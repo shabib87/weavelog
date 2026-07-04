@@ -1,7 +1,7 @@
 # Progress
 
-> **Status:** 1.95 research complete (5 threads + frontier models). Ready for 1.8 ROADMAP draft.
-> **Active phase:** 1.8 — ROADMAP draft
+> **Status:** 1.85b docs organization complete. Drafting ROADMAP with pending decisions noted.
+> **Active phase:** 1.8 — ROADMAP draft (in progress)
 > **Last updated:** 2026-07-04
 
 This is the single source of truth for "where are we." Agents read this first.
@@ -37,9 +37,9 @@ bottom (memory decay: don't re-read unless needed).
 
 | # | Phase | Status | Blocks on |
 |---|---|---|---|
-| 1.85b | Docs organization pass (4 fixes: NEXT_SESSION/PROGRESS split, headings, AGENTS.md table) | ⏳ next, before ROADMAP | nothing |
+| 1.85b | Docs organization pass (4 fixes: NEXT_SESSION/PROGRESS split, headings, AGENTS.md table) | ✅ done | — |
 | 1.85c | Docs format + link-backlink research (separate session) | ⏳ deferred | nothing |
-| 1.8 | ROADMAP draft (with pending decisions noted) | ⏳ blocked | 1.85b |
+| 1.8 | ROADMAP draft (with pending decisions noted) | 🟡 in progress | nothing |
 | 1.98b | Git hook enforcement | ⏳ deferred (fold into Phase 2) | nothing |
 | 2 | Global setup (global AGENTS.md, frontier models, global memory, gh CLI) | ⏳ blocked | 1.8 |
 | 3 | Project setup (project AGENTS.md, beads, agents/skills/loops) | ⏳ blocked | 2 |
@@ -68,6 +68,7 @@ bottom (memory decay: don't re-read unless needed).
 
 ## Done
 
+- **1.85b** — Docs organization: NEXT_SESSION stripped to narrative-only, headings normalized, AGENTS.md doc-hierarchy updated
 - **1.95** — Research complete: license, security+QA+TDD, frontier models, doc-indexing, evals+telemetry (5 docs)
 - **1.98** — Clean restart: sanitized, 7 atomic commits, .gitignore, AGENTS.md+PROGRESS.md verified
 - **1.97** — gh CLI added to stack (MIT, 31 releases/year, already installed)
