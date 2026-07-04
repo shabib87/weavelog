@@ -1,0 +1,435 @@
+# Model Selection for loopeng
+
+> **Date:** 2026-07-04
+> **Status:** Active
+> **Cross-referenced against:** `docs/NORTH_STAR.md`, `docs/RESEARCH.md`
+> **Data source:** OpenRouter live API (`https://openrouter.ai/api/v1/models`)
+> **Benchmarks:** Artificial Analysis indices + Design Arena (agent + model categories)
+> **Verification model:** GLM 5.2 (open-weight). Frontier models used only where
+>   the cost/quality gap is demonstrably worth it.
+
+## Purpose
+
+This document records the model selection rationale for loopeng v1. Every
+model choice must trace back to the North Star: a pre-defined agent team
+running spec → implement → verify → document for mobile fullstack projects
+(iOS, Android, React Native, KMP) with Maestro/Appium E2E testing, on Pi,
+with minimal cost and maximal agentic capability.
+
+**Principle:** Frontier models (GPT 5.5, Claude Opus 4.8, Claude Fable 5) are
+benchmarks only, not daily drivers. If an open-weight model can do a task,
+use the open-weight model. Frontier usage is reserved for tasks where the
+quality gap has measurable impact — and is documented as such.
+
+---
+
+## Types of Work and Relevant Benchmarks
+
+Loopeng runs different *types* of work. The right model depends on the task,
+not just the overall score.
+
+### Agentic Coding (spec → implement → verify)
+
+This is the core loopeng workflow. The model must reason about architecture,
+write code across multiple files, use tools, and verify its own output.
+**Most relevant:** AA Agentic Index + Design Arena agent categories
+(`fullstack`, `webapps`, `mobileapps`, `androidnative`).
+
+### Analytical Research (this document)
+
+Querying APIs, cross-referencing data, calculating cost/quality ratios,
+writing structured analysis. Zero code generation, zero tool use.
+**Most relevant:** AA Intelligence Index.
+
+The model that did this research: Claude Fable 5 (AA Intel 59.9, $10/$50).
+The best open-weight alternative: **GLM 5.2** (AA Intel 51.1, $0.91/$2.86).
+GLM 5.2 would do this work at ~85% of the intelligence for ~1% of the cost.
+
+### The Maker/Checker Principle
+
+A core loopeng insight: *the same model should never review its own output.*
+Different model families have different architectures, training data, and
+failure modes. A Z.ai model and a DeepSeek model won't share the same blind
+spots. The reviewer doesn't need to be smarter than the maker — it needs to
+be **different**.
+
+### Deep Codebase Analysis
+
+Feeding in a large codebase to trace bugs, map dependencies, or plan
+refactors. **Most relevant:** Context window size + AA Coding Index, since
+agentic tool use matters less than bulk comprehension.
+
+### Visual Verification (Mobile UI)
+
+Reviewing screenshots, comparing UI diffs, identifying layout regressions.
+**Most relevant:** Image support + Design Arena `mobileapps`.
+
+## Benchmark Methodology
+
+We use two independent benchmark sources to avoid single-vendor bias:
+
+1. **Artificial Analysis** (AA) — coding_index, agentic_index, intelligence_index.
+   These are composite scores from independent third-party evaluation.
+2. **Design Arena** — head-to-head agent battles on real development tasks:
+   `fullstack`, `webapps`, `mobileapps`, `androidnative`, `codecategories`.
+   These measure actual agentic performance, not just code generation.
+
+Frontier models serve as the quality ceiling:
+
+| Model | Prompt/M | Compl/M | AA Coding | AA Agentic | AA Intel | Code Cat | Fullstk | Mobile | Android |
+|---|---|---|---|---|---|---|---|---|---|
+| **Fable 5** | $10.00 | $50.00 | **76.5** | **52.8** | **59.9** | #2 | — | — | — |
+| **Opus 4.8** | $5.00 | $25.00 | 74.3 | 47.2 | 55.7 | #22 | #2 | **#1** | **#1** |
+| **GPT 5.5** | $5.00 | $30.00 | 74.9 | 44.9 | 54.8 | #17 | #15 | #9 | #4 |
+
+Open-weight models are evaluated against these on a value-per-dollar basis.
+
+---
+
+## Primary Agent: GLM 5.2
+
+**ID:** `z-ai/glm-5.2`
+**Cost:** $0.91/M prompt, $2.86/M completion, $0.17/M cache read
+**Context:** 1,048,576 tokens
+**Modality:** text → text
+
+### Why GLM 5.2
+
+| Metric | GPT 5.5 | Claude Opus 4.8 | GLM 5.2 | % of Frontier |
+|---|---|---|---|---|
+| AA Coding Index | 74.9 | 74.3 | **68.8** | 92% |
+| AA Agentic Index | 44.9 | 47.2 | **43.1** | 91–96% |
+| AA Intelligence Index | 54.8 | 55.7 | **51.1** | 92–93% |
+| Cost (prompt + completion) | $5.00/$30.00 | $5.00/$25.00 | **$0.91/$2.86** | 10–18% |
+
+| Design Arena Agent Task | GLM 5.2 | GPT 5.5 | Claude Opus 4.8 |
+|---|---|---|---|
+| Fullstack | **#3** | #15 | #2 |
+| Webapps | **#3** | #18 | #2 |
+| Mobileapps | #5 | #9 | **#1** |
+| Android Native | #7 | #4 | **#1** |
+| Code Categories (models) | **#1** | #17 | #22 |
+
+GLM 5.2 is the only open-weight model that competes with frontier models on
+agentic tasks. It is #1 in code categories (beating all frontier models), #3
+in fullstack and webapps, and #5 in mobileapps. At ~18% the price of GPT 5.5,
+it delivers ~92% of the quality across all dimensions.
+
+**Assigned roles:** Spec writer, implementer, verifier (code review), documenter.
+
+**Limitations:** No image support. For tasks requiring screenshots or UI
+review, delegate to Kimi K2.7 Code.
+
+---
+
+## Secondary Agent: Kimi K2.7 Code (Multimodal / Mobile)
+
+**ID:** `moonshotai/kimi-k2.7-code`
+**Cost:** $0.74/M prompt, $3.50/M completion, $0.15/M cache read
+**Context:** 262,144 tokens
+**Modality:** text + image → text
+
+### Why Kimi K2.7 Code
+
+| Metric | K2.6 | K2.7 Code | Notes |
+|---|---|---|---|
+| AA Coding Index | 56.0 | **60.8** | K2.7 Code is the code-specialized variant |
+| AA Agentic Index | 30.3 | 29.6 | Negligible difference for UI review |
+| Design Arena Mobileapps | #8 | #10 | Both strong on mobile |
+| Image support | ✅ | ✅ | Both support images |
+| Cost (prompt) | $0.66 | $0.74 | Nearly identical |
+
+K2.7 Code was chosen over K2.6 because the Verifier (UI) role is primarily
+visual reasoning backed by code understanding — not multi-step agentic tool
+use. The 4.8-point coding advantage of K2.7 Code matters more for
+determining whether a UI matches its spec than the 0.7-point agentic
+advantage of K2.6.
+
+**Assigned roles:** Mobile UI implementer, verifier (screenshot review),
+UI diff reviewer.
+
+**Fallback:** `moonshotai/kimi-k2.6` (AA Coding 56.0, $0.66/$3.41) — slightly
+higher agentic (30.3) and smarter (42.8) but weaker on code. Use when agentic
+reasoning about the UI matters more than code analysis.
+
+---
+
+## Deep Analysis: DeepSeek V4 Pro
+
+**ID:** `deepseek/deepseek-v4-pro`
+**Cost:** $0.43/M prompt, $0.87/M completion, $0.004/M cache read
+**Context:** 1,048,576 tokens
+**Modality:** text → text
+
+### Why DeepSeek V4 Pro
+
+| Metric | Value | Notes |
+|---|---|---|
+| AA Coding Index | 59.4 | 79% of GPT 5.5 |
+| AA Agentic Index | 36.4 | Second-highest among open models |
+| Context | 1M tokens | Feeds entire codebases in one shot |
+| Cost | $0.43/$0.87 | 2.1x cheaper than GLM 5.2 |
+
+The primary use case is deep codebase analysis: feed in a 200K+ token
+codebase, ask it to trace a bug across multiple files, understand dependency
+chains, or propose a large-scale refactor. The 1M context and strong reasoning
+(36.4 agentic) make it better suited for this than the cheaper flash variant.
+
+**Assigned roles:** Deep codebase analysis, large-scale refactor planning,
+trace debugging across multiple files.
+
+**Not for agentic execution:** Design Arena shows #29 in fullstack agents and
+#25 in webapps. GLM 5.2 should handle agentic workflows; DeepSeek V4 Pro
+should handle deep reasoning with large contexts.
+
+---
+
+## Budget Workhorses
+
+### DeepSeek V4 Flash
+
+**ID:** `deepseek/deepseek-v4-flash`
+**Cost:** $0.09/M prompt, $0.18/M completion, $0.02/M cache read
+**Context:** 1,048,576 tokens
+**AA Coding:** 56.2 | **AA Agentic:** 31.1 | **AA Intel:** 40.3
+
+Use for: test boilerplate generation, documentation drafts, simple lint fixes,
+CI/CD status messages — anything high-throughput and low-stakes.
+
+At $0.09/$0.18, it is **55x cheaper than GPT 5.5** while retaining
+75% of GPT 5.5's coding ability.
+
+### Ling 2.6 Flash
+
+**ID:** `inclusionai/ling-2.6-flash`
+**Cost:** $0.01/M prompt, $0.03/M completion
+**Context:** 262,144 tokens
+
+No AA benchmarks yet. At $0.01/$0.03, it is the cheapest model on OpenRouter
+— **500x cheaper than GPT 5.5**. Use only for the most trivial tasks until
+benchmarks confirm capability.
+
+---
+
+## Free Tier
+
+### Nemotron Ultra 550B:free
+
+**ID:** `nvidia/nemotron-3-ultra-550b-a55b:free`
+**Cost:** Free
+**Context:** 1,000,000 tokens
+**AA Coding:** 49.3 | **AA Agentic:** 27.4 | **AA Intel:** 37.8
+
+The best free model with benchmarks. 49.3 coding at $0 cost. Use for any
+non-critical task where spending credits isn't justified — CI/CD pipeline
+scripts, changelog generation, simple test assertions.
+
+---
+
+## Full Agent Team: 7 Roles, 4 Models
+
+Loopeng runs two phases. The **analysis loop** runs before any code exists.
+The **code loop** runs after analysis is validated. Each phase has its own
+maker/checker pairs.
+
+### Pre-Code: Analysis Loop
+
+| # | Role | Model | AA Intel | Does |
+|---|---|---|---|---|
+| 1 | **Analyst** | GLM 5.2 | 51.1 | Web search, API queries, gather benchmarks, synthesize data, draft analysis |
+| 2 | **Analysis Reviewer** | DeepSeek V4 Pro | 44.3 | Fact-check analyst output, cross-reference claims, catch reasoning errors, verify numbers |
+
+### Code: Implementation Loop
+
+| # | Role | Model | Does |
+|---|---|---|---|
+| 3 | **Spec Writer** | GLM 5.2 | Validated analysis → actionable, implementable spec |
+| 4 | **Implementer** | GLM 5.2 | Write code across files, follow spec |
+| 5 | **Verifier (Code)** | DeepSeek V4 Pro | Review diffs against spec, 1M context for large codebases |
+| 6 | **Verifier (UI)** | Kimi K2.7 Code | Screenshots, Maestro/Appium results, layout regressions |
+| 7 | **Documenter** | DeepSeek V4 Flash | Changelogs, API docs, README updates |
+
+### Maker/Checker Pairs
+
+```
+Analyst (GLM 5.2)      ──→  Analysis Reviewer (DeepSeek V4 Pro)
+    Z.ai model                DeepSeek model
+    AA Intel 51.1             AA Intel 44.3
+    Different families → different blind spots
+
+Implementer (GLM 5.2)   ──→  Verifier Code (DeepSeek V4 Pro)
+    Same cross-family split
+```
+
+The reviewer exists to catch what the maker misses. When GLM 5.2 makes a
+subtle interpretation error in benchmark data, DeepSeek V4 Pro won't share
+the same blind spot because they're built by different teams, with different
+architectures and training data.
+
+### The Iteration Contract
+
+The loop runs until every agent AND the human are satisfied:
+
+```
+Analyst → Reviewer → [issues?] → Analyst → Reviewer → [clear?]
+    ↓
+Spec Writer → Reviewer → [issues?] → Spec Writer → Reviewer → [clear?]
+    ↓
+Implementer → Verifier → [issues?] → Implementer → Verifier → [clear?]
+    ↓
+Verifier (UI) → [screenshots match spec?] → [no] → Implementer
+    ↓
+Documenter → [human signs off]
+```
+
+Each gate can loop back indefinitely. The human reviews at handoff gates:
+analysis→spec, spec→code, code→delivery.
+
+### Model Summary
+
+| Model | Cost (P+C) | Roles | Why This Model for These Roles |
+|---|---|---|---|
+| **GLM 5.2** | $0.91/$2.86 | Analyst, Spec Writer, Implementer | 51.1 Intel, #3 fullstack, #1 code cat. The workhorse. |
+| **DeepSeek V4 Pro** | $0.43/$0.87 | Analysis Reviewer, Verifier (Code) | Different family from GLM. 1M ctx. 36.4 agentic. The checker. |
+| **Kimi K2.7 Code** | $0.74/$3.50 | Verifier (UI) | Images + 60.8 coding. Only role requiring vision. |
+| **DeepSeek V4 Flash** | $0.09/$0.18 | Documenter | 56.2 coding at $0.09/$0.18. Good enough for docs. |
+
+---
+
+## Corrections to RESEARCH.md
+
+RESEARCH.md (as of 2026-07-04) lists these models. Three need replacement:
+
+1. **`mistralai/devstral-2512`** → drop. AA Coding 31.3, AA Agentic 10.6.
+   This is far below the quality floor needed for agentic work. Replace with
+   DeepSeek V4 Pro for deep analysis or Qwen 3.6 Plus for multimodal.
+
+2. **`qwen/qwen3.6-35b-a3b`** → upgrade to `qwen/qwen3.6-plus`.
+   54.5 coding vs 41.9, 27.6 agentic vs 21.4, 1M context vs 262K,
+   same image support, at $0.33/$1.95 vs $0.14/$1.00 (2.4x cost, 1.3x quality).
+
+3. **`nvidia/nemotron-3-super-120b-a12b`** → upgrade to
+   `nvidia/nemotron-3-ultra-550b-a55b`. 49.3 coding vs 37.7, 27.4 agentic
+   vs 8.7, both have free tiers, at $0.50/$2.20 vs $0.08/$0.45 (6x cost,
+   1.3x quality). Keep Super 120B:free as the "really cheap" fallback;
+   Ultra 550B:free as the "good free" option.
+
+---
+
+## Models Not Recommended
+
+| Model | Why Not |
+|---|---|
+| Codestral 2508 | #90 in code categories. Surprising miss from Mistral. |
+| Mistral Large 2512 | 20.1 coding index at $0.50/$1.50 — outclassed by DeepSeek V4 Flash (56.2 at $0.09/$0.18). |
+| Qwen 3 Coder 480B | #55 in code categories despite size. Underwhelming. |
+| Solar Pro 3 | 16.2 coding. Too weak. |
+| Granite 4.1 8B | 9.5 coding. Too small/weak for any loopeng task. |
+| GPT 5 / GPT 5.5 Pro | Frontier pricing without frontier-tier Design Arena agent results. No value case. |
+
+---
+
+## How to Cross-Verify This Document
+
+You can verify every claim in this document without spending money. The
+document's data comes entirely from the OpenRouter API. Re-run the queries
+and compare.
+
+### Method 1: Review with an Open-Weight Model (Recommended)
+
+Feed this document to **GLM 5.2** with the prompt:
+
+> "Review this model selection document for factual errors. Cross-check every
+> claimed benchmark number, cost figure, and comparison percentage against the
+> OpenRouter API (`https://openrouter.ai/api/v1/models`). For each model
+> mentioned, verify: (a) the model ID exists, (b) pricing matches, (c) AA
+> benchmarks match within rounding, (d) Design Arena ranks match. Flag every
+> discrepancy with the exact correct value."
+
+**Cost: ~$0.008** (under one cent). This is the same model the document
+recommends as the primary agent — eat your own dog food.
+
+If GLM 5.2 finds issues it cannot resolve (ambiguous data, conflicting
+benchmarks), escalate to a frontier model for those specific claims only.
+
+### Tiered Review Strategy
+
+| Pass | Model | Cost | Purpose |
+|---|---|---|---|
+| 1 | GLM 5.2 | $0.008 | Catch all obvious discrepancies |
+| 2 | DeepSeek V4 Pro | $0.005 | Second opinion, cross-check reasoning |
+| 3 | Opus 4.8 (frontier) | $0.07 | Resolve ambiguities, edge cases |
+
+Only escalate to pass 3 if passes 1 and 2 produce conflicting results.
+
+### When to Use Frontier for Review
+
+| Scenario | Model | Why |
+|---|---|---|
+| Benchmark data is self-contradictory | Opus 4.8 | Needs highest analytical reasoning |
+| Design Arena ranks reshuffled significantly | Opus 4.8 | Needs careful rank interpretation |
+| New model released, no AA data yet | Fable 5 | Needs inference from partial data |
+| Routine monthly re-verification | GLM 5.2 | Sufficient |
+
+### Frontier Model Costs for Doc Review
+
+| Model | Cost | AA Intel | Notes |
+|---|---|---|---|
+| GLM 5.2 | **$0.008** | 51.1 | Best open-weight. Always try first. |
+| DeepSeek V4 Pro | $0.005 | 44.3 | Cheaper, slightly weaker. Good second pass. |
+| Opus 4.8 | $0.07 | 55.7 | Frontier. #1 mobile/android. Escalation only. |
+| Fable 5 | $0.13 | 59.9 | Frontier. Best analytical mind, highest cost. Last resort. |
+| Nemotron Ultra:free | $0.00 | 37.8 | Free sanity check pass. |
+
+### Method 2: Self-Verify with the OpenRouter API
+
+```bash
+# Verify any model's current pricing and benchmarks
+curl -s "https://openrouter.ai/api/v1/models" \
+  -H "Authorization: Bearer $OPENROUTER_API_KEY" \
+  | python3 -c "
+import json, sys
+data = json.load(sys.stdin)
+for m in data['data']:
+    if m['id'] == 'z-ai/glm-5.2':
+        p = m['pricing']
+        print(f'Prompt: \${float(p[\"prompt\"])*1e6:.2f}/M')
+        print(f'Completion: \${float(p[\"completion\"])*1e6:.2f}/M')
+        b = m.get('benchmarks',{}).get('artificial_analysis',{})
+        print(f'Coding: {b.get(\"coding_index\")}')
+        print(f'Agentic: {b.get(\"agentic_index\")}')
+        print(f'Intelligence: {b.get(\"intelligence_index\")}')
+"
+```
+
+### Method 3: Verify Design Arena Rankings
+
+Design Arena rankings update frequently. Check the live data:
+
+```bash
+curl -s "https://openrouter.ai/api/v1/models" \
+  -H "Authorization: Bearer $OPENROUTER_API_KEY" \
+  | python3 -c "
+import json, sys
+data = json.load(sys.stdin)
+for m in data['data']:
+    if m['id'] == 'z-ai/glm-5.2':
+        for e in m.get('benchmarks',{}).get('design_arena',[]):
+            if e.get('arena') == 'agents':
+                print(f'{e[\"category\"]}: ELO={e[\"elo\"]} Rank=#{e[\"rank\"]} WR={e[\"win_rate\"]}%')
+"
+```
+
+
+
+---
+
+## Update Cadence
+
+- **Monthly:** Re-run the OpenRouter API queries. Model availability and
+  pricing change. New models appear.
+- **On Design Arena refresh:** Rankings shift as more battles complete.
+  Re-check the agent arena benchmarks especially.
+- **On new model release:** Especially Poolside Laguna M.1 and Cohere North
+  Mini Code — purpose-built coding agent models with no AA benchmarks yet.
+  When benchmarks drop, re-evaluate.
