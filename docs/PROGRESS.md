@@ -37,6 +37,9 @@ bottom (memory decay: don't re-read unless needed).
 
 | # | Phase | Status | Blocks on |
 |---|---|---|---|
+| 1.85b | Docs organization pass (4 fixes: NEXT_SESSION/PROGRESS split, headings, AGENTS.md table) | ⏳ next, before ROADMAP | nothing |
+| 1.85c | Docs format + link-backlink research (separate session) | ⏳ deferred | nothing |
+| 1.8 | ROADMAP draft (with pending decisions noted) | ⏳ blocked | 1.85b |
 | 1.98b | Git hook enforcement | ⏳ deferred (fold into Phase 2) | nothing |
 | 2 | Global setup (global AGENTS.md, frontier models, global memory, gh CLI) | ⏳ blocked | 1.8 |
 | 3 | Project setup (project AGENTS.md, beads, agents/skills/loops) | ⏳ blocked | 2 |
@@ -55,6 +58,11 @@ bottom (memory decay: don't re-read unless needed).
   until 1.98b + Phase 2 tooling.
 - **beads adoption:** requires user approval (package install). Flagged for Phase 3.
 - **License decision:** Apache 2.0 recommended; user decides during ROADMAP review.
+- **Frontier models decision:** Fable 5 + GPT-5.5 recommended; user decides.
+- **Telemetry decision:** phased opt-in (local-first) recommended; user decides.
+- **Docs format:** `docs/superpowers/plans/` stays (superpowers convention, don't fight it). The 2,848-line implementation plan needs chunking — deferred to 1.85c.
+- **History rewriting performed:** filter-branch removed literal home-dir path
+  from 2 commit diffs (92e2ada, f5deecf). Pre-push, safe. Verified 0 matches.
 
 ---
 
