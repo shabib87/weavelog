@@ -55,6 +55,10 @@ bottom (memory decay: don't re-read unless needed).
 
 ## Watch items
 
+- **Pi session JSONL is the native audit trail** — every message, tool call, and response is stored as structured JSONL at `~/.pi/agent/sessions/--<path>--/<timestamp>_<uuid>.jsonl`. This IS the thread-level audit trail. Export via `/export` (HTML/JSONL) or `/share` (GitHub gist). Not in the git repo (personal/local) but persists across sessions. This is how to recover thread reasoning if PROGRESS.md is insufficient.
+- **token-saving.pdf NOT evaluated** — the LinkedIn post (10 token-saving tools) was read via markitdown but not captured as research or evaluated against loopeng's stack. NEW tracked item: `docs/research/2026-07-04-token-saving-tools-evaluation.md`.
+- **Enforcement-layer analysis NOT in research doc** — the 4-layer analysis (prompt/hooks/CI/loopeng check) is in conversation only. Should be added to `docs/research/2026-07-04-security-qa-tdd-mechanisms.md`. NEW tracked item.
+- **NORTH_STAR audit + AGENTS.md compliance verification** — results are in conversation only, not in docs. Low severity (amendments applied, compliant). Optional to capture.
 - **Global Pi AGENTS.md NOT created** — discussed early in thread, approved,
   never written. `~/.pi/agent/AGENTS.md` does not exist. This is Phase 2 work.
 - **~/.codex/AGENTS.md NOT amended** — existing 36-line file has no
