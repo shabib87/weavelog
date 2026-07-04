@@ -1,4 +1,4 @@
-# TBD: Bash Tooling & Homebrew Distribution
+# Bash Tooling & Homebrew Distribution
 
 **Status:** ✅ RESOLVED (June 29, 2026) — **TypeScript only, entire project.**
 

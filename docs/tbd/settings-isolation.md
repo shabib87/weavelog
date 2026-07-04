@@ -1,4 +1,4 @@
-# TBD: Settings Isolation for Sub-Agents
+# Settings Isolation for Sub-Agents
 
 **Status:** Open blindspot — unaddressed in the current spec.
 **Severity:** High. Affects loop determinism.

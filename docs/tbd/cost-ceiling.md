@@ -1,4 +1,4 @@
-# TBD: Cost Ceiling & Runaway Detection
+# Cost Ceiling & Runaway Detection
 
 **Status:** Open blindspot — spec has retry limits but no budget.
 **Severity:** Medium. Affects trust and wallet.

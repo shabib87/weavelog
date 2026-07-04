@@ -1,4 +1,4 @@
-# TBD: CI/CD Strategy
+# CI/CD Strategy
 
 **Status:** Partially resolved — TypeScript-only locked; pipeline shape below.
 One open question remains (macOS-specific surface size).

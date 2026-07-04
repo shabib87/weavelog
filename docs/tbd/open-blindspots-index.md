@@ -1,4 +1,4 @@
-# TBD: Open Blindspots Index
+# Open Blindspots Index
 
 **Status:** Tracked open questions discovered during the bird's-eye review.
 Each has its own file or is folded into the spec revision.

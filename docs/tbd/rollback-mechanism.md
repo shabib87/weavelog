@@ -1,4 +1,4 @@
-# TBD: Rollback Mechanism for Rejected Steps
+# Rollback Mechanism for Rejected Steps
 
 **Status:** Open blindspot — spec mentions rollback as a gap but specifies no
 mechanism.

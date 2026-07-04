@@ -1,4 +1,4 @@
-# Research: Evals and Telemetry for loopeng
+# Evals and Telemetry
 
 > **Date:** 2026-07-04
 > **Status:** Active research. Informs ROADMAP.

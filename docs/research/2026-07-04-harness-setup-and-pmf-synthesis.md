@@ -1,4 +1,4 @@
-# Research Log: Harness Setup & PMF Synthesis
+# Harness Setup & PMF Synthesis
 
 > **Date:** 2026-07-04
 > **Status:** Active lab notebook. Source material for future blog writing.

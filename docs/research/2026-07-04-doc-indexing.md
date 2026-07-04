@@ -1,4 +1,4 @@
-# Research: Documentation Indexing for loopeng
+# Documentation Indexing
 
 > **Date:** 2026-07-04
 > **Status:** Active research. Informs ROADMAP.

@@ -1,4 +1,4 @@
-# Research: Frontier Model Selection for loopeng
+# Frontier Model Selection
 
 > **Date:** 2026-07-04
 > **Status:** Active research. Decision pending user approval.

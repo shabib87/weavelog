@@ -1,4 +1,4 @@
-# Research: Security, QA, and TDD Mechanisms for loopeng
+# Security, QA, and TDD Mechanisms
 
 > **Date:** 2026-07-04
 > **Status:** Active research. Informs ROADMAP design.
