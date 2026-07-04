@@ -59,3 +59,19 @@ verified stack with versions.
   `docs/superpowers/plans/2026-07-04-loopeng-implementation.md` is a
   pre-revision artifact. It needs chunking — tracked as 1.85c (separate
   session, docs format + link-backlink research).
+
+## Audit gaps (found 2026-07-04, to fix in Phase 2)
+
+- `~/.pi/agent/AGENTS.md` (global Pi constitution) — discussed, approved,
+  NEVER CREATED. Must be created in Phase 2.
+- `~/.codex/AGENTS.md` — must be amended with YAGNI/SOLID/KISS/DRY in Phase 2.
+- DRY missing from NORTH_STAR — user stated KISS+SOLID+DRY+YAGNI; only
+  YAGNI/SOLID/KISS are present. Phase 2 amendment.
+- No project `.pi/` directory — create in Phase 3.
+- Documentation rule (format, naming, links) not defined — 1.85c research.
+- Blog documentation rule not captured — user wants every session's work
+  documented with data backing for public blog posts. Define as a rule in
+  Phase 2.
+- Thread reasoning not systematically captured — Pi auto-compaction
+  summarizes older conversation. Artifacts (git, docs) survive; the reasoning
+  path does not. Define a "session audit" convention.
