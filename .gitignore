@@ -1,0 +1,28 @@
+# macOS
+.DS_Store
+
+# Node
+node_modules/
+dist/
+*.log
+
+# TypeScript
+*.tsbuildinfo
+
+# Pi
+.pi/npm/
+.pi/sessions/
+
+# Headroom (project-scoped memory state — auto-generated, never commit)
+.headroom/
+
+# Reference materials (not for public repo)
+docs/archive/reference-donot-git-commit-never/
+
+# IDE
+.vscode/
+.idea/
+
+# Environment
+.env
+.env.local
