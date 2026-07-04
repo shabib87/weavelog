@@ -46,6 +46,7 @@ loopeng/
 | `docs/RESEARCH.md` | Why we build it this way | Active, authoritative |
 | `docs/adr.md` | Architecture decision record | Active, authoritative |
 | `docs/PROGRESS.md` | Phase tracker (where we are) | Active, authoritative |
+| `docs/ROADMAP.md` | Product roadmap (version milestones) | Active, authoritative |
 | `docs/NEXT_SESSION.md` | Narrative handoff | Active |
 | `docs/specs/2026-06-28-loopeng-design.md` | Detailed design | Active |
 | `docs/research/` | Research logs (dated, lab notebooks) | Active |

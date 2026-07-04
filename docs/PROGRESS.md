@@ -1,7 +1,7 @@
 # Progress
 
-> **Status:** 1.85b docs organization complete. Drafting ROADMAP with pending decisions noted.
-> **Active phase:** 1.8 — ROADMAP draft (in progress)
+> **Status:** ROADMAP drafted with pending decisions. Planning phase complete. Ready for Phase 2 (global setup) after user reviews docs + decides.
+> **Active phase:** User review of research + ROADMAP, then Phase 2 (global setup)
 > **Last updated:** 2026-07-04
 
 This is the single source of truth for "where are we." Agents read this first.
@@ -37,13 +37,11 @@ bottom (memory decay: don't re-read unless needed).
 
 | # | Phase | Status | Blocks on |
 |---|---|---|---|
-| 1.85b | Docs organization pass (4 fixes: NEXT_SESSION/PROGRESS split, headings, AGENTS.md table) | ✅ done | — |
+| 1.85b | Docs organization pass | ✅ done | — |
 | 1.85c | Docs format + link-backlink research (separate session) | ⏳ deferred | nothing |
-| 1.8 | ROADMAP draft (with pending decisions noted) | 🟡 in progress | nothing |
+| 1.8 | ROADMAP draft | ✅ done | — |
 | 1.98b | Git hook enforcement | ⏳ deferred (fold into Phase 2) | nothing |
-| 2 | Global setup (global AGENTS.md, frontier models, global memory, gh CLI) | ⏳ blocked | 1.8 |
-| 3 | Project setup (project AGENTS.md, beads, agents/skills/loops) | ⏳ blocked | 2 |
-| 4 | CLI tool (`loopeng init` + `loopeng check`) | ⏳ blocked | 3 |
+| 2 | Global setup (global AGENTS.md, frontier models, global memory, gh CLI) | ⏳ next, after user review | user decisions |
 
 ---
 
@@ -68,6 +66,7 @@ bottom (memory decay: don't re-read unless needed).
 
 ## Done
 
+- **1.8** — ROADMAP drafted (version milestones v0.1→v1.0+, loop paradigm, four disciplines, success metrics, proof projects, pending decisions noted)
 - **1.85b** — Docs organization: NEXT_SESSION stripped to narrative-only, headings normalized, AGENTS.md doc-hierarchy updated
 - **1.95** — Research complete: license, security+QA+TDD, frontier models, doc-indexing, evals+telemetry (5 docs)
 - **1.98** — Clean restart: sanitized, 7 atomic commits, .gitignore, AGENTS.md+PROGRESS.md verified
