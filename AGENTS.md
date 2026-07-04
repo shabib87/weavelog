@@ -28,7 +28,11 @@ loopeng/
 │   ├── NORTH_STAR.md          # The anchor
 │   ├── RESEARCH.md            # Provenance
 │   ├── adr.md                 # Architecture decisions
+│   ├── PROGRESS.md            # Phase tracker (where we are)
+│   ├── NEXT_SESSION.md        # Narrative handoff
 │   ├── specs/                 # Detailed design specs
+│   ├── research/              # Research logs (dated, lab notebooks)
+│   ├── superpowers/plans/     # Implementation plans (superpowers convention)
 │   ├── tbd/                   # Open questions
 │   └── archive/               # Superseded — do not use
 └── .github/workflows/         # CI (Linux, node:test + biome + tsc)
@@ -41,7 +45,11 @@ loopeng/
 | `docs/NORTH_STAR.md` | What we build | Active, authoritative |
 | `docs/RESEARCH.md` | Why we build it this way | Active, authoritative |
 | `docs/adr.md` | Architecture decision record | Active, authoritative |
+| `docs/PROGRESS.md` | Phase tracker (where we are) | Active, authoritative |
+| `docs/NEXT_SESSION.md` | Narrative handoff | Active |
 | `docs/specs/2026-06-28-loopeng-design.md` | Detailed design | Active |
+| `docs/research/` | Research logs (dated, lab notebooks) | Active |
+| `docs/superpowers/plans/` | Implementation plans (superpowers convention) | Active |
 | `docs/tbd/` | Open questions | Do not implement against |
 | `docs/archive/` | Superseded research | **Do not use.** Provenance only. |
 
