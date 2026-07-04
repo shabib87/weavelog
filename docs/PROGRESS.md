@@ -1,7 +1,7 @@
 # Progress
 
-> **Status:** Clean restart in progress (commits 1–2 done, 3–7 pending). Enforcement hooks deferred to tracked item.
-> **Active phase:** 1.98 — Repo clean restart + sanitization + commit hygiene
+> **Status:** Clean restart complete. Repo sanitized, 7 atomic commits on `main`, AGENTS.md + PROGRESS.md verified against July 2026 standards. Ready for 1.98b (hooks) or 1.95 (research).
+> **Active phase:** 1.98b — Git hook enforcement (deferred) OR 1.95 — Research (7 threads)
 > **Last updated:** 2026-07-04
 
 This is the single source of truth for "where are we." Agents read this first.
@@ -10,50 +10,30 @@ bottom (memory decay: don't re-read unless needed).
 
 ---
 
-## Active phase: 1.98 — Repo clean restart
+## Active phase: choosing next step
 
-**Sub-fork resolved (decision (b)):** enforcement hooks (commit-msg, pre-commit)
-deferred to a tracked item. Clean restart proceeds with manual compliance only.
-Hooks are the next discrete task after 1.98 closes.
+**1.98 is closed.** Two paths forward:
+- **1.98b** — Git hook enforcement (commit-msg + pre-commit stopgap). Quick,
+  closes the enforcement gap.
+- **1.95** — Research: evals, telemetry, license, doc-indexing,
+  TDD-with-agents, two-layer QA, security mechanisms. Larger, blocks ROADMAP.
 
-**Done in this phase:**
-- ✅ File operations: sanitized home-dir paths → `~` (4 refs in 2 files)
-- ✅ Moved `docs/superpowers/plans/2026-07-04-codex-headroom-update.md` → `docs/research/2026-07-04-codex-headroom-setup.md`
-- ✅ Deleted superseded spec at `docs/superpowers/specs/`
-- ✅ Created root `.gitignore` (macOS, Node, TypeScript, Pi, headroom)
-- ✅ Added sanitization MUST NOT rule to AGENTS.md
-- ✅ Created orphan branch `fresh-main`
-- ✅ Commit 1: `chore: add .gitignore`
-- ✅ Commit 2: `docs: add North Star and research foundations`
+**Recommendation:** 1.95 first (it blocks ROADMAP, which blocks everything
+  downstream). Hooks (1.98b) can be installed during Phase 2 global setup.
 
-**Remaining (commits 3–7):**
-- [ ] Commit 3: `chore: add project identity (AGENTS.md, CLAUDE.md, README)`
-  - Add conventional-commit format to AGENTS.md Standards section
-  - AGENTS.md (with sanitization MUST NOT), CLAUDE.md, README.md
-- [ ] Commit 4: `docs: add architecture decision record and design spec`
-  - docs/adr.md, docs/specs/2026-06-28-loopeng-design.md
-- [ ] Commit 5: `docs: add open questions and blindspots`
-  - docs/tbd/ (6 files)
-- [ ] Commit 6: `docs: archive superseded starter research`
-  - docs/archive/ (4 files, reference PDFs excluded by .gitignore)
-- [ ] Commit 7: `docs: add research logs, progress tracker, handoff, and plans`
-  - docs/PROGRESS.md (this file), docs/NEXT_SESSION.md (refreshed),
-    docs/research/ (4 files), docs/superpowers/plans/ (1 file)
+## Done (1.98 — clean restart)
 
-**After 1.98 closes:** rename `fresh-main` → `main`, then move to 1.98b (hooks).
-
----
-
-## 1.98b — Git hook enforcement (deferred from 1.98)
-
-**Decision:** resolve as a discrete task after the clean restart. Two options
-recorded for when we pick it up:
-- Shell stopgap hooks (commit-msg regex + pre-commit grep) — no install, but
-  "no bash for logic" rule needs interpretation (git infra vs project logic)
-- Real tooling (commitlint + pre-commit + gitleaks) — needs package install
-  approval, robust, replaces shell stopgap
-
-**Status:** deferred, not started.
+- ✅ Sanitized `home-dir` → `~` (4 refs in 2 files)
+- ✅ Moved codex-headroom plan → `docs/research/2026-07-04-codex-headroom-setup.md`
+- ✅ Deleted superseded spec
+- ✅ Created `.gitignore` (macOS, Node, TypeScript, Pi, headroom)
+- ✅ Added sanitization MUST NOT + conventional commits to AGENTS.md
+- ✅ Created `docs/PROGRESS.md` (agent-readable tracker)
+- ✅ Refreshed `docs/NEXT_SESSION.md` (points to PROGRESS.md)
+- ✅ Clean restart: 7 atomic commits on `main`, orphan branch
+- ✅ Security scan: 0 personal refs in all committed history
+- ✅ AGENTS.md verified against agents.md July 2026 standard (90 lines, compliant)
+- ✅ PROGRESS.md verified against loop engineering principles
 
 ---
 
@@ -61,8 +41,8 @@ recorded for when we pick it up:
 
 | # | Phase | Status | Blocks on |
 |---|---|---|---|
-| 1.98b | Git hook enforcement | ⏳ deferred | 1.98 close |
-| 1.95 | Research: evals, telemetry, license, doc-indexing, TDD-with-agents, two-layer QA, security mechanisms | ⏳ not started | 1.98 close |
+| 1.98b | Git hook enforcement | ⏳ deferred (can fold into Phase 2) | nothing |
+| 1.95 | Research: evals, telemetry, license, doc-indexing, TDD-with-agents, two-layer QA, security mechanisms | ⏳ not started — **recommended next** | nothing |
 | 1.8 | ROADMAP draft (v0.1→v1.0 milestones, loop paradigm, four disciplines) | ⏳ blocked | 1.95 |
 | 2 | Global setup (global AGENTS.md for Pi+Codex, frontier model selection, global memory, gh CLI in workflow) | ⏳ blocked | 1.8 |
 | 3 | Project setup (project AGENTS.md, project memory, agents/skills/loops wiring, beads integration) | ⏳ blocked | 2 |
