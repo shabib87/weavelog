@@ -1,7 +1,7 @@
 # Progress
 
-> **Status:** Clean restart complete. Repo sanitized, 7 atomic commits on `main`, AGENTS.md + PROGRESS.md verified against July 2026 standards. Ready for 1.98b (hooks) or 1.95 (research).
-> **Active phase:** 1.98b — Git hook enforcement (deferred) OR 1.95 — Research (7 threads)
+> **Status:** 1.95 research complete (5 threads + frontier models). Ready for 1.8 ROADMAP draft.
+> **Active phase:** 1.8 — ROADMAP draft
 > **Last updated:** 2026-07-04
 
 This is the single source of truth for "where are we." Agents read this first.
@@ -10,43 +10,37 @@ bottom (memory decay: don't re-read unless needed).
 
 ---
 
-## Active phase: choosing next step
+## Active phase: 1.8 — ROADMAP draft
 
-**1.98 is closed.** Two paths forward:
-- **1.98b** — Git hook enforcement (commit-msg + pre-commit stopgap). Quick,
-  closes the enforcement gap.
-- **1.95** — Research: evals, telemetry, license, doc-indexing,
-  TDD-with-agents, two-layer QA, security mechanisms. Larger, blocks ROADMAP.
+**1.95 research is complete.** Five research docs committed:
+- `docs/research/2026-07-04-license-selection.md` — MIT vs Apache 2.0 vs AGPL-3.0
+- `docs/research/2026-07-04-security-qa-tdd-mechanisms.md` — enforcement stack, two-layer QA, TDD-with-agents
+- `docs/research/2026-07-04-frontier-model-selection.md` — Fable 5 + GPT-5.5 cross-vendor pair
+- `docs/research/2026-07-04-doc-indexing.md` — phased: flat-files → beads → headroom memory
+- `docs/research/2026-07-04-evals-and-telemetry.md` — phased (iii): local metrics.jsonl → workflow metrics → public aggregate
 
-**Recommendation:** 1.95 first (it blocks ROADMAP, which blocks everything
-  downstream). Hooks (1.98b) can be installed during Phase 2 global setup.
+**Decision points from research (need user input during ROADMAP review):**
+- License: Apache 2.0 + trademark (recommended) vs MIT vs AGPL-3.0
+- Frontier models: confirm Fable 5 + GPT-5.5 (recommended)
+- Telemetry: confirm phased opt-in approach (recommended)
 
-## Done (1.98 — clean restart)
-
-- ✅ Sanitized `home-dir` → `~` (4 refs in 2 files)
-- ✅ Moved codex-headroom plan → `docs/research/2026-07-04-codex-headroom-setup.md`
-- ✅ Deleted superseded spec
-- ✅ Created `.gitignore` (macOS, Node, TypeScript, Pi, headroom)
-- ✅ Added sanitization MUST NOT + conventional commits to AGENTS.md
-- ✅ Created `docs/PROGRESS.md` (agent-readable tracker)
-- ✅ Refreshed `docs/NEXT_SESSION.md` (points to PROGRESS.md)
-- ✅ Clean restart: 7 atomic commits on `main`, orphan branch
-- ✅ Security scan: 0 personal refs in all committed history
-- ✅ AGENTS.md verified against agents.md July 2026 standard (90 lines, compliant)
-- ✅ PROGRESS.md verified against loop engineering principles
+**Next:** draft `docs/ROADMAP.md` with:
+1. Loop-engineering paradigm (Voss/Osmani/LangChain/swyx synthesis)
+2. Four engineering disciplines (prompt + context + harness + loop)
+3. Version milestones v0.1→v1.0 mapping loop layers to releases
+4. Success metrics + telemetry hooks
+5. Proof projects (loopeng, codewithshabib blog, mobile comparison)
 
 ---
 
-## Upcoming phases (in order)
+## Upcoming phases
 
 | # | Phase | Status | Blocks on |
 |---|---|---|---|
-| 1.98b | Git hook enforcement | ⏳ deferred (can fold into Phase 2) | nothing |
-| 1.95 | Research: evals, telemetry, license, doc-indexing, TDD-with-agents, two-layer QA, security mechanisms | ⏳ not started — **recommended next** | nothing |
-| 1.8 | ROADMAP draft (v0.1→v1.0 milestones, loop paradigm, four disciplines) | ⏳ blocked | 1.95 |
-| 2 | Global setup (global AGENTS.md for Pi+Codex, frontier model selection, global memory, gh CLI in workflow) | ⏳ blocked | 1.8 |
-| 3 | Project setup (project AGENTS.md, project memory, agents/skills/loops wiring, beads integration) | ⏳ blocked | 2 |
-| 4 | CLI tool (loopeng as deterministic setup CLI — `loopeng init` + `loopeng check`) | ⏳ blocked | 3 |
+| 1.98b | Git hook enforcement | ⏳ deferred (fold into Phase 2) | nothing |
+| 2 | Global setup (global AGENTS.md, frontier models, global memory, gh CLI) | ⏳ blocked | 1.8 |
+| 3 | Project setup (project AGENTS.md, beads, agents/skills/loops) | ⏳ blocked | 2 |
+| 4 | CLI tool (`loopeng init` + `loopeng check`) | ⏳ blocked | 3 |
 
 ---
 
@@ -59,12 +53,15 @@ bottom (memory decay: don't re-read unless needed).
 - **Enforcement gap:** all rules currently Layer 1 (prompt-level) only. No
   mechanical gates (hooks, CI, `loopeng check`) exist yet. Manual compliance
   until 1.98b + Phase 2 tooling.
-- **NEXT_SESSION.md is stale** — being refreshed in commit 7.
+- **beads adoption:** requires user approval (package install). Flagged for Phase 3.
+- **License decision:** Apache 2.0 recommended; user decides during ROADMAP review.
 
 ---
 
 ## Done
 
+- **1.95** — Research complete: license, security+QA+TDD, frontier models, doc-indexing, evals+telemetry (5 docs)
+- **1.98** — Clean restart: sanitized, 7 atomic commits, .gitignore, AGENTS.md+PROGRESS.md verified
 - **1.97** — gh CLI added to stack (MIT, 31 releases/year, already installed)
 - **1.96** — Git/GitHub/SAST/review-tool research (all tools activity-audited, MIT)
 - **1.94** — Lab notebook captured (`docs/research/2026-07-04-harness-setup-and-pmf-synthesis.md`)
