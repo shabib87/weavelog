@@ -124,6 +124,24 @@ user can't remember 7 opaque model names but can remember `workhorse`,
 
 ---
 
+## 2026-07-05 — Audit Fix (follow-up)
+
+**Session:** 2026-07-05T17:36Z (same session as above, `019f335a`)
+**Scope:** Fixed 3 issues found during 5-pass audit trail verification.
+
+**Fixes:**
+1. **Duplicate GPT 5.5 row** — model-selection.md benchmark table had two identical
+   GPT 5.5 rows (line 86-87). Removed duplicate.
+2. **Frontier doc status stale** — status said "pending user approval" but the
+   user approved and the codex profile was applied. Updated to "Approved 2026-07-05."
+3. **Missing qwen discussion** — user questioned whether DS V4 Pro is a better
+   replacement for qwen3.6-35b-a3B than qwen3.6-plus. This exchange was not
+   captured in learning logs. Added Finding 7 to audit log documenting the
+   YAGNI vs diversity tradeoff (Qwen in `models.json` overrides as available
+   but not assigned).
+
+---
+
 ## Watch items
 
 - **Pi session JSONL is the native audit trail** — every message, tool call, and response is stored as structured JSONL at `~/.pi/agent/sessions/--<path>--/<timestamp>_<uuid>.jsonl`. This IS the thread-level audit trail. Export via `/export` (HTML/JSONL) or `/share` (GitHub gist). Not in the git repo (personal/local) but persists across sessions. This is how to recover thread reasoning if PROGRESS.md is insufficient.

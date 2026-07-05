@@ -34,7 +34,7 @@ Authoritative docs:
 4. Check `docs/AGENTS.md` for MUST NOT rules and standards before any work
 5. Begin the next action from PROGRESS.md
 
-To resume this exact conversation (model registry + profile naming):
+To resume this exact conversation (model registry + profile naming + audit fix):
 ```bash
 pi --session 019f335a-c44e-77dd-aaf4-3048d0b2bcad
 ```
