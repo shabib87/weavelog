@@ -12,6 +12,7 @@ dist/
 # Pi
 .pi/npm/
 .pi/sessions/
+.pi/logs/
 
 # Headroom (project-scoped memory state — auto-generated, never commit)
 .headroom/
