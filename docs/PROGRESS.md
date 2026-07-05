@@ -1,8 +1,8 @@
 # Progress
 
-> **Status:** Audit complete. Multiple gaps found. ROADMAP drafted but global constitutions not created, DRY not in NORTH_STAR, docs rule not defined. Correcting.
-> **Active phase:** 1.99 — Audit corrections
-> **Last updated:** 2026-07-04
+> **Status:** Audit complete + 5 uncaptured insights now tracked. Executing Phase 2 constitution work (DRY + global AGENTS.md).
+> **Active phase:** 2 — Global setup (constitution first)
+> **Last updated:** 2026-07-05
 
 This is the single source of truth for "where are we." Agents read this first.
 Update it before any phase transition. Completed phases move to **Done** at the
@@ -61,6 +61,43 @@ bottom (memory decay: don't re-read unless needed).
 - **NORTH_STAR audit + AGENTS.md compliance verification** — results are in conversation only, not in docs. Low severity (amendments applied, compliant). Optional to capture.
 - **Global Pi AGENTS.md NOT created** — discussed early in thread, approved,
   never written. `~/.pi/agent/AGENTS.md` does not exist. This is Phase 2 work.
+- **CLI + skill model synthesis (msgs 43-44, NOT captured)** — from this
+  session's reasoning: loopeng is a composer (setup/verify/compose, not run).
+  Skill tiers: T0 methodology (superpowers, always) + T1 language (SME, per
+  profile) + T2 platform (SME, arch-agnostic filter) + architecture as a
+  user-decided config field (NOT a skill). Profiles deferred to v0.3+ (manual
+  `loopeng add skill` first). Selection criterion: arch-dictating skills
+  rejected (e.g. Meet-Miyani/compose-skill). SME candidates audited:
+  twostraws/SwiftUI-Agent-Skill (4.2k★, MIT, adopt), callstackincubator/
+  agent-skills RN (1.5k★, MIT, adopt), new-silvermoon/awesome-android-agent-
+  skills (877★, Apache-2.0, adopt). MCP servers deferred to v2+ (Pi has no
+  native MCP). Maestro (14.6k★, Apache-2.0) = preferred mobile E2E, v1.0.x.
+- **Extensions map (msg 43, NOT captured)** — validated: superpowers +
+  headroom extension (in use). When-needed (YAGNI, non-speculative):
+  subagent spawning (Pi built-in example, v0.3), git-checkpoint (if rollback
+  tbd resolves to stash-based), protected-paths (if `loopeng check` can't
+  enforce statically), handoff (not planned, compaction may suffice).
+  Principle: adopt extensions when a concrete need is proven, not because Pi
+  ships examples.
+- **Greenfield vs brownfield (msg 45, NOT captured)** — `loopeng init` must
+  be idempotent + non-destructive: detect → preserve → augment. Applies to
+  all profiles. In brownfield (existing code/AGENTS.md/skills), preserves and
+  augments; in greenfield, scaffolds fresh. Architecture in brownfield is
+  detected from existing state, not re-decided. This collapses green/brown
+  into one behavior (KISS). Already aligns with tbd/open-blindspots-index.md
+  idempotency note.
+- **Blog (codewithshabib) is a stale trial, NOT a reference (msg 45)** — the
+  existing .agents/skills/ and AGENTS.md in the blog repo are April 2026
+  trial work, not July 2026 best practice. Do NOT use as a template.
+  Blog's role: brownfield proof project (content/web type) only. When
+  loopeng v1.0 runs against it, sets up the agent workspace fresh.
+- **Architecture is user-decided, not skill-dictated (msgs 43,46)** —
+  skills teach capability (language/platform patterns), NOT architecture
+  (MVVM/MVI/MVC/TSA/modular). Architecture is a workspace config field,
+  recorded in AGENTS.md `## Architecture` section, defaulting to "TBD —
+  user-decided." `loopeng check` verifies presence (not value). The
+  brainstorming flow for arch selection is just superpowers' brainstorming
+  skill applied to the question — no loopeng feature to build.
 - **~/.codex/AGENTS.md NOT amended** — existing 36-line file has no
   YAGNI/SOLID/KISS/DRY. Phase 2 work.
 - **DRY missing from NORTH_STAR** — user stated KISS+SOLID+DRY+YAGNI;
