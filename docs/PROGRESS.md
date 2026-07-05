@@ -288,16 +288,16 @@ and why "yes" is not an implementation signal.
 - `docs/research/model-selection.md` — added Superseded note to Free Tier.
 - `docs/research/RESEARCH.md` — added awareness note to OpenRouter section (roster is
   historical; consult models.md).
-- `docs/adr/0001-loopeng-architecture-decisions.md` — added awareness notes
-  to section 2.4 (model table) and section 4 (consequences); content
-  unchanged, pointers to models.md added so agents don't follow stale roster.
+- `docs/adr/0001-loopeng-architecture-decisions.md` — section 2.4 amended:
+  roster updated to current tier-based allocation (matching models.md), original
+  roster preserved as superseded, license corrected (DeepSeek V4 Pro = MIT, not
+  Apache 2.0; verified via HuggingFace). Section 4 awareness note retained.
 - `docs/PROGRESS.md` — this entry.
 
-**Pre-existing drift surfaced (NOT fixed):** ADR 2.4 roster (6 models,
-role-based, different nemotron variant) differs from models.md (6 models,
-tier-based). Predates this session. Awareness markers added so agents consult
-models.md as authoritative; full ADR/models.md alignment is a separate
-decision.
+**Pre-existing drift resolved (amended 2026-07-05):** ADR 2.4 roster was
+amended to match models.md: current tier-based roster added, original
+role-based roster preserved as superseded. License correction: DeepSeek V4
+Pro is MIT (not Apache 2.0 as originally recorded), verified via HuggingFace.
 
 **Honest gaps:** Could not fetch OpenRouter's ZDR-eligible provider list
 (docs site is a JS SPA; no ZDR field in `/api/v1/providers`). Could not

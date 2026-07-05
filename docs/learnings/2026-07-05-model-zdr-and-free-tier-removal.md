@@ -139,9 +139,12 @@ from models.md (now 6 models: GLM 5.2, DS V4 Pro, Kimi, DS V4 Flash, GPT-5.5,
 Fable 5). Different model set, different role structure (role-based vs
 tier-based), different nemotron variant. This predates this session and is
 unrelated to the free-tier removal. Aligning ADR with models.md is a separate
-decision with its own approval path. Awareness markers (pointer notes, not
-content edits) were added to docs/research/RESEARCH.md and the ADR so agents treat their
-rosters as historical and consult models.md as authoritative.
+decision with its own approval path. The ADR section 2.4 roster was amended
+(2026-07-05, separate user-approved decision) to match models.md: original
+role-based roster preserved as superseded, current tier-based roster added,
+license correction (DeepSeek V4 Pro is MIT, not Apache 2.0 as originally
+recorded; verified via HuggingFace). docs/research/RESEARCH.md retains a
+pointer note since its roster is provenance-only.
 
 ## Blog candidates
 

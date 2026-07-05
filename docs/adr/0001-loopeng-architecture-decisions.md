@@ -72,6 +72,35 @@ available only as explicit opt-in.
 
 **Default model allocation:**
 
+> **Amended 2026-07-05.** Roster updated from the original 6-model role-based
+> allocation (preserved below) to a 6-model tier-based allocation matching the
+> live registry (`~/.pi/agent/models.md`).
+>
+> **Reason:** OpenRouter ZDR (account-wide) blocks `:free` provider endpoints,
+> removing the Utility/free-tier slot (nemotron). Kimi K2.7 Code added for
+> vision support (GLM 5.2 has no image input). GPT-5.5 and Fable 5 added as
+> frontier escalation tiers (per North Star: frontier as last-resort
+> escalation). devstral-2512 (Writer) and qwen3.6-35b-a3b (Router) dropped;
+> their roles consolidated into GLM 5.2 (daily driver) and DS V4 Flash
+> (budget/docs). License correction: DeepSeek V4 Pro is MIT (not Apache 2.0 as
+> originally recorded); verified via HuggingFace 2026-07-05.
+> See `docs/learnings/2026-07-05-model-zdr-and-free-tier-removal.md`.
+
+| Tier | Model | License | Cost (input/output per 1M) |
+|---|---|---|---|
+| Primary (daily driver) | `z-ai/glm-5.2` | MIT | $0.57 / $1.80 |
+| Verifier (checker) | `deepseek/deepseek-v4-pro` | MIT | $0.43 / $0.87 |
+| Verifier (UI/vision) | `moonshotai/kimi-k2.7-code` | Other | $0.74 / $3.50 |
+| Budget (docs/CI) | `deepseek/deepseek-v4-flash` | MIT | $0.09 / $0.18 |
+| Frontier escalation 1 | `openai/gpt-5.5` | Proprietary | $5.00 / $30.00 |
+| Frontier escalation 2 | `anthropic/claude-fable-5` | Proprietary | $10.00 / $50.00 |
+
+All model IDs and prices verified against the live OpenRouter API (2026-07-05).
+Licenses verified via HuggingFace (`huggingface.co/api/models/<id>`):
+GLM 5.2 = MIT, DeepSeek V4 Pro = MIT, Kimi K2.7 Code = Other (custom).
+
+**Original allocation (2026-07-04, superseded 2026-07-05):**
+
 | Role | Model | License | Cost (input/output per 1M) |
 |---|---|---|---|
 | Specifier | `z-ai/glm-5.2` | MIT | $0.95 / $3.00 |
@@ -80,15 +109,6 @@ available only as explicit opt-in.
 | Writer | `mistralai/devstral-2512` | Modified MIT | $0.40 / $2.00 |
 | Router | `qwen/qwen3.6-35b-a3b` | Apache 2.0 | $0.14 / $1.00 |
 | Utility | `nvidia/nemotron-3-super-120b-a12b:free` | NVIDIA Open | Free |
-
-All six model IDs verified available on the live OpenRouter API.
-
-> **Note (2026-07-05):** The roster above is this ADR's original allocation,
-> retained as the architectural record. The live, authoritative model registry
-> is `~/.pi/agent/models.md`, revised independently of this ADR (free-tier
-> removed under OpenRouter ZDR; escalation tiers added). Do not treat the
-> table above as the current model roster; consult `models.md`. See
-> `docs/learnings/2026-07-05-model-zdr-and-free-tier-removal.md`.
 
 **Why OpenRouter:** Single API key manages all models, all providers, and
 fallback routing. 5.5% markup on credits is worth the operational simplicity.
