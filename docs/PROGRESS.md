@@ -114,6 +114,25 @@ bottom (memory decay: don't re-read unless needed).
   shortcut, proper research and analysis and reasoning work before you start
   changing thing." Implied by YAGNI + evidence-before-claims in constitution,
   but not explicit. Consider adding to global Pi AGENTS.md as a process rule.
+- **ADR format: not Nygard** — current `docs/adr/0001-loopeng-architecture-
+  decisions.md` is a monolithic file with 13 decisions. Nygard format
+  (https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions)
+  is the standard: one ADR per file, each with Title/Context/Decision/
+  Status/Consequences, numbered sequentially (0001-, 0002-, ...).
+  Restructuring is a dedicated-session task (split 211 lines into 13 files).
+- **Biome decision provenance** — biome appears in RESEARCH.md, ADR, AGENTS.md,
+  README.md, implementation plan as the linter/formatter, but was NEVER
+  explicitly discussed or decided in this thread. Inherited from prior-session
+  work. Needs verification: is biome still the right choice vs eslint+prettier?
+  Separate session or discussion required. Biome is MIT, 19k★, Rust-based,
+  active — meets the tool bar, but the decision trail is missing.
+- **Pi session path exposes username** — Pi encodes the cwd into the session
+  folder name (`--Users-<username>-Projects-<repo>--`), which leaks the
+  username even when the path starts with `~/`. Fix: reference sessions by
+  ID (`pi --session <uuid>`), not by file path. Document the pattern as
+  `--<encoded-cwd>--` in docs, never the literal encoded path. This is a
+  sanitization rule addition for `loopeng check` (Phase 4): scan for
+  `--Users-<name>-` patterns in committed docs.
 - **Documentation rule NOT created** — 1.85b was tactical cleanup only.
   Format research (linked-list/graph/backlinks) deferred to 1.85c.
 - **Blog documentation rule NOT captured** — user said "everything needs

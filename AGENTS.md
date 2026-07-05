@@ -26,13 +26,14 @@ loopeng/
 ├── tests/                     # Test suite
 ├── docs/                      # Project documentation
 │   ├── NORTH_STAR.md          # The anchor
-│   ├── PRODUCT.md            # Product strategy (what it is, moat, PMF)
+│   ├── PRODUCT.md             # Product strategy (what it is, moat, PMF)
 │   ├── RESEARCH.md            # Provenance
-│   ├── adr.md                 # Architecture decisions
+│   ├── adr/                   # Architecture decision records (numbered)
 │   ├── PROGRESS.md            # Phase tracker (where we are)
 │   ├── NEXT_SESSION.md        # Narrative handoff
 │   ├── specs/                 # Detailed design specs
 │   ├── research/              # Research logs (dated, lab notebooks)
+│   ├── learnings/             # Session learning logs (dated, for blog)
 │   ├── superpowers/plans/     # Implementation plans (superpowers convention)
 │   ├── tbd/                   # Open questions
 │   └── archive/               # Superseded — do not use
@@ -46,12 +47,13 @@ loopeng/
 | `docs/NORTH_STAR.md` | What we build | Active, authoritative |
 | `docs/PRODUCT.md` | Product strategy (what it is, moat, PMF) | Active, authoritative |
 | `docs/RESEARCH.md` | Why we build it this way | Active, authoritative |
-| `docs/adr.md` | Architecture decision record | Active, authoritative |
+| `docs/adr/` | Architecture decision records (numbered) | Active, authoritative |
 | `docs/PROGRESS.md` | Phase tracker (where we are) | Active, authoritative |
 | `docs/ROADMAP.md` | Product roadmap (version milestones) | Active, authoritative |
 | `docs/NEXT_SESSION.md` | Narrative handoff | Active |
 | `docs/specs/2026-06-28-loopeng-design.md` | Detailed design | Active |
 | `docs/research/` | Research logs (dated, lab notebooks) | Active |
+| `docs/learnings/` | Session learning logs (dated, for blog) | Active |
 | `docs/superpowers/plans/` | Implementation plans (superpowers convention) | Active |
 | `docs/tbd/` | Open questions | Do not implement against |
 | `docs/archive/` | Superseded research | **Do not use.** Provenance only. |
@@ -100,3 +102,6 @@ node --import tsx --test tests/cli/check.test.ts
 - **AGENTS.md:** `agents.md` — this file, <200 LOC
 - **Agents:** Pi-native `.pi/agents/<name>.md` with YAML frontmatter
 - **Workflows:** JSON configs with `schemaVersion` field
+- **Session learnings:** every working session produces a dated learning
+  log at `docs/learnings/YYYY-MM-DD-<topic>.md` (findings, decisions,
+  corrections, blog candidates). Raw material for future blog posts.

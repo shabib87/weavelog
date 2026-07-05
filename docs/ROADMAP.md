@@ -3,7 +3,7 @@
 > **Authority:** Product requirements (PRD equivalent). Traces to
 > `docs/NORTH_STAR.md` (what), `docs/RESEARCH.md` (why), and
 > `docs/PRODUCT.md` (product strategy — what loopeng is, moat, PMF).
-> **Cross-ref:** `docs/PROGRESS.md` (phase tracker), `docs/adr.md` (decisions)
+> **Cross-ref:** `docs/PROGRESS.md` (phase tracker), `docs/adr/` (decisions)
 
 This is the phased delivery plan for loopeng. It maps the loop-engineering
 paradigm to version milestones, defines success metrics, and sequences the

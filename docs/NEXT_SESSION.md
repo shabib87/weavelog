@@ -23,7 +23,7 @@ Authoritative docs:
 - `docs/NORTH_STAR.md` — the anchor (what we build, non-negotiables)
 - `docs/PRODUCT.md` — product strategy (what loopeng is, moat, PMF, what it's not)
 - `docs/RESEARCH.md` — provenance (why these choices)
-- `docs/adr.md` — architecture decision record
+- `docs/adr/` — architecture decision records (numbered)
 - `docs/PROGRESS.md` — phase tracker (where we are)
 
 ## How to start a session
@@ -41,7 +41,8 @@ pi --session 019f2e45-6c3e-793a-a3de-4eb4c1e878d0
 Or continue most recent: `pi -c`
 
 The session JSONL is at:
-`~/.pi/agent/sessions/--Users-<username>-Projects-loopeng--/2026-07-04T17-55-29-470Z_019f2e45-6c3e-793a-a3de-4eb4c1e878d0.jsonl`
+`~/.pi/agent/sessions/--<encoded-cwd>--/<timestamp>_<uuid>.jsonl`
+(Pi encodes the working directory into the folder name.)
 Export via `/export` (HTML/JSONL) or `/share` (GitHub gist).
 
 ## Engineering principles (from NORTH_STAR)
