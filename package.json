@@ -1,0 +1,22 @@
+{
+  "name": "loopeng",
+  "version": "0.1.0",
+  "description": "Deterministic, human-verified agentic loops on Pi",
+  "type": "module",
+  "bin": {
+    "loopeng": "./src/cli/index.ts"
+  },
+  "files": ["src/"],
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.5.0"
+  },
+  "scripts": {
+    "stats": "node --import tsx src/cli/index.ts stats",
+    "typecheck": "tsc --noEmit"
+  }
+}
