@@ -3,7 +3,7 @@
 **Status:** Draft (revised July 4, 2026)
 **Date:** June 28, 2026 (original); revised July 4, 2026
 **Supersedes:** `docs/superpowers/specs/2026-06-28-harness-kit-design.md` (relocated and revised)
-**Authoritative sources:** `docs/NORTH_STAR.md` (what), `docs/RESEARCH.md` (why)
+**Authoritative sources:** `docs/NORTH_STAR.md` (what), `docs/research/RESEARCH.md` (why)
 
 ---
 

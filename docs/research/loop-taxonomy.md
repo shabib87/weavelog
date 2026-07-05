@@ -2,7 +2,7 @@
 
 > **Date:** 2026-07-04
 > **Source:** Laurie Voss, "What the hell is a loop, anyway?" (2026-07-03)
-> **Cross-referenced against:** `docs/NORTH_STAR.md`, `docs/RESEARCH.md`, `docs/research/model-selection.md`
+> **Cross-referenced against:** `docs/NORTH_STAR.md`, `docs/research/RESEARCH.md`, `docs/research/model-selection.md`
 
 ## Summary
 

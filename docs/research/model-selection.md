@@ -3,7 +3,7 @@
 > **Date:** 2026-07-04
 > **Last verified:** 2026-07-05 (live OpenRouter API + full red team)
 > **Status:** Active
-> **Cross-referenced against:** `docs/NORTH_STAR.md`, `docs/RESEARCH.md`
+> **Cross-referenced against:** `docs/NORTH_STAR.md`, `docs/research/RESEARCH.md`
 > **Data source:** OpenRouter live API (`https://openrouter.ai/api/v1/models`)
 > **Benchmarks:** Artificial Analysis indices + Design Arena (agent + model categories)
 > **Verification model:** GLM 5.2 (open-weight). Frontier models used only where
@@ -325,10 +325,13 @@ analysis→spec, spec→code, code→delivery.
 
 ---
 
-## Available but Not Assigned (in `models.json` overrides, not in `enabledModels`)
+## Available but Not Assigned (passive fallback, not in `enabledModels`)
 
-These models are registered as available overrides but not assigned to active
-roles. They are kept for architectural diversity and emergency fallback:
+These models are kept for architectural diversity and emergency fallback but
+are NOT in the active team (`enabledModels`) and NOT configured in any
+profile. They exist as built-in OpenRouter models that can be invoked ad hoc
+via `pi --model <id>` or `codex -p` with a new profile if needed. No
+`models.json` overrides exist (deleted 2026-07-05; built-in models need none).
 
 | Model | Why Kept | AA Coding | AA Agentic | AA Intel | Cost (P/C/M) |
 |---|---|---|---|---|---|
@@ -360,11 +363,11 @@ RESEARCH.md (as of 2026-07-05) lists these models. Corrections from live API ver
    This is far below the quality floor needed for agentic work. Replace with
    DeepSeek V4 Pro for deep analysis or Qwen 3.6 Plus for multimodal.
 
-2. **`qwen/qwen3.6-35b-a3b`** → upgrade to `qwen/qwen3.6-plus`.
+3. **`qwen/qwen3.6-35b-a3b`** → upgrade to `qwen/qwen3.6-plus`.
    54.5 coding vs 41.9, 27.6 agentic vs 21.4, 1M context vs 262K,
    same image support, at $0.33/$1.95 vs $0.14/$1.00 (2.4x cost, 1.3x quality).
 
-3. **`nvidia/nemotron-3-super-120b-a12b`** → drop entirely.
+4. **`nvidia/nemotron-3-super-120b-a12b`** → drop entirely.
    Ultra 550B:free (49.3 coding, 27.4 agentic) subsumes it. Super 120B:free
    (37.7 coding, 8.7 agentic) is inferior on every metric. Keep only
    Ultra 550B:free as the single free-tier option.

@@ -50,7 +50,7 @@ Running `headroom init codex -g --backend openrouter` will:
 3. Create `~/.codex/hooks.json` for SessionStart/PreToolUse hooks
 4. Register headroom MCP server in config.toml
 
-Your existing profiles (`[profiles.glm]`, etc.) remain untouched and will still work — they specify models that Headroom will forward to OpenRouter.
+Your existing profiles remain untouched and will still work — they specify models that Headroom will forward to OpenRouter. *(Note: as of codex 0.134.0+, profiles use per-file `~/.codex/<name>.config.toml` overlay format, not the old `[profiles.<name>]` inline format in `config.toml`. See `~/.pi/agent/models.md` for the current team.)*
 
 ---
 
@@ -332,7 +332,7 @@ Expected: Shows `com.headroom.proxy` with PID and exit code 0
 
 ## Notes
 
-- **Config.toml profiles**: Your profiles (`[profiles.glm]`, `[profiles.deepseek]`, etc.) are preserved. They work because `model_provider = "headroom"` routes all API calls through the proxy, which forwards to OpenRouter. The profiles still specify which model to use.
+- **Config.toml profiles**: Profiles live in per-file `~/.codex/<name>.config.toml` (codex 0.134.0+ overlay format), layered onto `~/.codex/config.toml` via `codex -p <name>`. They work because `model_provider = "headroom"` routes all API calls through the proxy, which forwards to OpenRouter. See `~/.pi/agent/models.md` for the current profile team.
 
 - **Reverting**: To undo headroom routing, run `headroom init` with no targets again (it won't clean up), or manually remove the `# --- Headroom init provider ---` block from config.toml and restore `model_provider = "openrouter"`.
 

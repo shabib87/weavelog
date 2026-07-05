@@ -71,14 +71,14 @@ without truncation.
 
 ```
 Open-weights primary (daily driver)
-  ├── GLM 5.2 ($0.91/$2.86)           — workhorse
-  ├── DeepSeek V4 Pro ($0.43/$0.87)   — deep analysis, checker
-  ├── Kimi K2.7 Code ($0.74/$3.50)    — UI/multimodal
-  └── DeepSeek V4 Flash ($0.09/$0.18) — docs, boilerplate
+  ├── GLM 5.2 ($0.57/$1.80)           — glm-5-2-default
+  ├── DeepSeek V4 Pro ($0.43/$0.87)   — deepseek-4-pro-checker
+  ├── Kimi K2.7 Code ($0.74/$3.50)    — kimi-k2-7-ui
+  └── DeepSeek V4 Flash ($0.09/$0.18) — deepseek-4-flash-docs
 
 Frontier escalation (targeted, last-resort)
-  ├── GPT-5.5 ($5/$30)                — first escalation, cross-vendor, 1M ctx
-  └── Fable 5 ($10/$50)               — final escalation, strongest model
+  ├── GPT-5.5 ($5/$30)                — gpt-5-5-escalate, cross-vendor, 1M ctx
+  └── Fable 5 ($10/$50)              — claude-fable-5-final, strongest model
 ```
 
 The agent tries open-weights first. If they fall short, escalate to GPT-5.5
@@ -88,29 +88,26 @@ the chance that open-weights or cheaper frontier resolves the issue.
 
 ## Codex profile update
 
-**Applied 2026-07-05.** `~/.codex/gpt55.config.toml` created with
-`model = "openai/gpt-5.5"`. `~/.codex/opus.config.toml` preserved for now
-but removed from recommended escalation ladder.
-
-Previously at `config.toml`:
-```toml
-[profiles.opus]
-model = "anthropic/claude-opus-4.8"
-
-[profiles.fable]
-model = "anthropic/claude-fable-5"
-```
+**Applied 2026-07-05, renamed 2026-07-05.** Profiles use per-file overlay
+format (codex 0.134.0+): `~/.codex/<name>.config.toml` layered onto
+`~/.codex/config.toml` via `codex -p <name>`. The old `[profiles.<name>]`
+inline format in `config.toml` is no longer read by codex and has been
+removed.
 
 Current codex escalation profiles:
 ```toml
-[profiles.gpt55]
+# ~/.codex/gpt-5-5-escalate.config.toml
 model = "openai/gpt-5.5"
 model_reasoning_effort = "high"
 
-[profiles.fable]
+# ~/.codex/claude-fable-5-final.config.toml
 model = "anthropic/claude-fable-5"
 model_reasoning_effort = "high"
 ```
+
+The previous `opus` profile (`anthropic/claude-opus-4.8`) was removed from
+the escalation ladder entirely, replaced by `gpt-5-5-escalate` for
+cross-vendor diversity. See `~/.pi/agent/models.md` for the full team.
 
 ## What this resolves
 
@@ -124,7 +121,7 @@ model_reasoning_effort = "high"
 
 ## What this defers
 
-- Pi `models.json` modelOverrides for the frontier pair (Phase 2 global setup)
+- Frontier pair codex profiles applied (`gpt-5-5-escalate`, `claude-fable-5-final`). No `models.json` overrides needed; both are built-in OpenRouter models.
 - The escalation workflow config (when to auto-escalate vs human-triggered —
   Phase 3+ workflow design)
 - Reverification cadence (monthly per `model-selection.md`)

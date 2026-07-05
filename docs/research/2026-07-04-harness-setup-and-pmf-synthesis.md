@@ -3,7 +3,7 @@
 > **Date:** 2026-07-04
 > **Status:** Active lab notebook. Source material for future blog writing.
 > **Session:** `verify-doc` (Pi, z-ai/glm-5.2 via OpenRouter)
-> **Cross-ref:** `docs/NORTH_STAR.md`, `docs/RESEARCH.md`, `docs/research/model-selection.md`
+> **Cross-ref:** `docs/NORTH_STAR.md`, `docs/research/RESEARCH.md`, `docs/research/model-selection.md`
 
 This is a lab notebook, not a polished blog. It captures the findings,
 decisions, and corrections from the 2026-07-04 session so they survive the

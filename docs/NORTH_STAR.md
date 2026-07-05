@@ -45,5 +45,5 @@ reviewing diffs at verification gates — and never prompting the agents by hand
 This file is the anchor. Every spec, plan, and implementation decision must
 trace back to a non-negotiable here. If a proposal cannot, it is out of scope
 for v1 or requires amending this file first. For product definition, moat,
-and PMF, see `docs/PRODUCT.md`. `docs/RESEARCH.md` holds the provenance for
+and PMF, see `docs/PRODUCT.md`. `docs/research/RESEARCH.md` holds the provenance for
 *why* these choices were made.

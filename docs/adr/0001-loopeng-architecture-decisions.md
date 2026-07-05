@@ -4,7 +4,7 @@
 **Date:** July 4, 2026
 **Supersedes:** `docs/archive/stateless-multi-model-agent-swarm-adr.md`
 **Appendix:** `docs/specs/2026-06-28-loopeng-design.md` (detailed design)
-**Authoritative sources:** `docs/NORTH_STAR.md` (non-negotiables), `docs/RESEARCH.md` (provenance)
+**Authoritative sources:** `docs/NORTH_STAR.md` (non-negotiables), `docs/research/RESEARCH.md` (provenance)
 
 ---
 
@@ -185,10 +185,10 @@ Agent Skills (agentskills.io), AGENTS.md (agents.md).
 
 | Alternative | Why Rejected | Where Documented |
 |---|---|---|
-| SwarmForge orchestration | Hard-coded agent list; Gherkin-first; competes with Pi | `docs/RESEARCH.md` §SwarmForge |
+| SwarmForge orchestration | Hard-coded agent list; Gherkin-first; competes with Pi | `docs/research/RESEARCH.md` §SwarmForge |
 | Docker-based isolation | Incompatible with Xcode, Android Studio, iOS simulators | §2.6 |
 | Bash for orchestration logic | TypeScript is the project language; bash for config only | `docs/NORTH_STAR.md` |
-| Proprietary frontier models as default | Open-weight models achieve near-frontier capability at lower cost | `docs/RESEARCH.md` §Model Allocation |
+| Proprietary frontier models as default | Open-weight models achieve near-frontier capability at lower cost | `docs/research/RESEARCH.md` §Model Allocation |
 | Separate `.workflow/state.json` | Pi's session tree is branching-aware and auto-persisted | §2.8 |
 | Per-step git worktrees in v1 | Adds complexity without benefit for sequential execution | §2.12 |
 | `guard.sh` for isolation | Pi's `tool_call` hook is native, cross-platform, can't be bypassed | `docs/specs/...` §5.3 |

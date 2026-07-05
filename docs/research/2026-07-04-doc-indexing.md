@@ -50,7 +50,7 @@ tells agents what to read and in what order of authority.
 ```
 docs/
 ├── NORTH_STAR.md              ← anchor (what)
-├── RESEARCH.md                ← provenance (why)
+├── research/RESEARCH.md                ← provenance (why)
 ├── adr.md                     ← decisions
 ├── PROGRESS.md                ← phase tracker
 ├── NEXT_SESSION.md            ← handoff

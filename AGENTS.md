@@ -27,7 +27,7 @@ loopeng/
 ├── docs/                      # Project documentation
 │   ├── NORTH_STAR.md          # The anchor
 │   ├── PRODUCT.md             # Product strategy (what it is, moat, PMF)
-│   ├── RESEARCH.md            # Provenance
+│   ├── research/RESEARCH.md            # Provenance
 │   ├── adr/                   # Architecture decision records (numbered)
 │   ├── PROGRESS.md            # Phase tracker (where we are)
 │   ├── NEXT_SESSION.md        # Narrative handoff
@@ -46,7 +46,7 @@ loopeng/
 |---|---|---|
 | `docs/NORTH_STAR.md` | What we build | Active, authoritative |
 | `docs/PRODUCT.md` | Product strategy (what it is, moat, PMF) | Active, authoritative |
-| `docs/RESEARCH.md` | Why we build it this way | Active, authoritative |
+| `docs/research/RESEARCH.md` | Why we build it this way | Active, authoritative |
 | `docs/adr/` | Architecture decision records (numbered) | Active, authoritative |
 | `docs/PROGRESS.md` | Phase tracker (where we are) | Active, authoritative |
 | `docs/ROADMAP.md` | Product roadmap (version milestones) | Active, authoritative |
@@ -77,7 +77,7 @@ node --import tsx --test tests/cli/check.test.ts
 
 ## MUST NOT
 
-- MUST NOT edit `docs/NORTH_STAR.md` or `docs/RESEARCH.md` without explicit
+- MUST NOT edit `docs/NORTH_STAR.md` or `docs/research/RESEARCH.md` without explicit
   human approval.
 - MUST NOT implement against anything in `docs/archive/` — it is superseded.
 - MUST NOT implement against anything in `docs/tbd/` — it is unresolved.

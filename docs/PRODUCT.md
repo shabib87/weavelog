@@ -2,7 +2,7 @@
 
 > **Authority:** Product strategy. What loopeng IS, who it's for, why it wins.
 > **Distinct from:** `NORTH_STAR.md` (what we build — the anchor),
-> `ROADMAP.md` (how we deliver — milestones), `RESEARCH.md` (why these choices).
+> `ROADMAP.md` (how we deliver — milestones), `research/RESEARCH.md` (why these choices).
 > This doc answers: what is the product, what is it not, who uses it, what's
 > the moat, what's the PMF thesis.
 

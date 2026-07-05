@@ -140,7 +140,7 @@ Fable 5). Different model set, different role structure (role-based vs
 tier-based), different nemotron variant. This predates this session and is
 unrelated to the free-tier removal. Aligning ADR with models.md is a separate
 decision with its own approval path. Awareness markers (pointer notes, not
-content edits) were added to RESEARCH.md and the ADR so agents treat their
+content edits) were added to docs/research/RESEARCH.md and the ADR so agents treat their
 rosters as historical and consult models.md as authoritative.
 
 ## Blog candidates

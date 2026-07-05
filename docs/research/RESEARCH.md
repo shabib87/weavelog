@@ -111,6 +111,14 @@ says *why we build it this way*.
   share one proxy. For `--learn` isolation, use `--memory-storage=project`.
 
 ### OpenRouter
+
+> **Note (2026-07-05):** The six model IDs listed below are this ADR's
+> original roster, retained for provenance. The live, authoritative model
+> registry is `~/.pi/agent/models.md`, which has since been revised
+> (free-tier removed under OpenRouter ZDR; Kimi, GPT-5.5, and Fable 5 added).
+> Do not treat the list below as the current roster; consult `models.md`. See
+> `docs/learnings/2026-07-05-model-zdr-and-free-tier-removal.md`.
+
 - All six ADR model IDs verified available on the live API
   (`https://openrouter.ai/api/v1/models`): `z-ai/glm-5.2`,
   `deepseek/deepseek-v4-pro`, `deepseek/deepseek-v4-flash`,

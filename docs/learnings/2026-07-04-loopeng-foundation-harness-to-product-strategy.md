@@ -272,7 +272,7 @@ restructured. Tracked as a watch item for a dedicated session.
 
 ### 9. Biome was never decided — PROVENANCE GAP
 
-Biome appears in RESEARCH.md, ADR, AGENTS.md, README.md, and the
+Biome appears in docs/research/RESEARCH.md, ADR, AGENTS.md, README.md, and the
 implementation plan as the linter/formatter, but was NEVER explicitly
 discussed or decided in this thread. It was inherited from prior-session
 work and carried forward without questioning it. The decision trail is

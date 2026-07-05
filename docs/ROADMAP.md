@@ -1,7 +1,7 @@
 # Roadmap
 
 > **Authority:** Product requirements (PRD equivalent). Traces to
-> `docs/NORTH_STAR.md` (what), `docs/RESEARCH.md` (why), and
+> `docs/NORTH_STAR.md` (what), `docs/research/RESEARCH.md` (why), and
 > `docs/PRODUCT.md` (product strategy — what loopeng is, moat, PMF).
 > **Cross-ref:** `docs/PROGRESS.md` (phase tracker), `docs/adr/` (decisions)
 
