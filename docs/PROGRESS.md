@@ -99,6 +99,12 @@ bottom (memory decay: don't re-read unless needed).
   skill applied to the question — no loopeng feature to build.
 - **~/.codex/AGENTS.md** — ✅ AMENDED with engineering principles section (YAGNI/SOLID/KISS/DRY/TDD/QA/security/arch). Closed.
 - **DRY in NORTH_STAR** — ✅ ADDED. Closed.
+- **Release strategy NOT yet active** — semver tags cut per ROADMAP milestone
+  when actual code ships (not docs). First tag `v0.1.0` when `loopeng init`
+  works (Phase 4). No tags now (repo is docs-only, 28 commits). Strategy
+  noted in `docs/tbd/ci-cd-strategy.md` ("Versioning: semver, tags trigger
+  publish"). GitHub remote not yet configured (deferred per user). Tags +
+  releases get cut when there's a shippable artifact, not before.
 - **Documentation rule NOT created** — 1.85b was tactical cleanup only.
   Format research (linked-list/graph/backlinks) deferred to 1.85c.
 - **Blog documentation rule NOT captured** — user said "everything needs
