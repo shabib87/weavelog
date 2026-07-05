@@ -6,8 +6,8 @@ end-to-end loop — spec, implement, verify, document — with the human in the
 loop only for verification.
 
 ## Non-negotiables
-- Core engineering principles: YAGNI, SOLID, KISS. Every agent and every
-  artifact obeys these, globally and per-project.
+- Core engineering principles: YAGNI, SOLID, KISS, DRY. Every agent and
+  every artifact obeys these, globally and per-project.
 - Pi is the host. No separate orchestration runtime.
 - Open standards: Agent Skills (agentskills.io), AGENTS.md (agents.md).
 - The human provides intent and verifies; the agent acts in between. Never the
