@@ -36,6 +36,14 @@
 - Weak benchmarks (43.4 coding, 14.4 agentic) but Google family = different blind spots
 - Should be in `models.json` overrides (available but not assigned) for passive review fallback
 
+### 7. Qwen 3.6 Plus vs DS V4 Pro: YAGNI vs diversity tradeoff
+- User questioned whether DS V4 Pro is a better replacement for qwen3.6-35b-a3B
+- DS V4 Pro strictly dominates on every benchmark (59.4 vs 54.5 coding, 36.4 vs 27.6 agentic, 1M vs 262K ctx, $0.43 vs $0.33 prompt, $0.87 vs $1.95 completion)
+- YAGNI argument for dropping: 5 models is enough, Qwen had no unique role
+- Counter-argument: DS V4 Pro and Qwen are different families (DeepSeek vs Qwen) = different blind spots for maker/checker
+- Decision: kept Qwen 3.6 Plus in `models.json` overrides as available-but-not-assigned. The model earns its keep at $0.33/$1.95 if it provides a different verification lens from DeepSeek
+- User questioned whether DS V4 Pro (the verified checker) should be replaced. Decision stands: DS V4 Pro as checker is justified by cross-family diversity (DeepSeek vs Z.ai GLM), not by benchmark parity
+
 ## Decisions
 
 1. **Keep DeepSeek V4 Pro as Verifier (Code)** — with corrected rationale

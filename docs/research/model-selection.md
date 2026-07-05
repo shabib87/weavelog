@@ -84,7 +84,6 @@ Frontier models serve as the quality ceiling:
 |---|---|---|---|---|---|---|---|---|---|
 | **Fable 5** | $10.00 | $50.00 | **76.5** | **52.8** | **59.9** | #2 | — | — | — |
 | **GPT 5.5** | $5.00 | $30.00 | 74.9 | 44.9 | 54.8 | #17 | #15 | #9 | #4 |
-| **GPT 5.5** | $5.00 | $30.00 | 74.9 | 44.9 | 54.8 | #17 | #15 | #9 | #4 |
 
 Open-weight models are evaluated against these on a value-per-dollar basis.
 

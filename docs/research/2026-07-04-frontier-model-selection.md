@@ -1,7 +1,7 @@
 # Frontier Model Selection
 
 > **Date:** 2026-07-04
-> **Status:** Active research. Decision pending user approval.
+> **Status:** Approved 2026-07-05. Applied.
 > **Cross-ref:** `docs/research/model-selection.md` (primary agent team),
 > `docs/NORTH_STAR.md` (open-weights primary, frontier as targeted escalation)
 
