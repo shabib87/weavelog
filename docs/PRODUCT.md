@@ -27,6 +27,17 @@ loopeng is **opinionated, not generic.** It encodes one specific philosophy
 specific workflow (spec → implement → verify → document). It does not try to
 be all things to all teams.
 
+**Product attributes:**
+- **Local-first.** No account, no subscription, no cloud dependency. The
+  workspace and its state belong to the user. Works offline.
+- **Terminal-native.** No GUI app. The stack is Pi, lazygit, git-delta — all
+  terminal tools. Designed for engineers who live in the terminal.
+- **Human-in-the-loop.** The human provides intent and verifies; the agent
+  acts in between. Never the reverse. (Anchored in NORTH_STAR.)
+- **Phased delivery.** Everything ships in minimal viable slices — evals,
+  telemetry, contributions, profiles. No big-bang features. (Traces to YAGNI
+  + small ships.)
+
 ## What loopeng is NOT
 
 - **Does NOT run the loop.** Pi runs the loop. loopeng sets up the workspace
