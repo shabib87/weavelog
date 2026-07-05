@@ -1,7 +1,7 @@
 # Progress
 
-> **Status:** Audit complete + 5 uncaptured insights now tracked. Executing Phase 2 constitution work (DRY + global AGENTS.md).
-> **Active phase:** 2 — Global setup (constitution first)
+> **Status:** Constitution complete (DRY + global Pi AGENTS.md + codex AGENTS.md). PRODUCT.md created. 5 insights tracked. 3 pending decisions. Ready for Phase 2 tooling install.
+> **Active phase:** 2 — Global setup (constitution done; tooling install + 3 decisions next)
 > **Last updated:** 2026-07-05
 
 This is the single source of truth for "where are we." Agents read this first.
