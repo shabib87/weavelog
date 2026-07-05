@@ -88,7 +88,11 @@ the chance that open-weights or cheaper frontier resolves the issue.
 
 ## Codex profile update
 
-The codex profiles at `~/.codex/config.toml` currently have:
+**Applied 2026-07-05.** `~/.codex/gpt55.config.toml` created with
+`model = "openai/gpt-5.5"`. `~/.codex/opus.config.toml` preserved for now
+but removed from recommended escalation ladder.
+
+Previously at `config.toml`:
 ```toml
 [profiles.opus]
 model = "anthropic/claude-opus-4.8"
@@ -97,7 +101,7 @@ model = "anthropic/claude-opus-4.8"
 model = "anthropic/claude-fable-5"
 ```
 
-**Recommended update:**
+Current codex escalation profiles:
 ```toml
 [profiles.gpt55]
 model = "openai/gpt-5.5"
@@ -107,10 +111,6 @@ model_reasoning_effort = "high"
 model = "anthropic/claude-fable-5"
 model_reasoning_effort = "high"
 ```
-
-This replaces `opus` with `gpt55` — cross-vendor, cheaper, larger context.
-(Not applied yet — pending user approval. This is a personal codex config
-change, not a loopeng repo change.)
 
 ## What this resolves
 

@@ -53,6 +53,77 @@ bottom (memory decay: don't re-read unless needed).
 
 ---
 
+## 2026-07-05 — Model Selection Audit (live API + red team)
+
+**Session:** 2026-07-05T17:36Z (252 lines, GLM 5.2)
+**Scope:** Validated all model choices against live OpenRouter API, red-teamed
+own analysis, applied engineering principles (SOLID/KISS/DRY/YAGNI).
+
+**Changes made:**
+- `docs/research/model-selection.md` — updated costs, added red-team-corrected
+  DeepSeek V4 Pro justification, added "Available but Not Assigned" section,
+  added "Dropped" section, updated summary table, updated tiered review
+- `docs/research/2026-07-04-frontier-model-selection.md` — noted codex profile
+  applied (gpt55 replaces opus)
+- `~/.pi/agent/settings.json` — `enabledModels` corrected to final selection,
+  `defaultModel` changed from qwen-35b-a3b to z-ai/glm-5.2
+- `~/.pi/agent/models.json` — cleaned up (removed kimi-26, mim0, minimax,
+  ling-flash overrides; kept gemma + qwen-max as available but not assigned)
+- `~/.codex/gpt55.config.toml` — created (replaces opus in escalation)
+- `docs/learnings/2026-07-05-model-selection-audit.md` — created
+
+**Key corrections from live API:**
+- GLM 5.2 cost: $0.91/$2.86 → **$0.57/$1.80** (dropped ~37%)
+- DeepSeek V4 Pro as Verifier (Code) IS justified (diversity of blind spots > capability parity)
+- Documenter tier IS justified (6.3x cheaper on prompt, 10x on completion)
+- Kimi K2.7 Code rationale confirmed correct (coding > agentic for UI review)
+
+**Red team self-corrections:**
+- Initially claimed DeepSeek V4 Pro too weak for code verification — WRONG.
+  Maker/checker is about diversity, not parity.
+- Initially claimed Documenter is YAGNI — WRONG. Cost savings justify the tier.
+- Initially claimed K2.6 might be better for UI — WRONG. K2.7 Code's coding
+  advantage is the entire reason it exists over K2.6.
+
+---
+
+## 2026-07-05 — Codex Profile Naming + Model Registry
+
+**Scope:** Renamed all 7 codex profiles to `model-tier` format. Created centralized
+model registry (`~/.pi/agent/models.md`). Created user-facing help script.
+
+**Changes:**
+- `~/.codex/*.config.toml` — 7 profiles renamed: `workhorse`, `ds-v4pro-checker`,
+  `ds-v4flash-docs`, `kimi-k27-code-ui`, `nemotron-free`, `gpt55-escalate`,
+  `fable-final`. Each has structured `# Model:` `# Tier:` `# When:` comment headers.
+- `~/.codex/*.config.toml` (old) — removed: `deepseek`, `glm`, `kimi`, `flash`,
+  `nemotron`, `ling`, `opus`, `fable`.
+- `~/.pi/agent/models.md` — NEW. Central registry with full tables (roles, tiers,
+  benchmarks, when-to-use, escalation ladder, verification methods).
+- `~/.pi/agent/bin/model-help` — NEW. 40-line bash script that parses profile
+  comment headers and outputs a formatted table. Run: `~/.pi/agent/bin/model-help`.
+- `~/.pi/agent/AGENTS.md` — Added "Model selection" section (links to registry).
+- `~/.codex/AGENTS.md` — Added "Codex model profiles" table (Compact table with
+  profile commands, model IDs, and when-to-use).
+- `docs/learnings/2026-07-05-codex-profile-naming-and-registry.md` — NEW.
+
+**Naming rationale:** `model-tier` format encodes both *what the model is* and
+*when to use it*. Old names (`deepseek`, `glm`) only encoded the model. The
+user can't remember 7 opaque model names but can remember `workhorse`,
+`checker`, `escalate`, `fable`.
+
+**SOLID/KISS/DRY/YAGNI evaluation:**
+- **YAGNI:** Not a full help CLI, not a web UI, not a profile auto-discovery
+  system. Just a 40-line script and a markdown file.
+- **KISS:** Profile names are `kebab-case-model-tier`. One comment per field.
+  Script reads comments and prints table. That's it.
+- **DRY:** Registry (`models.md`) is the single source of truth. AGENTS.md files
+  link to it. Profile comments are the machine-readable source for the script.
+- **SOLID:** Script has one job — display profiles. If it gets bigger, it gets
+  its own package. Registry is the authoritative source; configs reference it.
+
+---
+
 ## Watch items
 
 - **Pi session JSONL is the native audit trail** — every message, tool call, and response is stored as structured JSONL at `~/.pi/agent/sessions/--<path>--/<timestamp>_<uuid>.jsonl`. This IS the thread-level audit trail. Export via `/export` (HTML/JSONL) or `/share` (GitHub gist). Not in the git repo (personal/local) but persists across sessions. This is how to recover thread reasoning if PROGRESS.md is insufficient.

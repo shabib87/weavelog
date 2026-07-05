@@ -34,9 +34,9 @@ Authoritative docs:
 4. Check `docs/AGENTS.md` for MUST NOT rules and standards before any work
 5. Begin the next action from PROGRESS.md
 
-To resume this exact conversation (all 49 messages of reasoning):
+To resume this exact conversation (model registry + profile naming):
 ```bash
-pi --session 019f2e45-6c3e-793a-a3de-4eb4c1e878d0
+pi --session 019f335a-c44e-77dd-aaf4-3048d0b2bcad
 ```
 Or continue most recent: `pi -c`
 
@@ -47,9 +47,14 @@ Export via `/export` (HTML/JSONL) or `/share` (GitHub gist).
 
 ## Engineering principles (from NORTH_STAR)
 
-YAGNI, SOLID, KISS. Shift-left testing (TDD first-class). Two-layer QA
+YAGNI, SOLID, KISS, DRY. Shift-left testing (TDD first-class). Two-layer QA
 (maker/checker + verification gates). Small ships with clean commits.
 Security woven in. Open-weights primary, frontier as targeted escalation.
+
+**Current model team** (validated 2026-07-05): GLM 5.2 (implementer) →
+DeepSeek V4 Pro (verifier, Code) → Kimi K2.7 Code (UI) + DeepSeek V4 Flash
+(docs). Frontier escalation: GPT-5.5 (first) → Fable 5 (final). See
+`docs/research/model-selection.md` for full rationale and live benchmark data.
 
 ## Tooling stack
 

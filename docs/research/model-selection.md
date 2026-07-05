@@ -1,12 +1,16 @@
 # Model Selection for loopeng
 
 > **Date:** 2026-07-04
+> **Last verified:** 2026-07-05 (live OpenRouter API + full red team)
 > **Status:** Active
 > **Cross-referenced against:** `docs/NORTH_STAR.md`, `docs/RESEARCH.md`
 > **Data source:** OpenRouter live API (`https://openrouter.ai/api/v1/models`)
 > **Benchmarks:** Artificial Analysis indices + Design Arena (agent + model categories)
 > **Verification model:** GLM 5.2 (open-weight). Frontier models used only where
 >   the cost/quality gap is demonstrably worth it.
+> **Verified by:** Live API query 2026-07-05T00:00Z. Full red team analysis.
+>   Corrections: GLM 5.2 cost ($0.57/$1.80 vs documented $0.91/$2.86),
+>   DeepSeek V4 Pro as Verifier (Code) IS justified (diversity > capability parity).
 
 ## Purpose
 
@@ -42,7 +46,7 @@ writing structured analysis. Zero code generation, zero tool use.
 **Most relevant:** AA Intelligence Index.
 
 The model that did this research: Claude Fable 5 (AA Intel 59.9, $10/$50).
-The best open-weight alternative: **GLM 5.2** (AA Intel 51.1, $0.91/$2.86).
+The best open-weight alternative: **GLM 5.2** (AA Intel 51.1, $0.57/$1.80).
 GLM 5.2 would do this work at ~85% of the intelligence for ~1% of the cost.
 
 ### The Maker/Checker Principle
@@ -79,7 +83,7 @@ Frontier models serve as the quality ceiling:
 | Model | Prompt/M | Compl/M | AA Coding | AA Agentic | AA Intel | Code Cat | Fullstk | Mobile | Android |
 |---|---|---|---|---|---|---|---|---|---|
 | **Fable 5** | $10.00 | $50.00 | **76.5** | **52.8** | **59.9** | #2 | — | — | — |
-| **Opus 4.8** | $5.00 | $25.00 | 74.3 | 47.2 | 55.7 | #22 | #2 | **#1** | **#1** |
+| **GPT 5.5** | $5.00 | $30.00 | 74.9 | 44.9 | 54.8 | #17 | #15 | #9 | #4 |
 | **GPT 5.5** | $5.00 | $30.00 | 74.9 | 44.9 | 54.8 | #17 | #15 | #9 | #4 |
 
 Open-weight models are evaluated against these on a value-per-dollar basis.
@@ -89,7 +93,9 @@ Open-weight models are evaluated against these on a value-per-dollar basis.
 ## Primary Agent: GLM 5.2
 
 **ID:** `z-ai/glm-5.2`
-**Cost:** $0.91/M prompt, $2.86/M completion, $0.17/M cache read
+**Cost:** $0.57/M prompt, $1.80/M completion, $0.17/M cache read
+> **Verified:** 2026-07-05 live API. Previously documented $0.91/$2.86 (price
+dropped after initial research).
 **Context:** 1,048,576 tokens
 **Modality:** text → text
 
@@ -100,7 +106,7 @@ Open-weight models are evaluated against these on a value-per-dollar basis.
 | AA Coding Index | 74.9 | 74.3 | **68.8** | 92% |
 | AA Agentic Index | 44.9 | 47.2 | **43.1** | 91–96% |
 | AA Intelligence Index | 54.8 | 55.7 | **51.1** | 92–93% |
-| Cost (prompt + completion) | $5.00/$30.00 | $5.00/$25.00 | **$0.91/$2.86** | 10–18% |
+| Cost (prompt + completion) | $5.00/$30.00 | $5.00/$30.00 | **$0.57/$1.80** | 10–18% |
 
 | Design Arena Agent Task | GLM 5.2 | GPT 5.5 | Claude Opus 4.8 |
 |---|---|---|---|
@@ -115,7 +121,7 @@ agentic tasks. It is #1 in code categories (beating all frontier models), #3
 in fullstack and webapps, and #5 in mobileapps. At ~18% the price of GPT 5.5,
 it delivers ~92% of the quality across all dimensions.
 
-**Assigned roles:** Spec writer, implementer, verifier (code review), documenter.
+**Assigned roles:** Spec writer, implementer.
 
 **Limitations:** No image support. For tasks requiring screenshots or UI
 review, delegate to Kimi K2.7 Code.
@@ -145,12 +151,10 @@ use. The 4.8-point coding advantage of K2.7 Code matters more for
 determining whether a UI matches its spec than the 0.7-point agentic
 advantage of K2.6.
 
-**Assigned roles:** Mobile UI implementer, verifier (screenshot review),
-UI diff reviewer.
+**Assigned roles:** Verifier (UI).
 
-**Fallback:** `moonshotai/kimi-k2.6` (AA Coding 56.0, $0.66/$3.41) — slightly
-higher agentic (30.3) and smarter (42.8) but weaker on code. Use when agentic
-reasoning about the UI matters more than code analysis.
+**Dropped:** `moonshotai/kimi-k2.6` — subsumed by K2.7 Code (higher coding,
+same image support, nearly identical cost).
 
 ---
 
@@ -175,12 +179,38 @@ codebase, ask it to trace a bug across multiple files, understand dependency
 chains, or propose a large-scale refactor. The 1M context and strong reasoning
 (36.4 agentic) make it better suited for this than the cheaper flash variant.
 
-**Assigned roles:** Deep codebase analysis, large-scale refactor planning,
-trace debugging across multiple files.
+**Assigned roles:** Verifier (Code), deep codebase analysis.
 
-**Not for agentic execution:** Design Arena shows #29 in fullstack agents and
-#25 in webapps. GLM 5.2 should handle agentic workflows; DeepSeek V4 Pro
-should handle deep reasoning with large contexts.
+### Why DeepSeek V4 Pro (after red team review 2026-07-05)
+
+Design Arena shows #29 in fullstack agents and #25 in webapps. This is a known
+weakness — but it is **not a problem** for the Verifier (Code) role.
+
+The maker/checker principle requires **diversity of blind spots**, not parity
+of capability. GLM 5.2 (Z.ai, MoE) and DeepSeek V4 Pro (DeepSeek, MoE with
+different routing) have completely different architectures, training data, and
+failure modes. When Z.ai's expert routing misses a cross-module type error,
+a DeepSeek model will think differently and likely catch it.
+
+| Model | AA Coding | Design Arena Fullstack | Fullstack Rank Gap |
+|---|---|---|---|
+| Implementer: GLM 5.2 | 68.8 | #3 | baseline |
+| Verifier: DS V4 Pro | 59.4 | #29 | -26 |
+
+The 26-rank gap is real but does not invalidate the arrangement. The checker
+does not need to be *smarter* than the maker — it needs to be *different*
+from the maker. Different architecture = different blind spots = better
+verification.
+
+**Trade-off acknowledged:** DeepSeek V4 Pro is not a superior reviewer. It
+is a *complementary* reviewer. It catches different classes of errors, not
+the same errors more reliably. This is the correct interpretation of the
+maker/checker principle.
+
+**Deep analysis role:** Feed in a 200K+ token codebase, trace a bug across
+multiple files, understand dependency chains, propose large-scale refactors.
+The 1M context and strong reasoning (36.4 agentic) make it better suited
+for this than the cheaper flash variant.
 
 ---
 
@@ -199,15 +229,7 @@ CI/CD status messages — anything high-throughput and low-stakes.
 At $0.09/$0.18, it is **55x cheaper than GPT 5.5** while retaining
 75% of GPT 5.5's coding ability.
 
-### Ling 2.6 Flash
 
-**ID:** `inclusionai/ling-2.6-flash`
-**Cost:** $0.01/M prompt, $0.03/M completion
-**Context:** 262,144 tokens
-
-No AA benchmarks yet. At $0.01/$0.03, it is the cheapest model on OpenRouter
-— **500x cheaper than GPT 5.5**. Use only for the most trivial tasks until
-benchmarks confirm capability.
 
 ---
 
@@ -247,7 +269,7 @@ maker/checker pairs.
 | 4 | **Implementer** | GLM 5.2 | Write code across files, follow spec |
 | 5 | **Verifier (Code)** | DeepSeek V4 Pro | Review diffs against spec, 1M context for large codebases |
 | 6 | **Verifier (UI)** | Kimi K2.7 Code | Screenshots, Maestro/Appium results, layout regressions |
-| 7 | **Documenter** | DeepSeek V4 Flash | Changelogs, API docs, README updates |
+| 7 | **Documenter** | DeepSeek V4 Flash | Changelogs, API docs, README updates. 6.3x cheaper on prompt, 10x cheaper on completion than GLM 5.2. Earns its keep via cost savings on high-throughput, low-risk role.
 
 ### Maker/Checker Pairs
 
@@ -289,18 +311,45 @@ analysis→spec, spec→code, code→delivery.
 
 | Model | Cost (P+C) | Roles | Why This Model for These Roles |
 |---|---|---|---|
-| **GLM 5.2** | $0.91/$2.86 | Analyst, Spec Writer, Implementer | 51.1 Intel, #3 fullstack, #1 code cat. The workhorse. |
-| **DeepSeek V4 Pro** | $0.43/$0.87 | Analysis Reviewer, Verifier (Code) | Different family from GLM. 1M ctx. 36.4 agentic. The checker. |
+| **GLM 5.2** | $0.57/$1.80 | Analyst, Spec Writer, Implementer | 51.1 Intel, #3 fullstack, #1 code cat. The workhorse. |
+| **DeepSeek V4 Pro** | $0.43/$0.87 | Analysis Reviewer, Verifier (Code) | Different family from GLM. 1M ctx. 36.4 agentic. Complementary reviewer — not smarter, *different*. |
 | **Kimi K2.7 Code** | $0.74/$3.50 | Verifier (UI) | Images + 60.8 coding. Only role requiring vision. |
-| **DeepSeek V4 Flash** | $0.09/$0.18 | Documenter | 56.2 coding at $0.09/$0.18. Good enough for docs. |
+| **DeepSeek V4 Flash** | $0.09/$0.18 | Documenter | 56.2 coding at $0.09/$0.18. 6.3x cheaper on prompt, 10x on completion. Earns its keep via cost savings. |
+
+---
+
+## Available but Not Assigned (in `models.json` overrides, not in `enabledModels`)
+
+These models are registered as available overrides but not assigned to active
+roles. They are kept for architectural diversity and emergency fallback:
+
+| Model | Why Kept | AA Coding | AA Agentic | AA Intel | Cost (P/C/M) |
+|---|---|---|---|---|---|
+| `google/gemma-4-31b-it` | Google family = different blind spots. Weak but available for passive review. | 43.4 | 14.4 | 29.4 | $0.12/$0.35 |
+| `qwen/qwen3.7-max` | Qwen architecture diversity. 66 coding but no role. | 66 | 30.6 | 46 | $1.25/$3.75 |
+
+---
+
+## Dropped from Active Selection (2026-07-05 red team)
+
+| Model | Why Dropped |
+|---|---|
+| `nvidia/nemotron-3-super-120b-a12b:free` | Inferior to Ultra 550B:free on every metric. |
+| `nvidia/nemotron-3-ultra-550b-a55b` (paid) | Paid tier has identical benchmarks to free tier at $0 cost. |
+| `google/gemma-4-31b-it:free` | Covered by paid override (gemma-4-31b-it at $0.12/$0.35). |
+| `moonshotai/kimi-k2.6` | Subsumed by K2.7 Code (higher coding, same image support). |
+| `inclusionai/ling-2.6-flash` | No AA benchmarks. Same budget tier as Flash. |
+| `xiaomi/mimo-v2.5-pro` | New, competitive, but no differentiator. |
+| `minimax/minimax-m3` | Same as MIMO — no clear advantage. |
 
 ---
 
 ## Corrections to RESEARCH.md
 
-RESEARCH.md (as of 2026-07-04) lists these models. Three need replacement:
+RESEARCH.md (as of 2026-07-05) lists these models. Corrections from live API verification:
 
-1. **`mistralai/devstral-2512`** → drop. AA Coding 31.3, AA Agentic 10.6.
+1. **GLM 5.2 cost updated:** documented $0.91/$2.86 → live API $0.57/$1.80 (dropped after initial research). Do not use old cost figure.
+2. **`mistralai/devstral-2512`** → drop. AA Coding 31.3, AA Agentic 10.6.
    This is far below the quality floor needed for agentic work. Replace with
    DeepSeek V4 Pro for deep analysis or Qwen 3.6 Plus for multimodal.
 
@@ -308,11 +357,10 @@ RESEARCH.md (as of 2026-07-04) lists these models. Three need replacement:
    54.5 coding vs 41.9, 27.6 agentic vs 21.4, 1M context vs 262K,
    same image support, at $0.33/$1.95 vs $0.14/$1.00 (2.4x cost, 1.3x quality).
 
-3. **`nvidia/nemotron-3-super-120b-a12b`** → upgrade to
-   `nvidia/nemotron-3-ultra-550b-a55b`. 49.3 coding vs 37.7, 27.4 agentic
-   vs 8.7, both have free tiers, at $0.50/$2.20 vs $0.08/$0.45 (6x cost,
-   1.3x quality). Keep Super 120B:free as the "really cheap" fallback;
-   Ultra 550B:free as the "good free" option.
+3. **`nvidia/nemotron-3-super-120b-a12b`** → drop entirely.
+   Ultra 550B:free (49.3 coding, 27.4 agentic) subsumes it. Super 120B:free
+   (37.7 coding, 8.7 agentic) is inferior on every metric. Keep only
+   Ultra 550B:free as the single free-tier option.
 
 ---
 
@@ -356,9 +404,9 @@ benchmarks), escalate to a frontier model for those specific claims only.
 
 | Pass | Model | Cost | Purpose |
 |---|---|---|---|
-| 1 | GLM 5.2 | $0.008 | Catch all obvious discrepancies |
-| 2 | DeepSeek V4 Pro | $0.005 | Second opinion, cross-check reasoning |
-| 3 | Opus 4.8 (frontier) | $0.07 | Resolve ambiguities, edge cases |
+| 1 | GLM 5.2 | $0.003 | Catch all obvious discrepancies |
+| 2 | DeepSeek V4 Pro | $0.002 | Second opinion, cross-check reasoning |
+| 3 | GPT-5.5 (frontier) | $0.04 | Resolve ambiguities, edge cases |
 
 Only escalate to pass 3 if passes 1 and 2 produce conflicting results.
 
@@ -366,8 +414,8 @@ Only escalate to pass 3 if passes 1 and 2 produce conflicting results.
 
 | Scenario | Model | Why |
 |---|---|---|
-| Benchmark data is self-contradictory | Opus 4.8 | Needs highest analytical reasoning |
-| Design Arena ranks reshuffled significantly | Opus 4.8 | Needs careful rank interpretation |
+| Benchmark data is self-contradictory | GPT-5.5 | Needs highest analytical reasoning (cross-vendor from Fable) |
+| Design Arena ranks reshuffled significantly | GPT-5.5 | Needs careful rank interpretation |
 | New model released, no AA data yet | Fable 5 | Needs inference from partial data |
 | Routine monthly re-verification | GLM 5.2 | Sufficient |
 
@@ -375,9 +423,9 @@ Only escalate to pass 3 if passes 1 and 2 produce conflicting results.
 
 | Model | Cost | AA Intel | Notes |
 |---|---|---|---|
-| GLM 5.2 | **$0.008** | 51.1 | Best open-weight. Always try first. |
-| DeepSeek V4 Pro | $0.005 | 44.3 | Cheaper, slightly weaker. Good second pass. |
-| Opus 4.8 | $0.07 | 55.7 | Frontier. #1 mobile/android. Escalation only. |
+| GLM 5.2 | **$0.003** | 51.1 | Best open-weight. Always try first. |
+| DeepSeek V4 Pro | $0.002 | 44.3 | Cheaper, slightly weaker. Good second pass. |
+| GPT-5.5 | $0.04 | 54.8 | Frontier. Cross-vendor from Fable. First escalation. |
 | Fable 5 | $0.13 | 59.9 | Frontier. Best analytical mind, highest cost. Last resort. |
 | Nemotron Ultra:free | $0.00 | 37.8 | Free sanity check pass. |
 
