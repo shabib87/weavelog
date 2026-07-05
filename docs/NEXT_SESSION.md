@@ -21,6 +21,7 @@ composing Superpowers for the skills layer.
 
 Authoritative docs:
 - `docs/NORTH_STAR.md` — the anchor (what we build, non-negotiables)
+- `docs/PRODUCT.md` — product strategy (what loopeng is, moat, PMF, what it's not)
 - `docs/RESEARCH.md` — provenance (why these choices)
 - `docs/adr.md` — architecture decision record
 - `docs/PROGRESS.md` — phase tracker (where we are)

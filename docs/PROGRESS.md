@@ -105,6 +105,15 @@ bottom (memory decay: don't re-read unless needed).
   noted in `docs/tbd/ci-cd-strategy.md` ("Versioning: semver, tags trigger
   publish"). GitHub remote not yet configured (deferred per user). Tags +
   releases get cut when there's a shippable artifact, not before.
+- **Git workflow: PR vs direct push** — recommendation: PRs for feature work
+  (v0.2+, when SAST/CI should run before merge), push directly to main for
+  docs/chore (v0.1, solo-dev). Worktrees per feature branch. PRs add value as
+  recorded review checkpoints + CI gates + public narrative for the blog.
+  Noted here, not yet in AGENTS.md (Phase 2).
+- **Research-before-changes principle** — user stated: "no guesswork, no
+  shortcut, proper research and analysis and reasoning work before you start
+  changing thing." Implied by YAGNI + evidence-before-claims in constitution,
+  but not explicit. Consider adding to global Pi AGENTS.md as a process rule.
 - **Documentation rule NOT created** — 1.85b was tactical cleanup only.
   Format research (linked-list/graph/backlinks) deferred to 1.85c.
 - **Blog documentation rule NOT captured** — user said "everything needs

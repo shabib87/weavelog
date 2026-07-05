@@ -1,8 +1,8 @@
 # Roadmap
 
-> **Status:** Draft. Pending decisions marked inline with recommendations.
 > **Authority:** Product requirements (PRD equivalent). Traces to
-> `docs/NORTH_STAR.md` (what) and `docs/RESEARCH.md` (why).
+> `docs/NORTH_STAR.md` (what), `docs/RESEARCH.md` (why), and
+> `docs/PRODUCT.md` (product strategy — what loopeng is, moat, PMF).
 > **Cross-ref:** `docs/PROGRESS.md` (phase tracker), `docs/adr.md` (decisions)
 
 This is the phased delivery plan for loopeng. It maps the loop-engineering
