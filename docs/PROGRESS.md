@@ -59,9 +59,8 @@ bottom (memory decay: don't re-read unless needed).
 - **token-saving.pdf NOT evaluated** — the LinkedIn post (10 token-saving tools) was read via markitdown but not captured as research or evaluated against loopeng's stack. NEW tracked item: `docs/research/2026-07-04-token-saving-tools-evaluation.md`.
 - **Enforcement-layer analysis NOT in research doc** — the 4-layer analysis (prompt/hooks/CI/loopeng check) is in conversation only. Should be added to `docs/research/2026-07-04-security-qa-tdd-mechanisms.md`. NEW tracked item.
 - **NORTH_STAR audit + AGENTS.md compliance verification** — results are in conversation only, not in docs. Low severity (amendments applied, compliant). Optional to capture.
-- **Global Pi AGENTS.md NOT created** — discussed early in thread, approved,
-  never written. `~/.pi/agent/AGENTS.md` does not exist. This is Phase 2 work.
-- **CLI + skill model synthesis (msgs 43-44, NOT captured)** — from this
+- **Global Pi AGENTS.md** — ✅ CREATED at `~/.pi/agent/AGENTS.md` (YAGNI/SOLID/KISS/DRY + TDD/QA/security/arch-agnostic). Closed.
+- **CLI + skill model synthesis (msgs 43-44, captured)** — from this
   session's reasoning: loopeng is a composer (setup/verify/compose, not run).
   Skill tiers: T0 methodology (superpowers, always) + T1 language (SME, per
   profile) + T2 platform (SME, arch-agnostic filter) + architecture as a
@@ -98,10 +97,8 @@ bottom (memory decay: don't re-read unless needed).
   user-decided." `loopeng check` verifies presence (not value). The
   brainstorming flow for arch selection is just superpowers' brainstorming
   skill applied to the question — no loopeng feature to build.
-- **~/.codex/AGENTS.md NOT amended** — existing 36-line file has no
-  YAGNI/SOLID/KISS/DRY. Phase 2 work.
-- **DRY missing from NORTH_STAR** — user stated KISS+SOLID+DRY+YAGNI;
-  NORTH_STAR has only YAGNI/SOLID/KISS. Phase 2 amendment.
+- **~/.codex/AGENTS.md** — ✅ AMENDED with engineering principles section (YAGNI/SOLID/KISS/DRY/TDD/QA/security/arch). Closed.
+- **DRY in NORTH_STAR** — ✅ ADDED. Closed.
 - **Documentation rule NOT created** — 1.85b was tactical cleanup only.
   Format research (linked-list/graph/backlinks) deferred to 1.85c.
 - **Blog documentation rule NOT captured** — user said "everything needs
