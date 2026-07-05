@@ -33,6 +33,16 @@ Authoritative docs:
 4. Check `docs/AGENTS.md` for MUST NOT rules and standards before any work
 5. Begin the next action from PROGRESS.md
 
+To resume this exact conversation (all 49 messages of reasoning):
+```bash
+pi --session 019f2e45-6c3e-793a-a3de-4eb4c1e878d0
+```
+Or continue most recent: `pi -c`
+
+The session JSONL is at:
+`~/.pi/agent/sessions/--Users-<username>-Projects-loopeng--/2026-07-04T17-55-29-470Z_019f2e45-6c3e-793a-a3de-4eb4c1e878d0.jsonl`
+Export via `/export` (HTML/JSONL) or `/share` (GitHub gist).
+
 ## Engineering principles (from NORTH_STAR)
 
 YAGNI, SOLID, KISS. Shift-left testing (TDD first-class). Two-layer QA
