@@ -26,6 +26,7 @@ loopeng/
 ├── tests/                     # Test suite
 ├── docs/                      # Project documentation
 │   ├── NORTH_STAR.md          # The anchor
+│   ├── PRODUCT.md            # Product strategy (what it is, moat, PMF)
 │   ├── RESEARCH.md            # Provenance
 │   ├── adr.md                 # Architecture decisions
 │   ├── PROGRESS.md            # Phase tracker (where we are)
@@ -43,6 +44,7 @@ loopeng/
 | Doc | Authority | Status |
 |---|---|---|
 | `docs/NORTH_STAR.md` | What we build | Active, authoritative |
+| `docs/PRODUCT.md` | Product strategy (what it is, moat, PMF) | Active, authoritative |
 | `docs/RESEARCH.md` | Why we build it this way | Active, authoritative |
 | `docs/adr.md` | Architecture decision record | Active, authoritative |
 | `docs/PROGRESS.md` | Phase tracker (where we are) | Active, authoritative |
