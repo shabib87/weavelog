@@ -142,6 +142,76 @@ user can't remember 7 opaque model names but can remember `workhorse`,
 
 ---
 
+## 2026-07-05 — ZDR-on decision + free-tier removal
+
+**Scope:** Model selection research thread (turns 1-5). Verified findings +
+4 decisions confirmed by user.
+
+**Decisions:**
+1. **Keep OpenRouter ZDR on** (account-wide). A coding agent's prompts are
+   proprietary source code; turning ZDR off to recover one $0 model exposes
+   every prompt to logging/distribution/training-by-free-tier-providers.
+   Verified: OpenRouter Terms (`openrouter.ai/terms`) grant license to
+   log/store/distribute Inputs when ZDR is off; OpenRouter data-residency blog
+   (`openrouter.ai/blog/insights/ai-data-residency`, 2026-06-22) documents
+   `zdr: true` restricts routing to zero-retention endpoints.
+2. **Remove the free tier.** `nvidia/nemotron-3-ultra-550b-a55b:free` and
+   codex profile `nemotron-3-free` removed from `~/.pi/agent/models.md`,
+   `settings.json` `enabledModels`, `~/.pi/agent/AGENTS.md`, and
+   `~/.codex/nemotron-3-free.config.toml` deleted. DeepSeek V4 Flash
+   ($0.09/$0.18 per M) absorbs the former free-tier workload. ZDR blocks
+   `:free` provider endpoints, so the free model is unusable regardless.
+3. **Sonnet 5 NOT added.** The turn-3 proposal (Sonnet 5 as frontier reviewer)
+   is not adopted under "remaining models keep as is." If frontier-parity
+   review is later needed, that is a separate +1 row +1 profile +1
+   enabledModels +1 AGENTS.md name.
+4. **Keep GPT-5.5 + Fable 5 escalation** unchanged.
+
+**Verified findings (full detail in learning log):**
+- GLM 5.2 has parity with Opus 4.8 on the agentic axis (Design Arena agents
+  fullstack: 1293 vs 1325 Elo, both top-3 globally). GPT-5.5 is weak on
+  agentic coding (agents rank #15-18) despite AA coding #2.
+- DS V4 Pro is a full tier below Opus 4.8 on agents (rank #29); its value is
+  cross-family diversity, not raw power. The loopeng design makes the
+  deterministic verifier the real gate, so the LLM checker's job is diversity.
+- Qwen 3.7 Max (AA coding 66.0) is NOT open-weights (no HuggingFace ID);
+  disqualified for the primary checker slot.
+- Sonnet 5 is close to Opus 4.8 (Anthropic announcement, 2026-06-30: "its
+  performance is close to that of Opus 4.8"; AA coding 71.5 vs 74.3).
+- Bedrock/ZDR routing: Anthropic models have Bedrock + Vertex + Azure
+  endpoints (7 for Sonnet 5); GPT-5.5 has Azure only (no Bedrock). User's
+  "Bedrock or similar" claim substantively correct.
+
+**Files changed:**
+- `~/.pi/agent/models.md` — removed 5 nemotron references; added Budget Tier
+  note; updated DS V4 Flash to absorb free-tier workload.
+- `~/.pi/agent/settings.json` — removed nemotron from `enabledModels`.
+- `~/.pi/agent/AGENTS.md` — removed `nemotron-3-free` from profile-name list.
+- `~/.codex/nemotron-3-free.config.toml` — deleted.
+- `docs/learnings/2026-07-05-model-zdr-and-free-tier-removal.md` — NEW.
+- `docs/research/model-selection.md` — added Superseded note to Free Tier.
+- `docs/RESEARCH.md` — added awareness note to OpenRouter section (roster is
+  historical; consult models.md).
+- `docs/adr/0001-loopeng-architecture-decisions.md` — added awareness notes
+  to section 2.4 (model table) and section 4 (consequences); content
+  unchanged, pointers to models.md added so agents don't follow stale roster.
+- `docs/PROGRESS.md` — this entry.
+
+**Pre-existing drift surfaced (NOT fixed):** ADR 2.4 roster (6 models,
+role-based, different nemotron variant) differs from models.md (6 models,
+tier-based). Predates this session. Awareness markers added so agents consult
+models.md as authoritative; full ADR/models.md alignment is a separate
+decision.
+
+**Honest gaps:** Could not fetch OpenRouter's ZDR-eligible provider list
+(docs site is a JS SPA; no ZDR field in `/api/v1/providers`). Could not
+verify OpenAI's live privacy policy from source (JS-blocked; used Wayback
+snapshot updated 2026-01-08). Anthropic's exact API retention period (30
+days) is widely documented but could not be crisply re-verified from
+`docs.anthropic.com` (JS SPA) this session.
+
+---
+
 ## Watch items
 
 - **Pi session JSONL is the native audit trail** — every message, tool call, and response is stored as structured JSONL at `~/.pi/agent/sessions/--<path>--/<timestamp>_<uuid>.jsonl`. This IS the thread-level audit trail. Export via `/export` (HTML/JSONL) or `/share` (GitHub gist). Not in the git repo (personal/local) but persists across sessions. This is how to recover thread reasoning if PROGRESS.md is insufficient.

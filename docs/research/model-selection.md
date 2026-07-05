@@ -234,6 +234,14 @@ At $0.09/$0.18, it is **55x cheaper than GPT 5.5** while retaining
 
 ## Free Tier
 
+> **Superseded 2026-07-05.** The free tier is removed from the active model
+> roster. OpenRouter ZDR (account-wide) blocks `:free` provider endpoints, so
+> `nvidia/nemotron-3-ultra-550b-a55b:free` is unusable. Its workload (CI
+> scripts, changelogs, simple test assertions) is absorbed by
+> `deepseek/deepseek-v4-flash` ($0.09/$0.18 per M, ZDR-compliant). The
+> authoritative registry is `~/.pi/agent/models.md`. See
+> `docs/learnings/2026-07-05-model-zdr-and-free-tier-removal.md`.
+
 ### Nemotron Ultra 550B:free
 
 **ID:** `nvidia/nemotron-3-ultra-550b-a55b:free`

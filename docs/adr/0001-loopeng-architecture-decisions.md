@@ -83,6 +83,13 @@ available only as explicit opt-in.
 
 All six model IDs verified available on the live OpenRouter API.
 
+> **Note (2026-07-05):** The roster above is this ADR's original allocation,
+> retained as the architectural record. The live, authoritative model registry
+> is `~/.pi/agent/models.md`, revised independently of this ADR (free-tier
+> removed under OpenRouter ZDR; escalation tiers added). Do not treat the
+> table above as the current model roster; consult `models.md`. See
+> `docs/learnings/2026-07-05-model-zdr-and-free-tier-removal.md`.
+
 **Why OpenRouter:** Single API key manages all models, all providers, and
 fallback routing. 5.5% markup on credits is worth the operational simplicity.
 Single point of ZDR enforcement.
@@ -199,6 +206,13 @@ Agent Skills (agentskills.io), AGENTS.md (agents.md).
 | macOS-only v1 | Negative | Linux CI validates test suite; Windows deferred indefinitely |
 | Open-weight model availability can change | Negative | `loopeng check` validates model IDs against live OpenRouter API before each run |
 | Solo-dev for v1 | Neutral | MIT license permits forks; issues welcome |
+
+> **Note (2026-07-05):** The "Nemotron free tier for utility tasks" mitigation
+> above is superseded. OpenRouter ZDR (account-wide) blocks `:free` provider
+> endpoints, so the free tier is unusable and removed. Utility tasks now route
+> to `deepseek/deepseek-v4-flash` ($0.09/$0.18 per M). The authoritative
+> registry is `~/.pi/agent/models.md`. See
+> `docs/learnings/2026-07-05-model-zdr-and-free-tier-removal.md`.
 
 ---
 
