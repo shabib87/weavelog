@@ -8,6 +8,24 @@ PROGRESS.md owns all status.
 
 ---
 
+## Immediate next step — verify the session-logger actually runs
+
+Before 1.85c, confirm the dogfood gate is open:
+
+1. Confirm the footer is visible in the Pi TUI (turns/tokens/cost/model
+   line). If yes, auto-discovery works and both extensions are loaded.
+2. Let this session shut down, then check for
+   `.pi/logs/<id>.stats.json` in the loopeng repo.
+   - **Appears:** logger works, dogfooding has started. Proceed to 1.85c.
+   - **Does not appear:** null-check bug in `m.usage.input` aggregation is
+     the prime suspect. Harden TDD-first (failing test: branch with one
+     usage-less assistant message expects a valid stats file). See
+     `docs/learnings/2026-07-05-session-logger-dogfood-gate.md`.
+
+Do NOT add an `extensions` array to `settings.json` — global extensions
+auto-discover. The earlier enablement snippet in the research log is
+misleading and gets fixed in 1.85c.
+
 ## Active phase: 1.85c — Doc system overhaul (ready, no blockers)
 
 Phase 1.85c is ready to start. This is the next session's priority.
@@ -21,13 +39,9 @@ Phase 1.85c is ready to start. This is the next session's priority.
   and research logs
 - `.pi/logs/` added to `.gitignore`
 - `docs/learnings/2026-07-05-session-logger-derailment.md` — post-mortem captured
-- `~/.pi/agent/extensions/footer.ts` — working (left-aligned session stats)
-- `~/.pi/agent/extensions/session-logger.ts` — working (per-session stats to
-  `.pi/logs/<session-id>.stats.json`)
-- Enable both via `~/.pi/agent/settings.json`:
-  ```json
-  { "extensions": ["extensions/footer.ts", "extensions/session-logger.ts"] }
-  ```
+- `~/.pi/agent/extensions/footer.ts` — code complete, pending runtime confirmation (left-aligned session stats)
+- `~/.pi/agent/extensions/session-logger.ts` — code complete, pending runtime confirmation (per-session stats to `.pi/logs/<session-id>.stats.json`). Zero `.pi/logs/` data exists yet; see `docs/learnings/2026-07-05-session-logger-dogfood-gate.md`.
+- Pi auto-discovers global extensions — no `settings.json` `extensions` entry needed. The earlier "enable via settings.json" snippet was misleading; fix batched into 1.85c.
 
 ## Known items for 1.85c
 
@@ -53,6 +67,12 @@ The INDEX.md documents the current state. The 1.85c session should:
 - `loopeng stats` CLI command — Phase 4
 - `loopeng init` / `loopeng check` — Phase 4
 - Any Pi extension work — footer and session-logger are done
+- session-logger topic-classification implementation — designed this session
+  (closed-set 6 labels, heuristic v1, LLM opt-in v2, JSONL linked via
+  `piSessionId`), but implementation is a separate TDD-first session. See
+  `docs/learnings/2026-07-05-session-quality-telemetry-axis.md`.
+- telemetry join cardinality (piSessionId 1:1 vs 1:many vs many:1) — open
+  decision before `.loopeng/metrics.jsonl` schema is finalized.
 
 ## Housekeeping
 

@@ -2,7 +2,7 @@
 
 > **Status:** Constitution complete (DRY + global Pi AGENTS.md + codex AGENTS.md). PRODUCT.md created. 5 insights tracked. 3 pending decisions. Ready for Phase 2 tooling install.
 > **Active phase:** 1.99 — Audit corrections
-> **Last updated:** 2026-07-05
+> **Last updated:** 2026-07-05 (session-quality telemetry axis decisions added)
 
 This is the single source of truth for "where are we." Agents read this first.
 Update it before any phase transition. Completed phases move to **Done** at the
@@ -308,6 +308,79 @@ days) is widely documented but could not be crisply re-verified from
 
 ---
 
+## 2026-07-05 — Session-Quality Telemetry Axis (correction + decisions)
+
+**Session:** 2026-07-05 (discussion only — no code touched)
+**Scope:** Corrected prior misframing of session-logger. Established the
+session-quality telemetry axis as distinct from workflow telemetry. Locked
+4 design decisions for the session-logger v2 schema.
+
+**Correction:** Prior assessment called session-logger "wrong shape for
+loopeng." Wrong. It serves the session-quality axis (how the human uses the
+agent, per-session health), which is distinct from the workflow-outcome axis
+(did the loop ship features). The two are complementary and joined via
+`piSessionId`, not competing.
+
+**Decisions (locked):**
+1. Closed-set taxonomy, 6 labels: `research | analysis | coding | docs |
+   debugging | review`. Mixing is a measured signal, not a type.
+2. Deterministic heuristic classification for v1 (tool-call counts + path
+   prefixes at shutdown). Private, free, testable.
+3. LLM classification deferred behind opt-in (v2). Changes privacy surface.
+4. JSONL linked to per-session log: `.loopeng/metrics.jsonl` entries carry
+   `piSessionId` referencing `.pi/logs/<piSessionId>.stats.json`. Join
+   cardinality (1:1 vs many) is an open decision before metrics.jsonl
+   schema is finalized.
+
+**What is NOT done (deferred to a TDD implementation session):**
+- Topic-classification code in `session-logger.ts` — schema designed, not
+  implemented. Must be TDD-first in its own session.
+- `loopeng stats` daily/weekly summary — Phase 4.
+- `metrics.jsonl` writer — Phase 4, depends on loopeng run loop existing.
+
+**Files changed:**
+- `docs/learnings/2026-07-05-session-quality-telemetry-axis.md` — NEW
+
+---
+
+## 2026-07-05 — Session Logger Dogfood Gate (auto-discovery audit)
+
+**Session:** 2026-07-05 (audit only — no code touched)
+**Scope:** Before enabling the session-logger for dogfooding, audited
+whether it was actually running. It was not, and the enablement story in
+the docs was wrong.
+
+**Findings:**
+1. Pi auto-discovers global extensions (`~/.pi/agent/extensions/*.ts`) —
+   no `settings.json` `extensions` entry needed. The research log and
+   NEXT_SESSION implied one was required. Misleading.
+2. Direct node import of `session-logger.ts` succeeds (loads, factory
+   registers both handlers). Code is sound in isolation.
+3. Zero `.pi/logs/` data exists anywhere under `~/Projects`. The
+   "working" claim is an overclaim — should be "code complete, pending
+   runtime confirmation."
+4. Two candidate causes: (1) no shutdown has fired in this cwd since
+   creation (likely — this session may be the first with the logger
+   loaded, and it has not ended); (2) latent null-check bug in
+   `input += m.usage.input` swallows silently if `usage` is undefined.
+
+**Disambiguation plan (no speculative changes):**
+1. Confirm footer is visible in Pi TUI (proves auto-discovery works).
+2. Let this session shut down, check for `.pi/logs/<id>.stats.json`.
+   - Appears → logger works, dogfooding started.
+   - Does not appear → null-check hardening, TDD-first session.
+
+**Decisions:** Do NOT add `extensions` array to settings (cargo-cult).
+Treat logger as unverified until a stats file appears. Null-check
+hardening is its own TDD session, not folded in here.
+
+**Files changed:**
+- `docs/learnings/2026-07-05-session-logger-dogfood-gate.md` — NEW
+- `docs/PROGRESS.md` — this entry + watch items
+- `docs/NEXT_SESSION.md` — corrected "working" claims, added verification step
+
+---
+
 ## Watch items
 
 - **Pi session JSONL is the native audit trail** — every message, tool call, and response is stored as structured JSONL at `~/.pi/agent/sessions/--<path>--/<timestamp>_<uuid>.jsonl`. This IS the thread-level audit trail. Export via `/export` (HTML/JSONL) or `/share` (GitHub gist). Not in the git repo (personal/local) but persists across sessions. This is how to recover thread reasoning if PROGRESS.md is insufficient.
@@ -376,6 +449,38 @@ days) is widely documented but could not be crisply re-verified from
 - **Loopeng stats CLI — deferred to Phase 4 (correct)** — the `loopeng stats`
   command belongs in Phase 4 (CLI tooling) alongside `loopeng init` and
   `loopeng check`. Should not have been started early.
+- **Session-logger topic classification — designed, not implemented
+  (2026-07-05)** — schema for `type`, `typeConfidence`, `typeSignals`,
+  `topicSwitches`, `dominantTypeRatio`, `turnsBucket`, `costPerTurnTrend`
+  locked. Closed-set 6-label taxonomy. Heuristic-only v1, LLM behind opt-in
+  v2. Implementation is a TDD-first session, NOT yet started. See learning
+  log `2026-07-05-session-quality-telemetry-axis.md`.
+- **Telemetry join cardinality — open decision** — `piSessionId` links
+  `.loopeng/metrics.jsonl` to `.pi/logs/<id>.stats.json`, but whether a
+  loopeng workflow run is 1:1, 1:many, or many:1 with a Pi session is
+  unresolved. Must be decided before the metrics.jsonl schema is finalized.
+  Affects whether the daily/weekly summary can prove "conflated sessions
+  fail more."
+- **Two telemetry axes, not one (2026-07-05)** — session-quality axis
+  (`.pi/logs/`, per-session JSON) and workflow-outcome axis
+  (`.loopeng/metrics.jsonl`, append-only JSONL) measure different things.
+  Both opt-in. Do NOT merge the locations or read one as if it were the
+  other. `loopeng stats` joins them via `piSessionId`.
+- **Session-logger runtime confirmation PENDING (2026-07-05)** — code is
+  complete and imports clean, but never confirmed running in a live
+  session. Zero `.pi/logs/` data exists. Disambiguation: check footer is
+  visible in TUI, then check for `.pi/logs/<id>.stats.json` after this
+  session shuts down. If absent, suspect null-check bug in `m.usage.input`
+  aggregation. See `docs/learnings/2026-07-05-session-logger-dogfood-gate.md`.
+- **Session-logger null-check hardening — TDD candidate** — `input +=
+  m.usage.input` has no null-check before the try/catch. If any assistant
+  message has undefined `usage`, the handler throws and Pi swallows it
+  silently. Fix: treat missing usage as 0. Must be TDD-first, own session.
+- **Pi auto-discovers global extensions (2026-07-05)** —
+  `~/.pi/agent/extensions/*.ts` load globally with no settings entry. The
+  `settings.json` `extensions` array is only for paths outside auto-
+  discovery dirs. Research log `2026-07-05-pi-tui-session-api.md` enable-
+  ment snippet is misleading; fix batched into 1.85c.
 - **ADR format: not Nygard** — current `docs/adr/0001-loopeng-architecture-
   decisions.md` is a monolithic file with 13 decisions. Nygard format
   (https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions)
