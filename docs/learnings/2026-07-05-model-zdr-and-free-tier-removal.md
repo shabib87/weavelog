@@ -1,7 +1,7 @@
 # Learning Log: ZDR-on decision, free-tier removal, and model-parity research
 
 > **Date:** 2026-07-05
-> **Session:** Model selection research thread (turns 1-5)
+> **Session:** Model selection research thread (turns 1-8)
 > **Status:** Decisions confirmed by user. Executed as one diff.
 
 ## Context
@@ -125,11 +125,18 @@ a JS SPA; no ZDR-eligibility field in the `/api/v1/providers` schema).
    that is a separate +1 row in models.md, +1 codex profile, +1
    enabledModels entry, +1 AGENTS.md profile name.
 4. **Keep GPT-5.5 + Fable 5 escalation** unchanged.
+5. **Amend ADR 2.4 roster** to match models.md (turn 8). Original role-based
+   roster preserved as superseded; current tier-based roster added. License
+   correction applied (see Corrections).
 
 ## Corrections
 
-- No corrections to prior artifacts. Pre-existing drift surfaced (see below)
-  but not "fixed" in this change.
+- **DeepSeek V4 Pro license:** original ADR 2.4 recorded it as Apache 2.0.
+  Verified via HuggingFace API (`huggingface.co/api/models/deepseek-ai/DeepSeek-V4-Pro`)
+  on 2026-07-05: license is MIT. Corrected in the ADR amendment (commit 3099d89).
+- No other corrections to prior artifacts. The pre-existing ADR/models.md
+  roster drift (different model sets, role-based vs tier-based) was resolved
+  by the amendment in decision 5, not by silently rewriting the ADR.
 
 ## Pre-existing drift surfaced (NOT fixed in this change)
 
