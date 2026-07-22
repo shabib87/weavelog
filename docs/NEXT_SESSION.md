@@ -8,27 +8,24 @@ PROGRESS.md owns all status.
 
 ---
 
-## Immediate next step — Phase 1.95: gate realism
+## Immediate next step — Chain 2: Phase 2/3 (global + project setup)
 
-The 2026-07-22 MoE audit (conductor: Kimi K3, fanouts: GLM-5.2, DeepSeek
-v4 Pro, Kimi K2.7-Code) established that the documented toolchain does not
-exist: `biome.json`, `.github/workflows/`, `src/extension/` are absent;
-`tsc` and the test suite cannot run (`tsx` undeclared, deps uninstalled).
-See `docs/learnings/2026-07-22-moe-orchestration-audit.md`.
+Phase 1.95 is DONE (2026-07-22, commit aad338e): toolchain installed and
+supply-chain verified, biome.json, CI workflow, README fixed, all gates
+green. Follow `docs/superpowers/plans/2026-07-22-moe-fast-track-to-phase-4.md`
+(reviewed handoff) for the Chain 2 shape:
 
-Phase 1.95 makes the gates real before any implementation work:
+1. Confirm Phase 2 watch items actually closed (global AGENTS.md exists at
+   ~/.pi/agent/AGENTS.md; DRY in NORTH_STAR; codex AGENTS.md amended).
+2. Parallel fresh planners: .pi/agents role files | workflows JSON |
+   .pi/settings.json (subagents defaults + open-weight modelScope).
+3. Single writer applies accepted plans; validators check sensors
+   (frontmatter parses, model IDs live, discovery works) — the human gate
+   is the verdict, validator checks are sensors only.
+4. Human gate → commit → telemetry log per the chain-1 template
+   (docs/learnings/2026-07-22-chain-1-gate-realism-telemetry.md).
 
-1. Declare `tsx` in devDependencies; install deps (needs author approval
-   per MUST NOT).
-2. Write `biome.json`.
-3. Add `.github/workflows/ci.yml` (Linux: node:test + biome + tsc).
-4. Fix README broken links (`docs/RESEARCH.md` → `docs/research/RESEARCH.md`,
-   `docs/adr.md` → `docs/adr/0001-...md`), TBD count (3 → 7), stale status
-   line, and the npm-vs-Homebrew framing (it is an open TBD, not decided).
-
-Then proceed to Phase 2 (global setup) → 3 (project setup) → 4 (CLI).
-Phase ordering note: 1.85c (doc overhaul) now yields to 1.95 — real gates
-before doc templates.
+Install acts need author approval first; keep gates between runs.
 
 ## What happened 2026-07-22 (MoE audit + Osmani alignment)
 
@@ -54,11 +51,10 @@ before doc templates.
 
 | # | Phase | Status |
 |---|---|---|
-| 1.95 | Gate realism (above) | next |
-| 1.85c | Doc system overhaul (templates, ADR split, conventions.md) | queued after 1.95 |
-| 2 | Global setup (~/.pi/agent/AGENTS.md, DRY to NORTH_STAR, tooling) | blocked on 1.95 |
-| 3 | Project setup (.pi/, agents/skills/workflows) | blocked on 2 |
-| 4 | CLI: `loopeng init` / `check` / `plugin add` | blocked on 3 |
+| 1.95 | Gate realism | ✅ done 2026-07-22 |
+| 2/3 | Global + project setup (.pi/agents, workflows, settings) | next — Chain 2 |
+| 1.85c | Doc system overhaul (templates, ADR split, conventions.md) | queued after Chain 2 |
+| 4 | CLI: `loopeng init` / `check` / `plugin add` | Chain 3 (TDD slices) |
 
 ## Known items (carried)
 
