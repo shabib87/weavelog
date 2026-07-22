@@ -4,7 +4,7 @@
 > a self-contained workspace where agents spec, implement, and verify — you
 > only review the diffs.
 
-**Status:** Design phase. Spec and ADR complete. Implementation not started.
+**Status:** Phase 1.95 — gate realism. Spec, ADR, and provenance complete; CLI scaffolded as a stub (`src/cli/index.ts`); full `loopeng init` / `check` / `plugin add` ship in Phase 4.
 
 loopeng turns any project into a self-contained agentic workspace. A
 pre-defined agent team runs an end-to-end loop — spec, implement, verify,
@@ -34,10 +34,15 @@ pi
 | Doc | Purpose |
 |---|---|
 | [`docs/NORTH_STAR.md`](docs/NORTH_STAR.md) | What we build — the anchor |
-| [`docs/RESEARCH.md`](docs/RESEARCH.md) | Why we build it this way — provenance |
-| [`docs/adr.md`](docs/adr.md) | Architecture decision record |
+| [`docs/PRODUCT.md`](docs/PRODUCT.md) | Product strategy, moat, PMF |
+| [`docs/ROADMAP.md`](docs/ROADMAP.md) | Version milestones, release plan |
+| [`docs/PROGRESS.md`](docs/PROGRESS.md) | Phase tracker — where we are |
+| [`docs/NEXT_SESSION.md`](docs/NEXT_SESSION.md) | Narrative handoff |
+| [`docs/INDEX.md`](docs/INDEX.md) | Document navigation map |
+| [`docs/research/RESEARCH.md`](docs/research/RESEARCH.md) | Why we build it this way — provenance |
+| [`docs/adr/0001-loopeng-architecture-decisions.md`](docs/adr/0001-loopeng-architecture-decisions.md) | Architecture decision record |
 | [`docs/specs/2026-06-28-loopeng-design.md`](docs/specs/2026-06-28-loopeng-design.md) | Detailed design |
-| [`docs/tbd/`](docs/tbd/) | Open questions (3 remaining) |
+| [`docs/tbd/`](docs/tbd/) | Open questions (6 open, 1 resolved of 7) |
 | [`docs/archive/`](docs/archive/) | Superseded research — **do not use** |
 
 ## Tech Stack
@@ -50,7 +55,7 @@ pi
 | Lint/Format | biome |
 | Typecheck | `tsc --noEmit` |
 | CI | GitHub Actions (`ubuntu-latest`) |
-| Distribution | npm primary, Homebrew secondary |
+| Distribution | npm primary, Homebrew wraps npm (resolved — [`docs/tbd/bash-homebrew-tooling.md`](docs/tbd/bash-homebrew-tooling.md)) |
 | Platform | macOS v1 |
 
 ## License
