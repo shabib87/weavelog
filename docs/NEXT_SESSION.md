@@ -30,7 +30,7 @@ misleading and gets fixed in 1.85c.
 
 Phase 1.85c is ready to start. This is the next session's priority.
 
-## What was done this session (setup for 1.85c)
+## What was done this session (setup for 1.85c + author Pi workspace polish)
 
 - `docs/INDEX.md` created — navigation map of all 32 docs with type, purpose,
   when-to-read, LOC, and last-updated timestamps
@@ -39,9 +39,14 @@ Phase 1.85c is ready to start. This is the next session's priority.
   and research logs
 - `.pi/logs/` added to `.gitignore`
 - `docs/learnings/2026-07-05-session-logger-derailment.md` — post-mortem captured
-- `~/.pi/agent/extensions/footer.ts` — code complete, pending runtime confirmation (left-aligned session stats)
 - `~/.pi/agent/extensions/session-logger.ts` — code complete, pending runtime confirmation (per-session stats to `.pi/logs/<session-id>.stats.json`). Zero `.pi/logs/` data exists yet; see `docs/learnings/2026-07-05-session-logger-dogfood-gate.md`.
 - Pi auto-discovers global extensions — no `settings.json` `extensions` entry needed. The earlier "enable via settings.json" snippet was misleading; fix batched into 1.85c.
+- Author Pi workspace polish (not loopeng product code):
+  - `~/.pi/agent/themes/loopeng-dark.json` created
+  - `~/.pi/agent/extensions/footer.ts` rewritten as a four-line labeled footer
+  - `~/.pi/agent/settings.json` updated to `"theme": "loopeng-dark"`
+  - `docs/pi-workspace/2026-07-07-author-setup.md` documents the private setup
+  - `docs/ROADMAP.md` notes future Pi package formalization post-v1
 
 ## Known items for 1.85c
 
