@@ -109,7 +109,9 @@ block core releases.
   architecture are rejected.
 - **Does NOT author platform skills.** Subject-matter experts do (e.g.
   twostraws for SwiftUI, callstackincubator for React Native). loopeng
-  curates, adopts, and composes — it does not reinvent what SMEs wrote.
+  curates, adopts, and composes - it does not reinvent what SMEs wrote.
+  Platform capabilities ship as plugin packages (Layer 3), not as core
+  loopeng features.
 - **Does NOT reinvent engineering methodology.** superpowers does (TDD, code
   review, verification, planning, debugging). loopeng composes superpowers.
 - **Does NOT target codex or Claude Code.** loopeng v1 targets Pi + OpenRouter
@@ -277,6 +279,12 @@ that a solo-OSS devex tool can build credibility via "built from real use"
 plus published evidence. loopeng applies that *approach* to a different
 domain. loopeng is not creating Tolaria, not competing with Tolaria, and not
 derived from Tolaria.
+
+**Philosophical provenance is distinct from tool references.** Addy Osmani's
+loop-engineering series is the intellectual foundation (RESEARCH.md Source
+1), not a competitor and not a tool. Attribution is part of the credibility
+model: the moat is the working assembly plus published telemetry, never the
+unattributed ideas.
 
 ## How this doc is used
 

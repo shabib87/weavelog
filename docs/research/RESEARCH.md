@@ -23,6 +23,25 @@ says *why we build it this way*.
   search of the article (zero matches). The acronym originates in the original
   ADR Section 10 as the author's synthesis of Addy's components. We attribute
   ETCSLV to the ADR, not to Addy.
+- **Series evolution (reviewed 2026-07-22):** The essay became a series —
+  eight posts from June 7 to July 20, 2026 (agentic code review, the new
+  SDLC, autonomy levels, agent-era career, earning judgment, own the outer
+  loop, software factories light/dark). loopeng treats this series as a
+  living provenance source: new posts trigger an alignment review. Full
+  synthesis: `docs/learnings/2026-07-22-addy-osmani-loop-engineering-alignment.md`.
+  - **Adopted from the series:** Back pressure ("only as much autonomy as
+    you can cheaply and reliably verify") and autonomy as a per-task switch
+    (spec Section 7.4). The lit-factory framing — loopeng is a lit-factory
+    harness composer at autonomy Level 2–3, with human judgment at the gate
+    and moved upstream into the constitution. The agent contract (goal,
+    scope, non-goals, tools, stopping condition, evidence, escalation,
+    budget) as the delegation template.
+  - **Accepted gap:** Evals as a verification layer (output + trajectory
+    rubrics) alongside deterministic tests. Adoption deferred to Phase 4+;
+    eval format TBD.
+  - **Deferred:** Intent debt / comprehension debt as workspace health
+    metrics (framing adopted in spec 7.4, metrics deferred). Taste
+    calibration (out of v1 scope, YAGNI).
 
 ### 2. Cobus Greyling — loop-engineering repo
 - Link: https://github.com/cobusgreyling/loop-engineering

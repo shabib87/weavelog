@@ -42,6 +42,21 @@ This design implements the ETCSLV framework synthesized from Addy Osmani's "[Loo
 | **L — Lifecycle Hooks** | Events at key loop transitions | Pi extension events (`turn_end`, `agent_end`, `tool_call`). |
 | **V — Verification** | Deterministic signal: succeed, fail, escalate | Sub-agent maker/checker split with different models. Human diff gate. Headroom `--learn` for self-improvement. |
 
+### Osmani Loop Primitives: Compose vs Run Boundary
+
+Osmani's canonical primitives map onto loopeng's composition surface.
+loopeng scaffolds and wires each primitive; Pi executes it. loopeng
+composes the harness — it does not run the loop.
+
+| Primitive (Osmani) | loopeng composes (init/check) | Pi runs |
+|---|---|---|
+| **Automations** | Workflow JSON configs (`.pi/workflows/`) | Extension spawns steps; v1 trigger is manual `/run` |
+| **Worktrees** | Deferred post-v1 (v1: sequential, shared cwd) | Git worktree isolation |
+| **Skills** | `.pi/skills/<name>/SKILL.md` (Agent Skills standard) | Progressive disclosure at runtime |
+| **Plugins/connectors** | `loopeng plugin add` wrapper around `pi install` | Package loading |
+| **Sub-agents** | `.pi/agents/<role>.md` with per-role model/tools | Sub-agent processes, maker/checker split |
+| **State/memory** | PROGRESS/INDEX conventions + session-tree entries | `pi.appendEntry()` persistence |
+
 ### LangChain's Four Loop Levels Mapped
 
 | Level | What It Does | Our Implementation |
@@ -443,6 +458,30 @@ pi.on("session_start", async (_event, ctx) => {
 - **Auto-persisted.** `pi.appendEntry()` writes to Pi's session file, which survives crashes.
 - **Reconstructable.** `session_start` with `reason: "resume"` replays all entries in order. State is always reconstructable from the entry stream.
 - **Survives `/resume`.** When Pi resumes a session, all `pi.appendEntry()` entries are available via `ctx.sessionManager.getEntries()`.
+
+### 7.4 Back Pressure and Per-Task Autonomy
+
+Following Osmani's back-pressure principle — "you can only hand a loop as
+much autonomy as you can cheaply and reliably verify" — gate depth is a
+per-task switch, not a global setting:
+
+- **Verification cost sets autonomy.** A step whose verdict has a cheap
+  deterministic oracle (tests, lint, typecheck) can tolerate `gate: none`
+  or light review. A step with no cheap oracle (spec quality, doc accuracy)
+  keeps `gate: human` with full review.
+- **Every delegation carries a verification budget.** Before a step runs,
+  its `verify` command and evidence requirements are fixed (Section 7.2) —
+  the agent knows what will be checked, and how, before it acts. This is
+  Osmani's agent contract (goal, scope, non-goals, tools, stopping
+  condition, evidence, escalation, budget) applied to workflow steps.
+- **v1 default is uniformly lit** (`gate: human` on all non-docs steps).
+  Osmani's "all-lit is a bottleneck" warning is a known v1 risk: at diff
+  volume, uniform human review degrades into review fatigue and
+  rubber-stamping (comprehension debt). Risk-tiered gate depth (blast
+  radius × verification cost) is the post-v1 evolution path, adopted once
+  telemetry shows where human attention is actually load-bearing.
+- **The human gate is a verdict, not a sensor.** AI review output is a
+  sensor; the human owns the advance/merge decision.
 
 ---
 
