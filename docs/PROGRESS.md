@@ -1,8 +1,8 @@
 # Progress
 
-> **Status:** Constitution complete (DRY + global Pi AGENTS.md + codex AGENTS.md). PRODUCT.md created. 5 insights tracked. 3 pending decisions. Author's Pi workspace polished (loopeng-dark theme + four-line footer). Ready for Phase 1.95 gate realism.
-> **Active phase:** 1.99 — Audit corrections
-> **Last updated:** 2026-07-22 (MoE orchestration audit + Osmani series alignment)
+> **Status:** Constitution complete (DRY + global Pi AGENTS.md + codex AGENTS.md). PRODUCT.md created. 5 insights tracked. 3 pending decisions. Author's Pi workspace polished (loopeng-dark theme + four-line footer). Ready for Phase 2 global setup (1.95 gate realism DONE 2026-07-22).
+> **Active phase:** 2 — Global setup (unblocked by 1.95)
+> **Last updated:** 2026-07-22 (Phase 1.95 complete: toolchain, biome, CI, README)
 
 This is the single source of truth for "where are we." Agents read this first.
 Update it before any phase transition. Completed phases move to **Done** at the
@@ -10,7 +10,7 @@ bottom (memory decay: don't re-read unless needed).
 
 ---
 
-## Active phase: 1.99 — Audit corrections
+## Phase 1.99 — Audit corrections (✅ closed 2026-07-22)
 
 **Full thread audit performed (2026-07-04).** Gaps found:
 
@@ -44,11 +44,12 @@ bottom (memory decay: don't re-read unless needed).
 
 | # | Phase | Status | Blocks on |
 |---|---|---|---|
-| 1.99 | Audit corrections (tracker honesty, NEXT_SESSION update) | 🟡 in progress | nothing |
-| 1.99a | **Scope refinement** — plugin architecture, three-layer model, mobile moved to v1.1/v1.2, ROADMAP/PRODUCT/ADR updated. NORTH_STAR amendment pending user approval. | ✅ done (except NORTH_STAR) | nothing |
+| 1.99 | Audit corrections (tracker honesty, NEXT_SESSION update) | ✅ done (2026-07-22) | nothing |
+| 1.95 | **Gate realism** — tsx/biome/typescript/@types/node installed (supply-chain verified), biome.json, CI workflow, README fixes, INDEX re-sync, .pi-subagents gitignore. Executed via MoE chain (worker GLM-5.2 + 2 validators). | ✅ done (2026-07-22) | nothing |
+| 1.99a | **Scope refinement** — plugin architecture, three-layer model, mobile moved to v1.1/v1.2, ROADMAP/PRODUCT/ADR updated. NORTH_STAR amendment approved and committed 2026-07-22. | ✅ done | nothing |
 | 1.85c | **Doc system overhaul** — define templates (research logs, learnings, TBD), split ADR, create conventions.md, enforce naming, add LOC tracking, doc lifecycle rules. INDEX.md scaffolded. Next session. | ⏳ ready (no blockers) | nothing |
 | 1.98b | Git hook enforcement | ⏳ deferred (fold into Phase 2) | nothing |
-| 2 | Global setup: create ~/.pi/agent/AGENTS.md, amend ~/.codex/AGENTS.md, add DRY to NORTH_STAR, install tooling | ⏳ next | 1.99 |
+| 2 | Global setup: create ~/.pi/agent/AGENTS.md, amend ~/.codex/AGENTS.md, add DRY to NORTH_STAR, install tooling | ⏳ next | nothing (1.95 + 1.99 done) |
 | 3 | Project setup: create .pi/, project AGENTS.md, beads, agents/skills/loops | ⏳ blocked | 2 |
 | 4 | CLI tool: `loopeng init` + `loopeng check` + `loopeng plugin add` | ⏳ blocked | 3 |
 
