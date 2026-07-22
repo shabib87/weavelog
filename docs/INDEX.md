@@ -101,6 +101,8 @@ Each captures what went wrong, root cause, and blog candidate.
 | `learnings/2026-07-07-pi-footer-redesign-and-theme.md` | Pi footer redesign + loopeng-dark theme | On author workspace | 93 |
 | `learnings/2026-07-08-scope-refinement-and-yak-shaving-research.md` | 1.99a scope refinement session | On scope decisions | 197 |
 | `learnings/2026-07-22-moe-orchestration-audit.md` | MoE fanout audit — repo state, pi-subagents gaps, roster decision | On audit findings | 95 |
+| `learnings/2026-07-22-pi-subagents-intercom-fix.md` | pi-intercom install fixes reviewer intercom tool; model override gotcha | On subagent setup | 57 |
+| `learnings/2026-07-22-chain-1-gate-realism-telemetry.md` | Chain 0/1 telemetry, supply-chain checklist, process learnings | On MoE chain execution | 77 |
 | `learnings/2026-07-22-addy-osmani-loop-engineering-alignment.md` | Osmani series alignment (secondhand synthesis; see research amendment) | On Osmani alignment | 162 |
 
 ---
@@ -157,9 +159,9 @@ Each file = one unresolved question blocking progress.
 | Provenance & decisions | 2 | 544 |
 | Research logs (dated) | 10 | 2,004 |
 | Research references (living) | 2 | 697 |
-| Learning logs | 12 | 1,609 |
+| Learning logs | 14 | 1,743 |
 | Design specs | 2 | 826 |
 | Open questions (TBD) | 7 | 395 |
 | Implementation plans | 3 | 3,740 |
 | Author workspace | 1 | 34 |
-| **Total** | **46** | **11,342** |
+| **Total** | **48** | **11,553** |
