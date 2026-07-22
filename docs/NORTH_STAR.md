@@ -15,8 +15,10 @@ loop only for verification.
 - Open-weight models are primary. Frontier models are targeted last-resort
   escalation (analyst/researcher/reviewer), called specifically when
   open-weights fall short and handed back when done. Maximize cost/quality.
-- loopeng-target workspaces support mobile toolchains (Swift/KMP/Kotlin)
-  without Docker.
+- loopeng workspaces support platform toolchains (mobile, web, etc.) via
+  plugin packages, not core. Core loopeng is platform-agnostic. Platform
+  capabilities ship as independently released plugins conforming to the
+  Agent Skills standard.
 - Minimal required tooling. Optional tools stay optional.
 - TypeScript is the implementation language for the entire project (CLI and
   extension). No bash for logic. One language, one toolchain.

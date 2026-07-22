@@ -199,6 +199,61 @@ convention (`.pi/agents/<name>.md`). No bespoke formats where standards exist.
 MIT license. Solo-dev for v1; issues welcome, PRs not yet. Standards:
 Agent Skills (agentskills.io), AGENTS.md (agents.md).
 
+### 2.14 Plugin/Package Architecture and Three-Layer Customization
+
+**Adopted 2026-07-08.** See
+`docs/research/2026-07-08-plugin-architecture-and-scope-refinement.md`.
+
+Platform-specific capabilities ship as independently released packages, not
+as core loopeng features. Core loopeng is platform-agnostic.
+
+**Three-layer customization model:**
+
+| Layer | What lives here | User can override? |
+|---|---|---|
+| **1. Fixed (constitution)** | Engineering philosophy, loop shape, open standards, Pi as host, open-weights-primary pattern | No |
+| **2. Opinionated defaults** | Model roster, budget, agent prompts, CI pipeline, hooks | Yes (edit after init; loopeng never overwrites) |
+| **3. User-owned** | Platform skills, custom agents, architecture decisions | Fully |
+
+**Distribution:** Pi-native `pi install` mechanism (`pi install npm:` and
+`pi install git:`). loopeng does not reinvent package management.
+
+**`loopeng plugin add` is a validated wrapper:**
+1. Runs `pi install <source>` (Pi handles installation).
+2. Validates skills against Agent Skills standard (required frontmatter:
+   `name`, `description`; optional: `license`, `compatibility`,
+   `metadata`, `allowed-tools`).
+3. Checks `compatibility` frontmatter against workspace profile.
+4. Reports what was installed and what was validated.
+
+Validation logic is shared between `loopeng plugin add` and `loopeng check`
+(DRY).
+
+**No symlinks.** Pi discovers skills natively from four standard paths
+(`~/.pi/agent/skills/`, `~/.agents/skills/`, `.pi/skills/`,
+`.agents/skills/`). No indirection.
+
+**Model defaults as living reference:** Specific model IDs are Layer 2
+defaults, not Layer 1 philosophy. loopeng ships a `models.md` template;
+`loopeng init --global` copies it to `~/.pi/agent/models.md`; user owns the
+file after. The tier structure (primary, verifier, budget, frontier
+escalation) is Layer 1. Model churn does not block core releases.
+
+**Official plugin packages (v1.1):**
+- `@loopeng/plugin-mobile-ios` (native iOS: Swift, SwiftUI, Xcode)
+- `@loopeng/plugin-mobile-android` (native Android: Kotlin, Compose, Gradle)
+- `@loopeng/plugin-mobile-kmp` (Kotlin Multiplatform)
+- `@loopeng/plugin-mobile-react-native` (React Native)
+
+Each plugin ships skills conforming to the Agent Skills standard with
+`compatibility` frontmatter validated by `loopeng plugin add`.
+
+**Why Pi-native distribution:** loopeng is Pi-native. Pi's package system
+(`pi install`, auto-discovery, settings-based filtering) is the official
+mechanism. Wrapping it with validation (Agent Skills conformance,
+compatibility checking) adds loopeng's opinionated layer without reinventing
+package management.
+
 ---
 
 ## 3. Rejected Alternatives
@@ -212,6 +267,9 @@ Agent Skills (agentskills.io), AGENTS.md (agents.md).
 | Separate `.workflow/state.json` | Pi's session tree is branching-aware and auto-persisted | §2.8 |
 | Per-step git worktrees in v1 | Adds complexity without benefit for sequential execution | §2.12 |
 | `guard.sh` for isolation | Pi's `tool_call` hook is native, cross-platform, can't be bypassed | `docs/specs/...` §5.3 |
+| Bundling platform skills into core | Contradicts "loopeng does NOT author platform skills" (PRODUCT.md); forces all users to install capabilities they may not need | §2.14 |
+| Custom plugin package manager | Pi-native `pi install` is the official mechanism; reinventing it violates KISS and DRY | §2.14 |
+| Symlink-based skill import | Pi discovers natively from four standard paths; symlinks add fragility for no benefit | §2.14 |
 
 ---
 
