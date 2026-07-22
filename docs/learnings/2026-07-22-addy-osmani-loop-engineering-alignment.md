@@ -2,7 +2,13 @@
 
 Raw session material. Companion to 2026-07-22-moe-orchestration-audit.md.
 
-## Method
+**Method note (amended):** the cluster table above describes the SECONDHAND
+extraction. It is superseded as analysis by the firsthand two-model
+amendment: `docs/research/2026-07-22-osmani-firsthand-alignment-amendment.md`.
+Key corrections from the amendment: the philosophy has one center
+(verification bottleneck), "lit factory" was a category error (loopeng is a
+harness composer for lit loops, not a factory), and judgment-upstream plus
+workflow-as-graph are the deepest unclaimed alignments.
 
 Second MoE fanout, all open-weight, fresh context, read-only. Source set:
 all 8 addyosmani.com loop-engineering posts since 2026-06-07 (dates verified
@@ -53,10 +59,17 @@ GLM-5.2 and DeepSeek v4 Pro handled a fetch hint with latitude.
 
 ## Alignment verdict
 
-loopeng is, in Osmani's framing, a **lit-factory harness composer operating
-at autonomy Level 2-3 with human-owned outer loop**. This is strong external
-validation of the NORTH_STAR shape: spec→implement→verify→document,
-maker/checker, deterministic gates, human-gated verification, state on disk.
+loopeng's **documented design** maps, in Osmani's framing, to a harness
+composer for lit loops at autonomy Level 2 (scoped delegation, human-gated,
+manually triggered) with a human-owned outer loop. Three caveats keep this
+honest: (1) the mapping is SELF-ASSESSED — AI agents applied his taxonomy
+to our docs, so this is framework fidelity (loopeng was designed from his
+essay), not external validation; (2) it describes the design, not a running
+system — the CLI is a stub as of this date; (3) real validation requires
+operational telemetry from proof projects or independent review. The
+NORTH_STAR shape (spec→implement→verify→document, maker/checker,
+deterministic gates, human-gated verification, state on disk) is consistent
+with his published principles, but consistency is not evidence.
 
 Strong matches: maker/checker (his sub-agent checker on stop condition),
 state-on-disk (his exact phrase mirrors the constitution), deterministic
@@ -141,8 +154,8 @@ careful. pi-fetch dropped; curl+textutil covers fetch needs for now (YAGNI).
 
 1. "Addy Osmani published 8 loop-engineering posts in 6 weeks. I ran an
    open-weight MoE fanout to audit my project against all of them."
-2. "My repo is a lit factory at autonomy level 2: external validation from
-   Osmani's taxonomy."
+2. "My repo's design fits Osmani's lit-factory taxonomy at level 2 — but
+   I graded that myself. Fidelity vs validation in agentic self-assessment."
 3. "The eval gap: two independent model experts converged on the same
    missing layer."
 4. "Vetting agent plugins like dependencies: stars, commit cadence, and the

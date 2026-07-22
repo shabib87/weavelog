@@ -31,9 +31,11 @@ says *why we build it this way*.
   synthesis: `docs/learnings/2026-07-22-addy-osmani-loop-engineering-alignment.md`.
   - **Adopted from the series:** Back pressure ("only as much autonomy as
     you can cheaply and reliably verify") and autonomy as a per-task switch
-    (spec Section 7.4). The lit-factory framing — loopeng is a lit-factory
-    harness composer at autonomy Level 2–3, with human judgment at the gate
-    and moved upstream into the constitution. The agent contract (goal,
+    (spec Section 7.4). The lit/dark factory framing — loopeng's design maps
+    to a harness composer for lit loops at autonomy Level 2 (self-assessed mapping
+    by AI agents; design-level, not operational), with human judgment at the
+    gate and moved upstream into the constitution. Firsthand two-model
+    correction: `docs/research/2026-07-22-osmani-firsthand-alignment-amendment.md`. The agent contract (goal,
     scope, non-goals, tools, stopping condition, evidence, escalation,
     budget) as the delegation template.
   - **Accepted gap:** Evals as a verification layer (output + trajectory

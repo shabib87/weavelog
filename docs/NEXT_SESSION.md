@@ -8,80 +8,73 @@ PROGRESS.md owns all status.
 
 ---
 
-## Immediate next step — verify the session-logger actually runs
+## Immediate next step — Phase 1.95: gate realism
 
-Before 1.85c, confirm the dogfood gate is open:
+The 2026-07-22 MoE audit (conductor: Kimi K3, fanouts: GLM-5.2, DeepSeek
+v4 Pro, Kimi K2.7-Code) established that the documented toolchain does not
+exist: `biome.json`, `.github/workflows/`, `src/extension/` are absent;
+`tsc` and the test suite cannot run (`tsx` undeclared, deps uninstalled).
+See `docs/learnings/2026-07-22-moe-orchestration-audit.md`.
 
-1. Confirm the footer is visible in the Pi TUI (turns/tokens/cost/model
-   line). If yes, auto-discovery works and both extensions are loaded.
-2. Let this session shut down, then check for
-   `.pi/logs/<id>.stats.json` in the loopeng repo.
-   - **Appears:** logger works, dogfooding has started. Proceed to 1.85c.
-   - **Does not appear:** null-check bug in `m.usage.input` aggregation is
-     the prime suspect. Harden TDD-first (failing test: branch with one
-     usage-less assistant message expects a valid stats file). See
-     `docs/learnings/2026-07-05-session-logger-dogfood-gate.md`.
+Phase 1.95 makes the gates real before any implementation work:
 
-Do NOT add an `extensions` array to `settings.json` — global extensions
-auto-discover. The earlier enablement snippet in the research log is
-misleading and gets fixed in 1.85c.
+1. Declare `tsx` in devDependencies; install deps (needs author approval
+   per MUST NOT).
+2. Write `biome.json`.
+3. Add `.github/workflows/ci.yml` (Linux: node:test + biome + tsc).
+4. Fix README broken links (`docs/RESEARCH.md` → `docs/research/RESEARCH.md`,
+   `docs/adr.md` → `docs/adr/0001-...md`), TBD count (3 → 7), stale status
+   line, and the npm-vs-Homebrew framing (it is an open TBD, not decided).
 
-## Active phase: 1.85c — Doc system overhaul (ready, no blockers)
+Then proceed to Phase 2 (global setup) → 3 (project setup) → 4 (CLI).
+Phase ordering note: 1.85c (doc overhaul) now yields to 1.95 — real gates
+before doc templates.
 
-Phase 1.85c is ready to start. This is the next session's priority.
+## What happened 2026-07-22 (MoE audit + Osmani alignment)
 
-## What was done this session (setup for 1.85c + author Pi workspace polish)
+- Full-repo audit via open-weight MoE fanout. Findings: docs-only repo
+  with CLI stub; `.pi/agents|skills|chains|settings.json` absent
+  (dogfooding principle falsified); builtin `researcher` subagent broken
+  (missing web tools; decision: no third-party plugin, curl suffices,
+  build-own research extension post-Phase 4).
+- All 8 Osmani loop-engineering posts (Jun 7–Jul 20) read firsthand after
+  the secondhand synthesis overclaimed ("strong external validation" —
+  corrected to framework fidelity, self-assessed). Accurate positioning:
+  **loopeng is a harness composer for lit loops at autonomy Level 2 —
+  design-level, not yet operational.**
+- Author-approved amendments applied: RESEARCH.md Source 1 series
+  evolution, PRODUCT.md provenance + telemetry metrics, spec compose-vs-run
+  primitives table, spec §7.4 back pressure + oracle criteria, handoff
+  decision log (intent capture), `tbd/configuration-failure-seam.md`.
+- Key firsthand alignments to preserve: workflow JSON = Osmani's graph;
+  spec gate = judgment upstream. See
+  `docs/research/2026-07-22-osmani-firsthand-alignment-amendment.md`.
 
-- `docs/INDEX.md` created — navigation map of all 32 docs with type, purpose,
-  when-to-read, LOC, and last-updated timestamps
-- `docs/RESEARCH.md` moved to `docs/research/RESEARCH.md` — all 14 cross-refs
-  updated across NORTH_STAR, PRODUCT, ROADMAP, PROGRESS, ADR, spec, learnings,
-  and research logs
-- `.pi/logs/` added to `.gitignore`
-- `docs/learnings/2026-07-05-session-logger-derailment.md` — post-mortem captured
-- `~/.pi/agent/extensions/session-logger.ts` — code complete, pending runtime confirmation (per-session stats to `.pi/logs/<session-id>.stats.json`). Zero `.pi/logs/` data exists yet; see `docs/learnings/2026-07-05-session-logger-dogfood-gate.md`.
-- Pi auto-discovers global extensions — no `settings.json` `extensions` entry needed. The earlier "enable via settings.json" snippet was misleading; fix batched into 1.85c.
-- Author Pi workspace polish (not loopeng product code):
-  - `~/.pi/agent/themes/loopeng-dark.json` created
-  - `~/.pi/agent/extensions/footer.ts` rewritten as a four-line labeled footer
-  - `~/.pi/agent/settings.json` updated to `"theme": "loopeng-dark"`
-  - `docs/pi-workspace/2026-07-07-author-setup.md` documents the private setup
-  - `docs/ROADMAP.md` notes future Pi package formalization post-v1
+## Queued phases (updated order)
 
-## Known items for 1.85c
+| # | Phase | Status |
+|---|---|---|
+| 1.95 | Gate realism (above) | next |
+| 1.85c | Doc system overhaul (templates, ADR split, conventions.md) | queued after 1.95 |
+| 2 | Global setup (~/.pi/agent/AGENTS.md, DRY to NORTH_STAR, tooling) | blocked on 1.95 |
+| 3 | Project setup (.pi/, agents/skills/workflows) | blocked on 2 |
+| 4 | CLI: `loopeng init` / `check` / `plugin add` | blocked on 3 |
 
-The INDEX.md documents the current state. The 1.85c session should:
+## Known items (carried)
 
-1. **Define doc templates** — required sections for research logs, learnings,
-   and TBD files. Research logs and learnings currently have loose formats.
-2. **Split ADR** — monolithic file with 13 decisions into per-decision Nygard files
-3. **Rename 2 outlier research files** — `loop-taxonomy.md` and `model-selection.md`
-   don't follow `YYYY-MM-DD-<topic>` convention. Decide: rename or make living-ref
-   convention explicit.
-4. **Create `docs/conventions.md`** — single source for doc lifecycle rules
-   (when something goes to PROGRESS vs NEXT_SESSION vs TBD), naming conventions,
-   and template specs.
-5. **Define living-ref vs dated-finding distinction** — `model-selection.md`
-   accumulates updates; `2026-07-05-model-selection-audit.md` is a date-stamped
-   finding. Both currently live in `research/`. Decide on a structural split
-   (e.g., `research/refs/` for living, `research/` for dated).
-
-## Not in scope for 1.85c
-
-- The `tsx` dependency for loopeng CLI — needs user approval to install
-- `loopeng stats` CLI command — Phase 4
-- `loopeng init` / `loopeng check` — Phase 4
-- Any Pi extension work — footer and session-logger are done
-- session-logger topic-classification implementation — designed this session
-  (closed-set 6 labels, heuristic v1, LLM opt-in v2, JSONL linked via
-  `piSessionId`), but implementation is a separate TDD-first session. See
-  `docs/learnings/2026-07-05-session-quality-telemetry-axis.md`.
-- telemetry join cardinality (piSessionId 1:1 vs 1:many vs many:1) — open
-  decision before `.loopeng/metrics.jsonl` schema is finalized.
+- Session-logger runtime verification still pending (see
+  `docs/learnings/2026-07-05-session-logger-dogfood-gate.md`). Confirm
+  `.pi/logs/<id>.stats.json` appears after a session shutdown.
+- `loopeng check` scope must resolve `tbd/configuration-failure-seam.md`
+  (who owns agent-failure diagnosis: loopeng vs Pi vs user).
+- Eval layer (output + trajectory rubrics) accepted gap, deferred Phase 4+.
+- INDEX.md re-synced 2026-07-22; keep it current per session (1.85c will
+  automate conventions).
 
 ## Housekeeping
 
-- `docs/INDEX.md` is the navigation map — agents should read it after PROGRESS
-  and NEXT_SESSION to find relevant docs
-- Uncommitted files: `docs/INDEX.md`, 3 learning logs, `docs/research/RESEARCH.md`,
-  `.gitignore` update, `docs/adr/` updated. Everything in `docs/` is pending commit.
+- All 2026-07-22 work PRIOR to the amendment batch is committed in grouped
+  conventional commits. The amendment batch itself (spec, RESEARCH, PRODUCT,
+  PROGRESS, NEXT_SESSION, INDEX, alignment log, new TBD) is uncommitted
+  pending author review. `.pi-subagents/` now gitignored.
+- `docs/INDEX.md` is the navigation map — read after PROGRESS and this file.

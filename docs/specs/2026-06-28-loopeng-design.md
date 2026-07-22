@@ -57,6 +57,18 @@ composes the harness — it does not run the loop.
 | **Sub-agents** | `.pi/agents/<role>.md` with per-role model/tools | Sub-agent processes, maker/checker split |
 | **State/memory** | PROGRESS/INDEX conventions + session-tree entries | `pi.appendEntry()` persistence |
 
+### Named Alignments with the Osmani Series (2026-07-22 firsthand review)
+
+- **The workflow config is the graph.** Osmani argues agent freedom should
+  be constrained to the inside of a node of a predefined graph — "mostly
+  deterministic code with LLM steps sprinkled in," back pressure drawn as a
+  diagram. loopeng workflow JSON (steps, `verify`, `gate`, rollback nodes)
+  is exactly that graph.
+- **The spec gate is judgment upstream.** His lit-factory move is reviewing
+  the decision before it is built ("a 200-line plan, not 2,000 lines of
+  generated code"). loopeng's human gate on the spec step embodies this —
+  the deepest alignment in the design.
+
 ### LangChain's Four Loop Levels Mapped
 
 | Level | What It Does | Our Implementation |
@@ -358,10 +370,19 @@ Handoff format:
   "to": "coder",
   "task": "implement-login",
   "payload": "## Specification\n\nFeature: User login...",
+  "decisionLog": {
+    "tried": "Approaches attempted during the step",
+    "ruledOut": "Alternatives considered and rejected, with reasons"
+  },
   "timestamp": "2026-06-28T12:00:00Z",
   "commit": "abc123def0"
 }
 ```
+
+The `decisionLog` implements Osmani's intent capture: the agent states what
+it was trying to do and what it ruled out, attached to the change. The
+reviewer is never "the first human to lay eyes on this code" — the intent
+reconstruction work stays with the producer, where it is cheap.
 
 ### 5.8 Human Verification Gate
 
@@ -482,6 +503,11 @@ per-task switch, not a global setting:
   telemetry shows where human attention is actually load-bearing.
 - **The human gate is a verdict, not a sensor.** AI review output is a
   sensor; the human owns the advance/merge decision.
+- **Oracle quality decides what can go dark.** A loop earns automation only
+  when its check is cheap, high-frequency, ungameable, immediate, and
+  non-drifting (green/red oracles, type gates, property tests, review
+  agents with real rubrics). Loop length is the practical proxy: agents
+  hold up for 3–10 steps and drift past 20, so steps stay short.
 
 ---
 

@@ -212,7 +212,10 @@ The credibility mechanism is **"built from real use," demonstrated across
 project types, with published telemetry.** The author publishes:
 
 - The process (how loopeng was used, step by step)
-- The data (tokens consumed, cost, retries, approval rates, time saved)
+- The data (tokens consumed, cost, retries, approval rates, time saved;
+  plus autonomy metrics from the Osmani series: review time per accepted
+  change, defect escape rate, token cost per accepted change, mean time
+  between interventions)
 - The output (the shipped feature, site update, or mobile app)
 
 This is stronger than a claim. It is falsifiable evidence. A reader can

@@ -1,6 +1,6 @@
 # Progress
 
-> **Status:** Constitution complete (DRY + global Pi AGENTS.md + codex AGENTS.md). PRODUCT.md created. 5 insights tracked. 3 pending decisions. Author's Pi workspace polished (loopeng-dark theme + four-line footer). Ready for Phase 2 tooling install.
+> **Status:** Constitution complete (DRY + global Pi AGENTS.md + codex AGENTS.md). PRODUCT.md created. 5 insights tracked. 3 pending decisions. Author's Pi workspace polished (loopeng-dark theme + four-line footer). Ready for Phase 1.95 gate realism.
 > **Active phase:** 1.99 — Audit corrections
 > **Last updated:** 2026-07-22 (MoE orchestration audit + Osmani series alignment)
 
@@ -70,12 +70,20 @@ audited loopeng against all 8 Osmani loop-engineering posts (Jun 7–Jul 20).
 - Builtin `researcher` subagent broken (requests uninstalled web tools).
   Decision: no third-party search plugin (maintenance gate); curl suffices;
   build-own research extension is a post-Phase-4 dogfooding candidate.
-- Osmani alignment: loopeng = lit-factory harness composer, autonomy
-  Level 2–3. Strong external validation of NORTH_STAR shape.
+- Osmani alignment: documented design maps to harness composer for lit
+  loops at autonomy Level 2 — SELF-ASSESSED by AI agents, design-level
+  only. Framework fidelity, not external validation (see alignment log
+  caveats).
 
 **Applied (author-approved):** RESEARCH.md Source 1 series-evolution
 amendment; PRODUCT.md provenance lines; spec Section 2 compose-vs-run
 primitives table; spec Section 7.4 back pressure + per-task autonomy.
+Second batch (2026-07-22, post-firsthand-review): "lit-factory" category
+error corrected to "harness composer for lit loops at Level 2"; spec gains
+named alignments (workflow-as-graph, judgment-upstream), handoff decision
+log (intent capture), §7.4 oracle criteria; PRODUCT telemetry adopts
+Osmani autonomy metrics; new `tbd/configuration-failure-seam.md`;
+NEXT_SESSION repointed to Phase 1.95; INDEX re-synced (45 docs).
 
 **New tracked items:**
 - **Phase 1.95 (proposed): gate realism** — declare tsx, write biome.json,
