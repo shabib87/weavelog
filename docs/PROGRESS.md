@@ -1,8 +1,8 @@
 # Progress
 
-> **Status:** Constitution complete (DRY + global Pi AGENTS.md + codex AGENTS.md). PRODUCT.md created. 5 insights tracked. 3 pending decisions. Ready for Phase 2 tooling install.
+> **Status:** Constitution complete (DRY + global Pi AGENTS.md + codex AGENTS.md). PRODUCT.md created. 5 insights tracked. 3 pending decisions. Author's Pi workspace polished (loopeng-dark theme + four-line footer). Ready for Phase 2 tooling install.
 > **Active phase:** 1.99 — Audit corrections
-> **Last updated:** 2026-07-05 (session-quality telemetry axis decisions added)
+> **Last updated:** 2026-07-22 (MoE orchestration audit + Osmani series alignment)
 
 This is the single source of truth for "where are we." Agents read this first.
 Update it before any phase transition. Completed phases move to **Done** at the
@@ -44,12 +44,45 @@ bottom (memory decay: don't re-read unless needed).
 
 | # | Phase | Status | Blocks on |
 |---|---|---|---|
-| 1.99 | Audit corrections (this — tracker honesty, NEXT_SESSION update) | 🟡 in progress | nothing |
+| 1.99 | Audit corrections (tracker honesty, NEXT_SESSION update) | 🟡 in progress | nothing |
+| 1.99a | **Scope refinement** — plugin architecture, three-layer model, mobile moved to v1.1/v1.2, ROADMAP/PRODUCT/ADR updated. NORTH_STAR amendment pending user approval. | ✅ done (except NORTH_STAR) | nothing |
 | 1.85c | **Doc system overhaul** — define templates (research logs, learnings, TBD), split ADR, create conventions.md, enforce naming, add LOC tracking, doc lifecycle rules. INDEX.md scaffolded. Next session. | ⏳ ready (no blockers) | nothing |
 | 1.98b | Git hook enforcement | ⏳ deferred (fold into Phase 2) | nothing |
 | 2 | Global setup: create ~/.pi/agent/AGENTS.md, amend ~/.codex/AGENTS.md, add DRY to NORTH_STAR, install tooling | ⏳ next | 1.99 |
 | 3 | Project setup: create .pi/, project AGENTS.md, beads, agents/skills/loops | ⏳ blocked | 2 |
-| 4 | CLI tool: `loopeng init` + `loopeng check` | ⏳ blocked | 3 |
+| 4 | CLI tool: `loopeng init` + `loopeng check` + `loopeng plugin add` | ⏳ blocked | 3 |
+
+---
+
+## 2026-07-22 — MoE Orchestration Audit + Osmani Series Alignment
+
+**Session:** 2026-07-22 (conductor: Kimi K3; MoE fanouts: GLM-5.2,
+DeepSeek v4 Pro/Flash, Kimi K2.7-Code)
+**Scope:** Audited repo state with a mixture-of-experts subagent fanout;
+audited loopeng against all 8 Osmani loop-engineering posts (Jun 7–Jul 20).
+
+**Findings (evidence in `docs/learnings/2026-07-22-*.md`):**
+- Repo is docs-only with a CLI stub; `biome.json`, `.github/workflows/`,
+  `src/extension/` claimed but absent; gates cannot run (tsx undeclared,
+  deps uninstalled).
+- `.pi/agents|skills|chains|settings.json` absent — dogfooding principle
+  currently falsified.
+- Builtin `researcher` subagent broken (requests uninstalled web tools).
+  Decision: no third-party search plugin (maintenance gate); curl suffices;
+  build-own research extension is a post-Phase-4 dogfooding candidate.
+- Osmani alignment: loopeng = lit-factory harness composer, autonomy
+  Level 2–3. Strong external validation of NORTH_STAR shape.
+
+**Applied (author-approved):** RESEARCH.md Source 1 series-evolution
+amendment; PRODUCT.md provenance lines; spec Section 2 compose-vs-run
+primitives table; spec Section 7.4 back pressure + per-task autonomy.
+
+**New tracked items:**
+- **Phase 1.95 (proposed): gate realism** — declare tsx, write biome.json,
+  add CI workflow, fix README links/TBD count/status, re-sync INDEX.md
+  (now 9 files stale), add `.pi-subagents/` to .gitignore.
+- Eval layer (output + trajectory rubrics) accepted as gap, deferred
+  Phase 4+.
 
 ---
 
