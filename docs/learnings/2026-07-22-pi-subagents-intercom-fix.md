@@ -41,6 +41,26 @@
   `pi-intercom@^0.6.0` declared, reviewer.md allowlist satisfied.
   Verdict: FIXED.
 
+## Retracted diagnosis (2026-07-22, later same session)
+
+A separate background subagent failure (scout dispatch) was initially
+misdiagnosed as a `typebox/compile` import breakage: `structured-output.ts:4`
+imports `import { Compile } from "typebox/compile"`, and `ls typebox/` showed
+no `compile/` directory. **This diagnosis was wrong.** `typebox@1.3.6` resolves
+`./compile` via `package.json` `exports` maps to `build/compile/index.mjs`, not
+a directory. Runtime verification:
+
+```
+$ cd ~/.pi/agent/npm && node -e "import('typebox/compile').then(m=>console.log(typeof m.Compile))"
+function
+```
+
+A trivial async background subagent run subsequently completed successfully.
+The original scout failure had a different, undetermined cause (possibly
+transient). Lesson: do not infer a runtime failure from a directory listing;
+run the import/repro before claiming breakage. No typebox learning log or
+upstream issue was filed, because the premise was refuted.
+
 ## Residual risks
 
 - If pi-intercom fails to load at runtime (peer dep or init error), the same
