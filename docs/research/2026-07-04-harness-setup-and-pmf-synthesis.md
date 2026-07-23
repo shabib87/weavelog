@@ -367,6 +367,10 @@ credibility + audience + patterns are the moat.
 
 ## 9. Tooling stack (verified)
 
+> **Superseded for current state.** This table is the 2026-07-04 system-stack
+> snapshot. For the current `~/.pi/agent/` harness inventory (extensions, npm
+> packages, settings), see `docs/pi-workspace/2026-07-07-author-setup.md`.
+
 | Tool | Version | Role | Discipline | Status |
 |---|---|---|---|---|
 | Pi | 0.80.3 | Agent host | Harness | ✅ Running |

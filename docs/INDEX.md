@@ -51,6 +51,7 @@
 |---|---|---|---|---|---|
 | `research/RESEARCH.md` | Provenance | WHY behind every design decision, source-by-source | On unfamiliar territory | 241 | 2026-07-22 |
 | `adr/0001-loopeng-architecture-decisions.md` | ADR | Architecture decisions (monolithic — needs splitting) | On design changes | 303 | 2026-07-08 |
+| `adr/0002-bash-homebrew-tooling.md` | ADR | Bash/Homebrew decision (RESOLVED: TypeScript only) | On distribution/language | 49 | 2026-07-22 |
 
 ---
 
@@ -101,7 +102,8 @@ Each captures what went wrong, root cause, and blog candidate.
 | `learnings/2026-07-07-pi-footer-redesign-and-theme.md` | Pi footer redesign + loopeng-dark theme | On author workspace | 93 |
 | `learnings/2026-07-08-scope-refinement-and-yak-shaving-research.md` | 1.99a scope refinement session | On scope decisions | 197 |
 | `learnings/2026-07-22-moe-orchestration-audit.md` | MoE fanout audit — repo state, pi-subagents gaps, roster decision | On audit findings | 95 |
-| `learnings/2026-07-22-pi-subagents-intercom-fix.md` | pi-intercom install fixes reviewer intercom tool; model override gotcha | On subagent setup | 57 |
+| `learnings/2026-07-22-pi-web-access-install.md` | pi-web-access install decision, source review, Exa egress scope | On web-search tooling | 60 |
+| `learnings/2026-07-22-pi-subagents-intercom-fix.md` | pi-intercom install fixes reviewer intercom tool; model override gotcha; typebox/compile retraction | On subagent setup | 74 |
 | `learnings/2026-07-22-chain-1-gate-realism-telemetry.md` | Chain 0/1 telemetry, supply-chain checklist, process learnings | On MoE chain execution | 77 |
 | `learnings/2026-07-22-addy-osmani-loop-engineering-alignment.md` | Osmani series alignment (secondhand synthesis; see research amendment) | On Osmani alignment | 162 |
 
@@ -122,7 +124,6 @@ Each file = one unresolved question blocking progress.
 
 | File | Topic | Severity | When | LOC |
 |---|---|---|---|---|
-| `tbd/bash-homebrew-tooling.md` | How to ship loopeng (npm vs Homebrew) | Medium | On distribution | 49 |
 | `tbd/ci-cd-strategy.md` | CI/CD pipeline design | Medium | On automation | 61 |
 | `tbd/cost-ceiling.md` | Per-workload cost limits | Low | On budget design | 49 |
 | `tbd/open-blindspots-index.md` | Master list of all known blind spots | Medium | On design reviews | 96 |

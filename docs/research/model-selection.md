@@ -6,8 +6,12 @@
 > **Cross-referenced against:** `docs/NORTH_STAR.md`, `docs/research/RESEARCH.md`
 > **Data source:** OpenRouter live API (`https://openrouter.ai/api/v1/models`)
 > **Benchmarks:** Artificial Analysis indices + Design Arena (agent + model categories)
-> **Verification model:** GLM 5.2 (open-weight). Frontier models used only where
->   the cost/quality gap is demonstrably worth it.
+> **Default model amendment (2026-07-22):** The live default model is now
+>   `moonshotai/kimi-k3` (see `~/.pi/agent/settings.json`), not GLM 5.2. The
+>   tier framing below (`glm-5-2-default` as "the one you fall back to") is
+>   the 2026-07-05 baseline; see `~/.pi/agent/models.md` for the current
+>   default-vs-advisor split. GLM 5.2 remains a valid primary-tier model; it
+>   is no longer the implicit daily driver.
 > **Verified by:** Live API query 2026-07-05T00:00Z. Full red team analysis.
 >   Corrections: GLM 5.2 cost ($0.57/$1.80 vs documented $0.91/$2.86),
 >   DeepSeek V4 Pro as Verifier (Code) IS justified (diversity > capability parity).

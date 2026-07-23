@@ -1,12 +1,62 @@
 # Author's Pi Workspace Setup
 
-This documents the private Pi workspace configuration used by the loopeng author. These files live in `~/.pi/agent/`, not in the loopeng repo.
+> **Snapshot as of 2026-07-22.** This is a hand-maintained inventory of the
+> author's private Pi harness under `~/.pi/agent/`. It will drift. Verify
+> against the live directory before relying on it. The durable, machine-checked
+> version of this is the planned `loopeng check` command (Phase 4); until then,
+> treat this as a dated snapshot, not a permanent source of truth.
 
-## Files
+This documents the private Pi workspace configuration used by the loopeng author.
+These files live in `~/.pi/agent/`, not in the loopeng repo.
 
-- `~/.pi/agent/themes/loopeng-dark.json` — custom Pi theme
-- `~/.pi/agent/extensions/footer.ts` — four-line footer extension
-- `~/.pi/agent/settings.json` — Pi settings, including `"theme": "loopeng-dark"`
+## Local extensions (`~/.pi/agent/extensions/`)
+
+- `footer.ts` — four-line footer (session identity, model/runtime, token flow,
+  cost/context/extension statuses). Spec: `docs/superpowers/specs/2026-07-07-loopeng-footer-theme-design.md`.
+- `herdr-agent-state.ts` — bridges Pi agent state (working/blocked/idle) to the
+  herdr pane manager over a Unix socket. Installed by herdr; managed file.
+- `session-logger.ts` — session-quality telemetry. Schema designed; runtime
+  dogfood gate pending. See `docs/learnings/2026-07-05-session-logger-*.md`.
+
+## Packages (`~/.pi/agent/npm/` + `settings.json` `packages[]`)
+
+Five npm packages and one git package:
+
+| Package | Version | Source | Notes |
+|---|---|---|---|
+| `pi-subagents` | ^0.35.1 | `npm:pi-subagents` | Subagent delegation (single/chain/parallel/async). Companion to pi-intercom. |
+| `pi-intercom` | ^0.6.0 | `npm:pi-intercom` | Supervisor bridge for pi-subagents. See `docs/learnings/2026-07-22-pi-subagents-intercom-fix.md`. |
+| `pi-diff-review` | ^0.1.26 | `npm:pi-diff-review` | Diff review. |
+| `pi-web-access` | ^0.13.0 | `npm:pi-web-access` | `web_search` + `fetch_content` tools. Installed 2026-07-22. See `docs/learnings/2026-07-22-pi-web-access-install.md`. |
+| `@ryan_nookpi/pi-extension-headroom` | ^0.1.5 | `npm:@ryan_nookpi/pi-extension-headroom` | Context compression. **Deprecated** per package README (npm registry `deprecated` field is NOT set). Headroom proxy itself is separate; see below. |
+| `superpowers` | git main | `git:github.com/obra/superpowers` | Skills framework (brainstorming, TDD, debugging, plans, etc.). Not npm. |
+
+## Settings highlights (`~/.pi/agent/settings.json`)
+
+- `defaultModel`: `moonshotai/kimi-k3` (changed from `z-ai/glm-5.2` on
+  2026-07-22; see `docs/research/model-selection.md` and `~/.pi/agent/models.md`)
+- `defaultProvider`: `openrouter`
+- `defaultThinkingLevel`: `high`
+- `enabledModels`: `z-ai/glm-5.2`, `moonshotai/kimi-k3`, `deepseek/deepseek-v4-pro`,
+  `deepseek/deepseek-v4-flash`, `moonshotai/kimi-k2.7-code`, `openai/gpt-5.5`,
+  `anthropic/claude-fable-5`
+- `compaction`: enabled, reserveTokens 16384, keepRecentTokens 20000
+- `retry`: enabled, maxRetries 3
+- `quietStartup`: false
+- `theme`: `loopeng-dark`
+
+## State files and directories (`~/.pi/agent/`)
+
+- `AGENTS.md` — global agent constitution (loaded first by Pi; applies to every
+  project unless a project-root AGENTS.md overrides).
+- `intercom/` — pi-intercom broker runtime state (`broker.pid`, `broker.sock`).
+  Populated when a subagent session is active.
+- `run-history.jsonl` — subagent run log (agent, task, status, duration).
+- `models.md` — model registry (codex profile naming, tier framing,
+  default-vs-advisor split). Updated 2026-07-22.
+- `models-store.json` — cached model catalog from OpenRouter live API.
+- `themes/loopeng-dark.json` — custom theme (see below).
+- `bin/`, `skills/`, `sessions/` — standard Pi runtime dirs.
 
 ## loopeng-dark theme
 
@@ -29,6 +79,15 @@ Four lines:
 3. Token flow: input, output, cache-read, cache-hit rate
 4. Cost/pressure/extensions: cost, context usage, extension statuses
 
+## System stack (external to `~/.pi/agent/`)
+
+For the broader system stack (Pi host, headroom proxy, markitdown, codex), see
+`docs/research/2026-07-04-harness-setup-and-pmf-synthesis.md` §9. Headroom
+proxy runs launchd-managed as `com.headroom.proxy` on port 8788
+(`--memory --memory-storage project --learn`), separate from the deprecated
+npm extension above.
+
 ## Future
 
-This setup may become a distributable Pi package when loopeng is ready to offer it to users. Until then, it is author-only configuration.
+This setup may become a distributable Pi package when loopeng is ready to offer
+it to users. Until then, it is author-only configuration.

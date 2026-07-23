@@ -1,5 +1,12 @@
 # Codex CLI Update + Headroom Persistence Plan
 
+> **Stale plan artifact (verified 2026-07-22).** The final deployed state is:
+> launchd-managed headroom proxy on port **8788** (not 8787 as planned
+> below), running as `com.headroom.proxy` with `--memory --memory-storage
+> project --learn` flags. Read this doc as historical plan/provenance, not
+> current state. Current harness state lives in
+> `docs/pi-workspace/2026-07-07-author-setup.md`.
+
 > **For agentic workers:** Execute inline in this session.
 
 **Goal:** Reinstall Codex CLI via official method, wire it through Headroom to OpenRouter, and make Headroom survive restarts for codex, pi, and claude.

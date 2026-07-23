@@ -1,6 +1,6 @@
 # Progress
 
-> **Status:** Constitution complete (DRY + global Pi AGENTS.md + codex AGENTS.md). PRODUCT.md created. 5 insights tracked. 3 pending decisions. Author's Pi workspace polished (loopeng-dark theme + four-line footer). Ready for Phase 2 global setup (1.95 gate realism DONE 2026-07-22).
+> **Status:** Constitution complete (DRY + global Pi AGENTS.md + codex AGENTS.md). PRODUCT.md created. 5 insights tracked. 3 pending decisions. Author's Pi workspace fully inventoried (see `docs/pi-workspace/2026-07-07-author-setup.md`). Ready for Phase 2 global setup (1.95 gate realism DONE 2026-07-22).
 > **Active phase:** 2 — Global setup (unblocked by 1.95)
 > **Last updated:** 2026-07-22 (Phase 1.95 complete: toolchain, biome, CI, README)
 
@@ -92,6 +92,39 @@ NEXT_SESSION repointed to Phase 1.95; INDEX re-synced (45 docs).
   (now 9 files stale), add `.pi-subagents/` to .gitignore.
 - Eval layer (output + trajectory rubrics) accepted as gap, deferred
   Phase 4+.
+
+## 2026-07-22 — Tooling-doc recon + pi-web-access install
+
+**Session:** 2026-07-22 (conductor: Kimi K3; red-team reviewer: Kimi K3, fresh
+context, two rounds).
+**Scope:** Inventory and reconcile tooling documentation against the live
+`~/.pi/agent/` harness state. Install a web-search tool for the repo.
+
+**Work done:**
+- Installed `pi-web-access@^0.13.0` (npm) — `web_search` + `fetch_content`
+  tools. Source-reviewed before install; zero-config Exa MCP egress documented.
+  Decision log: `docs/learnings/2026-07-22-pi-web-access-install.md`.
+- Reconciled `docs/pi-workspace/2026-07-07-author-setup.md` against live
+  harness: now lists 5 npm + 1 git packages, 3 local extensions, state files,
+  settings highlights (kimi-k3 default). Dated snapshot disclaimer added.
+- G5 fix: `docs/research/model-selection.md` amended — GLM 5.2 no longer the
+  implicit default; live default is `moonshotai/kimi-k3`.
+- Stale banners added: `codex-headroom-setup.md` (final state: launchd
+  8788, not 8787), `harness-setup §9` (superseded pointer to author-setup.md).
+- Moved `docs/tbd/bash-homebrew-tooling.md` → `docs/adr/0002-bash-homebrew-tooling.md`
+  (RESOLVED docs violate the tbd/ contract).
+- Retracted false `typebox/compile` breakage diagnosis; appended retraction
+  to `docs/learnings/2026-07-22-pi-subagents-intercom-fix.md`. The import
+  resolves via `package.json` exports; trivial async subagent run confirmed
+  working.
+- INDEX.md re-synced (new learning log, new ADR, tbd/ entry removed).
+
+**Process note (evidence-before-claims):** Two false diagnoses were made and
+caught by red-teaming — first that headroom was not launchd-managed (it is:
+`launchctl list` shows `com.headroom.proxy`), second that `typebox/compile`
+was a missing module (it resolves via subpath exports). Both errors came from
+treating a filesystem listing as proof of a runtime failure. Lesson recorded:
+run the import/repro before claiming breakage.
 
 ---
 
