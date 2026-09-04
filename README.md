@@ -1,12 +1,12 @@
-# loopeng
+# flightlead
 
-> Deterministic, human-verified agentic loops on Pi. Bootstrap any project as
-> a self-contained workspace where agents spec, implement, and verify — you
-> only review the diffs.
+> The inner harness: agent work you can audit. Deterministic, human-verified
+> agentic loops on Pi. Bootstrap any project as a self-contained workspace
+> where agents spec, implement, and verify — you only review the diffs.
 
-**Status:** Phase 1.95 — gate realism. Spec, ADR, and provenance complete; CLI scaffolded as a stub (`src/cli/index.ts`); full `loopeng init` / `check` / `plugin add` ship in Phase 4.
+**Status:** Phase 1.95 — gate realism. Spec, ADR, and provenance complete; CLI scaffolded as a stub (`src/cli/index.ts`); full `flightlead init` / `check` / `plugin add` ship in Phase 4. Formerly codenamed *loopeng*.
 
-loopeng turns any project into a self-contained agentic workspace. A
+flightlead turns any project into a self-contained agentic workspace. A
 pre-defined agent team runs an end-to-end loop — spec, implement, verify,
 document — with the human in the loop only for verification. Built on
 [Pi](https://pi.dev), [OpenRouter](https://openrouter.ai), and
@@ -14,14 +14,14 @@ document — with the human in the loop only for verification. Built on
 
 ## Quickstart
 
-> loopeng is not yet usable. This is the planned quickstart for v1.
+> flightlead is not yet usable. This is the planned quickstart for v1.
 
 ```bash
 # 1. Verify your machine
-loopeng check
+flightlead check
 
 # 2. Initialize a workspace
-loopeng init ./my-project --mode software
+flightlead init ./my-project --mode software
 
 # 3. Start the loop
 cd ./my-project

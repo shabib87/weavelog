@@ -5,9 +5,9 @@ const args = process.argv.slice(2);
 if (args.length === 0 || args[0] === "--help" || args[0] === "-h") {
 	console.log(
 		`
-Usage: loopeng <command> [options]
+Usage: flightlead <command> [options]
 
-loopeng is in development. Commands will ship in Phase 4.
+flightlead is in development. Commands will ship in Phase 4.
 
 Planned commands:
   stats  Show session usage statistics from .pi/logs/*.stats.json
@@ -21,5 +21,5 @@ See docs/PROGRESS.md for phase status.
 }
 
 console.error(`Unknown command: ${args[0]}`);
-console.error("Run 'loopeng --help' for usage");
+console.error("Run 'flightlead --help' for usage");
 process.exit(1);

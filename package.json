@@ -1,10 +1,10 @@
 {
-	"name": "loopeng",
+	"name": "flightlead",
 	"version": "0.1.0",
-	"description": "Deterministic, human-verified agentic loops on Pi",
+	"description": "The inner harness: agent work you can audit",
 	"type": "module",
 	"bin": {
-		"loopeng": "./src/cli/index.ts"
+		"flightlead": "./src/cli/index.ts"
 	},
 	"files": [
 		"src/"
