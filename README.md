@@ -1,63 +1,132 @@
 # flightlead
 
-> The inner harness: agent work you can audit. Deterministic, human-verified
-> agentic loops on Pi. Bootstrap any project as a self-contained workspace
-> where agents spec, implement, and verify — you only review the diffs.
-
-**Status:** Phase 1.95 — gate realism. Spec, ADR, and provenance complete; CLI scaffolded as a stub (`src/cli/index.ts`); full `flightlead init` / `check` / `plugin add` ship in Phase 4. Formerly codenamed *loopeng*.
-
-flightlead turns any project into a self-contained agentic workspace. A
-pre-defined agent team runs an end-to-end loop — spec, implement, verify,
-document — with the human in the loop only for verification. Built on
-[Pi](https://pi.dev), [OpenRouter](https://openrouter.ai), and
-[Headroom](https://github.com/chopratejas/headroom).
-
-## Quickstart
-
-> flightlead is not yet usable. This is the planned quickstart for v1.
-
-```bash
-# 1. Verify your machine
-flightlead check
-
-# 2. Initialize a workspace
-flightlead init ./my-project --mode software
-
-# 3. Start the loop
-cd ./my-project
-pi
-/run feature "add user login"
+```
+  ______ _ _           _                   _ _
+ |  ____| (_)         | |                 | | |
+ | |__  | |_ _ __  ___| |_ ___  _   _  ___| | |
+ |  __| | | | '_ \/ __| __/ _ \| | | |/ _ \ | |
+ | |    | | | |_) \__ \ || (_) | |_| |  __/ | |
+ |_|    |_|_| .__/|___/\__\___/ \__, |\___|_|_|
+            | |                  | |
+            |_|                  |_|
 ```
 
-## Documentation
+> The inner harness: agent work you can audit.
+
+A deterministic CLI that composes an opinionated, evidence-grade agentic
+developer-experience stack on open standards. It installs the toolchain,
+materializes agent configs, runs deterministic gates, and records every
+decision in an append-only ledger — so agent work can be audited, not
+trusted.
+
+**Status: v0.1.0 — works on the author's machine; the stranger test is the
+product.** arm64 macOS only. Not yet published.
+
+## What this is
+
+flightlead composes a stack — opencode first, then pi, Claude Code, Codex —
+and wraps it in gates:
+
+- **Setup:** `flightlead init` installs opinionated deps and materializes
+  `~/.agents/*` + `~/.config/opencode/*`. Two-step user-modification flow.
+  Never silently overwrites managed files.
+- **Verify:** `flightlead check` runs deterministic gates — tests, lint,
+  typecheck, semgrep (telemetry off, pinned rulesets), secrets, frontmatter,
+  manifest completeness.
+- **Audit:** `flightlead doctor` verifies the stack; every command appends to
+  an append-only JSONL ledger. Zero silent failure: refusal = log line +
+  non-zero exit.
+- **Scaffold:** `flightlead scaffold --project` turns a repo into an agentic
+  workspace: backlog, AGENTS.md, docs/research, ADRs.
+
+Agents spec, implement, verify, and document. The human directs (conductor,
+one-question-at-a-time dialogue) and verifies (plan and merge gates).
+
+## What this is not
+
+- Not a new agent host. Hosts are composed, not built.
+- Not unattended. v1 is human-gated at the plan and merge gates.
+- Not a hosted product. Local CLI, local state, works offline.
+- Not vendor-locked. Open-weights primary; frontier models are targeted
+  escalation. Subscription-mode hosts (Claude Code, Codex) degrade to
+  single-provider tiering — documented, not hidden.
+- Not accepting PRs in v1. Issues welcome. See `CONTRIBUTING.md`.
+
+## Principles
+
+YAGNI, SOLID, KISS, DRY · TDD, small ships, clean conventional commits ·
+maker/checker split, the same agent never grades its own work · security
+woven in · evidence over claims (gate receipts, run ledger, dated research
+corpus) · open standards (AGENTS.md, Agent Skills) · composition over
+invention, with attribution · local-first · terminal-native · TypeScript
+only, no bash for logic · arm64 macOS v1 · zero silent failure.
+
+Full anchor: [`docs/NORTH_STAR.md`](docs/NORTH_STAR.md).
+
+## Moat
+
+The scaffold is replicable — that's the point; it's the wedge. The durable
+layer is the evidence-grade audit trail: gate receipts, the JSONL run
+ledger, and a dated research corpus. NIST AI RMF and the EU AI Act create
+real demand for exactly that. The corpus compounds; competitors start at
+zero. CLI code, opinions, and process hygiene alone are not moats.
+Full argument: [`docs/PRODUCT.md`](docs/PRODUCT.md).
+
+## Who it's for
+
+Principal/senior engineers who want disciplined, auditable agentic loops on
+macOS + terminal and share the YAGNI/TDD/maker-checker philosophy. Not
+junior developers (too opinionated). Not enterprise (no SSO/rbac/audit).
+
+## Quickstart (the stranger test)
+
+```bash
+# 1. Install (npm at 0.1.0; brew tap at 0.2+)
+npm i -g flightlead
+
+# 2. Install deps + materialize configs (asks before every write)
+flightlead init
+
+# 3. Verify the stack — all subchecks green
+flightlead doctor
+
+# 4. Scaffold a project workspace
+flightlead scaffold --project ./my-project
+
+# 5. Run the loop in your agent host
+cd ./my-project
+```
+
+Requirements: arm64 macOS, node, git. Models are opinionated defaults;
+`init` asks and flags override. Full command spec:
+[`docs/cli.md`](docs/cli.md).
+
+## Roadmap ladder
+
+| Version | Host | Gate to next |
+|---|---|---|
+| v0.1.0 | opencode | stranger test green + npm publish (this release) |
+| v0.2 | pi + plugin system | brew tap |
+| v0.3 | Claude Code | subscription-mode tiering shipped |
+| v0.4 | Codex | stranger test green |
+| v1.0 | all hosts | + public evidence corpus |
+
+Details: [`docs/ROADMAP.md`](docs/ROADMAP.md).
+
+## Docs map
 
 | Doc | Purpose |
 |---|---|
-| [`docs/NORTH_STAR.md`](docs/NORTH_STAR.md) | What we build — the anchor |
-| [`docs/PRODUCT.md`](docs/PRODUCT.md) | Product strategy, moat, PMF |
-| [`docs/ROADMAP.md`](docs/ROADMAP.md) | Version milestones, release plan |
-| [`docs/PROGRESS.md`](docs/PROGRESS.md) | Phase tracker — where we are |
-| [`docs/NEXT_SESSION.md`](docs/NEXT_SESSION.md) | Narrative handoff |
-| [`docs/INDEX.md`](docs/INDEX.md) | Document navigation map |
-| [`docs/research/RESEARCH.md`](docs/research/RESEARCH.md) | Why we build it this way — provenance |
-| [`docs/adr/0001-loopeng-architecture-decisions.md`](docs/adr/0001-loopeng-architecture-decisions.md) | Architecture decision record |
-| [`docs/specs/2026-06-28-loopeng-design.md`](docs/specs/2026-06-28-loopeng-design.md) | Detailed design |
-| [`docs/tbd/`](docs/tbd/) | Open questions (6 open, 1 resolved of 7) |
-| [`docs/archive/`](docs/archive/) | Superseded research — **do not use** |
+| [`docs/NORTH_STAR.md`](docs/NORTH_STAR.md) | The anchor — non-negotiables |
+| [`docs/PRODUCT.md`](docs/PRODUCT.md) | Product strategy, moat, PMF, landscape |
+| [`docs/ROADMAP.md`](docs/ROADMAP.md) | Milestone ladder |
+| [`docs/cli.md`](docs/cli.md) | CLI spec — commands, exit codes, ledger |
+| [`ATTRIBUTION.md`](ATTRIBUTION.md) | Lineage — what came from where |
+| [`docs/specs/`](docs/specs/) | Ratified briefs |
 
-## Tech Stack
+## License & attribution
 
-| Component | Choice |
-|---|---|
-| Language | TypeScript only (CLI + Pi extension) |
-| Runtime | Node.js (`node --import tsx`) |
-| Test | `node --import tsx --test` |
-| Lint/Format | biome |
-| Typecheck | `tsc --noEmit` |
-| CI | GitHub Actions (`ubuntu-latest`) |
-| Distribution | npm primary, Homebrew wraps npm (resolved — [`docs/tbd/bash-homebrew-tooling.md`](docs/tbd/bash-homebrew-tooling.md)) |
-| Platform | macOS v1 |
+Code: Apache-2.0 ([`LICENSE`](LICENSE), see [`NOTICE`](NOTICE)). Lineage and
+inspired-by: [`ATTRIBUTION.md`](ATTRIBUTION.md).
 
-## License
-
-MIT — see [LICENSE](LICENSE).
+flightlead name/logo © Shabib Hossain — not covered by the code license.
