@@ -17,15 +17,13 @@ names; symlinked third-party skills keep their upstream names).
 | addyosmani/agent-skills (© 2025 Addy Osmani) | MIT | review depth/sizing → reviewer; LLM-security → security; contract discipline + collision evals → skill-spec; doubt-driven adversarial framing |
 | DietrichGebert/ponytail (© 2026 DietrichGebert) | MIT | YAGNI ladder → implementer; canary-invariants technique |
 | third-party symlinks | own terms | diagram-design, tldraw-offline — un-prefixed, canonical copies outside the repo |
-| public concept-derived (CompositionalHQ/awesome-claude-skills curation, 2025-10, author unattributable) | text MIT | as-content-research-writer (text from-scratch, concept derived) |
+| public concept-derived (ComposioHQ/awesome-claude-skills curation, 2025-10, author unattributable) | text MIT | as-content-research-writer (text from-scratch, concept derived) |
 | harness-original (this project) | Apache-2.0 | in-my-voice, prompt-triage, remove-ai-slop, simplify-language, tool-selection-rubric, verify-with-criteria, binary-doc-conversion; skill-spec core (addy distills credited in its frontmatter) |
 
-<!-- REVIEWER: decision needed — harness-original skills were MIT in the
-author instance; shipping under Apache-2.0 (per the ratified license
-decision) changes their license. Confirm the relicense intent. -->
-
-<!-- REVIEWER: decision needed — CompositionalHQ vs ComposioHQ naming: the
-instance README says ComposioHQ; verify before public flip. -->
+Relicense note: harness-original skills were MIT in the author instance
+pre-v0.1.0; from v0.1.0 they ship under Apache-2.0 (ratified license
+decision, `docs/specs/2026-09-05-v010-draft-brief.md`). Ported skill
+frontmatter carries the updated `license:` field.
 
 ## Tool lineage
 
@@ -37,9 +35,9 @@ bundled that forbids it.
 | backlog.md | MIT | installed dep — task/project management |
 | difit | MIT | installed dep — diff review |
 | markitdown | MIT | installed dep — document ingestion |
-| headroom (proxy) | <!-- REVIEWER: decision needed — license not recorded in brief --> | installed dep — compression proxy, model routing |
-| opencode | <!-- REVIEWER: decision needed — license not recorded in brief --> | composed host (v0.1) |
-| pi | <!-- REVIEWER: decision needed — license not recorded in brief --> | composed host (v0.2) |
+| headroom (proxy) | Apache-2.0 | installed dep — compression proxy, model routing |
+| opencode | MIT | composed host (v0.1) |
+| pi | MIT | composed host (v0.2) |
 | semgrep | LGPL-2.1 | **INVOKED-NOT-BUNDLED** — invoked as a pinned external binary, never linked or distributed with flightlead |
 
 ## Inspired by
