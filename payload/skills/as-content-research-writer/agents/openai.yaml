@@ -1,0 +1,7 @@
+interface:
+  display_name: "Content Research Writer"
+  short_description: "Research, structure, and revise existing drafts"
+  default_prompt: "Use $as-content-research-writer to research, strengthen, or revise this outline, draft, or section."
+
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "harness": "opencode",
+  "liveRoot": "~/.config/opencode",
+  "trackedRoot": ".",
+  "files": {
+    "AGENTS.md": "AGENTS.md",
+    "opencode.jsonc": "config/opencode.jsonc",
+    "agents/diff-reviewer-deepseek.md": "config/agents/diff-reviewer-deepseek.md",
+    "agents/diff-reviewer-glm.md": "config/agents/diff-reviewer-glm.md",
+    "agents/diff-reviewer-kimi.md": "config/agents/diff-reviewer-kimi.md",
+    "agents/diff-reviewer-qwen.md": "config/agents/diff-reviewer-qwen.md",
+    "agents/implementer.md": "config/agents/implementer.md",
+    "agents/plan-gate-deepseek.md": "config/agents/plan-gate-deepseek.md",
+    "agents/plan-gate-glm.md": "config/agents/plan-gate-glm.md",
+    "agents/plan-gate-kimi.md": "config/agents/plan-gate-kimi.md",
+    "agents/plan-gate-qwen.md": "config/agents/plan-gate-qwen.md",
+    "agents/qa.md": "config/agents/qa.md",
+    "agents/researcher.md": "config/agents/researcher.md",
+    "agents/scout.md": "config/agents/scout.md",
+    "agents/security.md": "config/agents/security.md",
+    "agents/vision-deepseek.md": "config/agents/vision-deepseek.md",
+    "agents/vision-kimi.md": "config/agents/vision-kimi.md",
+    "agents/vision-minimax.md": "config/agents/vision-minimax.md",
+    "prompts/plan-reviewer.md": "config/prompts/plan-reviewer.md",
+    "prompts/reviewer.md": "config/prompts/reviewer.md",
+    "prompts/vision.md": "config/prompts/vision.md"
+  },
+  "exclusions": [
+    "secrets/",
+    "node_modules/"
+  ],
+  "pluginsDeferral": true,
+  "hashSemantics": "sha256 of the bytes written to live (see config-sync --help)"
+}

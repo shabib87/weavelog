@@ -1,0 +1,109 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  // All model traffic routes through the local Headroom compression proxy
+  // (launchd: com.headroom.proxy, backend=openrouter, upstream openrouter.ai).
+  // See ~/.agents/AGENT-STACK-RUNBOOK.md for rollback and validation.
+  "provider": {
+    "openrouter": {
+      "options": {
+        "baseURL": "http://localhost:8788/v1",
+        // Ensure a cache key is always set -> OpenRouter session-pinned routing
+        "setCacheKey": true
+      },
+      "models": {
+        // qwen3.8 is 1M only on some OpenRouter providers; pin to the 1M ones
+        "qwen/qwen3.8-2.4t-a95b": {
+          "options": {
+            "provider": {
+              "order": ["SiliconFlow", "Modal", "Alibaba"]
+            }
+          }
+        },
+        // minimax-m3 is vision-capable but opencode defaults image input to
+        // false without an explicit modalities declaration (no models.dev entry).
+        "minimax/minimax-m3": {
+          "modalities": { "input": ["text", "image", "video"], "output": ["text"] }
+        },
+        // kimi-k3 same issue: no models.dev image-input entry, so declare it.
+        "moonshotai/kimi-k3": {
+          "modalities": { "input": ["text", "image", "video"], "output": ["text"] }
+        },
+        // glm-5.3-flash is native multimodal (text+image+video); opencode defaults
+        // image input to false without an explicit modalities declaration.
+        "z-ai/glm-5.3-flash": {
+          "modalities": { "input": ["text", "image", "video"], "output": ["text"] }
+        }
+      }
+    }
+  },
+  // Only OpenRouter is enabled; all other built-in providers are ignored.
+  "enabled_providers": ["openrouter"],
+  // 6-model roster (TASK-25, 2026-08-30): conductor glm-5.3-flash; bulk flash-0731.
+  // glm-5.2 retired (value trap). See docs/research/2026-08-30-model-redistribution-cost-quality.md
+  "model": "openrouter/z-ai/glm-5.3-flash",
+  "small_model": "openrouter/deepseek/deepseek-v4-flash-0731",
+  // superpowers plugin REMOVED 2026-08-16 (light-factory plan): 4 keeper skills
+  // ported to ~/.agents/skills/ (as-systematic-debugging, as-tdd,
+  // as-code-review, as-writing-skills). See docs/plans/2026-08-16-light-factory-plan.md
+  "mcp": {
+    "context7": {
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp",
+      "oauth": false,
+      "headers": { "CONTEXT7_API_KEY": "{file:./secrets/context7-key}" },
+      "enabled": true
+    },
+    "tavily": {
+      "type": "remote",
+      "url": "https://mcp.tavily.com/mcp/",
+      "oauth": false,
+      "headers": { "Authorization": "Bearer {file:./secrets/tavily-key}" },
+      "enabled": true
+    },
+    "semgrep": {
+      "type": "local",
+      "command": ["/opt/homebrew/bin/semgrep", "mcp"],
+      "enabled": true
+    },
+    "backlog": {
+      "type": "local",
+      // Task tracking ONLY (queue + kanban). CLI is the primary interface
+      // (see AGENTS.md "Task tracking"). MCP DISABLED 2026-08-29: the MCP
+      // pilot was never measured, 20 tool schemas tax the frozen prefix every
+      // request, and the MCP writes files directly (bypasses enforce.ts
+      // write-block). CLI via bash is the sole interface. Re-enable path:
+      // docs/research/2026-08-29-backlog-mcp-enforcement-bypass.md
+      "command": ["{env:HOME}/.bun/bin/backlog", "mcp", "start"],
+      "enabled": false
+    },
+    "headroom": {
+      "type": "local",
+      "command": ["{env:HOME}/.local/bin/headroom", "mcp", "serve"],
+      "enabled": true
+    },
+    "chrome-devtools": {
+      "type": "local",
+      // Enable only while a CDP session runs:
+      //   pnpm exec electron-vite dev -- --remote-debugging-port=9333
+      // npx path is pinned to node v22.23.1 (nvm) — update if you upgrade node.
+      "command": [
+        "{env:HOME}/.nvm/versions/node/v22.23.1/bin/npx",
+        "-y",
+        "chrome-devtools-mcp@latest",
+        "--browserUrl=http://[IP_ADDRESS]:9333"
+      ],
+      "enabled": false
+    },
+    "Astro docs": {
+      "type": "remote",
+      "url": "https://mcp.docs.astro.build/mcp",
+      "enabled": true
+    }
+  },
+  "permission": {
+    // Tavily free tier = 1k credits/month shared with mobile apps.
+    // Cheap ops (search/extract/map/crawl, 1-5 credits) self-serve; only research
+    // (4-250 credits, dynamic) is human-gated. researcher.md restates this policy.
+    "tavily_tavily_research*": "ask"
+  }
+}

@@ -33,3 +33,4 @@ docs/archive/reference-donot-git-commit-never/
 # flightlead state (never commit; lives in ~/.local/state/flightlead/)
 state/
 
+!.env.example

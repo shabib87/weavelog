@@ -1,0 +1,7 @@
+{
+	"name": "skill-spec-meta",
+	"private": true,
+	"scripts": {
+		"validate": "npx --yes skills-ref validate ."
+	}
+}
