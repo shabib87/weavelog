@@ -28,3 +28,8 @@ docs/archive/reference-donot-git-commit-never/
 # Environment
 .env
 .env.local
+.env.*
+
+# flightlead state (never commit; lives in ~/.local/state/flightlead/)
+state/
+
