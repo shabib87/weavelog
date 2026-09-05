@@ -17,4 +17,28 @@ jobs:
       - run: npm ci
       - run: npx biome check
       - run: npx tsc --noEmit
-      - run: node --import tsx --test "tests/**/*.test.ts"
+      - name: Tests (skip-when-absent)
+        run: |
+          if [ ! -d tests ]; then echo "SKIP: tests/ not present yet"; exit 0; fi
+          node --import tsx --test "tests/**/*.test.ts"
+      - name: Build dist (skip-when-absent)
+        run: |
+          if [ ! -f tsconfig.build.json ]; then echo "SKIP: tsconfig.build.json not present yet"; exit 0; fi
+          npm run build
+          test -f dist/cli/index.js
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: semgrep (telemetry off, pinned rulesets)
+        run: |
+          pipx install semgrep
+          semgrep scan --config p/default --metrics=off --error
+      - name: Skill frontmatter license/upstream check (skip-when-absent)
+        run: |
+          if [ ! -d payload/skills ]; then echo "SKIP: payload/skills not present yet"; exit 0; fi
+          missing=""
+          while IFS= read -r f; do
+            grep -q '^license:' "$f" || missing="$missing$f (license)\n"
+            grep -q '^upstream:' "$f" || missing="$missing$f (upstream)\n"
+          done < <(find payload/skills -name 'SKILL.md')
+          if [ -n "$missing" ]; then echo "Missing frontmatter fields:"; printf "$missing"; exit 1; fi
