@@ -51,7 +51,8 @@ alignment with Addy Osmani's loop-engineering series (addyosmani.com, June
 
 **Product attributes:**
 - **Local-first.** No account, no subscription, no cloud dependency. The
-  workspace and its state belong to the user. Works offline.
+  workspace and its state belong to the user. All network access is
+  explicit: package installs, model APIs, and security scans.
 - **Terminal-native.** No GUI app. The stack is opencode, lazygit, git-delta
   - all terminal tools. Designed for engineers who live in the terminal.
 - **Human directs and verifies.** The human runs the conductor role:

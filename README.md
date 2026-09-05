@@ -46,7 +46,9 @@ one-question-at-a-time dialogue) and verifies (plan and merge gates).
 
 - Not a new agent host. Hosts are composed, not built.
 - Not unattended. v1 is human-gated at the plan and merge gates.
-- Not a hosted product. Local CLI, local state, works offline.
+- Not a hosted product. Local CLI, local state. No account, no
+  cloud dependency; the only network use is package installs, model
+  APIs, and security scans.
 - Not vendor-locked. Open-weights primary; frontier models are targeted
   escalation. Subscription-mode hosts (Claude Code, Codex) degrade to
   single-provider tiering — documented, not hidden.
