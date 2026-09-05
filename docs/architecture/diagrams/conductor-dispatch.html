@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conductor dispatch — roles across phases</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper:   #f5f5f5;
+      --color-ink:     #2d3142;
+      --color-muted:   #4f5d75;
+      --color-accent:  #eb6c36;
+      --font-sans:     'Geist', system-ui, sans-serif;
+      --font-serif:    'Instrument Serif', serif;
+      --font-mono:     'Geist Mono', ui-monospace, monospace;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-paper);
+      color: var(--color-ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+    }
+    .frame { max-width: 1200px; width: 100%; }
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 2.4vw + 0.75rem, 2rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: var(--color-ink);
+      margin-bottom: 1.5rem;
+    }
+    svg { width: 100%; min-width: 900px; display: block; }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">Process · Diagram Design</p>
+    <h1>Conductor dispatch — which role acts in which phase</h1>
+
+    <svg viewBox="0 0 1064 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="conductordispatch-title conductordispatch-desc">
+      <title id="conductordispatch-title">Conductor dispatch across phases</title>
+      <desc id="conductordispatch-desc">Process diagram showing the conductor dispatching role agents across the WHY, WHAT, and HOW phases: scout and researcher in WHY, plan gates in WHAT, and implementer, reviewers, QA, and security in HOW, with subagents returning findings while only the conductor writes state.</desc>
+      <defs>
+        <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
+        <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#eb6c36"/></marker>
+        <marker id="arrow-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2e5aa8"/></marker>
+      </defs>
+
+      <rect width="100%" height="100%" fill="#f5f5f5"/>
+
+      <!-- Step columns: WHY(1) WHAT(2) HOW(3) -->
+      <!-- Step headers -->
+      <rect x="316" y="32" width="96" height="24" rx="2" fill="#ffffff" stroke="#2d3142" stroke-width="0.8"/>
+      <text x="364" y="48" fill="#2d3142" font-size="10" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.1em">1 · WHY</text>
+      <rect x="512" y="32" width="96" height="24" rx="2" fill="#ffffff" stroke="#2d3142" stroke-width="0.8"/>
+      <text x="560" y="48" fill="#2d3142" font-size="10" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.1em">2 · WHAT</text>
+      <rect x="708" y="32" width="96" height="24" rx="2" fill="#eb6c36" stroke="#eb6c36" stroke-width="0.8"/>
+      <text x="756" y="48" fill="#f5f5f5" font-size="10" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.1em">3 · HOW</text>
+
+      <!-- Arrows between step headers -->
+      <line x1="412" y1="44" x2="512" y2="44" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <line x1="608" y1="44" x2="708" y2="44" stroke="#eb6c36" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+
+      <!-- Lane labels -->
+      <text x="40" y="120" fill="#4f5d75" font-family="'Geist Mono',monospace" font-size="9" letter-spacing=".16em">CONDUCTOR</text>
+      <text x="364" y="76" fill="rgba(45,49,66,0.40)" font-family="'Geist Mono',monospace" font-size="7" letter-spacing=".14em" text-anchor="middle">INTAKE · RESEARCH</text>
+      <text x="560" y="76" fill="rgba(45,49,66,0.40)" font-family="'Geist Mono',monospace" font-size="7" letter-spacing=".14em" text-anchor="middle">SPEC · DIALOGUE</text>
+      <text x="756" y="76" fill="rgba(45,49,66,0.40)" font-family="'Geist Mono',monospace" font-size="7" letter-spacing=".14em" text-anchor="middle">PLAN · BUILD · VERIFY</text>
+
+      <text x="40" y="248" fill="#4f5d75" font-family="'Geist Mono',monospace" font-size="9" letter-spacing=".16em">EVIDENCE ROLES</text>
+      <text x="40" y="384" fill="#4f5d75" font-family="'Geist Mono',monospace" font-size="9" letter-spacing=".16em">GATE ROLES</text>
+      <text x="40" y="488" fill="#4f5d75" font-family="'Geist Mono',monospace" font-size="9" letter-spacing=".16em">BUILD ROLES</text>
+
+      <!-- Arrows: conductor dispatches (drawn before nodes) -->
+      <path d="M 340,140 V 172" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <path d="M 536,140 V 164 Q 536,172 528,172 H 468 Q 460,172 460,180 V 308 Q 460,316 468,316 H 508 Q 516,316 516,324" fill="none" stroke="#eb6c36" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+      <path d="M 340,348 V 380" fill="none" stroke="#eb6c36" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+      <path d="M 340,172 Q 340,180 348,180 H 704 Q 712,180 712,188 V 420" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <path d="M 740,140 Q 740,148 748,148 H 752 Q 760,148 760,156 V 420" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+      <!-- Dispatch labels -->
+      <rect x="288" y="148" width="56" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="316" y="157" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DISPATCH</text>
+      <rect x="700" y="256" width="64" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="732" y="265" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DISPATCH</text>
+      <rect x="288" y="360" width="56" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="316" y="369" fill="#eb6c36" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DISPATCH</text>
+      <rect x="468" y="288" width="56" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="496" y="297" fill="#eb6c36" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">DISPATCH</text>
+
+      <!-- CONDUCTOR row (single node spanning conceptually; drawn as one wide node) -->
+      <rect x="240" y="88" width="600" height="52" rx="6" fill="rgba(235,108,54,0.08)" stroke="#eb6c36" stroke-width="1"/>
+      <rect x="248" y="96" width="72" height="12" rx="2" fill="transparent" stroke="#eb6c36" stroke-width="0.8" opacity="0.55"/>
+      <text x="284" y="105" fill="#eb6c36" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FRONT DOOR</text>
+      <text x="540" y="120" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">conductor — the only writer of state; subagents return findings</text>
+
+      <!-- EVIDENCE ROLES row: scout (WHY), researcher (WHY) -->
+      <rect x="288" y="196" width="152" height="56" rx="6" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="0.8"/>
+      <text x="364" y="220" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">scout</text>
+      <text x="364" y="236" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">internal recon</text>
+
+      <rect x="480" y="196" width="152" height="56" rx="6" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="0.8"/>
+      <text x="556" y="220" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">researcher</text>
+      <text x="556" y="236" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">external · docs/research</text>
+
+      <!-- GATE ROLES row: plan-gates-x4 (WHAT), reviewers-x4 (HOW), qa+security (HOW) -->
+      <rect x="288" y="324" width="152" height="56" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="364" y="348" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">plan-gates ×4</text>
+      <text x="364" y="364" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">qwen·glm·kimi·deepseek</text>
+
+      <rect x="480" y="324" width="152" height="56" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="556" y="348" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">reviewers ×4</text>
+      <text x="556" y="364" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">cross-family · budget</text>
+
+      <rect x="672" y="324" width="152" height="56" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <text x="748" y="348" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">qa · security</text>
+      <text x="748" y="364" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">tests · semgrep</text>
+
+      <!-- BUILD ROLES row: implementer (HOW) -->
+      <rect x="672" y="420" width="152" height="56" rx="6" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="0.8"/>
+      <text x="748" y="444" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">implementer</text>
+      <text x="748" y="460" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">TDD red-first · bulk executor</text>
+
+      <!-- Return arrows (dashed, right-to-left: evidence flows back) -->
+      <path d="M 556,196 V 148" fill="none" stroke="#4f5d75" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+      <rect x="568" y="164" width="64" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="600" y="173" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FINDINGS</text>
+
+      <path d="M 824,448 H 1004 V 140 H 988" fill="none" stroke="#4f5d75" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+      <rect x="972" y="288" width="64" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="1004" y="279" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">EVIDENCE</text>
+
+      <path d="M 748,420 V 380" fill="none" stroke="#4f5d75" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+      <rect x="758" y="392" width="76" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="796" y="401" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">VERIFIED BY</text>
+
+      <!-- Legend -->
+      <line x1="32" y1="512" x2="1032" y2="512" stroke="rgba(45,49,66,0.10)" stroke-width="0.8"/>
+      <text x="32" y="532" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+      <rect x="132" y="522" width="12" height="12" rx="2" fill="rgba(235,108,54,0.08)" stroke="#eb6c36"/>
+      <text x="152" y="532" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace">CONDUCTOR (ONLY STATE WRITER)</text>
+      <rect x="404" y="522" width="12" height="12" rx="2" fill="#ffffff" stroke="#2d3142"/>
+      <text x="424" y="532" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace">GATE ROLES</text>
+      <rect x="556" y="522" width="12" height="12" rx="2" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="0.8"/>
+      <text x="576" y="532" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace">EVIDENCE / BUILD ROLES</text>
+      <line x1="764" y1="528" x2="804" y2="528" stroke="#4f5d75" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+      <text x="812" y="532" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace">RETURN PATH</text>
+    </svg>
+  </div>
+</body>
+</html>

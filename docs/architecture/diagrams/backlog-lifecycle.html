@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Backlog task lifecycle</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper:   #f5f5f5;
+      --color-ink:     #2d3142;
+      --color-muted:   #4f5d75;
+      --color-accent:  #eb6c36;
+      --font-sans:     'Geist', system-ui, sans-serif;
+      --font-serif:    'Instrument Serif', serif;
+      --font-mono:     'Geist Mono', ui-monospace, monospace;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-paper);
+      color: var(--color-ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+    }
+    .frame { max-width: 1200px; width: 100%; }
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 2.4vw + 0.75rem, 2rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: var(--color-ink);
+      margin-bottom: 1.5rem;
+    }
+    svg { width: 100%; min-width: 900px; display: block; }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">State machine · Diagram Design</p>
+    <h1>Backlog task lifecycle — states, gates, and field mapping</h1>
+
+    <svg viewBox="0 0 1000 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="backloglifecycle-title backloglifecycle-desc">
+      <title id="backloglifecycle-title">Backlog task lifecycle</title>
+      <desc id="backloglifecycle-desc">State machine showing a backlog task moving from To Do through In Progress and In Review to Done, with the plan-approval and merge-approval human gates on transitions and the backlog.md field that each stage writes.</desc>
+      <defs>
+        <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
+        <marker id="arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#eb6c36"/></marker>
+      </defs>
+
+      <rect width="100%" height="100%" fill="#f5f5f5"/>
+
+      <!-- Transitions (drawn first) -->
+      <!-- Start -> To Do -->
+      <line x1="72" y1="216" x2="96" y2="216" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <!-- To Do -> In Progress (spec + plan gates passed) -->
+      <line x1="248" y1="216" x2="320" y2="216" stroke="#eb6c36" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+      <!-- In Progress -> In Review (worktree + verify) -->
+      <line x1="472" y1="216" x2="544" y2="216" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <!-- In Review -> Done (merge approval) -->
+      <line x1="696" y1="216" x2="768" y2="216" stroke="#eb6c36" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+      <!-- In Review -> In Progress (kick back, dashed) -->
+      <path d="M 660,160 C 660,96, 396,96, 396,160" fill="none" stroke="#4f5d75" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+      <!-- Done -> end dot -->
+      <line x1="844" y1="264" x2="844" y2="316" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+      <!-- Transition labels -->
+      <rect x="252" y="196" width="64" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="284" y="205" fill="#eb6c36" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">APPROVE</text>
+
+      <rect x="476" y="196" width="64" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="508" y="205" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">VERDICT</text>
+
+      <rect x="700" y="196" width="64" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="732" y="205" fill="#eb6c36" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">MERGE OK</text>
+
+      <rect x="464" y="88" width="152" height="12" rx="2" fill="#f5f5f5"/>
+      <text x="540" y="97" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">KICK BACK + FEEDBACK</text>
+
+      <!-- Start dot -->
+      <circle cx="60" cy="216" r="6" fill="#2d3142"/>
+
+      <!-- State: To Do -->
+      <rect x="96" y="168" width="152" height="96" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <rect x="104" y="176" width="44" height="12" rx="2" fill="transparent" stroke="rgba(45,49,66,0.40)" stroke-width="0.8"/>
+      <text x="126" y="185" fill="#4f5d75" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STATE</text>
+      <text x="172" y="212" fill="#2d3142" font-size="14" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">To Do</text>
+      <text x="172" y="230" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">spec + ACs + deps</text>
+      <text x="172" y="246" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">description · --ac</text>
+
+      <!-- State: In Progress -->
+      <rect x="320" y="168" width="152" height="96" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <rect x="328" y="176" width="44" height="12" rx="2" fill="transparent" stroke="rgba(45,49,66,0.40)" stroke-width="0.8"/>
+      <text x="350" y="185" fill="#4f5d75" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STATE</text>
+      <text x="396" y="212" fill="#2d3142" font-size="14" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">In Progress</text>
+      <text x="396" y="230" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">worktree · implement · verify</text>
+      <text x="396" y="246" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">--plan · --append-notes</text>
+
+      <!-- State: In Review -->
+      <rect x="544" y="168" width="152" height="96" rx="8" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <rect x="552" y="176" width="44" height="12" rx="2" fill="transparent" stroke="rgba(45,49,66,0.40)" stroke-width="0.8"/>
+      <text x="574" y="185" fill="#4f5d75" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STATE</text>
+      <text x="620" y="212" fill="#2d3142" font-size="14" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">In Review</text>
+      <text x="620" y="230" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">diff review · HITL gate</text>
+      <text x="620" y="246" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">--comment · --check-ac</text>
+
+      <!-- State: Done (focal — happy completion) -->
+      <rect x="768" y="168" width="152" height="96" rx="8" fill="rgba(235,108,54,0.08)" stroke="#eb6c36" stroke-width="1"/>
+      <rect x="776" y="176" width="44" height="12" rx="2" fill="transparent" stroke="#eb6c36" stroke-width="0.8" opacity="0.55"/>
+      <text x="798" y="185" fill="#eb6c36" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">STATE</text>
+      <text x="844" y="212" fill="#2d3142" font-size="14" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Done</text>
+      <text x="844" y="230" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">merged · worktree freed</text>
+      <text x="844" y="246" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">--final-summary</text>
+
+      <!-- End dot (ringed) -->
+      <circle cx="844" cy="328" r="8" fill="none" stroke="#2d3142" stroke-width="1.2"/>
+      <circle cx="844" cy="328" r="5" fill="#2d3142"/>
+
+      <!-- Field-mapping strip (annotations, not nodes) -->
+      <line x1="60" y1="372" x2="940" y2="372" stroke="rgba(45,49,66,0.10)" stroke-width="0.8"/>
+      <text x="60" y="392" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">FIELD MAPPING — ONE BACKLOG.MD FIELD PER CONCERN, WRITTEN VIA CLI ONLY</text>
+      <text x="60" y="416" fill="#2d3142" font-size="11" font-family="'Geist', sans-serif">spec → description</text>
+      <text x="260" y="416" fill="#2d3142" font-size="11" font-family="'Geist', sans-serif">acceptance → --ac (EARS)</text>
+      <text x="470" y="416" fill="#2d3142" font-size="11" font-family="'Geist', sans-serif">plan → --plan</text>
+      <text x="640" y="416" fill="#2d3142" font-size="11" font-family="'Geist', sans-serif">progress → --append-notes</text>
+      <text x="60" y="440" fill="#2d3142" font-size="11" font-family="'Geist', sans-serif">review → --comment</text>
+      <text x="260" y="440" fill="#2d3142" font-size="11" font-family="'Geist', sans-serif">files → --modified-file</text>
+      <text x="470" y="440" fill="#2d3142" font-size="11" font-family="'Geist', sans-serif">proof → --check-ac (one at a time)</text>
+      <text x="640" y="440" fill="#2d3142" font-size="11" font-family="'Geist', sans-serif" font-weight="600">validation order: tests FIRST, then --check-ac</text>
+
+      <!-- Legend -->
+      <line x1="60" y1="472" x2="940" y2="472" stroke="rgba(45,49,66,0.10)" stroke-width="0.8"/>
+      <text x="60" y="492" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+      <line x1="150" y1="486" x2="190" y2="486" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#arrow)"/>
+      <text x="198" y="490" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace">TRANSITION</text>
+      <line x1="312" y1="486" x2="352" y2="486" stroke="#eb6c36" stroke-width="1.4" marker-end="url(#arrow-accent)"/>
+      <text x="360" y="490" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace">HUMAN GATE</text>
+      <line x1="500" y1="486" x2="540" y2="486" stroke="#4f5d75" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrow)"/>
+      <text x="548" y="490" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace">KICK BACK</text>
+      <circle cx="676" cy="486" r="5" fill="#2d3142"/>
+      <text x="692" y="490" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace">START</text>
+      <circle cx="768" cy="486" r="7" fill="none" stroke="#2d3142" stroke-width="1.2"/>
+      <circle cx="768" cy="486" r="4" fill="#2d3142"/>
+      <text x="786" y="490" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace">END</text>
+    </svg>
+  </div>
+</body>
+</html>

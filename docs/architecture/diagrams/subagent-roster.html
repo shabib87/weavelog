@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subagent roster — ownership map</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --color-paper:   #f5f5f5;
+      --color-ink:     #2d3142;
+      --color-muted:   #4f5d75;
+      --color-accent:  #eb6c36;
+      --font-sans:     'Geist', system-ui, sans-serif;
+      --font-serif:    'Instrument Serif', serif;
+      --font-mono:     'Geist Mono', ui-monospace, monospace;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-paper);
+      color: var(--color-ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+    }
+    .frame { max-width: 1200px; width: 100%; }
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-muted);
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-family: var(--font-serif);
+      font-size: clamp(1.5rem, 2.4vw + 0.75rem, 2rem);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: var(--color-ink);
+      margin-bottom: 1.5rem;
+    }
+    svg { width: 100%; min-width: 900px; display: block; }
+  </style>
+</head>
+<body>
+  <div class="frame">
+    <p class="eyebrow">Org chart · Diagram Design</p>
+    <h1>Subagent roster — 16 role agents + conductor, pod-grouped</h1>
+
+    <svg viewBox="0 0 1000 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="subagentroster-title subagentroster-desc">
+      <title id="subagentroster-title">Subagent roster ownership map</title>
+      <desc id="subagentroster-desc">Org chart of the sixteen-agent roster: the conductor at the root dispatches scout, researcher, implementer, QA, and security directly, plus three model-family pods — four diff reviewers, four plan gates, and three vision agents.</desc>
+      <defs>
+        <marker id="arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
+      </defs>
+
+      <rect width="100%" height="100%" fill="#f5f5f5"/>
+
+      <!-- connectors (orthogonal bus) -->
+      <path d="M 500,132 V 168 L 116,168 V 208" fill="none" stroke="#4f5d75" stroke-width="1"/>
+      <path d="M 500,168 L 283,168 V 208" fill="none" stroke="#4f5d75" stroke-width="1"/>
+      <path d="M 500,168 V 208" fill="none" stroke="#4f5d75" stroke-width="1"/>
+      <path d="M 500,168 L 717,168 V 208" fill="none" stroke="#4f5d75" stroke-width="1"/>
+      <path d="M 500,168 L 884,168 V 208" fill="none" stroke="#4f5d75" stroke-width="1"/>
+
+      <!-- tier-2 bus from single-role nodes to nothing (roles are leaves) -->
+
+      <!-- Root: conductor (focal) -->
+      <rect x="388" y="72" width="224" height="60" rx="6" fill="rgba(235,108,54,0.08)" stroke="#eb6c36" stroke-width="1"/>
+      <rect x="396" y="80" width="76" height="12" rx="2" fill="transparent" stroke="#eb6c36" stroke-width="0.8" opacity="0.55"/>
+      <text x="434" y="89" fill="#eb6c36" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">FRONT DOOR</text>
+      <text x="500" y="108" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">conductor</text>
+      <text x="500" y="122" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">dispatch + merge state</text>
+
+      <!-- Tier 1: five single-role agents -->
+      <rect x="40" y="208" width="152" height="64" rx="6" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="0.8"/>
+      <text x="116" y="234" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">scout</text>
+      <text x="116" y="250" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">read-only recon</text>
+      <text x="116" y="262" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">internal recon</text>
+
+      <rect x="208" y="208" width="152" height="64" rx="6" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="0.8"/>
+      <text x="284" y="234" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">researcher</text>
+      <text x="284" y="250" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">external research</text>
+      <text x="284" y="262" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">edit: docs/research only</text>
+
+      <rect x="424" y="208" width="152" height="64" rx="6" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="0.8"/>
+      <text x="500" y="234" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">implementer</text>
+      <text x="500" y="250" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">bulk TDD executor</text>
+      <text x="500" y="262" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">one task per dispatch</text>
+
+      <rect x="640" y="208" width="152" height="64" rx="6" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="0.8"/>
+      <text x="716" y="234" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">qa</text>
+      <text x="716" y="250" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">long deterministic loops</text>
+      <text x="716" y="262" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">edit: test/spec globs only</text>
+
+      <rect x="808" y="208" width="152" height="64" rx="6" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="0.8"/>
+      <text x="884" y="234" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">security</text>
+      <text x="884" y="250" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">semgrep SAST + supply</text>
+      <text x="884" y="262" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">read-only</text>
+
+      <!-- Tier 2: three pods -->
+      <rect x="150" y="356" width="200" height="80" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <rect x="158" y="364" width="36" height="12" rx="2" fill="transparent" stroke="rgba(45,49,66,0.40)" stroke-width="0.8"/>
+      <text x="176" y="373" fill="#4f5d75" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">POD</text>
+      <text x="250" y="390" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">diff-reviewers ×4</text>
+      <text x="250" y="406" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">qwen · glm · kimi · deepseek</text>
+      <text x="250" y="420" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">edit: deny · gate 3 pre-merge</text>
+
+      <rect x="400" y="356" width="200" height="80" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <rect x="408" y="364" width="36" height="12" rx="2" fill="transparent" stroke="rgba(45,49,66,0.40)" stroke-width="0.8"/>
+      <text x="426" y="373" fill="#4f5d75" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">POD</text>
+      <text x="500" y="390" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">plan-gates ×4</text>
+      <text x="500" y="406" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">qwen·glm·kimi·deepseek</text>
+      <text x="500" y="420" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">edit: deny · gate 2 plans</text>
+
+      <rect x="640" y="356" width="200" height="80" rx="6" fill="#ffffff" stroke="#2d3142" stroke-width="1"/>
+      <rect x="648" y="364" width="36" height="12" rx="2" fill="transparent" stroke="rgba(45,49,66,0.40)" stroke-width="0.8"/>
+      <text x="666" y="373" fill="#4f5d75" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.08em">POD</text>
+      <text x="740" y="390" fill="#2d3142" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">vision ×3</text>
+      <text x="740" y="406" fill="#4f5d75" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">minimax · kimi · deepseek</text>
+      <text x="740" y="420" fill="#7a8399" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">render + screenshot reads</text>
+
+      <!-- connector stubs from bus down to pods -->
+      <path d="M 500,168 L 248,168 V 344 H 308 Q 316,344 316,352 V 356" fill="none" stroke="#4f5d75" stroke-width="1"/>
+      <path d="M 500,272 V 356" fill="none" stroke="#4f5d75" stroke-width="1"/>
+      <path d="M 500,168 L 800,168 V 336 Q 800,344 792,344 H 748 Q 740,344 740,352 V 356" fill="none" stroke="#4f5d75" stroke-width="1"/>
+
+      <!-- Family-diversity annotation (footer strip, not a node) -->
+      <line x1="32" y1="462" x2="968" y2="462" stroke="rgba(45,49,66,0.10)" stroke-width="0.8"/>
+      <text x="32" y="482" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">WHY PODS: CROSS-FAMILY ERROR DIVERSITY — REVIEWERS AND GATES SPAN 4 MODEL FAMILIES SO ONE FAMILY'S BLIND SPOT CANNOT PASS A BAD DIFF OR PLAN</text>
+
+      <!-- Legend -->
+      <line x1="32" y1="496" x2="968" y2="496" stroke="rgba(45,49,66,0.10)" stroke-width="0.8"/>
+      <text x="32" y="512" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+      <rect x="132" y="502" width="12" height="12" rx="2" fill="rgba(235,108,54,0.08)" stroke="#eb6c36"/>
+      <text x="152" y="512" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace">FRONT DOOR</text>
+      <rect x="276" y="500" width="12" height="12" rx="2" fill="rgba(45,49,66,0.05)" stroke="#4f5d75" stroke-width="0.8"/>
+      <text x="296" y="512" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace">SINGLE ROLE</text>
+      <rect x="432" y="500" width="12" height="12" rx="2" fill="#ffffff" stroke="#2d3142"/>
+      <text x="452" y="512" fill="#4f5d75" font-size="8" font-family="'Geist Mono', monospace">MODEL-FAMILY POD</text>
+    </svg>
+  </div>
+</body>
+</html>
