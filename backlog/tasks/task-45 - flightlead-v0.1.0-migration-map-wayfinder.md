@@ -7,10 +7,11 @@ status: In Progress
 assignee:
   - '@conductor'
 created_date: '2026-09-05 06:01'
-updated_date: '2026-09-06 07:28'
+updated_date: '2026-09-06 18:00'
 labels:
   - 'wayfinder:map'
   - spec-approved
+milestone: m-7
 dependencies: []
 references:
   - docs/research/2026-09-02-oss-agent-harnesses.md

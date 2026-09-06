@@ -6,13 +6,13 @@ title: >-
 status: To Do
 assignee: []
 created_date: '2026-09-06 17:52'
-updated_date: '2026-09-06 17:52'
+updated_date: '2026-09-06 18:00'
 labels: []
 dependencies: []
 references:
   - 'https://openrouter.ai/models'
   - 'https://openrouter.ai/docs/features/prompt-caching'
-priority: medium
+priority: high
 type: spike
 ordinal: 49000
 ---
@@ -42,3 +42,9 @@ Research spike (September 2026 state): build the evidence base for a dynamic, da
 - [ ] #5 Research note passes a sanitization scan before merge (no absolute home paths, no secrets)
 - [ ] #6 Zero repo code changes in this spike (note only)
 <!-- DOD:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+2026-09-06 (human): priority raised to High on cost grounds (Kimi K3 spend per review round). Sequencing: dispatch AFTER TASK-59 (biome gate) and TASK-56 (repo cleanup) — research note lands post-disposition-pass so the TASK-56 inventory stays valid.
+<!-- SECTION:NOTES:END -->
