@@ -4,9 +4,10 @@ title: Reviewer specialization — per-reviewer lenses across the four model fam
 status: To Do
 assignee: []
 created_date: '2026-09-05 16:59'
-updated_date: '2026-09-05 16:59'
+updated_date: '2026-09-06 17:52'
 labels: []
-dependencies: []
+dependencies:
+  - TASK-61
 priority: medium
 type: enhancement
 ordinal: 37000
@@ -25,3 +26,11 @@ Plan-gate and diff-reviewer subagents currently share one prompt per gate with d
 - [ ] #3 WHEN any specialized reviewer prompt is written THEN the lens SHALL be phrased primary with anything-goes-secondary so lens-exclusive blind spots are mitigated
 - [ ] #4 WHEN the specialized reviewers return findings THEN a merge/dedup step SHALL consolidate overlapping findings before presentation to the human gate
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+2026-09-06 DAG wiring: dependency edge added on TASK-61 (dynamic model routing research) — the Kimi K3 keep/drop and 4-vs-3 reviewer decision lands there first, so lens mapping waits for the roster answer. Ordering-only edges on TASK-7/8 kept per original intent.
+
+2026-09-06 correction: TASK-7/8 remain ordering-only per original description (no edges). Single added edge: TASK-61.
+<!-- SECTION:NOTES:END -->
