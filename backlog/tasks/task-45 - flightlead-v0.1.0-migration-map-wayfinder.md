@@ -7,7 +7,7 @@ status: In Progress
 assignee:
   - '@conductor'
 created_date: '2026-09-05 06:01'
-updated_date: '2026-09-06 06:09'
+updated_date: '2026-09-06 07:00'
 labels:
   - 'wayfinder:map'
   - spec-approved
@@ -216,6 +216,19 @@ AMENDMENT 2026-09-09 (from TASK-51 spec v2): the 1.3 port-matrix suite count is 
 - 3.2-pre: (ii) relocation DONE — ~/.agents/{state,logs,reports}/* moved to ~/.local/state/flightlead/ (old config-materialize.json preserved as .pre-port; no clobbers); (iii) post-port tree state committed on ~/.agents main fbaeaf5 (sanctioned --no-verify: the live Hook 7 blocks main commits by design; this commit is owned by the plan).
 - GATE (a): ~/.agents porcelain EMPTY; .worktrees/TASK-45 absent (pre-removed by human). GATE (b): unzip -t OK + manifest MATCH vs 0.9 artifact. GATE (c): npm test 598/598. GATE (d): sync no-op exit 0. GATE (e): backlog task list exit 0 from flightlead. GATE (f): state/logs/reports relocated, originals empty. GATE (g): :8788 HTTP 200 + doctor 8/8 + new plist loaded + kickstart exit 0 + old plist byte-untouched.
 - STATE: GATE 3.2 OPEN for HUMAN APPROVAL before 3.3 (rm -rf ~/.agents/.git + deletion sub-step + old plist deletion).
+
+2026-09-06 STEP 3 FLIP COMPLETE (3.3 executed under explicit human GATE 3.2 approval):
+- worktree metadata pruned (.worktrees/TASK-45 was pre-removed; rmdir no-op); ~/.agents/.git REMOVED.
+- DELETION SUB-STEP done: config/, bin/, plugins/, docs/architecture/, the 2 ported research note copies (49 personal notes KEPT), 16 ported skills + skills/README.md (provenance promoted in 0.3; in-my-voice + diagram-design symlink KEPT), all .DS_Store, backlog/ copy-left source, emptied state/logs/reports, stack-versions.json, AGENT-STACK-RUNBOOK.md (stub), old com.agents.stack-check.plist.
+- TERMINAL STATE == AC#5 POST-FLIP ONLY-LIST exactly: ~/.agents = {.env, .gitignore, AGENTS.md, LICENSE, docs/{AUTHORING.md, plans, research x49, spec}, skills/{in-my-voice, diagram-design -> ../../code/diagram-design/skills/diagram-design}}. NOTHING else. (b) untouched: ~/.pi, ~/.headroom, ~/.claude/skills/tldraw-offline, com.headroom.proxy.plist.
+- AC#8 COMMAND BATTERY from ~/Projects/flightlead: backlog task list 0, flightlead doctor 0, flightlead check 0 (after fix: drift check now renders tokens like sync — commit post-flip), git status --porcelain 0; zshrc sha256 matches 0.9b baseline.
+- 598/598 tests; all work pushed through the post-flip drift-check fix.
+
+FLAGGED POST-FLIP GAP (not covered by PORT PLAN v8): ~/.config/opencode/plugins/{enforce,verify-gate}.ts are the OLD active copies referencing deleted ~/.agents/bin paths -> future opencode sessions load them fail-open (no enforcement) because the ported src/hooks resolve machinery package-relative and cannot simply be copied to the plugins dir. Follow-up ticket created; blocks nothing in TASK-45 but degrades live enforcement until resolved.
+
+TASK-34 DISSOLUTION RECORDED per Step 4: repo move + remote done (origin github.com:shabib87/flightlead, main pushed); semver -> release-please (CHANGELOG seed at 0.6; workflow lands at publish setup); setup guide -> init/README.
+
+2026-09-06 STEP 4 PRECONDITION (1) CLOSED: npm name flightlead CLAIMED via minimal 0.0.0 placeholder publish (human-approved mechanism; human performed the 2FA publish from /tmp/fl-claim staging). Tarball = 4 files (LICENSE Apache-2.0, NOTICE, one-paragraph README, package.json) — no code, no backlog/, no personal strings (inspected pre-publish). Registry: npm view flightlead -> 0.0.0 latest. The real 0.1.0 replaces it after: 0.4+0.5 close (TASK-53/54) -> .github/publish-gate marker flip -> stranger test on clean arm64 -> tag v0.1.0 -> npm publish (release-please over conventional commits).
 <!-- SECTION:NOTES:END -->
 
 <!-- SECTION:PLAN:END -->
