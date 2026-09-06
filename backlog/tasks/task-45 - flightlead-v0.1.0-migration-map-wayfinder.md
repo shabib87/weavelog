@@ -7,7 +7,7 @@ status: In Progress
 assignee:
   - '@conductor'
 created_date: '2026-09-05 06:01'
-updated_date: '2026-09-06 07:00'
+updated_date: '2026-09-06 07:28'
 labels:
   - 'wayfinder:map'
   - spec-approved
@@ -229,6 +229,8 @@ FLAGGED POST-FLIP GAP (not covered by PORT PLAN v8): ~/.config/opencode/plugins/
 TASK-34 DISSOLUTION RECORDED per Step 4: repo move + remote done (origin github.com:shabib87/flightlead, main pushed); semver -> release-please (CHANGELOG seed at 0.6; workflow lands at publish setup); setup guide -> init/README.
 
 2026-09-06 STEP 4 PRECONDITION (1) CLOSED: npm name flightlead CLAIMED via minimal 0.0.0 placeholder publish (human-approved mechanism; human performed the 2FA publish from /tmp/fl-claim staging). Tarball = 4 files (LICENSE Apache-2.0, NOTICE, one-paragraph README, package.json) — no code, no backlog/, no personal strings (inspected pre-publish). Registry: npm view flightlead -> 0.0.0 latest. The real 0.1.0 replaces it after: 0.4+0.5 close (TASK-53/54) -> .github/publish-gate marker flip -> stranger test on clean arm64 -> tag v0.1.0 -> npm publish (release-please over conventional commits).
+
+2026-09-06 NAME DECISION + DAG REWIRE (human): user unsatisfied with the name; rename-everything ratified as highest-priority post-port task. Created TASK-57 (name research spike, shortlist + availability evidence, human picks) and TASK-58 (rename across repo/npm/GitHub/machine state, harness label, depends-on 57). DAG wired: 58 blocks 53, 55, 56 (name-bearing work) to avoid rework; 54 stays independent (privacy sweep is name-agnostic); publish flow sits behind 53+54+56+marker. Rename hassle assessed as LOW-MODERATE (scripted string sweep, plist redo per 3.1 playbook, npm re-claim, GitHub rename with redirects) — cheap now, expensive post-publish.
 <!-- SECTION:NOTES:END -->
 
 <!-- SECTION:PLAN:END -->
