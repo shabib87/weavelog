@@ -3,11 +3,11 @@ id: TASK-58
 title: >-
   Rename flightlead to the ratified name across repo, npm, GitHub, and machine
   state
-status: In Progress
+status: Done
 assignee:
   - '@opencode'
 created_date: '2026-09-06 07:27'
-updated_date: '2026-09-06 08:50'
+updated_date: '2026-09-06 09:00'
 labels:
   - harness
   - spec-approved
@@ -27,10 +27,10 @@ Outcome: the project carries ONE name everywhere — code, docs, npm, GitHub, ma
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 WHEN the rename completes THEN grep across tracked files SHALL find zero occurrences of the old name outside git history and backlog/ historical task text, and every occurrence of the new name SHALL be consistent (package.json, manifest, CLI output, docs, plist)
-- [ ] #2 WHEN the new LaunchAgent is loaded THEN the renamed CLI check --stack-only SHALL exit 0 from the pinned argv and the old com.flightlead.check plist SHALL be bootout-ed and deleted with doctor green
-- [ ] #3 IF the npm name is free THEN it SHALL be claimed under the human's account (shabibhossain) with a minimal placeholder or the real publish, verified via npm view
-- [ ] #4 WHEN all gates re-run (npm test, tsc, biome, privacy-audit, doctor, check, backlog task list) THEN all SHALL exit green with the new name
+- [x] #1 WHEN the rename completes THEN grep across tracked files SHALL find zero occurrences of the old name outside git history and backlog/ historical task text, and every occurrence of the new name SHALL be consistent (package.json, manifest, CLI output, docs, plist)
+- [x] #2 WHEN the new LaunchAgent is loaded THEN the renamed CLI check --stack-only SHALL exit 0 from the pinned argv and the old com.flightlead.check plist SHALL be bootout-ed and deleted with doctor green
+- [x] #3 IF the npm name is free THEN it SHALL be claimed under the human's account (shabibhossain) with a minimal placeholder or the real publish, verified via npm view
+- [x] #4 WHEN all gates re-run (npm test, tsc, biome, privacy-audit, doctor, check, backlog task list) THEN all SHALL exit green with the new name
 <!-- AC:END -->
 
 ## Definition of Done
@@ -68,3 +68,9 @@ A version of this should be added to README.
 
 2026-09-06 MERGED: task/TASK-58 -> main as e30a22e via --no-ff merge under explicit HITL merge approval (three-action question, human chose Merge). Post-merge verification: working tree clean, flightlead 0 / loopeng 0 outside backlog/. Worktree kept until task finalization (machine-state steps pending).
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Renamed the project to weavelog everywhere. In-repo sweep of both old names (flightlead 363 + loopeng 567 baseline occurrences) merged to main at e30a22e under HITL approval: code, weavelog.json manifest, WEAVELOG_* tokens, CLI strings, tests, docs spine, filenames; diff-reviewed PASS-WITH-FIXES (fixes landed). GitHub repo renamed shabib87/flightlead -> shabib87/weavelog via gh (redirects active), remote updated, main pushed. npm weavelog claimed (0.0.0 placeholder, maintainer shabibhossain, verified via npm view); old flightlead placeholder unpublished by human. Machine state: repo dir renamed to ~/Projects/weavelog, live .env rekeyed to WEAVELOG_* (same values), state dir consolidated at ~/.local/state/weavelog, LaunchAgent migrated to com.weavelog.check (old plist bootout-ed AND deleted). Verified fresh: zero-occurrence grep 0/0/0 (weavelog 940), npm test 598/598, tsc 0, privacy-audit 0, doctor 8/8, check --stack-only 7/0 exit 0 from pinned argv (kickstart last exit 0), sync no-op 21 skip, backlog task list exit 0. Biome gate pre-existing repo-wide breakage waived at merge gate -> follow-up TASK-59.
+<!-- SECTION:FINAL_SUMMARY:END -->
