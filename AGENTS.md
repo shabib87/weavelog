@@ -21,14 +21,14 @@ out of scope for v1 or requires amending the North Star first.
 weavelog/
 ├── AGENTS.md                  # This file
 ├── README.md                  # Project overview and quickstart
-├── LICENSE                    # MIT
+├── LICENSE                    # Apache-2.0
 ├── CLAUDE.md                  # Claude dispatch stub
-├── package.json               # npm package (CLI + extension)
+├── package.json               # npm package (CLI)
 ├── tsconfig.json              # TypeScript config
 ├── biome.json                 # Linter/formatter config
 ├── src/                       # TypeScript source
 │   ├── cli/                   # weavelog CLI (weavelog check, weavelog init)
-│   └── extension/             # weavelog/pi-weavelog (Pi extension, pre-rename npm scope)
+│   └── hooks/                 # enforce + verify-gate hooks
 ├── tests/                     # Test suite
 ├── docs/                      # Project documentation
 │   ├── NORTH_STAR.md          # The anchor
@@ -78,7 +78,7 @@ tsc --noEmit
 node --import tsx --test tests/**/*.test.ts
 
 # Run a single test file
-node --import tsx --test tests/cli/check.test.ts
+node --import tsx --test tests/cli/index.test.ts
 ```
 
 ## MUST NOT
