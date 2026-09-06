@@ -4,12 +4,14 @@ title: Step 2 — Single-task dispatch end-to-end
 status: To Do
 assignee: []
 created_date: '2026-08-24 02:48'
-updated_date: '2026-09-05 23:01'
+updated_date: '2026-09-06 16:24'
 labels: []
 milestone: m-4
 dependencies:
   - TASK-4
   - TASK-11
+references:
+  - 'https://github.com/abiosoft/colima'
 priority: high
 type: task
 ordinal: 4000
@@ -32,3 +34,9 @@ Get one task working end-to-end: SDK provider, deny-list (native permission glob
 - [ ] #7 context7 enabled for worker session; worker prompt includes doc-lookup instruction
 - [ ] #8 One task completes end-to-end: worktree → agent → done-check → status update
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+2026-09-06 sandboxing re-assessment: TASK-60 spike (Colima substrate + zero-dep socket loop) defines the candidate execution substrate; its recommendation feeds this step dispatch plan at activation. Research: ~/.agents/docs/research/2026-09-06-sandboxing-substrates.md (repo mirror lands with TASK-60).
+<!-- SECTION:NOTES:END -->

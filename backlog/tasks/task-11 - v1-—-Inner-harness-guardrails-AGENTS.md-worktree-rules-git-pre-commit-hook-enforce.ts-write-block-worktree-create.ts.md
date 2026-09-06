@@ -6,7 +6,7 @@ title: >-
 status: Done
 assignee: []
 created_date: '2026-08-25 05:37'
-updated_date: '2026-08-29 02:28'
+updated_date: '2026-09-06 16:24'
 labels:
   - v1
 dependencies: []
@@ -63,6 +63,8 @@ The existing 9 scripts in bin/src/ stay as-is (infrastructure: version checking,
 
 <!-- SECTION:NOTES:BEGIN -->
 Pre-existing finding: live plugin `$` shell tag throws `$ is not a function` synchronously (opencode 1.18.18). Commit gate (Hook 2) is silently broken by it — `git commit` (relative) triggers it, `/usr/bin/git commit` (absolute) bypasses COMMIT_RE. Write-block hardened to fail open on synchronous throw; commit gate fix is a candidate follow-up task, not part of TASK-11.
+
+2026-09-06 sandboxing re-assessment: process-level isolation (Colima containers, TASK-60 spike) is the successor layer; these worktree guardrails remain the file-level baseline.
 <!-- SECTION:NOTES:END -->
 
 ## Comments
