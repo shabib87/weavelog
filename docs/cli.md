@@ -172,9 +172,60 @@ copy-paste fix.
 
 ---
 
+## Reference surfaces
+
+Fixed environment facts the commands operate on (runbook "Quick reference card",
+redistributed here by the TASK-45 runbook decomposition; `~` = the user's home,
+absolute paths in launchd plists are substituted at install time by `init`).
+
+### Paths
+
+| What | Where |
+|---|---|
+| opencode config | `~/.config/opencode/opencode.jsonc` (materialized from `payload/config/opencode.jsonc`) |
+| Global behavior rules | `~/.config/opencode/AGENTS.md` (materialized from `payload/AGENTS.md`) |
+| Role agents | `~/.config/opencode/agents/{scout,diff-reviewer-*,plan-gate-*,qa,researcher,implementer,vision-*,security}.md` (from `payload/config/agents/` + `payload/config/prompts/`) |
+| Skills hub | `~/.agents/skills/` (canonical copies from `payload/skills/`; pi/claude symlink chains, codex real copies) |
+| Scripts | `src/` in this repo; live host `~/.agents/bin/src/` |
+| Manifest | `flightlead.json`; live host `~/.agents/stack-versions.json` |
+| headroom binary | `~/.local/bin/headroom` (pipx venv `~/.local/pipx/venvs/headroom-ai`, python3.13) |
+| headroom proxy log | `~/.headroom/proxy-launchd.log` (dir must be 700) |
+| proxy plist | `~/Library/LaunchAgents/com.headroom.proxy.plist` |
+| stack-check plist | `~/Library/LaunchAgents/com.agents.stack-check.plist` |
+| opencode auth | `~/.local/share/opencode/auth.json` (only place tooling reads the OpenRouter key) |
+| MCP secrets | `~/.config/opencode/secrets/{context7-key,tavily-key}` (files 600, dir 700) |
+| Backup set | `~/backups/headroom-setup-2026-08-15/` (700); consumed by `init` on a fresh machine |
+
+### Ports and URLs
+
+| What | Value |
+|---|---|
+| headroom proxy | `http://localhost:8788` — `/health`, `/stats`, OpenAI-compat `/v1` |
+| headroom dashboard | `http://localhost:8788/dashboard` (never a bracketed IPv4 URL; brackets are IPv6-only, use `curl -g`) |
+| opencode baseURL | `http://localhost:8788/v1` |
+| upstream | `https://openrouter.ai/api/v1` (both openai and anthropic backends) |
+| chrome-devtools CDP (disabled MCP) | port 9333 |
+| stack-check schedule | Sunday 09:00 via `com.agents.stack-check` (report-only; `RunAtLoad` false) |
+
+### Models
+
+Opinionated defaults — `init` asks, flags override. Role → model table lives in
+`docs/architecture/model-routing.md`; the machine-readable default is the `models`
+list in `flightlead.json` (glm-5.3-flash, deepseek-v4-flash-0731, deepseek-v4-pro-0813,
+qwen3.8-2.4t-a95b, kimi-k3, minimax-m3). The opencode keys are `model`
+(`openrouter/z-ai/glm-5.3-flash`, new-session workhorse) and `small_model`
+(`openrouter/deepseek/deepseek-v4-flash-0731`, cheap bulk); subagents inherit them
+unless their agent file sets its own `model`. Versions are manifest-pinned in
+`flightlead.json`; the headroom rollback pin is `headroom-ai[proxy]==0.30.0`.
+
+---
+
 ## Provenance
 
 - CLI surface table: `docs/specs/2026-09-05-v010-draft-brief.md` ("CLI surface").
 - Doctor subchecks: runbook verification battery decomposition (brief,
   "Runbook decomposition rule": "verification battery → doctor subchecks").
 - Zero-silent-failure + ledger: brief ("Ledger" and "Zero silent failure").
+- Reference surfaces (paths, ports/URLs, model defaults): runbook "Quick reference
+  card", redistributed by the TASK-45 decomposition (see
+  `docs/architecture/runbook-decomposition.md`).
