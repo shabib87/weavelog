@@ -38,3 +38,4 @@ state/
 # worktree-local artifacts
 node_modules
 TASK.md
+.worktrees/
