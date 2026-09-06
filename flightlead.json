@@ -1,0 +1,53 @@
+{
+	"tools": {
+		"headroom": {
+			"channel": "pipx",
+			"version": "0.36.5",
+			"check": "headroom.version"
+		},
+		"backlog": {
+			"channel": "npm",
+			"version": "1.50.1",
+			"check": "backlog.version"
+		},
+		"markitdown": {
+			"channel": "pipx",
+			"version": "0.1.7",
+			"check": "markitdown.version"
+		},
+		"opencode": {
+			"channel": "app",
+			"version": "1.18.25",
+			"check": "opencode.version"
+		},
+		"pi": {
+			"channel": "app",
+			"version": "0.84.4",
+			"check": "pi.version"
+		},
+		"diagram-design": {
+			"channel": "git",
+			"version": "ac490fd",
+			"repo": "cathrynlavery/diagram-design",
+			"check": "diagram-design.present"
+		}
+	},
+	"models": [
+		"z-ai/glm-5.3-flash",
+		"deepseek/deepseek-v4-flash-0731",
+		"deepseek/deepseek-v4-pro-0813",
+		"qwen/qwen3.8-2.4t-a95b",
+		"moonshotai/kimi-k3",
+		"minimax/minimax-m3"
+	],
+	"proxyPort": 8788,
+	"apiUrls": {
+		"openai": "https://openrouter.ai/api/v1",
+		"anthropic": "https://openrouter.ai/api/v1"
+	},
+	"launchd": {
+		"proxy": "com.headroom.proxy",
+		"stackCheck": "com.agents.stack-check"
+	},
+	"updatedAt": "2026-09-04T18:40:46Z"
+}
