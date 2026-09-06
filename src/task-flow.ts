@@ -26,7 +26,7 @@ import {
 	detectHarnessDevFromCwd,
 	type ParsedTask,
 	resolveDependencyStatuses,
-} from "./task-validate.ts";
+} from "./task-validate.js";
 
 const HELP = `Usage: bun task-flow.ts <subcommand> [args]
 

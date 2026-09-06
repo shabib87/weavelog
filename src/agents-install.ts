@@ -156,7 +156,10 @@ const pythonPath = flagValue("--python") ?? join("/opt/homebrew/bin/python3.13")
 // --- phase 4 (opencode-config) ----------------------------------------------
 
 const configSyncPath =
-	process.env.AGENTS_INSTALL_CONFIG_SYNC ?? join(repoRoot, "bin", "src", "config-sync.ts");
+	process.env.AGENTS_INSTALL_CONFIG_SYNC ??
+	(existsSync(new URL("../config-sync.js", import.meta.url))
+		? fileURLToPath(new URL("../config-sync.js", import.meta.url))
+		: fileURLToPath(new URL("../config-sync.ts", import.meta.url)));
 const harnessManifestPath =
 	process.env.AGENTS_INSTALL_HARNESS_MANIFEST ??
 	join(repoRoot, "config", "harnesses", "opencode.json");

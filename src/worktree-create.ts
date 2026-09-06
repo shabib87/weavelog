@@ -58,9 +58,8 @@ if [ "$branch" = "main" ] || [ "$branch" = "master" ]; then
 fi
 # TASK-51: block AC-gutting on spec-approved tasks (backlog/tasks/task-*.md).
 # Presence-guarded so foreign repos (no harness bin) are never blocked.
-root="$(git rev-parse --show-toplevel 2>/dev/null)"
-if [ -n "$root" ] && [ -f "$root/bin/src/task-validate.ts" ]; then
-  if ! bun "$root/bin/src/task-validate.ts" --pre-commit; then
+if command -v flightlead >/dev/null 2>&1; then
+  if ! flightlead check --pre-commit; then
     exit 1
   fi
 fi

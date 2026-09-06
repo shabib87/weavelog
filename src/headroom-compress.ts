@@ -114,7 +114,7 @@ const HELP = `Usage: bun headroom-compress.ts --help
 Thin helper for POST http://localhost:8788/v1/compress via fetch() — no SDK dependency.
 Import it; do not shell out:
 
-  import { headroomCompress } from "./headroom-compress.ts";
+  import { headroomCompress } from "./headroom-compress.js";
   const r = await headroomCompress(messages, { mode: "ccr", frozen_message_count: 4 });
 
 Endpoint: POST <baseUrl>/v1/compress  (baseUrl default http://localhost:8788)

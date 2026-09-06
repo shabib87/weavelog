@@ -139,6 +139,8 @@ function makeStackHome(): string {
 	mkdirSync(join(home, ".bun", "bin"), { recursive: true });
 	writeFileSync(join(home, ".bun", "bin", "backlog"), '#!/bin/sh\necho "1.2.3"\n');
 	chmodSync(join(home, ".bun", "bin", "backlog"), 0o755);
+	writeFileSync(join(home, ".local", "bin", "fake-pricing"), '#!/bin/sh\necho "pricing ok"\n');
+	chmodSync(join(home, ".local", "bin", "fake-pricing"), 0o755);
 	return home;
 }
 
@@ -148,6 +150,7 @@ function stackRun(args: string[], extraEnv: Record<string, string> = {}) {
 		HOME: home,
 		STACK_CHECK_OPENROUTER_MODELS_URL: MODELS_URL,
 		STACK_CHECK_NPM_REGISTRY_URL: NPM_URL,
+		STACK_CHECK_PRICING_BIN: join(home, ".local", "bin", "fake-pricing"),
 		HEADROOM_UPDATE_CHECK: "off",
 		...extraEnv,
 	});
@@ -1735,7 +1738,7 @@ describe("checkConfigDrift (config/ vs live per harness manifest)", () => {
 			});
 			assert.equal(drift.length, 1);
 			assert.ok(drift[0].includes("AGENTS.md"));
-			assert.ok(drift[0].includes("config-sync"));
+			assert.ok(drift[0].includes("flightlead sync"));
 			assert.ok(drift[0].includes("commit"));
 		} finally {
 			f.cleanup();
@@ -1755,7 +1758,7 @@ describe("checkConfigDrift (config/ vs live per harness manifest)", () => {
 			});
 			assert.equal(drift.length, 1);
 			assert.ok(drift[0].includes("AGENTS.md"));
-			assert.ok(drift[0].includes("config-sync"));
+			assert.ok(drift[0].includes("flightlead sync"));
 			assert.ok(drift[0].includes("commit"));
 		} finally {
 			f.cleanup();
@@ -1930,7 +1933,7 @@ describe("checkConfigDrift (config/ vs live per harness manifest)", () => {
 		}
 	});
 
-	test("drift fix hint names the absolute (homedir-expanded) config-sync path, not cwd-relative", () => {
+	test("drift fix hint names the flightlead sync surface, not cwd-relative", () => {
 		const f = makeConfigFixture({
 			tracked: { "AGENTS.md": "tracked-edited\n", "config/agents/a.md": "a\n" },
 			live: { "AGENTS.md": "live\n", "agents/a.md": "a\n" },
@@ -1941,9 +1944,9 @@ describe("checkConfigDrift (config/ vs live per harness manifest)", () => {
 				liveRoot: f.liveRoot,
 				harnessManifestPath: f.manifestPath,
 			});
-			assert.ok(drift[0].includes(join(homedir(), ".agents", "bin", "src", "config-sync.ts")));
-			// the old cwd-relative hint form ("bun bin/src/config-sync.ts") is gone
-			assert.ok(!drift[0].includes("bun bin/src/"));
+			assert.ok(drift[0].includes("flightlead sync"));
+			// the old author-instance hint form is gone
+			assert.ok(!drift[0].includes("bin/src/config-sync.ts"));
 		} finally {
 			f.cleanup();
 		}
@@ -1976,7 +1979,7 @@ describe("checkPointerTargets (thin global AGENTS.md pointer validation, AC #10)
 			assert.equal(drift.length, 1);
 			assert.ok(drift[0].includes("AGENTS.md"));
 			assert.ok(drift[0].includes(join(home, "nope", "not-here")));
-			assert.ok(drift[0].includes("config-sync"));
+			assert.ok(drift[0].includes("flightlead sync"));
 			assert.ok(drift[0].includes("commit"));
 			assert.equal(check.pointers[0].exists, false);
 		} finally {
@@ -2019,7 +2022,7 @@ describe("stack-check config drift (CLI wiring, env overrides)", () => {
 			};
 			assert.ok(report.checks.configSync);
 			assert.equal(
-				report.drift.some((d) => d.includes("AGENTS.md") && d.includes("config-sync")),
+				report.drift.some((d) => d.includes("AGENTS.md") && d.includes("flightlead sync")),
 				true,
 			);
 			rmSync(home, { recursive: true, force: true });

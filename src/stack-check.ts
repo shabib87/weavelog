@@ -18,7 +18,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { isAbsolute, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { excludedBy, normalizeRel } from "./config-sync.ts";
+import { excludedBy, normalizeRel } from "./config-sync.js";
 
 const HELP = `Usage: bun stack-check.ts [options]
 
@@ -117,7 +117,7 @@ export interface ConfigDriftOptions {
 	harnessManifestPath: string;
 }
 
-const CONFIG_FIXES = `fixes: re-materialize via bun ${join(homedir(), ".agents", "bin", "src", "config-sync.ts")} OR commit the change`;
+const CONFIG_FIXES = `fixes: re-materialize via flightlead sync OR commit the change`;
 
 export function checkConfigDrift(opts: ConfigDriftOptions): {
 	check: Record<string, unknown>;
@@ -922,14 +922,15 @@ async function main(reportPath: string, notify: boolean) {
 
 	// 6. pricing drift: litellm DB must hold live prices for manifest models
 	// (headroom/litellm upgrades WIPE injected entries -> rerun sync-model-pricing --apply)
-	const pricing = spawnSync(
-		process.execPath,
-		[join(HOME, ".agents", "bin", "sync-model-pricing.ts"), "--check"],
-		{
-			encoding: "utf8",
-			timeout: 120_000,
-		},
-	);
+	const pricingBin =
+		process.env.STACK_CHECK_PRICING_BIN ??
+		(existsSync(new URL("../sync-model-pricing.js", import.meta.url))
+			? fileURLToPath(new URL("../sync-model-pricing.js", import.meta.url))
+			: fileURLToPath(new URL("../sync-model-pricing.ts", import.meta.url)));
+	const pricing = spawnSync(process.execPath, [pricingBin, "--check"], {
+		encoding: "utf8",
+		timeout: 120_000,
+	});
 	checks.pricingSync = {
 		exitCode: pricing.status,
 		summary: (pricing.stdout || pricing.stderr || "").trim().split("\n")[0],

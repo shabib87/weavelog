@@ -124,7 +124,9 @@ export class FrontmatterViolationError extends Error {}
  * Hook 9 argv — pure so the forward-only contract (no --force, no --adopt:
  * a refusal means a human decides) is testable without spawning a process.
  */
-export function configSyncArgv(home: string): [string, string, string, string] {
+export function configSyncArgv(home: string): string[] {
+	const js = fileURLToPath(new URL("../config-sync.js", import.meta.url));
+	if (existsSync(js)) return ["node", js];
 	return ["node", "--import", "tsx", fileURLToPath(new URL("../config-sync.ts", import.meta.url))];
 }
 
@@ -373,7 +375,7 @@ export function createHooks(deps: EnforceDeps): EnforceHooks {
 	const enforceCreateQuality = async (command: string): Promise<void> => {
 		if (createQualityIssues === null) {
 			try {
-				const mod = (await import(new URL("../task-validate.ts", import.meta.url).href)) as {
+				const mod = (await import(new URL("../task-validate.js", import.meta.url).href)) as {
 					parseTaskCreateArgs: (input: string | string[]) => {
 						hasDescription: boolean;
 						acCount: number;
@@ -468,8 +470,18 @@ export function createHooks(deps: EnforceDeps): EnforceHooks {
 
 	const RESEARCH_DIR = join(home, ".agents", "docs", "research");
 	const PLANS_DIR = join(home, ".agents", "docs", "plans");
-	const FRONTMATTER_CHECK = fileURLToPath(new URL("../frontmatter-check.ts", import.meta.url));
-	const REVIEWER_LOOP = fileURLToPath(new URL("../reviewer-loop.ts", import.meta.url));
+	const machineryScript = (base: string): { path: string; prefix: string[] } => {
+		const js = fileURLToPath(new URL(`../${base}.js`, import.meta.url));
+		if (existsSync(js)) return { path: js, prefix: [] };
+		return {
+			path: fileURLToPath(new URL(`../${base}.ts`, import.meta.url)),
+			prefix: ["--import", "tsx"],
+		};
+	};
+	const FM = machineryScript("frontmatter-check");
+	const REVIEWER = machineryScript("reviewer-loop");
+	const FRONTMATTER_CHECK = FM.path;
+	const REVIEWER_LOOP = REVIEWER.path;
 	const HEADROOM_BIN = join(home, ".local", "bin", "headroom");
 	const LEARN_TARGET = join(home, ".agents", "docs", "learned-patterns.md");
 	const DENYLIST = denylist(home);
@@ -480,7 +492,8 @@ export function createHooks(deps: EnforceDeps): EnforceHooks {
 	// ancestor) is reached through a symlink (reviewer fix).
 	const LIVE_HARNESS_ROOT = `${canonicalPath(join(home, ".config", "opencode"))}/`;
 	// Hook 9: forward-only materializer run at session start.
-	const CONFIG_SYNC = fileURLToPath(new URL("../config-sync.ts", import.meta.url));
+	const SYNC = machineryScript("config-sync");
+	const CONFIG_SYNC = SYNC.path;
 
 	// Kill switches (reviewer-mandated bypass flags — see the recovery runbook).
 	// Read PER HOOK CALL so a runtime env change takes effect without a restart:
@@ -578,7 +591,7 @@ export function createHooks(deps: EnforceDeps): EnforceHooks {
 				.join("\n");
 			return `config-sync refused (out-of-band live edit):\n${lines}\nNever adopted silently — resolve explicitly, then re-run.`;
 		} catch {
-			return "config-sync refused (out-of-band live edit) — run `bun ~/.agents/bin/src/config-sync.ts` for the refusal report. Never adopted silently — resolve explicitly (--adopt / --force), then re-run.";
+			return "config-sync refused (out-of-band live edit) — run `flightlead sync` for the refusal report. Never adopted silently — resolve explicitly (--adopt / --force), then re-run.";
 		}
 	}
 
@@ -606,13 +619,13 @@ export function createHooks(deps: EnforceDeps): EnforceHooks {
 				const dir = dirname(filePath);
 				try {
 					const result = await withTimeout(
-						$`bun ${FRONTMATTER_CHECK} ${dir}`.quiet().nothrow(),
+						$`node ${FM.prefix} ${FM.path} ${dir}`.quiet().nothrow(),
 						timeouts.checkMs,
 					);
 					if (result?.exitCode === 1) {
 						output.metadata = {
 							...output.metadata,
-							frontmatter_warning: `⚠ frontmatter-check.ts violations near ${filePath}:\n${result.text()}\nRun \`bun ${FRONTMATTER_CHECK} --fix ${dir}\` to fix.`,
+							frontmatter_warning: `⚠ frontmatter-check violations near ${filePath}:\n${result.text()}\nRun \`node ${FM.prefix.join(" ")} ${FM.path} --fix ${dir}\` to fix.`,
 						};
 					} else if (result?.exitCode === 0) {
 						output.metadata = {
@@ -755,12 +768,12 @@ export function createHooks(deps: EnforceDeps): EnforceHooks {
 					if (!staged.stdout) return; // no staged research docs
 					// frontmatter-check takes DIRECTORIES (see its --help) — validate the
 					// research dir by absolute path (no dependence on the shell's cwd).
-					const result = runCmd("bun", [FRONTMATTER_CHECK, RESEARCH_DIR], {
+					const result = runCmd("node", [...FM.prefix, FM.path, RESEARCH_DIR], {
 						timeout: timeouts.checkMs,
 					});
 					if (result.status === 1) {
 						throw new FrontmatterViolationError(
-							`frontmatter violations detected in staged research docs — fix before committing:\n${result.stdout}\nRun \`bun ${FRONTMATTER_CHECK} --fix ${RESEARCH_DIR}\` to fix.`,
+							`frontmatter violations detected in staged research docs — fix before committing:\n${result.stdout}\nRun \`node ${FM.prefix.join(" ")} ${FM.path} --fix ${RESEARCH_DIR}\` to fix.`,
 						);
 					}
 					// exit 0/2 or null: fail-open (a broken checker must not block commits).

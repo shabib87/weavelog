@@ -205,7 +205,7 @@ describe("Hook 2 — commit gate (back-pressure)", () => {
 					stdout: "docs/research/2026-08-16-doc.md\n",
 					stderr: "",
 				};
-			if (_cmd === "bun") return { status: 1, stdout: VIOLATIONS_JSON, stderr: "" };
+			if (_cmd === "node") return { status: 1, stdout: VIOLATIONS_JSON, stderr: "" };
 			return { status: 0, stdout: "", stderr: "" };
 		};
 		const hooks = createHooks(depsFor(home, $, { runCmd }));
@@ -227,7 +227,7 @@ describe("Hook 2 — commit gate (back-pressure)", () => {
 					stdout: "docs/research/2026-08-16-doc.md\n",
 					stderr: "",
 				};
-			if (_cmd === "bun") return { status: 0, stdout: "{}", stderr: "" };
+			if (_cmd === "node") return { status: 0, stdout: "{}", stderr: "" };
 			return { status: 0, stdout: "", stderr: "" };
 		};
 		const hooks = createHooks(depsFor(home, $, { runCmd }));
@@ -285,7 +285,7 @@ describe("Hook 2 — commit gate (back-pressure)", () => {
 					stdout: "docs/research/2026-08-16-doc.md\n",
 					stderr: "",
 				};
-			if (_cmd === "bun") return { status: 1, stdout: VIOLATIONS_JSON, stderr: "" };
+			if (_cmd === "node") return { status: 1, stdout: VIOLATIONS_JSON, stderr: "" };
 			return { status: 0, stdout: "", stderr: "" };
 		};
 		const hooks = createHooks(depsFor(home, $, { runCmd }));
@@ -1022,13 +1022,12 @@ describe("Hook 9 — session-start auto-materialize (config-sync)", () => {
 		assert.equal(calls.length, 1);
 	});
 
-	test("default runner argv is forward-only: bun config-sync.ts, no --force/--adopt", () => {
+	test("default runner argv is forward-only: node config-sync, no --force/--adopt", () => {
 		const home = "/tmp/whatever-home";
 		const argv = configSyncArgv(home);
 		assert.equal(argv[0], "node");
-		assert.equal(argv[1], "--import");
-		assert.equal(argv[2], "tsx");
-		assert.ok(argv.join(" ").includes("config-sync.ts"));
+		assert.ok(argv.join(" ").includes("config-sync"));
+		assert.ok(!argv.join(" ").includes("force"));
 		assert.ok(!argv.join(" ").includes("--force"));
 		assert.ok(!argv.join(" ").includes("--adopt"));
 	});

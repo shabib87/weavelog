@@ -482,22 +482,42 @@ ${acs}
 		assert.equal(setup.status, 0);
 	}
 
-	function runHook() {
+	function fakeFlightleadShim(): string {
+		const bin = join(
+			tmpdir(),
+			`fake-flightlead-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+		);
+		mkdirSync(bin, { recursive: true });
+		const cli = fileURLToPath(new URL("../src/cli/index.ts", import.meta.url));
+		const tsxUrl = String(import.meta.resolve("tsx"));
+		writeFileSync(
+			join(bin, "flightlead"),
+			`#!/bin/sh\nexec ${process.execPath} --import ${tsxUrl} ${cli} check --pre-commit "$@"\n`,
+		);
+		chmodSync(join(bin, "flightlead"), 0o755);
+		return bin;
+	}
+
+	function runHook(opts: { withFlightlead?: boolean } = {}) {
+		const path =
+			opts.withFlightlead === false
+				? process.env.PATH
+				: `${fakeFlightleadShim()}:${process.env.PATH}`;
 		return spawnSync("sh", [join(repoDir, ".git", "hooks", "pre-commit")], {
 			cwd: repoDir,
-			env: { ...process.env },
+			env: { ...process.env, PATH: path },
 			encoding: "utf8",
 		});
 	}
 
-	test("generated hook calls task-validate.ts --pre-commit behind a file-presence guard", () => {
+	test("generated hook calls flightlead check --pre-commit behind a command-presence guard", () => {
 		setList([{ id: SAMPLE_TASK.id, title: SAMPLE_TASK.title }]);
 		setView(SAMPLE_TASK);
 		const r = run(["--ready"]);
 		assert.equal(r.status, 0);
 		const content = readFileSync(join(repoDir, ".git", "hooks", "pre-commit"), "utf8");
-		assert.ok(content.includes('task-validate.ts" --pre-commit'));
-		assert.ok(content.includes('-f "$root/bin/src/task-validate.ts"'));
+		assert.ok(content.includes("flightlead check --pre-commit"));
+		assert.ok(content.includes("command -v flightlead"));
 	});
 
 	test("end-to-end: hook blocks a commit that guts a spec-approved task's ACs", () => {
@@ -528,19 +548,19 @@ ${acs}
 		assert.equal(ok.status, 0);
 	});
 
-	test("fail-open: repo without bin/src/task-validate.ts never blocks", () => {
+	test("fail-open: repo without flightlead on PATH never blocks", () => {
 		setList([{ id: SAMPLE_TASK.id, title: SAMPLE_TASK.title }]);
 		setView(SAMPLE_TASK);
 		const r = run(["--ready"]);
 		assert.equal(r.status, 0);
-		// No bin/src in this repo — the guard skips the validator entirely
+		// No flightlead on PATH — the guard skips the validator entirely
 		spawnSync("git", ["checkout", "-b", "task/TASK-9"], {
 			cwd: repoDir,
 			encoding: "utf8",
 		});
 		writeFileSync(join(repoDir, "README.md"), "# changed\n");
 		spawnSync("git", ["add", "README.md"], { cwd: repoDir, encoding: "utf8" });
-		const ok = runHook();
+		const ok = runHook({ withFlightlead: false });
 		assert.equal(ok.status, 0);
 	});
 });

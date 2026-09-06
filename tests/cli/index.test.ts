@@ -1,6 +1,14 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { chmodSync, existsSync, lstatSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import {
+	chmodSync,
+	existsSync,
+	lstatSync,
+	mkdirSync,
+	readFileSync,
+	rmSync,
+	writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, test } from "node:test";
@@ -9,7 +17,9 @@ import { fileURLToPath } from "node:url";
 const CLI = fileURLToPath(new URL("../../src/cli/index.ts", import.meta.url));
 const DIST = fileURLToPath(new URL("../../dist/cli/index.js", import.meta.url));
 const REPO = fileURLToPath(new URL("../..", import.meta.url));
-const TSX_LOADER = fileURLToPath(new URL("../../node_modules/tsx/dist/loader.mjs", import.meta.url));
+const TSX_LOADER = fileURLToPath(
+	new URL("../../node_modules/tsx/dist/loader.mjs", import.meta.url),
+);
 
 interface RunResult {
 	status: number | null;
@@ -17,10 +27,7 @@ interface RunResult {
 	stderr: string;
 }
 
-function run(
-	args: string[],
-	opts: { env?: Record<string, string>; cwd?: string } = {},
-): RunResult {
+function run(args: string[], opts: { env?: Record<string, string>; cwd?: string } = {}): RunResult {
 	return spawnSync(process.execPath, ["--import", "tsx", CLI, ...args], {
 		encoding: "utf8",
 		timeout: 120_000,
@@ -96,7 +103,10 @@ function fakePlist(path: string, nodePath: string): void {
 	);
 }
 
-function initFixture(withDiagramDesign: boolean, extraLiveFiles: Record<string, string> = {}): {
+function initFixture(
+	withDiagramDesign: boolean,
+	extraLiveFiles: Record<string, string> = {},
+): {
 	dir: string;
 	live: string;
 	config: string;
@@ -136,7 +146,9 @@ describe("cli (--help)", () => {
 describe("cli init", () => {
 	test("materializes config + skills + AGENTS.md, resolves .env tokens, symlinks diagram-design, writes ledger", () => {
 		const f = initFixture(true);
-		const r = run(["init"], { env: { FLIGHTLEAD_LIVE_ROOT: f.live, FLIGHTLEAD_STATE_DIR: f.state } });
+		const r = run(["init"], {
+			env: { FLIGHTLEAD_LIVE_ROOT: f.live, FLIGHTLEAD_STATE_DIR: f.state },
+		});
 		assert.equal(r.status, 0);
 		assert.ok(existsSync(join(f.config, "opencode.jsonc")), "opencode.jsonc materialized");
 		assert.ok(existsSync(join(f.config, "AGENTS.md")), "live AGENTS.md written");
@@ -156,7 +168,15 @@ describe("cli init", () => {
 		assert.equal(entry.exitCode, 0);
 		assert.ok(Array.isArray(entry.filesTouched) && entry.filesTouched.length > 0);
 		assert.ok(entry.filesTouched.some((p: string) => p.endsWith("opencode.jsonc")));
-		for (const key of ["ts", "command", "args", "filesTouched", "decisions", "errors", "exitCode"]) {
+		for (const key of [
+			"ts",
+			"command",
+			"args",
+			"filesTouched",
+			"decisions",
+			"errors",
+			"exitCode",
+		]) {
 			assert.ok(key in entry, `ledger line has ${key}`);
 		}
 	});
@@ -171,7 +191,9 @@ describe("cli init", () => {
 
 	test("diagram-design symlink skipped with a warning when the host target is absent", () => {
 		const f = initFixture(false);
-		const r = run(["init"], { env: { FLIGHTLEAD_LIVE_ROOT: f.live, FLIGHTLEAD_STATE_DIR: f.state } });
+		const r = run(["init"], {
+			env: { FLIGHTLEAD_LIVE_ROOT: f.live, FLIGHTLEAD_STATE_DIR: f.state },
+		});
 		assert.equal(r.status, 0);
 		assert.equal(existsSync(join(f.live, "skills", "diagram-design")), false);
 		assert.ok(r.stdout.includes("diagram-design"), "skip condition recorded in output");
@@ -251,7 +273,10 @@ describe("cli doctor", () => {
 		};
 		const r = run(["doctor"], { env });
 		assert.notEqual(r.status, 0);
-		assert.ok((r.stdout + r.stderr).includes(missingNode), "loud message names the pinned node path");
+		assert.ok(
+			(r.stdout + r.stderr).includes(missingNode),
+			"loud message names the pinned node path",
+		);
 	});
 
 	test("doctor with a fake plist pinning a valid current node path passes the guard", () => {

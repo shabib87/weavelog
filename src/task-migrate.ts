@@ -40,7 +40,7 @@ import {
 	normalizeLabel,
 	RESERVED_LABELS,
 	VERSION_MILESTONE_ID,
-} from "./task-validate.ts";
+} from "./task-validate.js";
 
 const HELP = `Usage: bun task-migrate.ts [--execute] [--help]
 
