@@ -1,4 +1,4 @@
-# Model Selection for loopeng
+# Model Selection for weavelog
 
 > **Date:** 2026-07-04
 > **Last verified:** 2026-07-05 (live OpenRouter API + full red team)
@@ -18,7 +18,7 @@
 
 ## Purpose
 
-This document records the model selection rationale for loopeng v1. Every
+This document records the model selection rationale for weavelog v1. Every
 model choice must trace back to the North Star: a pre-defined agent team
 running spec → implement → verify → document for mobile fullstack projects
 (iOS, Android, React Native, KMP) with Maestro/Appium E2E testing, on Pi,
@@ -33,12 +33,12 @@ quality gap has measurable impact — and is documented as such.
 
 ## Types of Work and Relevant Benchmarks
 
-Loopeng runs different *types* of work. The right model depends on the task,
+Weavelog runs different *types* of work. The right model depends on the task,
 not just the overall score.
 
 ### Agentic Coding (spec → implement → verify)
 
-This is the core loopeng workflow. The model must reason about architecture,
+This is the core weavelog workflow. The model must reason about architecture,
 write code across multiple files, use tools, and verify its own output.
 **Most relevant:** AA Agentic Index + Design Arena agent categories
 (`fullstack`, `webapps`, `mobileapps`, `androidnative`).
@@ -55,7 +55,7 @@ GLM 5.2 would do this work at ~85% of the intelligence for ~1% of the cost.
 
 ### The Maker/Checker Principle
 
-A core loopeng insight: *the same model should never review its own output.*
+A core weavelog insight: *the same model should never review its own output.*
 Different model families have different architectures, training data, and
 failure modes. A Z.ai model and a DeepSeek model won't share the same blind
 spots. The reviewer doesn't need to be smarter than the maker — it needs to
@@ -261,7 +261,7 @@ scripts, changelog generation, simple test assertions.
 
 ## Full Agent Team: 7 Roles, 4 Models
 
-Loopeng runs two phases. The **analysis loop** runs before any code exists.
+Weavelog runs two phases. The **analysis loop** runs before any code exists.
 The **code loop** runs after analysis is validated. Each phase has its own
 maker/checker pairs.
 
@@ -386,7 +386,7 @@ RESEARCH.md (as of 2026-07-05) lists these models. Corrections from live API ver
 | Mistral Large 2512 | 20.1 coding index at $0.50/$1.50 — outclassed by DeepSeek V4 Flash (56.2 at $0.09/$0.18). |
 | Qwen 3 Coder 480B | #55 in code categories despite size. Underwhelming. |
 | Solar Pro 3 | 16.2 coding. Too weak. |
-| Granite 4.1 8B | 9.5 coding. Too small/weak for any loopeng task. |
+| Granite 4.1 8B | 9.5 coding. Too small/weak for any weavelog task. |
 | GPT 5 / GPT 5.5 Pro | Frontier pricing without frontier-tier Design Arena agent results. No value case. |
 
 ---

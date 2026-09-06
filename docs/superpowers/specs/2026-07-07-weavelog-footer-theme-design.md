@@ -1,11 +1,11 @@
-# loopeng Footer + Theme Design
+# weavelog Footer + Theme Design
 
 Date: 2026-07-07
 Status: Draft — pending user review
 
 ## Goal
 
-Replace the current single-line, symbol-heavy footer in Pi with a four-line, labeled, color-coded footer. Introduce a custom `loopeng-dark` theme based on the current active dark theme with the requested palette (dim orange, dim dark green, dim white, dim teal, yellowish, white), and make it the default.
+Replace the current single-line, symbol-heavy footer in Pi with a four-line, labeled, color-coded footer. Introduce a custom `weavelog-dark` theme based on the current active dark theme with the requested palette (dim orange, dim dark green, dim white, dim teal, yellowish, white), and make it the default.
 
 ## Background
 
@@ -41,7 +41,7 @@ Specific problems:
 
 ### Color mapping
 
-| Footer element | Theme token | `loopeng-dark` var | User palette |
+| Footer element | Theme token | `weavelog-dark` var | User palette |
 |---|---|---|---|
 | Labels (`input:`, `output:`, `model:`, etc.) | `dim` | `dimGray` | dim gray |
 | Branch / turns / mode / separator `·` | `muted` | `warmWhiteDim` | dim white |
@@ -58,7 +58,7 @@ Specific problems:
 
 ### Theme file
 
-Create `~/.pi/agent/themes/loopeng-dark.json` with all 51 required Pi theme tokens. The file is based on the current active `dark.json` theme; only the `vars` and color values are changed to preserve readability relationships and keep the theme global (affects the whole TUI, not just the footer).
+Create `~/.pi/agent/themes/weavelog-dark.json` with all 51 required Pi theme tokens. The file is based on the current active `dark.json` theme; only the `vars` and color values are changed to preserve readability relationships and keep the theme global (affects the whole TUI, not just the footer).
 
 Key palette vars:
 
@@ -95,7 +95,7 @@ Update `~/.pi/agent/settings.json` to set:
 
 ```json
 {
-  "theme": "loopeng-dark"
+  "theme": "weavelog-dark"
 }
 ```
 
@@ -130,14 +130,14 @@ Values not directly available (e.g., git dirty state, CPU, clock) would require 
 
 ## Files changed
 
-- `~/.pi/agent/themes/loopeng-dark.json` (new)
-- `~/.pi/agent/settings.json` (add `"theme": "loopeng-dark"`)
+- `~/.pi/agent/themes/weavelog-dark.json` (new)
+- `~/.pi/agent/settings.json` (add `"theme": "weavelog-dark"`)
 - `~/.pi/agent/extensions/footer.ts` (rewrite render)
 
 ## Out of scope
 
 - `tsx` dependency installation (requires approval)
-- `loopeng check` / `loopeng init` CLI
+- `weavelog check` / `weavelog init` CLI
 - Session-logger verification
 - Any other Pi extensions
 - Additional footer data sources (git status, system metrics)
@@ -147,5 +147,5 @@ Values not directly available (e.g., git dirty state, CPU, clock) would require 
 1. Save files, run `/reload` in Pi.
 2. Confirm footer shows four labeled lines.
 3. Confirm colors match the palette in a truecolor terminal.
-4. Confirm `settings.json` has `"theme": "loopeng-dark"`.
+4. Confirm `settings.json` has `"theme": "weavelog-dark"`.
 5. Verify readability against the current dark theme's contrast hierarchy.

@@ -101,7 +101,7 @@ Reasons persist so nobody re-adopts these without addressing the stated blocker.
 - `payload/config/opencode.jsonc` — `model`, `small_model`, `provider.openrouter` (the
   `baseURL http://localhost:8788/v1` proxy route, `setCacheKey`, and the qwen order
   pin), `enabled_providers: ["openrouter"]`.
-- `flightlead.json` — machine-readable `models` list (the manifest default; the six
+- `weavelog.json` — machine-readable `models` list (the manifest default; the six
   manifest models: glm-5.3-flash, deepseek-v4-flash-0731, deepseek-v4-pro-0813,
   qwen3.8-2.4t-a95b, kimi-k3, minimax-m3). Vision-exp is an agent-file-only model, not a
   manifest default.

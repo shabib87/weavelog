@@ -64,9 +64,9 @@ describe("label vocabulary (AC #11, #17)", () => {
 });
 
 describe("harness-dev context detection (AC #17)", () => {
-	test("canonical repo list contains the agents-harness and flightlead repos", () => {
+	test("canonical repo list contains the agents-harness and weavelog repos", () => {
 		assert.ok(HARNESS_DEV_REPOS.includes("agents-harness"));
-		assert.ok(HARNESS_DEV_REPOS.includes("flightlead"));
+		assert.ok(HARNESS_DEV_REPOS.includes("weavelog"));
 	});
 
 	test("git remote URL basename match -> harness-dev", () => {
@@ -74,20 +74,20 @@ describe("harness-dev context detection (AC #17)", () => {
 			isHarnessDevContext({ remoteUrls: ["git@github.com:acme/agents-harness.git"] }),
 			true,
 		);
-		assert.equal(isHarnessDevContext({ remoteUrls: ["https://github.com/acme/flightlead"] }), true);
+		assert.equal(isHarnessDevContext({ remoteUrls: ["https://github.com/acme/weavelog"] }), true);
 		assert.equal(
-			isHarnessDevContext({ remoteUrls: ["ssh://git@github.com/team/flightlead/"] }),
+			isHarnessDevContext({ remoteUrls: ["ssh://git@github.com/team/weavelog/"] }),
 			true,
 		);
 	});
 
-	test("flightlead dev-repo naming variants match (dev suffix)", () => {
+	test("weavelog dev-repo naming variants match (dev suffix)", () => {
 		assert.equal(
-			isHarnessDevContext({ remoteUrls: ["git@github.com:acme/flightlead-dev.git"] }),
+			isHarnessDevContext({ remoteUrls: ["git@github.com:acme/weavelog-dev.git"] }),
 			true,
 		);
 		assert.equal(
-			isHarnessDevContext({ remoteUrls: ["https://github.com/acme/flightlead.dev"] }),
+			isHarnessDevContext({ remoteUrls: ["https://github.com/acme/weavelog.dev"] }),
 			true,
 		);
 	});
@@ -124,8 +124,8 @@ describe("harness-dev context detection (AC #17)", () => {
 
 	test("repo root basename matching a canonical repo (no remotes) -> harness-dev", () => {
 		assert.equal(isHarnessDevContext({ repoRootName: "agents-harness" }), true);
-		assert.equal(isHarnessDevContext({ repoRootName: "flightlead" }), true);
-		assert.equal(isHarnessDevContext({ repoRootName: "flightlead-dev" }), true);
+		assert.equal(isHarnessDevContext({ repoRootName: "weavelog" }), true);
+		assert.equal(isHarnessDevContext({ repoRootName: "weavelog-dev" }), true);
 		assert.equal(isHarnessDevContext({ repoRootName: "my-app" }), false);
 		assert.equal(isHarnessDevContext({ repoRootName: "" }), false);
 	});
@@ -162,8 +162,8 @@ describe("harness-dev context detection (AC #17)", () => {
 
 	test("backlog project_name matching a canonical repo -> harness-dev (works in every worktree)", () => {
 		assert.equal(isHarnessDevContext({ backlogProjectName: "agents-harness" }), true);
-		assert.equal(isHarnessDevContext({ backlogProjectName: "Flightlead" }), true);
-		assert.equal(isHarnessDevContext({ backlogProjectName: "flightlead-dev" }), true);
+		assert.equal(isHarnessDevContext({ backlogProjectName: "Weavelog" }), true);
+		assert.equal(isHarnessDevContext({ backlogProjectName: "weavelog-dev" }), true);
 		assert.equal(isHarnessDevContext({ backlogProjectName: "my-app" }), false);
 		assert.equal(isHarnessDevContext({ backlogProjectName: "" }), false);
 	});
@@ -303,10 +303,10 @@ describe("milestone decision table (AC #18)", () => {
 	test("wayfinder map task without version scope maps to the name-derived map milestone", () => {
 		const r = decideMilestone({
 			labels: [],
-			wayfinderMap: "flightlead-v0.1",
+			wayfinderMap: "weavelog-v0.1",
 			currentMilestone: null,
 		});
-		assert.equal(r.milestone, wayfinderMilestoneName("flightlead-v0.1"));
+		assert.equal(r.milestone, wayfinderMilestoneName("weavelog-v0.1"));
 		assert.match(r.reason, /wayfinder/i);
 	});
 
@@ -333,7 +333,7 @@ describe("milestone decision table (AC #18)", () => {
 	});
 
 	test("wayfinderMilestoneName is deterministic and derived from the map name", () => {
-		assert.equal(wayfinderMilestoneName("flightlead-v0.1"), "wayfinder:flightlead-v0.1");
+		assert.equal(wayfinderMilestoneName("weavelog-v0.1"), "wayfinder:weavelog-v0.1");
 	});
 });
 

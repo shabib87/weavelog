@@ -8,7 +8,7 @@
 
 ## The question
 
-How does loopeng measure "is it useful" and "what problem is it solving"?
+How does weavelog measure "is it useful" and "what problem is it solving"?
 What data to gather, how to gather it, how to use it for credibility?
 The user wants phased (iii): usage telemetry first (v0.x), outcome/eval
 telemetry once workflows stabilize (v1.x). Opt-in, privacy-conscious.
@@ -24,7 +24,7 @@ GET /api/v1/generation?id=<id> → per-request cost, tokens, model
 
 OpenRouter provides **aggregate spend** and **per-request cost data**. This
 covers: how much was spent, on which models, per request. What it does NOT
-cover: which loopeng command triggered the request, whether the output was
+cover: which weavelog command triggered the request, whether the output was
 good, workflow-level metrics.
 
 ### 2. Headroom /stats — compression and savings data
@@ -41,7 +41,7 @@ per-agent: codex (21 reqs, 7937 tokens saved, 20.14%)
 
 Plus `headroom savings --json` for a durable ledger. This covers: tokens
 saved, compression ratio, per-agent and per-model breakdown. What it does NOT
-cover: loopeng command attribution, workflow outcomes.
+cover: weavelog command attribution, workflow outcomes.
 
 ### 3. Headroom evals — built-in quality evaluation
 
@@ -58,7 +58,7 @@ stack (headroom v0.30.0, MIT... wait, Apache 2.0). No additional install.
 
 What none of the existing sources track:
 
-| Metric | OpenRouter | Headroom | loopeng needs |
+| Metric | OpenRouter | Headroom | weavelog needs |
 |---|---|---|---|
 | Cost per request | ✅ | — | ✅ |
 | Tokens saved | — | ✅ | ✅ |
@@ -71,7 +71,7 @@ What none of the existing sources track:
 | Retries per step | — | — | ✅ (outcome) |
 
 **The gap is workflow-level telemetry** — metrics that tie model usage to
-loopeng's spec→implement→verify→document workflow.
+weavelog's spec→implement→verify→document workflow.
 
 ## Telemetry tools audit (MIT/Apache 2.0, active)
 
@@ -84,28 +84,28 @@ loopeng's spec→implement→verify→document workflow.
 | headroom evals | Apache 2.0 | (in stack) | ✅ built-in, compression quality |
 
 **No external telemetry tool meets the user's bar** (MIT/Apache 2.0, active,
-non-hobby, fit for devex tool telemetry). The right approach: **loopeng
-implements its own minimal telemetry** as a `.loopeng/metrics.jsonl` log file,
+non-hobby, fit for devex tool telemetry). The right approach: **weavelog
+implements its own minimal telemetry** as a `.weavelog/metrics.jsonl` log file,
 composing with OpenRouter + headroom data sources.
 
 ## Recommendation: phased, minimal, opt-in
 
 ### Phase 1 (v0.x): Usage telemetry — local metrics log
 
-**What:** loopeng writes a local append-only JSONL log for each command run.
+**What:** weavelog writes a local append-only JSONL log for each command run.
 
 ```jsonl
-{"ts":"2026-07-04T19:30:00Z","cmd":"loopeng check","model":"z-ai/glm-5.2","tokens_in":1234,"tokens_out":567,"cost_usd":0.003,"status":"pass","duration_ms":1200}
-{"ts":"2026-07-04T19:35:00Z","cmd":"loopeng init","model":"z-ai/glm-5.2","tokens_in":0,"tokens_out":0,"cost_usd":0,"status":"pass","duration_ms":450}
+{"ts":"2026-07-04T19:30:00Z","cmd":"weavelog check","model":"z-ai/glm-5.2","tokens_in":1234,"tokens_out":567,"cost_usd":0.003,"status":"pass","duration_ms":1200}
+{"ts":"2026-07-04T19:35:00Z","cmd":"weavelog init","model":"z-ai/glm-5.2","tokens_in":0,"tokens_out":0,"cost_usd":0,"status":"pass","duration_ms":450}
 ```
 
-**Where:** `.loopeng/metrics.jsonl` (gitignored, local only)
+**Where:** `.weavelog/metrics.jsonl` (gitignored, local only)
 
-**Opt-in:** controlled by `loopeng config set telemetry local` (default: off).
+**Opt-in:** controlled by `weavelog config set telemetry local` (default: off).
 No external upload. The user owns the data.
 
 **Composes with:** OpenRouter `/api/v1/key` (aggregate cost) + headroom
-`/stats` (compression savings). loopeng doesn't duplicate these — it
+`/stats` (compression savings). weavelog doesn't duplicate these — it
 references them and adds the workflow attribution layer.
 
 **This is the `docs/tbd/open-blindspots-index.md` "Loop Telemetry" proposal
@@ -126,7 +126,7 @@ schedule to measure compression quality over time. Results appended to the
 metrics log.
 
 **This is the "is it useful" evidence.** The user can query the log to answer:
-- How many features shipped via loopeng?
+- How many features shipped via weavelog?
 - What's the human approval rate?
 - Which models fail most?
 - Where do humans reject most often?
@@ -136,8 +136,8 @@ metrics log.
 **What:** aggregate, anonymized telemetry published to the blog.
 
 ```
-loopeng stats --public
-  → "127 features shipped via loopeng"
+weavelog stats --public
+  → "127 features shipped via weavelog"
   → "94% human approval rate at verify gate"
   → "$0.08 average cost per feature"
   → "2.3 retries average per implement step"
@@ -145,13 +145,13 @@ loopeng stats --public
 
 **Privacy design:**
 - Telemetry is local-only by default (Phase 1–2)
-- Public sharing requires explicit `loopeng stats --publish` (Phase 3)
+- Public sharing requires explicit `weavelog stats --publish` (Phase 3)
 - Published data is aggregate counts only — no code content, no personal data,
   no project identifiers
 - Opt-in at every phase. Off by default. The user controls their data.
 
 **This is the Tolaria "built from real use" credibility play, with data.**
-Tolaria's evidence was "I use it every day." loopeng's evidence: "X developers
+Tolaria's evidence was "I use it every day." weavelog's evidence: "X developers
 ran Y loops, shipped Z features, at $0.08 average cost."
 
 ## What NOT to do
@@ -169,16 +169,16 @@ ran Y loops, shipped Z features, at $0.08 average cost."
 | Question | Answer |
 |---|---|
 | What data to gather? | Usage (Phase 1) + outcome (Phase 2) + aggregate public (Phase 3) |
-| How to gather? | Local `.loopeng/metrics.jsonl` + OpenRouter API + headroom /stats |
-| What tools? | No external telemetry tool (none meet the bar). loopeng writes its own minimal log. |
-| Opt-in design? | Default off. `loopeng config set telemetry local`. No external upload unless explicit `--publish`. |
+| How to gather? | Local `.weavelog/metrics.jsonl` + OpenRouter API + headroom /stats |
+| What tools? | No external telemetry tool (none meet the bar). weavelog writes its own minimal log. |
+| Opt-in design? | Default off. `weavelog config set telemetry local`. No external upload unless explicit `--publish`. |
 | Evals? | `headroom evals adversarial/probes` (built-in) for compression quality |
 | Privacy? | Local-only by default. Aggregate counts only for public. No code content. |
-| Credibility evidence? | `loopeng stats --public` publishes aggregate data to the blog |
+| Credibility evidence? | `weavelog stats --public` publishes aggregate data to the blog |
 
 ## What this defers
 
-- The `loopeng stats` command implementation (Phase 4 CLI tool)
+- The `weavelog stats` command implementation (Phase 4 CLI tool)
 - The public dashboard design (Phase 3, when there's enough data)
-- The `loopeng config` command (Phase 4 CLI tool)
+- The `weavelog config` command (Phase 4 CLI tool)
 - Eval cadence (how often to run headroom evals — Phase 2+ decision)

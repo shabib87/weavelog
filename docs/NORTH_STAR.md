@@ -1,6 +1,6 @@
 # North Star
 
-Build the inner harness: agent work you can audit. flightlead is a
+Build the inner harness: agent work you can audit. weavelog is a
 deterministic CLI that composes an opinionated, evidence-grade agentic
 developer-experience stack on open standards. A pre-defined agent team runs an
 end-to-end loop — spec, implement, verify, document — with the human directing
@@ -11,15 +11,15 @@ and verifying.
 - Core engineering principles: YAGNI, SOLID, KISS, DRY. Every agent and every
   artifact obeys these, globally and per-project.
 - TDD and small ships with clean conventional commits are first-class. Every
-  feature, in flightlead and in workspaces it produces, ships test-first with
+  feature, in weavelog and in workspaces it produces, ships test-first with
   atomic commits.
 - QA is non-negotiable: maker/checker split and verification gates are woven
   into every loop. The same agent never grades its own work.
-- Security is non-negotiable: flightlead's own code is scanned, `flightlead
+- Security is non-negotiable: weavelog's own code is scanned, `weavelog
   check` enforces security on workspaces it produces, and security
   verification is woven into the loop.
 - **Host-composed, not host-built.** The host is a composition choice:
-  opencode first (v0.1), pi (0.2), Claude Code (0.3), Codex (0.4). flightlead
+  opencode first (v0.1), pi (0.2), Claude Code (0.3), Codex (0.4). weavelog
   composes hosts. It never builds a new agent host.
 - **The human directs AND verifies.** The human runs the conductor role:
   one-question-at-a-time dialogue, plan gate before implementation, merge

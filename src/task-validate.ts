@@ -84,7 +84,7 @@ export function unknownLabels(labels: string[] | null | undefined): string[] {
 /**
  * HARNESS-DEV CONTEXT DETECTION (AC #17).
  *
- * The canonical repo list: the agents-harness repo and the flightlead dev repo.
+ * The canonical repo list: the agents-harness repo and the weavelog dev repo.
  * A working repo is a harness-dev context when a git remote URL matches a
  * canonical repo (basename match, case-insensitive, tolerating `.git` and a
  * `-dev`/`.dev` dev-repo suffix), OR — only when the repo has NO remotes —
@@ -102,7 +102,7 @@ export function unknownLabels(labels: string[] | null | undefined): string[] {
  * are a validation FAILURE (not a warning) at claim, create gate, and
  * pre-commit.
  */
-export const HARNESS_DEV_REPOS: readonly string[] = ["agents-harness", "flightlead"];
+export const HARNESS_DEV_REPOS: readonly string[] = ["agents-harness", "weavelog"];
 
 function repoNameFromUrl(url: string): string {
 	const clean = url.trim().replace(/\/+$/, "");
@@ -333,7 +333,7 @@ export function decideMilestone(input: MilestoneDecisionInput): MilestoneDecisio
 
 /**
  * SCAFFOLDED-WORKSPACE VOCABULARY (AC #17) — the consumable contract for the
- * future flightlead scaffold command (no scaffold command exists yet).
+ * future weavelog scaffold command (no scaffold command exists yet).
  * A scaffolded workspace is NOT a harness development repo, so the generated
  * task vocabulary is the reserved set plus the fixed default general label
  * (deferred) ONLY — no harness, no dogfood. A scaffold config may add further
@@ -532,12 +532,12 @@ export function claimGate(task: ParsedTask, options: ClaimGateOptions = {}): Gat
 	if (!harnessDev) {
 		if (hasLabel(task.labels, "harness")) {
 			errors.push(
-				'label "harness" is only settable in a harness-dev context (canonical harness repos: agents-harness, flightlead) — this repo is not detected as one; remove the label or record the harness-dev context',
+				'label "harness" is only settable in a harness-dev context (canonical harness repos: agents-harness, weavelog) — this repo is not detected as one; remove the label or record the harness-dev context',
 			);
 		}
 		if (hasLabel(task.labels, "dogfood")) {
 			errors.push(
-				'label "dogfood" is only settable in a harness-dev context (canonical harness repos: agents-harness, flightlead) — this repo is not detected as one; remove the label or record the harness-dev context',
+				'label "dogfood" is only settable in a harness-dev context (canonical harness repos: agents-harness, weavelog) — this repo is not detected as one; remove the label or record the harness-dev context',
 			);
 		}
 	}
@@ -733,12 +733,12 @@ export function createGateCheck(
 	if (!harnessDev) {
 		if (hasLabel(input.labels, "harness")) {
 			errors.push(
-				'label "harness" is only settable in a harness-dev context (agents-harness / flightlead)',
+				'label "harness" is only settable in a harness-dev context (agents-harness / weavelog)',
 			);
 		}
 		if (hasLabel(input.labels, "dogfood")) {
 			errors.push(
-				'label "dogfood" is only settable in a harness-dev context (agents-harness / flightlead)',
+				'label "dogfood" is only settable in a harness-dev context (agents-harness / weavelog)',
 			);
 		}
 	}

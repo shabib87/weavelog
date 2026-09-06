@@ -1,7 +1,7 @@
 # Agent Instructions: Build harness-init
 
 > **Archived.** This was a task brief from the original idea session. It is
-> superseded by the `loopeng` design. Preserved for provenance only — do not
+> superseded by the `weavelog` design. Preserved for provenance only — do not
 > implement against this. See `docs/archive/README.md` and `docs/NORTH_STAR.md`.
 
 ## Mission

@@ -2,15 +2,13 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 
-const manifest = JSON.parse(
-	readFileSync(new URL("../../flightlead.json", import.meta.url), "utf8"),
-);
+const manifest = JSON.parse(readFileSync(new URL("../../weavelog.json", import.meta.url), "utf8"));
 
-test("flightlead.json declares at least six models", () => {
+test("weavelog.json declares at least six models", () => {
 	assert.ok(manifest.models.length >= 6);
 });
 
-test("flightlead.json proxy port is 8788", () => {
+test("weavelog.json proxy port is 8788", () => {
 	assert.equal(manifest.proxyPort, 8788);
 });
 

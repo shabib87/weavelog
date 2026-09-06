@@ -67,4 +67,4 @@
 
 - "Why Your Verifier Shouldn't Be Smarter Than Your Implementer" — the DeepSeek V4 Pro maker/checker principle explained
 - "Model Cost Collapse: GLM 5.2 Dropped 37% in One Week" — the importance of live data
-- "The 7-Model Stack: How loopeng Picks Its Team" — model selection methodology
+- "The 7-Model Stack: How weavelog Picks Its Team" — model selection methodology

@@ -1,4 +1,4 @@
-# 2026-07-22 — MoE orchestration audit of loopeng (conductor: Kimi K3)
+# 2026-07-22 — MoE orchestration audit of weavelog (conductor: Kimi K3)
 
 Raw session material. Not polished. Feeds future blog posts and Phase 1.95 planning.
 
@@ -50,11 +50,11 @@ error caught: AGENTS.md is 107 LOC (expert claimed 200+).
 
 ### Git compliance check (conductor)
 - Last 20 commits: 100% Conventional Commits. Author identity redacted.
-- Gaps: commit-msg hook still pending (manual discipline), `loopeng check`
+- Gaps: commit-msg hook still pending (manual discipline), `weavelog check`
   does not exist (manual sanitization).
 
 ### Strategic finding
-- PRODUCT.md dogfooding principle ("loopeng builds loopeng from v0.4") is
+- PRODUCT.md dogfooding principle ("weavelog builds weavelog from v0.4") is
   currently falsified: no `.pi/agents/`, no chains, no working gates.
   Fastest path back to thesis-true: Phase 1.95 (make documented gates real)
   + `.pi/` dogfood artifacts, making the repo its own first proof project.

@@ -4,7 +4,7 @@
 
 ## Decision
 
-The CLI (`loopeng check`, `loopeng init`) and the Pi extension are both
+The CLI (`weavelog check`, `weavelog init`) and the Pi extension are both
 TypeScript. No bash for logic. Bash is used only for trivial shims if ever
 needed (none anticipated in v1).
 
@@ -20,10 +20,10 @@ needed (none anticipated in v1).
   Node anyway.
 
 ## Distribution (consequence of TS-only)
-- **Primary:** npm — `npx loopeng@latest init` works with zero install.
+- **Primary:** npm — `npx weavelog@latest init` works with zero install.
 - **Secondary:** Homebrew formula wrapping the npm package with a `node`
   dependency (how TS-based taps like `serve`/`bun` distribute).
-- The extension: `pi install npm:loopeng/pi-loopeng (pre-rename scope)`.
+- The extension: `pi install npm:weavelog/pi-weavelog (pre-rename scope)`.
 
 ## What was considered and rejected (preserved for provenance)
 
@@ -32,13 +32,13 @@ needed (none anticipated in v1).
   Con: fragile for logic-heavy scaffolding; hard to test beyond bats.
   **Rejected** — logic-heavy CLI is a liability in bash.
 - **TypeScript (single language for whole project)** — CLI runs via `npx
-  loopeng` or a compiled binary. **Chosen.** One language, one test setup,
+  weavelog` or a compiled binary. **Chosen.** One language, one test setup,
   SOLID applies cleanly, shares types with the extension.
 - **TypeScript + thin bash wrapper** — rejected as unnecessary complexity.
 - **Go or Rust compiled binary** — rejected as overkill for solo-dev v1.
 
 ### 2. Distribution channel implications
-- TypeScript → `npx loopeng` works with zero install; Homebrew wraps a
+- TypeScript → `npx weavelog` works with zero install; Homebrew wraps a
   `node` dependency. npm primary, Homebrew secondary.
 
 ### 3. Testing strategy

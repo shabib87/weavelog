@@ -9,7 +9,7 @@ FIX-THEN-SHIP; every finding below is resolved in this revision.
 
 ## Goal
 
-Reach Phase 4 (CLI: `loopeng init` / `check` / `plugin add`) with maximum
+Reach Phase 4 (CLI: `weavelog init` / `check` / `plugin add`) with maximum
 autonomous MoE fanout, bounded by Osmani back pressure: autonomy only
 where verification is cheap, and **all v1 gates stay lit** (spec §7.4:
 uniformly human-gated until telemetry justifies tiering). Speed comes from
@@ -109,5 +109,5 @@ accepted trade).
 ## Definition of done for the fast track
 
 Phase 4 CLI slices merged, gates green (biome, tsc, node --test in CI),
-telemetry logs per chain on disk, and loopeng used to scaffold its own
+telemetry logs per chain on disk, and weavelog used to scaffold its own
 `.pi/` workspace — the dogfooding principle made true.

@@ -3,16 +3,16 @@
 > **Snapshot as of 2026-07-22.** This is a hand-maintained inventory of the
 > author's private Pi harness under `~/.pi/agent/`. It will drift. Verify
 > against the live directory before relying on it. The durable, machine-checked
-> version of this is the planned `loopeng check` command (Phase 4); until then,
+> version of this is the planned `weavelog check` command (Phase 4); until then,
 > treat this as a dated snapshot, not a permanent source of truth.
 
-This documents the private Pi workspace configuration used by the loopeng author.
-These files live in `~/.pi/agent/`, not in the loopeng repo.
+This documents the private Pi workspace configuration used by the weavelog author.
+These files live in `~/.pi/agent/`, not in the weavelog repo.
 
 ## Local extensions (`~/.pi/agent/extensions/`)
 
 - `footer.ts` — four-line footer (session identity, model/runtime, token flow,
-  cost/context/extension statuses). Spec: `docs/superpowers/specs/2026-07-07-loopeng-footer-theme-design.md`.
+  cost/context/extension statuses). Spec: `docs/superpowers/specs/2026-07-07-weavelog-footer-theme-design.md`.
 - `herdr-agent-state.ts` — bridges Pi agent state (working/blocked/idle) to the
   herdr pane manager over a Unix socket. Installed by herdr; managed file.
 - `session-logger.ts` — session-quality telemetry. Schema designed; runtime
@@ -43,7 +43,7 @@ Five npm packages and one git package:
 - `compaction`: enabled, reserveTokens 16384, keepRecentTokens 20000
 - `retry`: enabled, maxRetries 3
 - `quietStartup`: false
-- `theme`: `loopeng-dark`
+- `theme`: `weavelog-dark`
 
 ## State files and directories (`~/.pi/agent/`)
 
@@ -55,10 +55,10 @@ Five npm packages and one git package:
 - `models.md` — model registry (codex profile naming, tier framing,
   default-vs-advisor split). Updated 2026-07-22.
 - `models-store.json` — cached model catalog from OpenRouter live API.
-- `themes/loopeng-dark.json` — custom theme (see below).
+- `themes/weavelog-dark.json` — custom theme (see below).
 - `bin/`, `skills/`, `sessions/` — standard Pi runtime dirs.
 
-## loopeng-dark theme
+## weavelog-dark theme
 
 Based on Pi's built-in `dark` theme with a custom palette:
 
@@ -89,5 +89,5 @@ npm extension above.
 
 ## Future
 
-This setup may become a distributable Pi package when loopeng is ready to offer
+This setup may become a distributable Pi package when weavelog is ready to offer
 it to users. Until then, it is author-only configuration.

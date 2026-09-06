@@ -4,14 +4,14 @@
 > **Status:** Active. Decisions adopted into ROADMAP, PRODUCT, ADR.
 > **Session:** scope-refinement discussion (Codex, GLM 5.2)
 > **Cross-ref:** `docs/PRODUCT.md`, `docs/ROADMAP.md`,
-> `docs/adr/0001-loopeng-architecture-decisions.md`, `docs/NORTH_STAR.md`
+> `docs/adr/0001-weavelog-architecture-decisions.md`, `docs/NORTH_STAR.md`
 
 ## Context
 
 User identified that bundling mobile-stack-heavy skills at launch is
 unnecessary and complicates the core. The core moat (opinionated integration
 plus builder credibility) stays the same. The question: how to refine the
-roadmap so loopeng stays generic and simple enough for `loopeng init` to
+roadmap so weavelog stays generic and simple enough for `weavelog init` to
 produce a working agentic workspace with the author's engineering philosophy,
 while allowing platform-specific capabilities (mobile, web, dotnet) to be
 added as independently released packages.
@@ -20,28 +20,28 @@ added as independently released packages.
 
 ### 1. Three-layer customization model
 
-loopeng's customization surface is three concentric layers:
+weavelog's customization surface is three concentric layers:
 
 | Layer | What lives here | Who controls it | User can override? |
 |---|---|---|---|
-| **1. Fixed (constitution)** | Engineering philosophy (YAGNI, SOLID, KISS, DRY, TDD, maker/checker, security), loop shape (spec, implement, verify, document), open standards (Agent Skills, AGENTS.md), Pi as host, open-weights-primary pattern | loopeng core | No. If user disagrees, loopeng is the wrong tool. |
-| **2. Opinionated defaults** | Specific model roster, budget default, agent role prompts, CI pipeline shape, hook configs | loopeng ships defaults | Yes. `loopeng init` writes them. User edits after. loopeng never overwrites user modifications. |
-| **3. User-owned** | Platform skills (mobile, web, dotnet), custom agents, architecture decisions (MVVM, MVI, modular), user's existing skill libraries | User | Fully. loopeng discovers, imports, wires. Does not author. |
+| **1. Fixed (constitution)** | Engineering philosophy (YAGNI, SOLID, KISS, DRY, TDD, maker/checker, security), loop shape (spec, implement, verify, document), open standards (Agent Skills, AGENTS.md), Pi as host, open-weights-primary pattern | weavelog core | No. If user disagrees, weavelog is the wrong tool. |
+| **2. Opinionated defaults** | Specific model roster, budget default, agent role prompts, CI pipeline shape, hook configs | weavelog ships defaults | Yes. `weavelog init` writes them. User edits after. weavelog never overwrites user modifications. |
+| **3. User-owned** | Platform skills (mobile, web, dotnet), custom agents, architecture decisions (MVVM, MVI, modular), user's existing skill libraries | User | Fully. weavelog discovers, imports, wires. Does not author. |
 
-**Principle:** loopeng is opinionated about methodology (Layer 1), provides
+**Principle:** weavelog is opinionated about methodology (Layer 1), provides
 sensible defaults for implementation (Layer 2), and is a neutral compositor
 for user-owned capabilities (Layer 3). This matches the existing PRODUCT.md
-statement: "loopeng does NOT author platform skills."
+statement: "weavelog does NOT author platform skills."
 
 ### 2. Plugin/package architecture
 
 Platform-specific capabilities ship as independently released packages, not
-as core loopeng features.
+as core weavelog features.
 
 **Distribution:** Pi-native `pi install` mechanism.
 
-- Official packages: `pi install npm:loopeng/plugin-mobile-ios (pre-rename scope)`,
-  `pi install npm:loopeng/plugin-mobile-android (pre-rename scope)`, etc.
+- Official packages: `pi install npm:weavelog/plugin-mobile-ios (pre-rename scope)`,
+  `pi install npm:weavelog/plugin-mobile-android (pre-rename scope)`, etc.
 - Community packages: any Pi-installable repo that conforms to Agent Skills
   standard.
 - User's own skills: drop into `.agents/skills/` (project-local) or
@@ -49,7 +49,7 @@ as core loopeng features.
   paths (`~/.pi/agent/skills/`, `~/.agents/skills/`, `.pi/skills/`,
   `.agents/skills/`).
 
-**`loopeng plugin add` is a validated wrapper, not a replacement for
+**`weavelog plugin add` is a validated wrapper, not a replacement for
 `pi install`:**
 
 1. Runs `pi install <source>` (Pi handles package installation)
@@ -64,7 +64,7 @@ as core loopeng features.
 **No symlinks.** Pi discovers skills from multiple native paths. No
 indirection, no fragile path assumptions.
 
-**Validation logic is shared.** `loopeng plugin add` and `loopeng check`
+**Validation logic is shared.** `weavelog plugin add` and `weavelog check`
 use the same skill-validation code (DRY).
 
 ### 3. Model defaults as living reference
@@ -72,13 +72,13 @@ use the same skill-validation code (DRY).
 The specific model IDs (GLM 5.2, DeepSeek V4 Pro, Kimi K2.7, etc.) are
 Layer 2 defaults, not Layer 1 philosophy. They change every few months.
 
-- loopeng ships a `models.md` template.
-- `loopeng init --global` copies it to `~/.pi/agent/models.md`.
-- User owns the file after. loopeng never overwrites it.
+- weavelog ships a `models.md` template.
+- `weavelog init --global` copies it to `~/.pi/agent/models.md`.
+- User owns the file after. weavelog never overwrites it.
 - The tier structure (primary, verifier, budget, frontier escalation) is
   Layer 1 (the pattern). Specific model IDs are Layer 2 (the implementation).
 - Model churn does not block core releases. `~/.pi/agent/models.md` updates
-  independently of loopeng core.
+  independently of weavelog core.
 
 ### 4. User profile sharpened
 
@@ -90,7 +90,7 @@ Layer 2 defaults, not Layer 1 philosophy. They change every few months.
 - Occasionally customizes: drops in own skills, swaps a model, adjusts a
   budget.
 
-**Customization ceiling:** Layer 3 fully open. Layer 2 editable but loopeng
+**Customization ceiling:** Layer 3 fully open. Layer 2 editable but weavelog
 owns defaults. Layer 1 fixed. If a user wants to change Layer 1, they are
 not the target user.
 
@@ -101,10 +101,10 @@ toolchain support was a core NORTH_STAR non-negotiable.
 
 **After:** Mobile capabilities ship as independently released plugin
 packages. The mobile proof project moves to v1.2. Core v1.0 proves on
-two proof projects (loopeng itself + blog).
+two proof projects (weavelog itself + blog).
 
 **Why this is a correctness fix, not a scope reduction:** PRODUCT.md already
-states "loopeng does NOT author platform skills." Bundling mobile skills
+states "weavelog does NOT author platform skills." Bundling mobile skills
 into core contradicted that principle. The plugin model makes the product
 consistent with its own stated strategy.
 
@@ -125,12 +125,12 @@ consistent with its own stated strategy.
 ## NORTH_STAR amendment proposed
 
 Current NORTH_STAR non-negotiable:
-"loopeng-target workspaces support mobile toolchains (Swift/KMP/Kotlin)
+"weavelog-target workspaces support mobile toolchains (Swift/KMP/Kotlin)
 without Docker."
 
 **Proposed amendment:**
-"loopeng workspaces support platform toolchains (mobile, web, etc.) via
-plugin packages, not core. Core loopeng is platform-agnostic. Platform
+"weavelog workspaces support platform toolchains (mobile, web, etc.) via
+plugin packages, not core. Core weavelog is platform-agnostic. Platform
 capabilities ship as independently released plugins conforming to the
 Agent Skills standard."
 
@@ -146,6 +146,6 @@ NORTH_STAR.md edits.
 - **Plugin compatibility verification depth:** How strict should
   `compatibility` frontmatter checking be? Hard fail vs. warning.
   Recommendation: warning in v0.2, hard fail option in v0.3.
-- **Plugin versioning:** Should plugins declare a minimum loopeng version?
-  Recommendation: yes, via `compatibility` frontmatter `minLoopengVersion`
-  field. Validated by `loopeng plugin add`.
+- **Plugin versioning:** Should plugins declare a minimum weavelog version?
+  Recommendation: yes, via `compatibility` frontmatter `minWeavelogVersion`
+  field. Validated by `weavelog plugin add`.

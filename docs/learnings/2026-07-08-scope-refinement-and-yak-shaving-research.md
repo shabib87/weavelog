@@ -3,7 +3,7 @@
 > **Date:** 2026-07-08
 > **Session:** scope-refinement discussion (Codex, GLM 5.2)
 > **Related:** `docs/research/2026-07-08-plugin-architecture-and-scope-refinement.md`,
-> `docs/PRODUCT.md`, `docs/ROADMAP.md`, `docs/adr/0001-loopeng-architecture-decisions.md`,
+> `docs/PRODUCT.md`, `docs/ROADMAP.md`, `docs/adr/0001-weavelog-architecture-decisions.md`,
 > `docs/NORTH_STAR.md`
 
 ## Scope refinement (adopted, NORTH_STAR amended)
@@ -18,15 +18,15 @@ core features.
 1. Three-layer customization model (Fixed / Opinionated defaults /
    User-owned).
 2. Plugin/package architecture using Pi-native `pi install`.
-3. `loopeng plugin add` as validated wrapper around `pi install`.
+3. `weavelog plugin add` as validated wrapper around `pi install`.
 4. Model defaults as living reference (Layer 2, not Layer 1).
 5. Mobile moved to v1.1 (plugins) and v1.2 (proof project).
-6. Core v1.0 proves on two proof projects (loopeng + blog).
+6. Core v1.0 proves on two proof projects (weavelog + blog).
 
 **NORTH_STAR amendment applied (user-approved 2026-07-08).** Line 18
-changed from "loopeng-target workspaces support mobile toolchains
-(Swift/KMP/Kotlin) without Docker" to "loopeng workspaces support platform
-toolchains (mobile, web, etc.) via plugin packages, not core. Core loopeng
+changed from "weavelog-target workspaces support mobile toolchains
+(Swift/KMP/Kotlin) without Docker" to "weavelog workspaces support platform
+toolchains (mobile, web, etc.) via plugin packages, not core. Core weavelog
 is platform-agnostic."
 
 **Docs updated:** NORTH_STAR.md, ROADMAP.md, PRODUCT.md, ADR 0001 (new
@@ -38,7 +38,7 @@ section 2.14, amendments to 2.3 and 2.12), PROGRESS.md. Research log at
 ### 1. Correctness fix, not scope reduction
 
 Removing mobile from core was not a scope reduction. It was a correctness
-fix. PRODUCT.md already stated "loopeng does NOT author platform skills."
+fix. PRODUCT.md already stated "weavelog does NOT author platform skills."
 Bundling mobile skills into core contradicted that principle. The plugin
 model makes the product consistent with its own stated strategy. When a
 product's scope contradicts its own stated principles, the scope is wrong,
@@ -54,14 +54,14 @@ The model allocation has two layers that should not be conflated:
   Layer 2 defaults. These change every few months as models evolve.
 
 By separating them, model churn no longer blocks core releases. The
-`~/.pi/agent/models.md` file updates independently of loopeng core. The
-user owns it after `loopeng init --global` copies the template. This is the
+`~/.pi/agent/models.md` file updates independently of weavelog core. The
+user owns it after `weavelog init --global` copies the template. This is the
 same principle as separating interface from implementation in SOLID.
 
 ### 3. Opinionated defaults, not dictatorship
 
 The three-layer model clarified a principle that was implicit before:
-loopeng is opinionated about methodology (Layer 1, fixed), provides sensible
+weavelog is opinionated about methodology (Layer 1, fixed), provides sensible
 defaults for implementation (Layer 2, editable), and is a neutral compositor
 for user-owned capabilities (Layer 3, fully open). This is "opinionated
 defaults, not dictatorship" - the same posture as Prettier (opinionated
@@ -71,7 +71,7 @@ The moat is the opinion, not the configurability.
 ### 4. Customization ceiling defined by Layer 1
 
 The user asked "to what level do I allow customization?" The answer is
-Layer 3 is fully open, Layer 2 is editable but loopeng owns defaults, and
+Layer 3 is fully open, Layer 2 is editable but weavelog owns defaults, and
 Layer 1 is fixed. If a user wants to change Layer 1 (e.g., "I don't want
 maker/checker"), they are not the target user. This is the filter: the
 philosophy IS the product. Users who disagree with the philosophy self-
@@ -81,10 +81,10 @@ select out. This is a feature, not a bug.
 
 Choosing Pi-native `pi install` over a custom plugin package manager is a
 KISS and DRY decision. Pi already has a package system with auto-discovery,
-settings-based filtering, and validation. Wrapping it with loopeng's
+settings-based filtering, and validation. Wrapping it with weavelog's
 opinionated validation layer (Agent Skills conformance, compatibility
 checking) adds value without reinventing package management. The validation
-logic is shared between `loopeng plugin add` and `loopeng check` (DRY).
+logic is shared between `weavelog plugin add` and `weavelog check` (DRY).
 
 ### 6. No symlinks - Pi discovers natively
 
@@ -92,7 +92,7 @@ The instinct to use symlinks for skill import was wrong. Pi already
 discovers skills from four standard paths (`~/.pi/agent/skills/`,
 `~/.agents/skills/`, `.pi/skills/`, `.agents/skills/`). Adding symlink
 indirection would add fragility for no benefit. The user puts skills where
-Pi expects them, and loopeng surfaces what was found. Simpler is better.
+Pi expects them, and weavelog surfaces what was found. Simpler is better.
 
 ## Yak shaving / local tracking (parked by user)
 
@@ -135,12 +135,12 @@ pickup.
    Depth visible in logs but not exposed to agent context window (to
    prevent manipulation).
 
-### What loopeng already captures
+### What weavelog already captures
 
 From the existing two-axis telemetry design:
 - **Session-quality axis** (`.pi/logs/<id>.stats.json`): `topicSwitches`,
   `dominantTypeRatio`, `turnsBucket`, `costPerTurnTrend`.
-- **Workflow axis** (`.loopeng/metrics.jsonl`): `step`, `model`, `outcome`,
+- **Workflow axis** (`.weavelog/metrics.jsonl`): `step`, `model`, `outcome`,
   `retries`, `duration`, `human_approved`.
 
 These are observational (post-hoc), not preventive. They tell you what
@@ -162,17 +162,17 @@ them.
 ### Proposed (not agreed, parked)
 
 Three-layer model:
-- Layer 1: Deterministic scope gate in `loopeng check` (verify gate). Spec
+- Layer 1: Deterministic scope gate in `weavelog check` (verify gate). Spec
   declares expected scope, `git diff --name-only` checks actual vs declared
   after step.
-- Layer 2: Behavioral loop detection in loopeng Pi extension (real-time via
+- Layer 2: Behavioral loop detection in weavelog Pi extension (real-time via
   `tool_call` hook). Sliding window, four patterns, escalating actions.
 - Layer 3: Enhanced session-quality telemetry signals (`taskChainDepth`,
   `scopeDriftScore`, `timePerStepTrend`, `loopDetected`).
 
 Meta problem: human yak shaving (user self-identified). Guardrails differ
 from agent yak shaving. Possible: plan step must trace to NORTH_STAR/
-ROADMAP, session stats show scope drift score, `loopeng stats` includes a
+ROADMAP, session stats show scope drift score, `weavelog stats` includes a
 "yak shaving index."
 
 ### Decision
@@ -183,7 +183,7 @@ it back up.
 ## Blog candidates
 
 - "The Plugin Boundary: Why Core Should Stay Core" - the decision to move
-  mobile skills out of core loopeng into plugins, and how it made the
+  mobile skills out of core weavelog into plugins, and how it made the
   product more consistent with its own stated philosophy.
 - "Three Layers of Opinion" - the Fixed/Defaults/User-owned model and how it
   defines the customization ceiling for an opinionated tool.
@@ -193,5 +193,5 @@ it back up.
 - "Opinionated Defaults, Not Dictatorship" - the customization posture and
   why the philosophy IS the product, not a configurable option.
 - "Yak Shaving Detection in Agentic Loops" - survey of the landscape (KEEL,
-  ScopeGuard, AgentScope, agent-loop-guard, Scope Lock) and what loopeng
+  ScopeGuard, AgentScope, agent-loop-guard, Scope Lock) and what weavelog
   could adopt (to be written when the topic is resumed).

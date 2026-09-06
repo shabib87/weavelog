@@ -1,4 +1,4 @@
-# Loop Taxonomy for loopeng
+# Loop Taxonomy for weavelog
 
 > **Date:** 2026-07-04
 > **Source:** Laurie Voss, "What the hell is a loop, anyway?" (2026-07-03)
@@ -7,7 +7,7 @@
 ## Summary
 
 Laurie Voss identifies four distinct architectures that all get called "loops"
-in AI engineering. This document maps each one to loopeng's architecture and
+in AI engineering. This document maps each one to weavelog's architecture and
 defines where v1 ends and v2 begins.
 
 ---
@@ -23,8 +23,8 @@ The agent's own act-observe cycle. It iterates on steps within one task and
 ends on environment feedback: test output, API response, file contents.
 Humans are absent mid-loop and appear only at boundaries.
 
-**Where it lives in loopeng:** This is Pi itself. The model calls `bash`,
-`edit`, `read` — Pi handles the tool execution loop. loopeng does not
+**Where it lives in weavelog:** This is Pi itself. The model calls `bash`,
+`edit`, `read` — Pi handles the tool execution loop. weavelog does not
 engineer this layer.
 
 ### 2. Task Loop (Ralph Loop)
@@ -41,12 +41,12 @@ and — critically — watches the loop, spots failure patterns, and fixes them
 so they never recur. Huntley compares the human's role to "a locomotive
 engineer, someone whose whole job is keeping the train on the rails."
 
-**Where it lives in loopeng:** **This is loopeng v1.** Spec → implement →
+**Where it lives in weavelog:** **This is weavelog v1.** Spec → implement →
 verify → document, with the human reviewing diffs at verification gates.
 The Ralph Loop's key insight — fresh context per iteration — maps directly
 to Pi's `/fork` per agent role.
 
-| Ralph Loop Principle | loopeng v1 Implementation |
+| Ralph Loop Principle | weavelog v1 Implementation |
 |---|---|
 | Fresh context per iteration | Pi `/fork` per agent role (Analyst, Implementer, Verifier) |
 | Human writes spec, judges done | Human authors AGENTS.md, verifies at handoff gates |
@@ -68,7 +68,7 @@ which checkpoints to automate and which to keep human. Zach Lloyd at Warp:
 team code now created by internal Claude Tag, with agents taking
 responsibility for parts of the codebase, not just individual bugs.
 
-**Where it lives in loopeng:** **loopeng v2.** v1 is human-gated at every
+**Where it lives in weavelog:** **weavelog v2.** v1 is human-gated at every
 verification point. v2 would add automated merge, continuous backlog
 processing, and ratcheting autonomy as eval scores improve.
 
@@ -88,7 +88,7 @@ Exit signals: evals, judges, filtered product feedback, and an explicit
 ask-a-human tool for tacit knowledge. This is the loop that rewrites the
 prompts, swaps the models, and tunes the eval thresholds.
 
-**Where it lives in loopeng:** **v2/v3.** The eval system is the first
+**Where it lives in weavelog:** **v2/v3.** The eval system is the first
 step: collecting traces, clustering failures, identifying which model/role
 combinations degrade. The system loop will eventually auto-tune these.
 
@@ -107,7 +107,7 @@ loops operate.
 
 ---
 
-## Where loopeng Sits in the Stack
+## Where weavelog Sits in the Stack
 
 ```
 OVERSIGHT LOOP (Human)
@@ -116,7 +116,7 @@ SYSTEM LOOP (v2/v3)
     ↓ studies, improves
 PRODUCT LOOP (v2)
     ↓ orchestrates lifecycle
-TASK LOOP (v1 — LOOPENG)        ← YOU ARE HERE
+TASK LOOP (v1 — WEAVELOG)        ← YOU ARE HERE
     ↓ runs spec→implement→verify→document
 EXECUTION LOOP (Pi)
     ↓ runs tool calls per agent
@@ -132,17 +132,17 @@ nothing feeds back into a next cycle, and a loop without feedback is just
 a for statement. Fan-out is a topology you can deploy inside any of the
 four loops, not a loop of its own."*
 
-This matters for loopeng: parallel sub-agents (like running Analyst and
+This matters for weavelog: parallel sub-agents (like running Analyst and
 Implementer concurrently) is fan-out, not a loop. The loop is the feedback
 cycle, not the dispatch pattern.
 
 ---
 
-## What This Means for loopeng v1
+## What This Means for weavelog v1
 
 ### Scope Boundaries
 
-| Concern | loopeng v1 | loopeng v2+ |
+| Concern | weavelog v1 | weavelog v2+ |
 |---|---|---|
 | Task loop (spec→code→verify→doc) | ✅ Built | ✅ Improved |
 | Analysis pre-loop (research→review→spec) | ✅ Added 2026-07-04 | ✅ Improved |
@@ -152,7 +152,7 @@ cycle, not the dispatch pattern.
 
 ### The Eval System: Wired Signals
 
-Laurie's closing is the design brief for loopeng's eval system:
+Laurie's closing is the design brief for weavelog's eval system:
 
 > *"Naming a signal is not the same as wiring it in. A loop without its
 > signal doesn't converge, it just runs until something external stops it.

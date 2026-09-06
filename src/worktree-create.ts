@@ -58,8 +58,8 @@ if [ "$branch" = "main" ] || [ "$branch" = "master" ]; then
 fi
 # TASK-51: block AC-gutting on spec-approved tasks (backlog/tasks/task-*.md).
 # Presence-guarded so foreign repos (no harness bin) are never blocked.
-if command -v flightlead >/dev/null 2>&1; then
-  if ! flightlead check --pre-commit; then
+if command -v weavelog >/dev/null 2>&1; then
+  if ! weavelog check --pre-commit; then
     exit 1
   fi
 fi

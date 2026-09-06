@@ -1,4 +1,4 @@
-# 2026-07-04 — loopeng Foundation: Harness Fix to Product Strategy
+# 2026-07-04 — weavelog Foundation: Harness Fix to Product Strategy
 
 > **Session:** `verify-doc` (Pi, z-ai/glm-5.2 via OpenRouter)
 > **Duration:** ~5h 18m (17:55 → 23:13 UTC, then resumed 05:06 → 06:50)
@@ -7,7 +7,7 @@
 > **Cost:** $9.85 (Pi-tracked); $25.57 lifetime OpenRouter spend
 > **Type:** Foundational — evolved from harness verification to product strategy
 
-This is the learning log for the session that established loopeng's
+This is the learning log for the session that established weavelog's
 foundation. It is raw material for future blog posts. Each section is a
 candidate blog post with the data that backs it.
 
@@ -151,7 +151,7 @@ output, THEN claim. Not "should be clean" — `grep -c` returns 0.
 **Lesson:** overclaiming is the agent equivalent of the user's overreach
 pattern. Both violate YAGNI + verification-before-completion. The
 superpowers skill is prompt-level enforcement; mechanical gates (hooks,
-`loopeng check`) are the robust fix.
+`weavelog check`) are the robust fix.
 
 **Blog candidate:** "The overclaim pattern: when agents violate their own
 principles"
@@ -164,10 +164,10 @@ principles"
 
 | Decision | Why | Where |
 |---|---|---|
-| loopeng = composer CLI (setup/verify/compose), not a runner | Pi runs the loop; loopeng sets up the workspace. SOLID. | PRODUCT.md |
+| weavelog = composer CLI (setup/verify/compose), not a runner | Pi runs the loop; weavelog sets up the workspace. SOLID. | PRODUCT.md |
 | Open-weights primary, frontier as targeted escalation | Maximize cost/quality; cross-vendor maker/checker | NORTH_STAR, frontier-model-selection.md |
-| 3 proof projects (loopeng, blog, mobile comparison) | Falsifiable PMF evidence; Tolaria model with data | PRODUCT.md, ROADMAP |
-| Codex is personal backup, NOT a loopeng target | loopeng v1 = Pi + OpenRouter only | PRODUCT.md |
+| 3 proof projects (weavelog, blog, mobile comparison) | Falsifiable PMF evidence; Tolaria model with data | PRODUCT.md, ROADMAP |
+| Codex is personal backup, NOT a weavelog target | weavelog v1 = Pi + OpenRouter only | PRODUCT.md |
 | Architecture is user-decided, not skill-dictated | Skills teach capability, not arch; user controls | PRODUCT.md, constitution |
 | Tolaria = non-competing reference, not a clone | Business use-case analysis reference only | PRODUCT.md |
 
@@ -246,7 +246,7 @@ Corrected: insights captured as PROGRESS watch items, not new docs.
 
 ### 6. Tolaria framing — CORRECTED
 
-I initially described Tolaria as a "reference architecture" for loopeng to
+I initially described Tolaria as a "reference architecture" for weavelog to
 learn from. The user corrected: "don't take the codewithshabib agents too
 seriously, it was a trial." Then for Tolaria: it's a non-competing reference
 for business use-case analysis, NOT a template. PRODUCT.md now states this
@@ -260,11 +260,11 @@ the path starts with `~/`. I put the full path in NEXT_SESSION.md and the
 learning log. The user caught it. Fix: reference sessions by ID
 (`pi --session <uuid>`), not by file path. Document the pattern as
 `--<encoded-cwd>--`, never the literal encoded path. This is a sanitization
-rule addition for `loopeng check`: scan for `--Users-<name>-` patterns.
+rule addition for `weavelog check`: scan for `--Users-<name>-` patterns.
 
 ### 8. ADR not in Nygard format — GAP FOUND
 
-The ADR (`docs/adr/0001-loopeng-architecture-decisions.md`) is a monolithic
+The ADR (`docs/adr/0001-weavelog-architecture-decisions.md`) is a monolithic
 file with 13 decisions in one document. Nygard format (the standard) is one
 ADR per file, each with Title/Context/Decision/Status/Consequences, numbered
 sequentially. The file was moved to `docs/adr/` (correct location) but not
@@ -293,11 +293,11 @@ item for a separate session.
 | 5 | "Pi's native audit trail: the session JSONL" | Finding 5 | JSONL path, 512 entries, 2.3MB, /export + /share |
 | 6 | "The overclaim pattern: when agents violate their own principles" | Finding 6 | 4 specific overclaims, superpowers skill reference |
 | 7 | "What Tolaria taught me about OSS credibility" | Decision (Tolaria) | 18k★, AGPL+trademark, "built from real use" |
-| 8 | "Three proof projects: how I'll demonstrate loopeng works" | Decision (PMF) | 3 projects, falsifiability thesis |
+| 8 | "Three proof projects: how I'll demonstrate weavelog works" | Decision (PMF) | 3 projects, falsifiability thesis |
 | 9 | "I almost rebuilt superpowers. Then I read it." | Decision (compose) | skills inventory, 1:1 mapping table |
 | 10 | "Why I collapsed BRD/PRD/TRD into NORTH_STAR/ROADMAP/ADR" | Decision (doc chain) | enterprise vs solo, YAGNI |
 | 11 | "The honest moat of a solo OSS devex tool" | PRODUCT.md §Moat | "not code, it's integration + credibility" |
-| 12 | "loopeng's constitution: YAGNI/SOLID/KISS/DRY as law" | NORTH_STAR + global AGENTS.md | 3 constitution files, principle-to-skill mapping |
+| 12 | "weavelog's constitution: YAGNI/SOLID/KISS/DRY as law" | NORTH_STAR + global AGENTS.md | 3 constitution files, principle-to-skill mapping |
 | 13 | "Pi's session folder name leaks your username" | Correction 7 | Pi cwd encoding pattern, sanitization rule addition |
 | 14 | "When your ADR isn't really an ADR" | Correction 8 | Nygard format vs monolithic, restructure task |
 | 15 | "The linter I never chose" | Correction 9 | Biome provenance gap, inherited assumptions |

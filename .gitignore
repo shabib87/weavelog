@@ -30,7 +30,11 @@ docs/archive/reference-donot-git-commit-never/
 .env.local
 .env.*
 
-# flightlead state (never commit; lives in ~/.local/state/flightlead/)
+# weavelog state (never commit; lives in ~/.local/state/weavelog/)
 state/
 
 !.env.example
+
+# worktree-local artifacts
+node_modules
+TASK.md

@@ -8,7 +8,7 @@
 ## The question
 
 As docs grow, how do agents and humans find the right doc without context
-rot? Does loopeng need a custom indexing system, or do existing tools suffice?
+rot? Does weavelog need a custom indexing system, or do existing tools suffice?
 
 ## Pi's native context discovery (evidence from Pi README + docs)
 
@@ -26,7 +26,7 @@ Pi already has a built-in doc discovery mechanism. This is the YAGNI floor:
 
 **Key finding:** Pi walks parent directories and concatenates all AGENTS.md
 files. This IS an indexing mechanism — hierarchical, automatic, standard-based.
-The doc-hierarchy table in loopeng's AGENTS.md (already exists) tells the
+The doc-hierarchy table in weavelog's AGENTS.md (already exists) tells the
 agent which docs are authoritative. This handles ~100 files trivially.
 
 ## The four options
@@ -44,7 +44,7 @@ agent which docs are authoritative. This handles ~100 files trivially.
 ### Phase A (v0.1–v0.3): flat files + AGENTS.md — what we have now
 
 Pi's native AGENTS.md discovery is the indexing mechanism. No additional
-tooling. The doc-hierarchy table in AGENTS.md (which loopeng already has)
+tooling. The doc-hierarchy table in AGENTS.md (which weavelog already has)
 tells agents what to read and in what order of authority.
 
 ```

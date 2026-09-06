@@ -6,9 +6,9 @@ steps: 30
 permission:
   edit:
     "**/*": allow
-    "/{{FLIGHTLEAD_CONFIG_HOME}}/opencode/**": deny
-    "/{{FLIGHTLEAD_HOME}}/AGENT-STACK-RUNBOOK.md": deny
-    "/{{FLIGHTLEAD_HOME}}/skills/**": deny
+    "/{{WEAVELOG_CONFIG_HOME}}/opencode/**": deny
+    "/{{WEAVELOG_HOME}}/AGENT-STACK-RUNBOOK.md": deny
+    "/{{WEAVELOG_HOME}}/skills/**": deny
     "**/AGENTS.md": deny
     "**/docs/plans/**": deny
     "**/docs/research/**": deny

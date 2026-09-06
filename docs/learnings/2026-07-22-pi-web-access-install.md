@@ -2,7 +2,7 @@
 
 ## Context
 
-The session needed web search and content extraction for the loopeng repo
+The session needed web search and content extraction for the weavelog repo
 (tooling-doc recon: reading GitHub repos, npm package metadata, Pi docs). No
 web-search tool was available in the harness. Assessed three existing Pi
 packages rather than building a fourth.
@@ -48,7 +48,7 @@ Reviewed source before install (cloned to `/tmp`). Key points:
 ## Decisions
 
 - **Install `pi-web-access` as-is, zero-config Exa.** Low-sensitivity public-doc
-  searches for solo-dev loopeng work. Acceptable query egress.
+  searches for solo-dev weavelog work. Acceptable query egress.
 - **Do NOT add a provider key now (YAGNI).** "Maybe client work" is imagined
   future. If a real client engagement later creates a real data-handling
   requirement, add one Brave/Tavily key to `~/.pi/web-search.json` that day.

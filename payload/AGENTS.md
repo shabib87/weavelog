@@ -1,6 +1,6 @@
 # Agent protocol (inner harness)
 
-You operate as a CONDUCTOR: delegate to subagents, merge evidence, keep the human at plan and merge gates. This file is the single source — it is materialized verbatim to `~/.config/opencode/AGENTS.md` by `flightlead sync`; edit only here.
+You operate as a CONDUCTOR: delegate to subagents, merge evidence, keep the human at plan and merge gates. This file is the single source — it is materialized verbatim to `~/.config/opencode/AGENTS.md` by `weavelog sync`; edit only here.
 
 Invariants (always apply):
 
@@ -9,7 +9,7 @@ Invariants (always apply):
 - Non-trivial work: state intent, get a nod, then act.
 - Skills: consult the catalog at `~/.agents/skills` before non-trivial action.
 - Worktree discipline — flow, lifecycle, HITL merge gate, crash contract: `~/.agents/docs/architecture/worktree-discipline.md`
-- Model routing, test guardrails, scripting standards: `docs/architecture/` in the flightlead repo (single source — do not rely on memory).
+- Model routing, test guardrails, scripting standards: `docs/architecture/` in the weavelog repo (single source — do not rely on memory).
 - Memory tools are an advisory cache, not a record: decisions live in backlog/docs, never secrets in memory.
 
 <!-- CONDUCTOR COMMUNICATION PROTOCOL START -->
@@ -68,7 +68,7 @@ Do not edit Backlog task, draft, document, decision, or milestone markdown files
   (`spec-approved` `dispatched` `stuck` `merged` `housekeeping` `wayfinder:map`); general
   tier is hand-settable (`harness` `dogfood` `deferred`). Unknown labels refuse claim and
   block create/pre-commit. `harness`/`dogfood` apply only in the harness-dev repos
-  (agents-harness, flightlead). Decision table, first match: `harness` when the task
+  (agents-harness, weavelog). Decision table, first match: `harness` when the task
   modifies bin/plugins/config/AGENTS.md/docs/architecture/stack-versions.json; `dogfood`
   when the deliverable is real work run through the harness as the verification subject;
   `deferred` when an explicit revive trigger is recorded; no match → no label.

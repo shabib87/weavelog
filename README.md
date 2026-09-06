@@ -1,4 +1,4 @@
-# flightlead
+# weavelog
 
 ```
   ______ _ _           _                   _ _
@@ -22,21 +22,30 @@ trusted.
 **Status: v0.1.0 — works on the author's machine; the stranger test is the
 product.** arm64 macOS only. Not yet published.
 
+## Why Weavelog
+
+The name comes from the project's non-negotiables: verification gates are
+woven into every loop, the harness composes an opinionated stack from
+existing tools rather than building new ones (weave), and every gate
+produces a receipt — every run appends to the JSONL ledger (log). Weavelog
+names both halves of the tool in one word: what it composes, and what it
+proves.
+
 ## What this is
 
-flightlead composes a stack — opencode first, then pi, Claude Code, Codex —
+weavelog composes a stack — opencode first, then pi, Claude Code, Codex —
 and wraps it in gates:
 
-- **Setup:** `flightlead init` installs opinionated deps and materializes
+- **Setup:** `weavelog init` installs opinionated deps and materializes
   `~/.agents/*` + `~/.config/opencode/*`. Two-step user-modification flow.
   Never silently overwrites managed files.
-- **Verify:** `flightlead check` runs deterministic gates — tests, lint,
+- **Verify:** `weavelog check` runs deterministic gates — tests, lint,
   typecheck, semgrep (telemetry off, pinned rulesets), secrets, frontmatter,
   manifest completeness.
-- **Audit:** `flightlead doctor` verifies the stack; every command appends to
+- **Audit:** `weavelog doctor` verifies the stack; every command appends to
   an append-only JSONL ledger. Zero silent failure: refusal = log line +
   non-zero exit.
-- **Scaffold:** `flightlead scaffold --project` turns a repo into an agentic
+- **Scaffold:** `weavelog scaffold --project` turns a repo into an agentic
   workspace: backlog, AGENTS.md, docs/research, ADRs.
 
 Agents spec, implement, verify, and document. The human directs (conductor,
@@ -84,16 +93,16 @@ junior developers (too opinionated). Not enterprise (no SSO/rbac/audit).
 
 ```bash
 # 1. Install (npm at 0.1.0; brew tap at 0.2+)
-npm i -g flightlead
+npm i -g weavelog
 
 # 2. Install deps + materialize configs (asks before every write)
-flightlead init
+weavelog init
 
 # 3. Verify the stack — all subchecks green
-flightlead doctor
+weavelog doctor
 
 # 4. Scaffold a project workspace
-flightlead scaffold --project ./my-project
+weavelog scaffold --project ./my-project
 
 # 5. Run the loop in your agent host
 cd ./my-project
@@ -131,4 +140,4 @@ Details: [`docs/ROADMAP.md`](docs/ROADMAP.md).
 Code: Apache-2.0 ([`LICENSE`](LICENSE), see [`NOTICE`](NOTICE)). Lineage and
 inspired-by: [`ATTRIBUTION.md`](ATTRIBUTION.md).
 
-flightlead name/logo © Shabib Hossain — not covered by the code license.
+weavelog name/logo © Shabib Hossain — not covered by the code license.

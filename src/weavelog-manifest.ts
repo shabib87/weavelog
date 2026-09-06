@@ -1,9 +1,9 @@
-export interface FlightleadManifest {
+export interface WeavelogManifest {
 	tools: Record<string, ToolSpec>;
 	models: string[];
 	proxyPort: number;
 	apiUrls: Record<string, string>;
-	launchd: FlightleadLaunchd;
+	launchd: WeavelogLaunchd;
 	updatedAt: string;
 }
 
@@ -14,7 +14,7 @@ export interface ToolSpec {
 	repo?: string;
 }
 
-export interface FlightleadLaunchd {
+export interface WeavelogLaunchd {
 	proxy: string;
 	stackCheck: string;
 }

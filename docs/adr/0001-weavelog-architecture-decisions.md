@@ -1,16 +1,16 @@
-# Architecture Decision Record: loopeng
+# Architecture Decision Record: weavelog
 
 **Status:** Accepted
 **Date:** July 4, 2026
 **Supersedes:** `docs/archive/stateless-multi-model-agent-swarm-adr.md`
-**Appendix:** `docs/specs/2026-06-28-loopeng-design.md` (detailed design)
+**Appendix:** `docs/specs/2026-06-28-weavelog-design.md` (detailed design)
 **Authoritative sources:** `docs/NORTH_STAR.md` (non-negotiables), `docs/research/RESEARCH.md` (provenance)
 
 ---
 
-## 1. What loopeng Is
+## 1. What weavelog Is
 
-loopeng is a minimal, open-source developer-experience setup that turns any
+weavelog is a minimal, open-source developer-experience setup that turns any
 project into a self-contained agentic workspace. A pre-defined agent team
 runs an end-to-end loop — spec, implement, verify, document — with the human
 in the loop only for verification. Built on Pi + OpenRouter + Headroom.
@@ -27,7 +27,7 @@ decisions; the spec is the detailed design appendix.
 
 Pi is the host. No separate orchestration runtime (no SwarmForge, no tmux
 layer, no Babashka scripts). All loop coordination lives in a Pi TypeScript
-extension (`loopeng/pi-loopeng`).
+extension (`weavelog/pi-weavelog`).
 
 **Why Pi:**
 - MIT-licensed terminal coding agent with a TypeScript extension system.
@@ -52,7 +52,7 @@ No bash for logic. One language, one toolchain.
 - **Test framework:** `node --import tsx --test` (native test runner)
 - **Linter/formatter:** biome
 - **Typechecker:** `tsc --noEmit`
-- **Distribution:** npm primary (`npx loopeng`), Homebrew secondary (wraps node)
+- **Distribution:** npm primary (`npx weavelog`), Homebrew secondary (wraps node)
 
 ### 2.3 Platform: macOS Only (v1)
 
@@ -167,13 +167,13 @@ separate `.workflow/state.json`. Benefits:
 
 ### 2.9 Rollback: Git Branch Checkpoints
 
-On step rejection, reset to a git branch checkpoint (`loopeng/step-<id>`).
+On step rejection, reset to a git branch checkpoint (`weavelog/step-<id>`).
 Branches survive Pi crashes (unlike stashes). Combined with `git clean -fd`
 for untracked files created by the step.
 
 ### 2.10 Budget: $5 Default, Pause on Exhaustion
 
-Per-workflow `budget` field (USD) enforced in the loopeng extension by
+Per-workflow `budget` field (USD) enforced in the weavelog extension by
 tracking spend from `message_end` events. Default: $5.00. On exhaustion:
 pause, surface, let human decide — budget exhaustion is a verification event.
 
@@ -205,20 +205,20 @@ Agent Skills (agentskills.io), AGENTS.md (agents.md).
 `docs/research/2026-07-08-plugin-architecture-and-scope-refinement.md`.
 
 Platform-specific capabilities ship as independently released packages, not
-as core loopeng features. Core loopeng is platform-agnostic.
+as core weavelog features. Core weavelog is platform-agnostic.
 
 **Three-layer customization model:**
 
 | Layer | What lives here | User can override? |
 |---|---|---|
 | **1. Fixed (constitution)** | Engineering philosophy, loop shape, open standards, Pi as host, open-weights-primary pattern | No |
-| **2. Opinionated defaults** | Model roster, budget, agent prompts, CI pipeline, hooks | Yes (edit after init; loopeng never overwrites) |
+| **2. Opinionated defaults** | Model roster, budget, agent prompts, CI pipeline, hooks | Yes (edit after init; weavelog never overwrites) |
 | **3. User-owned** | Platform skills, custom agents, architecture decisions | Fully |
 
 **Distribution:** Pi-native `pi install` mechanism (`pi install npm:` and
-`pi install git:`). loopeng does not reinvent package management.
+`pi install git:`). weavelog does not reinvent package management.
 
-**`loopeng plugin add` is a validated wrapper:**
+**`weavelog plugin add` is a validated wrapper:**
 1. Runs `pi install <source>` (Pi handles installation).
 2. Validates skills against Agent Skills standard (required frontmatter:
    `name`, `description`; optional: `license`, `compatibility`,
@@ -226,7 +226,7 @@ as core loopeng features. Core loopeng is platform-agnostic.
 3. Checks `compatibility` frontmatter against workspace profile.
 4. Reports what was installed and what was validated.
 
-Validation logic is shared between `loopeng plugin add` and `loopeng check`
+Validation logic is shared between `weavelog plugin add` and `weavelog check`
 (DRY).
 
 **No symlinks.** Pi discovers skills natively from four standard paths
@@ -234,24 +234,24 @@ Validation logic is shared between `loopeng plugin add` and `loopeng check`
 `.agents/skills/`). No indirection.
 
 **Model defaults as living reference:** Specific model IDs are Layer 2
-defaults, not Layer 1 philosophy. loopeng ships a `models.md` template;
-`loopeng init --global` copies it to `~/.pi/agent/models.md`; user owns the
+defaults, not Layer 1 philosophy. weavelog ships a `models.md` template;
+`weavelog init --global` copies it to `~/.pi/agent/models.md`; user owns the
 file after. The tier structure (primary, verifier, budget, frontier
 escalation) is Layer 1. Model churn does not block core releases.
 
 **Official plugin packages (v1.1):**
-- `loopeng/plugin-mobile-ios` (native iOS: Swift, SwiftUI, Xcode)
-- `loopeng/plugin-mobile-android` (native Android: Kotlin, Compose, Gradle)
-- `loopeng/plugin-mobile-kmp` (Kotlin Multiplatform)
-- `loopeng/plugin-mobile-react-native` (React Native)
+- `weavelog/plugin-mobile-ios` (native iOS: Swift, SwiftUI, Xcode)
+- `weavelog/plugin-mobile-android` (native Android: Kotlin, Compose, Gradle)
+- `weavelog/plugin-mobile-kmp` (Kotlin Multiplatform)
+- `weavelog/plugin-mobile-react-native` (React Native)
 
 Each plugin ships skills conforming to the Agent Skills standard with
-`compatibility` frontmatter validated by `loopeng plugin add`.
+`compatibility` frontmatter validated by `weavelog plugin add`.
 
-**Why Pi-native distribution:** loopeng is Pi-native. Pi's package system
+**Why Pi-native distribution:** weavelog is Pi-native. Pi's package system
 (`pi install`, auto-discovery, settings-based filtering) is the official
 mechanism. Wrapping it with validation (Agent Skills conformance,
-compatibility checking) adds loopeng's opinionated layer without reinventing
+compatibility checking) adds weavelog's opinionated layer without reinventing
 package management.
 
 ---
@@ -267,7 +267,7 @@ package management.
 | Separate `.workflow/state.json` | Pi's session tree is branching-aware and auto-persisted | §2.8 |
 | Per-step git worktrees in v1 | Adds complexity without benefit for sequential execution | §2.12 |
 | `guard.sh` for isolation | Pi's `tool_call` hook is native, cross-platform, can't be bypassed | `docs/specs/...` §5.3 |
-| Bundling platform skills into core | Contradicts "loopeng does NOT author platform skills" (PRODUCT.md); forces all users to install capabilities they may not need | §2.14 |
+| Bundling platform skills into core | Contradicts "weavelog does NOT author platform skills" (PRODUCT.md); forces all users to install capabilities they may not need | §2.14 |
 | Custom plugin package manager | Pi-native `pi install` is the official mechanism; reinventing it violates KISS and DRY | §2.14 |
 | Symlink-based skill import | Pi discovers natively from four standard paths; symlinks add fragility for no benefit | §2.14 |
 
@@ -282,7 +282,7 @@ package management.
 | Pi is pre-1.0 (0.80.3) — extension API can break | Negative | Pin peerDependency in `package.json`; state supported Pi versions in spec |
 | Headroom proxy is machine-global (port 8788) | Neutral | Shared across concurrent projects; `--memory-storage=project` prevents cross-project bleed |
 | macOS-only v1 | Negative | Linux CI validates test suite; Windows deferred indefinitely |
-| Open-weight model availability can change | Negative | `loopeng check` validates model IDs against live OpenRouter API before each run |
+| Open-weight model availability can change | Negative | `weavelog check` validates model IDs against live OpenRouter API before each run |
 | Solo-dev for v1 | Neutral | MIT license permits forks; issues welcome |
 
 > **Note (2026-07-05):** The "Nemotron free tier for utility tasks" mitigation

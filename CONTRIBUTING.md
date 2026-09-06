@@ -9,7 +9,7 @@ clean arm64 Mac is the single most valuable issue you can file.
 
 ## PRs: not accepted in v1
 
-Per `docs/NORTH_STAR.md`, flightlead is solo-dev OSS for v1: the author
+Per `docs/NORTH_STAR.md`, weavelog is solo-dev OSS for v1: the author
 decides direction, and external pull requests are not merged. This is a
 stated limit, not an oversight. Issues are the contribution surface; use
 them to shape the roadmap.
@@ -18,7 +18,7 @@ them to shape the roadmap.
 
 - **One problem per issue.** No mega-threads bundling bugs and features.
 - **Reproduction path:** what you ran, what you expected, what happened —
-  including the exit code and the relevant `~/.local/state/flightlead/`
+  including the exit code and the relevant `~/.local/state/weavelog/`
   ledger lines (redact paths you consider private).
 - **Environment:** macOS version, chip (arm64 required), node version,
   host (opencode/pi) and version.

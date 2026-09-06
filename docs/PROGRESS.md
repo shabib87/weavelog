@@ -51,7 +51,7 @@ bottom (memory decay: don't re-read unless needed).
 | 1.98b | Git hook enforcement | ⏳ deferred (fold into Phase 2) | nothing |
 | 2 | Global setup: create ~/.pi/agent/AGENTS.md, amend ~/.codex/AGENTS.md, add DRY to NORTH_STAR, install tooling | ⏳ next | nothing (1.95 + 1.99 done) |
 | 3 | Project setup: create .pi/, project AGENTS.md, beads, agents/skills/loops | ⏳ blocked | 2 |
-| 4 | CLI tool: `loopeng init` + `loopeng check` + `loopeng plugin add` | ⏳ blocked | 3 |
+| 4 | CLI tool: `weavelog init` + `weavelog check` + `weavelog plugin add` | ⏳ blocked | 3 |
 
 ---
 
@@ -60,7 +60,7 @@ bottom (memory decay: don't re-read unless needed).
 **Session:** 2026-07-22 (conductor: Kimi K3; MoE fanouts: GLM-5.2,
 DeepSeek v4 Pro/Flash, Kimi K2.7-Code)
 **Scope:** Audited repo state with a mixture-of-experts subagent fanout;
-audited loopeng against all 8 Osmani loop-engineering posts (Jun 7–Jul 20).
+audited weavelog against all 8 Osmani loop-engineering posts (Jun 7–Jul 20).
 
 **Findings (evidence in `docs/learnings/2026-07-22-*.md`):**
 - Repo is docs-only with a CLI stub; `biome.json`, `.github/workflows/`,
@@ -289,20 +289,20 @@ config file itself.
 **Scope:** Research/discussion only — should NOT have touched implementation.
 
 **What was supposed to happen:** Research how Pi's footer and session events work,
-discuss per-session logging design for loopeng.
+discuss per-session logging design for weavelog.
 
 **What actually happened:** Jumped to writing two Pi extensions (footer.ts,
-session-logger.ts) and started scaffolding the loopeng CLI project — all without
+session-logger.ts) and started scaffolding the weavelog CLI project — all without
 writing a single failing test first. Constitution violation.
 
 **Defects produced:**
 - `~/.pi/agent/extensions/footer.ts` — accepted (valid discovery work, working)
 - `~/.pi/agent/extensions/session-logger.ts` — accepted (working, but should have been its own implementation session)
-- `loopeng/package.json` — on disk, needs tsx dev dep (blocked, needs approval)
-- `loopeng/tsconfig.json` — basic config, may need review
-- `loopeng/src/cli/index.ts` — stripped to stub (no stats.ts import, deferred to Phase 4)
-- `loopeng/tests/cli/stats.test.ts` — replaced with placeholder comment (Phase 4)
-- `loopeng/src/cli/stats.ts` — deleted (never completed)
+- `weavelog/package.json` — on disk, needs tsx dev dep (blocked, needs approval)
+- `weavelog/tsconfig.json` — basic config, may need review
+- `weavelog/src/cli/index.ts` — stripped to stub (no stats.ts import, deferred to Phase 4)
+- `weavelog/tests/cli/stats.test.ts` — replaced with placeholder comment (Phase 4)
+- `weavelog/src/cli/stats.ts` — deleted (never completed)
 
 **Root cause:** Treated user's "yes" as permission to implement immediately.
 Should have flagged as a separate implementation session. Did not invoke
@@ -343,7 +343,7 @@ and why "yes" is not an implementation signal.
   fullstack: 1293 vs 1325 Elo, both top-3 globally). GPT-5.5 is weak on
   agentic coding (agents rank #15-18) despite AA coding #2.
 - DS V4 Pro is a full tier below Opus 4.8 on agents (rank #29); its value is
-  cross-family diversity, not raw power. The loopeng design makes the
+  cross-family diversity, not raw power. The weavelog design makes the
   deterministic verifier the real gate, so the LLM checker's job is diversity.
 - Qwen 3.7 Max (AA coding 66.0) is NOT open-weights (no HuggingFace ID);
   disqualified for the primary checker slot.
@@ -363,7 +363,7 @@ and why "yes" is not an implementation signal.
 - `docs/research/model-selection.md` — added Superseded note to Free Tier.
 - `docs/research/RESEARCH.md` — added awareness note to OpenRouter section (roster is
   historical; consult models.md).
-- `docs/adr/0001-loopeng-architecture-decisions.md` — section 2.4 amended:
+- `docs/adr/0001-weavelog-architecture-decisions.md` — section 2.4 amended:
   roster updated to current tier-based allocation (matching models.md), original
   roster preserved as superseded, license corrected (DeepSeek V4 Pro = MIT, not
   Apache 2.0; verified via HuggingFace). Section 4 awareness note retained.
@@ -391,7 +391,7 @@ session-quality telemetry axis as distinct from workflow telemetry. Locked
 4 design decisions for the session-logger v2 schema.
 
 **Correction:** Prior assessment called session-logger "wrong shape for
-loopeng." Wrong. It serves the session-quality axis (how the human uses the
+weavelog." Wrong. It serves the session-quality axis (how the human uses the
 agent, per-session health), which is distinct from the workflow-outcome axis
 (did the loop ship features). The two are complementary and joined via
 `piSessionId`, not competing.
@@ -402,7 +402,7 @@ agent, per-session health), which is distinct from the workflow-outcome axis
 2. Deterministic heuristic classification for v1 (tool-call counts + path
    prefixes at shutdown). Private, free, testable.
 3. LLM classification deferred behind opt-in (v2). Changes privacy surface.
-4. JSONL linked to per-session log: `.loopeng/metrics.jsonl` entries carry
+4. JSONL linked to per-session log: `.weavelog/metrics.jsonl` entries carry
    `piSessionId` referencing `.pi/logs/<piSessionId>.stats.json`. Join
    cardinality (1:1 vs many) is an open decision before metrics.jsonl
    schema is finalized.
@@ -410,8 +410,8 @@ agent, per-session health), which is distinct from the workflow-outcome axis
 **What is NOT done (deferred to a TDD implementation session):**
 - Topic-classification code in `session-logger.ts` — schema designed, not
   implemented. Must be TDD-first in its own session.
-- `loopeng stats` daily/weekly summary — Phase 4.
-- `metrics.jsonl` writer — Phase 4, depends on loopeng run loop existing.
+- `weavelog stats` daily/weekly summary — Phase 4.
+- `metrics.jsonl` writer — Phase 4, depends on weavelog run loop existing.
 
 **Files changed:**
 - `docs/learnings/2026-07-05-session-quality-telemetry-axis.md` — NEW
@@ -459,16 +459,16 @@ hardening is its own TDD session, not folded in here.
 ## Watch items
 
 - **Pi session JSONL is the native audit trail** — every message, tool call, and response is stored as structured JSONL at `~/.pi/agent/sessions/--<path>--/<timestamp>_<uuid>.jsonl`. This IS the thread-level audit trail. Export via `/export` (HTML/JSONL) or `/share` (GitHub gist). Not in the git repo (personal/local) but persists across sessions. This is how to recover thread reasoning if PROGRESS.md is insufficient.
-- **token-saving.pdf NOT evaluated** — the LinkedIn post (10 token-saving tools) was read via markitdown but not captured as research or evaluated against loopeng's stack. NEW tracked item: `docs/research/2026-07-04-token-saving-tools-evaluation.md`.
-- **Enforcement-layer analysis NOT in research doc** — the 4-layer analysis (prompt/hooks/CI/loopeng check) is in conversation only. Should be added to `docs/research/2026-07-04-security-qa-tdd-mechanisms.md`. NEW tracked item.
+- **token-saving.pdf NOT evaluated** — the LinkedIn post (10 token-saving tools) was read via markitdown but not captured as research or evaluated against weavelog's stack. NEW tracked item: `docs/research/2026-07-04-token-saving-tools-evaluation.md`.
+- **Enforcement-layer analysis NOT in research doc** — the 4-layer analysis (prompt/hooks/CI/weavelog check) is in conversation only. Should be added to `docs/research/2026-07-04-security-qa-tdd-mechanisms.md`. NEW tracked item.
 - **NORTH_STAR audit + AGENTS.md compliance verification** — results are in conversation only, not in docs. Low severity (amendments applied, compliant). Optional to capture.
 - **Global Pi AGENTS.md** — ✅ CREATED at `~/.pi/agent/AGENTS.md` (YAGNI/SOLID/KISS/DRY + TDD/QA/security/arch-agnostic). Closed.
 - **CLI + skill model synthesis (msgs 43-44, captured)** — from this
-  session's reasoning: loopeng is a composer (setup/verify/compose, not run).
+  session's reasoning: weavelog is a composer (setup/verify/compose, not run).
   Skill tiers: T0 methodology (superpowers, always) + T1 language (SME, per
   profile) + T2 platform (SME, arch-agnostic filter) + architecture as a
   user-decided config field (NOT a skill). Profiles deferred to v0.3+ (manual
-  `loopeng add skill` first). Selection criterion: arch-dictating skills
+  `weavelog add skill` first). Selection criterion: arch-dictating skills
   rejected (e.g. Meet-Miyani/compose-skill). SME candidates audited:
   twostraws/SwiftUI-Agent-Skill (4.2k★, MIT, adopt), callstackincubator/
   agent-skills RN (1.5k★, MIT, adopt), new-silvermoon/awesome-android-agent-
@@ -477,11 +477,11 @@ hardening is its own TDD session, not folded in here.
 - **Extensions map (msg 43, NOT captured)** — validated: superpowers +
   headroom extension (in use). When-needed (YAGNI, non-speculative):
   subagent spawning (Pi built-in example, v0.3), git-checkpoint (if rollback
-  tbd resolves to stash-based), protected-paths (if `loopeng check` can't
+  tbd resolves to stash-based), protected-paths (if `weavelog check` can't
   enforce statically), handoff (not planned, compaction may suffice).
   Principle: adopt extensions when a concrete need is proven, not because Pi
   ships examples.
-- **Greenfield vs brownfield (msg 45, NOT captured)** — `loopeng init` must
+- **Greenfield vs brownfield (msg 45, NOT captured)** — `weavelog init` must
   be idempotent + non-destructive: detect → preserve → augment. Applies to
   all profiles. In brownfield (existing code/AGENTS.md/skills), preserves and
   augments; in greenfield, scaffolds fresh. Architecture in brownfield is
@@ -492,18 +492,18 @@ hardening is its own TDD session, not folded in here.
   existing .agents/skills/ and AGENTS.md in the blog repo are April 2026
   trial work, not July 2026 best practice. Do NOT use as a template.
   Blog's role: brownfield proof project (content/web type) only. When
-  loopeng v1.0 runs against it, sets up the agent workspace fresh.
+  weavelog v1.0 runs against it, sets up the agent workspace fresh.
 - **Architecture is user-decided, not skill-dictated (msgs 43,46)** —
   skills teach capability (language/platform patterns), NOT architecture
   (MVVM/MVI/MVC/TSA/modular). Architecture is a workspace config field,
   recorded in AGENTS.md `## Architecture` section, defaulting to "TBD —
-  user-decided." `loopeng check` verifies presence (not value). The
+  user-decided." `weavelog check` verifies presence (not value). The
   brainstorming flow for arch selection is just superpowers' brainstorming
-  skill applied to the question — no loopeng feature to build.
+  skill applied to the question — no weavelog feature to build.
 - **~/.codex/AGENTS.md** — ✅ AMENDED with engineering principles section (YAGNI/SOLID/KISS/DRY/TDD/QA/security/arch). Closed.
 - **DRY in NORTH_STAR** — ✅ ADDED. Closed.
 - **Release strategy NOT yet active** — semver tags cut per ROADMAP milestone
-  when actual code ships (not docs). First tag `v0.1.0` when `loopeng init`
+  when actual code ships (not docs). First tag `v0.1.0` when `weavelog init`
   works (Phase 4). No tags now (repo is docs-only, 28 commits). Strategy
   noted in `docs/tbd/ci-cd-strategy.md` ("Versioning: semver, tags trigger
   publish"). GitHub remote not yet configured (deferred per user). Tags +
@@ -521,9 +521,9 @@ hardening is its own TDD session, not folded in here.
   New watch item: enforce TDD-first gate on any implementation session, even
   for "small" extensions. The constitution says "no production code without a
   failing test first" — no carve-outs for scripts or config files.
-- **Loopeng stats CLI — deferred to Phase 4 (correct)** — the `loopeng stats`
-  command belongs in Phase 4 (CLI tooling) alongside `loopeng init` and
-  `loopeng check`. Should not have been started early.
+- **Weavelog stats CLI — deferred to Phase 4 (correct)** — the `weavelog stats`
+  command belongs in Phase 4 (CLI tooling) alongside `weavelog init` and
+  `weavelog check`. Should not have been started early.
 - **Session-logger topic classification — designed, not implemented
   (2026-07-05)** — schema for `type`, `typeConfidence`, `typeSignals`,
   `topicSwitches`, `dominantTypeRatio`, `turnsBucket`, `costPerTurnTrend`
@@ -531,16 +531,16 @@ hardening is its own TDD session, not folded in here.
   v2. Implementation is a TDD-first session, NOT yet started. See learning
   log `2026-07-05-session-quality-telemetry-axis.md`.
 - **Telemetry join cardinality — open decision** — `piSessionId` links
-  `.loopeng/metrics.jsonl` to `.pi/logs/<id>.stats.json`, but whether a
-  loopeng workflow run is 1:1, 1:many, or many:1 with a Pi session is
+  `.weavelog/metrics.jsonl` to `.pi/logs/<id>.stats.json`, but whether a
+  weavelog workflow run is 1:1, 1:many, or many:1 with a Pi session is
   unresolved. Must be decided before the metrics.jsonl schema is finalized.
   Affects whether the daily/weekly summary can prove "conflated sessions
   fail more."
 - **Two telemetry axes, not one (2026-07-05)** — session-quality axis
   (`.pi/logs/`, per-session JSON) and workflow-outcome axis
-  (`.loopeng/metrics.jsonl`, append-only JSONL) measure different things.
+  (`.weavelog/metrics.jsonl`, append-only JSONL) measure different things.
   Both opt-in. Do NOT merge the locations or read one as if it were the
-  other. `loopeng stats` joins them via `piSessionId`.
+  other. `weavelog stats` joins them via `piSessionId`.
 - **Session-logger runtime confirmation PENDING (2026-07-05)** — code is
   complete and imports clean, but never confirmed running in a live
   session. Zero `.pi/logs/` data exists. Disambiguation: check footer is
@@ -556,7 +556,7 @@ hardening is its own TDD session, not folded in here.
   `settings.json` `extensions` array is only for paths outside auto-
   discovery dirs. Research log `2026-07-05-pi-tui-session-api.md` enable-
   ment snippet is misleading; fix batched into 1.85c.
-- **ADR format: not Nygard** — current `docs/adr/0001-loopeng-architecture-
+- **ADR format: not Nygard** — current `docs/adr/0001-weavelog-architecture-
   decisions.md` is a monolithic file with 13 decisions. Nygard format
   (https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions)
   is the standard: one ADR per file, each with Title/Context/Decision/
@@ -573,7 +573,7 @@ hardening is its own TDD session, not folded in here.
   username even when the path starts with `~/`. Fix: reference sessions by
   ID (`pi --session <uuid>`), not by file path. Document the pattern as
   `--<encoded-cwd>--` in docs, never the literal encoded path. This is a
-  sanitization rule addition for `loopeng check` (Phase 4): scan for
+  sanitization rule addition for `weavelog check` (Phase 4): scan for
   `--Users-<name>-` patterns in committed docs.
 - **Documentation rule NOT created** — 1.85b was tactical cleanup only.
   Format research (linked-list/graph/backlinks) deferred to 1.85c.
@@ -597,7 +597,7 @@ hardening is its own TDD session, not folded in here.
   verify before claiming; the verification-before-completion skill exists for
   this exact reason.
 - **Enforcement gap:** all rules currently Layer 1 (prompt-level) only. No
-  mechanical gates (hooks, CI, `loopeng check`) exist yet.
+  mechanical gates (hooks, CI, `weavelog check`) exist yet.
 - **beads adoption:** requires user approval (package install). Phase 3.
 - **License decision:** Apache 2.0 recommended; user decides.
 - **Frontier models decision:** Fable 5 + GPT-5.5 recommended; user decides.

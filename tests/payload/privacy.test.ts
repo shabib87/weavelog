@@ -16,7 +16,7 @@ const TEXT_EXTENSIONS = new Set([
 	".sh",
 ]);
 
-const FORBIDDEN_STRINGS = ["shabibhossain", "/Users/shabibhossain", "@loopeng"];
+const FORBIDDEN_STRINGS = ["shabibhossain", "/Users/shabibhossain", "@weavelog"];
 
 const SKIP_DIRS = new Set(["node_modules", ".git", "dist"]);
 

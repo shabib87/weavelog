@@ -1,8 +1,8 @@
-# loopeng Implementation Plan
+# weavelog Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build the loopeng CLI (`loopeng check`, `loopeng init`) and Pi extension (`loopeng/pi-loopeng`) in TypeScript, with full test coverage.
+**Goal:** Build the weavelog CLI (`weavelog check`, `weavelog init`) and Pi extension (`weavelog/pi-weavelog`) in TypeScript, with full test coverage.
 
 **Architecture:** Two independent subsystems sharing a types package. Phase 1: CLI for machine verification and workspace scaffolding. Phase 2: Pi extension for the ETCSLV orchestration loop — sub-agent spawning, verification gates, budget tracking, rollback, and isolation. Both tested with `node --import tsx --test` and typechecked with `tsc --noEmit`.
 
@@ -15,7 +15,7 @@
 - Test framework: `node --import tsx --test`
 - Linter/formatter: biome (`biome check`, `biome format --write`)
 - Typechecker: `tsc --noEmit`
-- Distribution: npm primary (`npx loopeng`), Homebrew secondary
+- Distribution: npm primary (`npx weavelog`), Homebrew secondary
 - TDD: write failing test first, run to confirm failure, implement, confirm pass
 - Frequent commits: each task ends with a commit
 - MUST NOT add dependencies without explicit human approval
@@ -31,8 +31,8 @@ src/
 │   └── types.ts              # WorkflowConfig, AgentConfig, StepConfig, etc.
 ├── cli/
 │   ├── index.ts              # Entry point, command dispatch (check | init)
-│   ├── check.ts              # loopeng check — machine verification
-│   ├── init.ts               # loopeng init — workspace scaffolding
+│   ├── check.ts              # weavelog check — machine verification
+│   ├── init.ts               # weavelog init — workspace scaffolding
 │   └── scaffold.ts           # Scaffold file writers (AGENTS.md, .pi/ tree)
 ├── extension/
 │   ├── index.ts              # Pi extension entry, event wiring
@@ -85,7 +85,7 @@ Root config:
 - Create: `.gitignore`
 
 **Interfaces:**
-- Produces: `package.json` with `"bin": { "loopeng": "./src/cli/index.ts" }` and `"pi-extension": "./src/extension/index.ts"`
+- Produces: `package.json` with `"bin": { "weavelog": "./src/cli/index.ts" }` and `"pi-extension": "./src/extension/index.ts"`
 
 - [ ] **Step 1: Create package.json**
 
@@ -95,13 +95,13 @@ mkdir -p src/cli src/extension src/shared tests/cli tests/extension tests/shared
 
 ```json
 {
-  "name": "loopeng",
+  "name": "weavelog",
   "version": "0.1.0",
   "description": "Deterministic, human-verified agentic loops on Pi",
   "license": "MIT",
   "type": "module",
   "bin": {
-    "loopeng": "./src/cli/index.ts"
+    "weavelog": "./src/cli/index.ts"
   },
   "pi-extension": "./src/extension/index.ts",
   "scripts": {
@@ -434,7 +434,7 @@ describe("CLI entry point", () => {
     const out = execSync("node --import tsx src/cli/index.ts --help", {
       encoding: "utf-8",
     });
-    assert.match(out, /loopeng/);
+    assert.match(out, /weavelog/);
   });
 
   it("dispatches to check command", () => {
@@ -466,12 +466,12 @@ Expected: FAIL — no `src/cli/index.ts`.
 ```typescript
 #!/usr/bin/env node
 
-const USAGE = `loopeng — deterministic, human-verified agentic loops
+const USAGE = `weavelog — deterministic, human-verified agentic loops
 
 Usage:
-  loopeng check              Verify machine setup (Pi, Headroom, env vars)
-  loopeng init <path>        Scaffold a new loopeng workspace
-  loopeng --help             Show this help
+  weavelog check              Verify machine setup (Pi, Headroom, env vars)
+  weavelog init <path>        Scaffold a new weavelog workspace
+  weavelog --help             Show this help
 `;
 
 function main(): void {
@@ -485,17 +485,17 @@ function main(): void {
 
   switch (command) {
     case "check":
-      console.log("[loopeng] check — verifying machine setup...");
+      console.log("[weavelog] check — verifying machine setup...");
       // Task 4: real implementation
       break;
     case "init": {
       const targetPath = args[1];
       if (!targetPath) {
         console.error("Error: init requires a target path.");
-        console.log("Usage: loopeng init <path> [--mode software|mobile|writing|research]");
+        console.log("Usage: weavelog init <path> [--mode software|mobile|writing|research]");
         process.exit(1);
       }
-      console.log(`[loopeng] init — scaffolding ${targetPath}...`);
+      console.log(`[weavelog] init — scaffolding ${targetPath}...`);
       // Task 5: real implementation
       break;
     }
@@ -525,7 +525,7 @@ git commit -m "feat: add CLI entry point with command dispatch"
 
 ---
 
-### Task 4: loopeng check — Machine Verification
+### Task 4: weavelog check — Machine Verification
 
 **Files:**
 - Create: `src/cli/check.ts`
@@ -694,7 +694,7 @@ export function runChecks(): CheckResult[] {
 }
 
 export function formatCheckResults(results: CheckResult[]): string {
-  const lines: string[] = ["loopeng check", ""];
+  const lines: string[] = ["weavelog check", ""];
   const passCount = results.filter((r) => r.pass).length;
   const total = results.length;
 
@@ -707,7 +707,7 @@ export function formatCheckResults(results: CheckResult[]): string {
   lines.push(`${passCount}/${total} checks passed.`);
 
   if (passCount < total) {
-    lines.push("Fix the failures above, then re-run loopeng check.");
+    lines.push("Fix the failures above, then re-run weavelog check.");
   }
 
   return lines.join("\n");
@@ -740,12 +740,12 @@ Expected: 4 tests PASS.
 
 ```bash
 git add src/cli/check.ts src/cli/index.ts tests/cli/check.test.ts
-git commit -m "feat: add loopeng check — machine verification"
+git commit -m "feat: add weavelog check — machine verification"
 ```
 
 ---
 
-### Task 5: loopeng init — Workspace Scaffolding
+### Task 5: weavelog init — Workspace Scaffolding
 
 **Files:**
 - Create: `src/cli/init.ts`
@@ -771,7 +771,7 @@ describe("scaffoldWorkspace", () => {
   let tmpDir: string;
 
   before(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), "loopeng-test-"));
+    tmpDir = mkdtempSync(join(tmpdir(), "weavelog-test-"));
   });
 
   after(() => {
@@ -821,10 +821,10 @@ describe("scaffoldWorkspace", () => {
     assert.deepEqual(mtime1, mtime2);
   });
 
-  it("creates dotfiles (.env.loopeng, .gitignore)", () => {
+  it("creates dotfiles (.env.weavelog, .gitignore)", () => {
     const target = join(tmpDir, "project6");
     scaffoldWorkspace(target);
-    assert.ok(existsSync(join(target, ".env.loopeng")));
+    assert.ok(existsSync(join(target, ".env.weavelog")));
     assert.ok(existsSync(join(target, ".gitignore")));
   });
 });
@@ -850,7 +850,7 @@ export interface ScaffoldOptions {
 
 const AGENTS_MD_TEMPLATE = `# AGENTS.md — {name}
 
-This project uses [loopeng](https://github.com/shabib87/loopeng) for
+This project uses [weavelog](https://github.com/shabib87/weavelog) for
 agentic loop engineering. A pre-defined agent team runs an end-to-end
 loop — spec, implement, verify, document — with human verification gates.
 
@@ -883,7 +883,7 @@ const SPECIFIER_MD = agentTemplate(
   "Behavior specification agent — writes specs from task descriptions",
   "z-ai/glm-5.2",
   "read, bash, write",
-  `You are the specifier role in a loopeng workflow. You receive a task
+  `You are the specifier role in a weavelog workflow. You receive a task
 description and produce a specification document.
 
 Rules:
@@ -898,7 +898,7 @@ const CODER_MD = agentTemplate(
   "TDD implementation agent — writes code, fixes tests, never commits without green",
   "deepseek/deepseek-v4-pro",
   "read, bash, edit, write",
-  `You are the coder role in a loopeng workflow. You receive a specification
+  `You are the coder role in a weavelog workflow. You receive a specification
 and implement it using test-driven development.
 
 Rules:
@@ -915,7 +915,7 @@ const QA_MD = agentTemplate(
   "Verification agent — runs tests, checks lint, validates correctness",
   "deepseek/deepseek-v4-flash",
   "read, bash",
-  `You are the QA role in a loopeng workflow. You verify the coder's output.
+  `You are the QA role in a weavelog workflow. You verify the coder's output.
 
 Rules:
 - Run the test suite. Report actual pass/fail counts — never fabricate.
@@ -930,7 +930,7 @@ const WRITER_MD = agentTemplate(
   "Documentation agent — writes ADRs, READMEs, and technical prose",
   "mistralai/devstral-2512",
   "read, bash, write",
-  `You are the writer role in a loopeng workflow. You produce documentation
+  `You are the writer role in a weavelog workflow. You produce documentation
 from implemented code and specifications.
 
 Rules:
@@ -1014,7 +1014,7 @@ const FIX_WORKFLOW = {
   ],
 };
 
-const GITIGNORE_CONTENT = `.env.loopeng
+const GITIGNORE_CONTENT = `.env.weavelog
 .workflow/
 node_modules/
 dist/
@@ -1037,7 +1037,7 @@ export function scaffoldWorkspace(targetPath: string, _options: ScaffoldOptions 
   // Root files
   writeIfMissing(join(targetPath, "AGENTS.md"), AGENTS_MD_TEMPLATE.replace("{name}", projectName));
   writeIfMissing(join(targetPath, ".gitignore"), GITIGNORE_CONTENT);
-  writeIfMissing(join(targetPath, ".env.loopeng"), "# loopeng per-project environment variables\n");
+  writeIfMissing(join(targetPath, ".env.weavelog"), "# weavelog per-project environment variables\n");
 
   // Agents
   const agentsDir = join(targetPath, ".pi", "agents");
@@ -1071,7 +1071,7 @@ import { scaffoldWorkspace } from "./scaffold.js";
 
 export function runInit(targetPath: string, mode?: string): void {
   const modeStr = mode ? ` (mode: ${mode})` : "";
-  console.log(`[loopeng] Initializing workspace at ${targetPath}${modeStr}...`);
+  console.log(`[weavelog] Initializing workspace at ${targetPath}${modeStr}...`);
 
   const created = scaffoldWorkspace(targetPath, { mode });
 
@@ -1090,7 +1090,7 @@ export function runInit(args: string[]): void {
   const targetPath = args[1];
   if (!targetPath) {
     console.error("Error: init requires a target path.");
-    console.log("Usage: loopeng init <path> [--mode software|mobile|writing|research]");
+    console.log("Usage: weavelog init <path> [--mode software|mobile|writing|research]");
     process.exit(1);
   }
   const modeIndex = args.indexOf("--mode");
@@ -1123,7 +1123,7 @@ Expected: 6 tests PASS.
 
 ```bash
 git add src/cli/scaffold.ts src/cli/init.ts src/cli/index.ts tests/cli/scaffold.test.ts
-git commit -m "feat: add loopeng init — workspace scaffolding"
+git commit -m "feat: add weavelog init — workspace scaffolding"
 ```
 
 ---
@@ -1308,7 +1308,7 @@ describe("discoverAgents", () => {
   let tmpDir: string;
 
   before(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), "loopeng-agent-test-"));
+    tmpDir = mkdtempSync(join(tmpdir(), "weavelog-agent-test-"));
     const agentsDir = join(tmpDir, ".pi", "agents");
     mkdirSync(agentsDir, { recursive: true });
 
@@ -1551,7 +1551,7 @@ describe("loadWorkflow", () => {
   let tmpDir: string;
 
   before(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), "loopeng-wf-test-"));
+    tmpDir = mkdtempSync(join(tmpdir(), "weavelog-wf-test-"));
     const wfDir = join(tmpDir, ".pi", "workflows");
     mkdirSync(wfDir, { recursive: true });
     writeFileSync(join(wfDir, "feature.json"), JSON.stringify(VALID_WORKFLOW));
@@ -1589,7 +1589,7 @@ describe("handoff protocol", () => {
   let tmpDir: string;
 
   before(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), "loopeng-handoff-test-"));
+    tmpDir = mkdtempSync(join(tmpdir(), "weavelog-handoff-test-"));
   });
 
   after(() => {
@@ -2185,7 +2185,7 @@ describe("rollback", () => {
   }
 
   beforeEach(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), "loopeng-rollback-"));
+    tmpDir = mkdtempSync(join(tmpdir(), "weavelog-rollback-"));
     gitInit(tmpDir);
   });
 
@@ -2195,9 +2195,9 @@ describe("rollback", () => {
 
   it("creates a branch checkpoint", async () => {
     const ref = await createCheckpoint("spec", tmpDir);
-    assert.match(ref, /loopeng\/step-spec/);
+    assert.match(ref, /weavelog\/step-spec/);
     const branches = execSync("git branch", { cwd: tmpDir, encoding: "utf-8" });
-    assert.match(branches, /loopeng\/step-spec/);
+    assert.match(branches, /weavelog\/step-spec/);
   });
 
   it("rolls back to checkpoint and discards changes", async () => {
@@ -2215,7 +2215,7 @@ describe("rollback", () => {
     const ref = await createCheckpoint("spec", tmpDir);
     await discardCheckpoint(ref, tmpDir);
     const branches = execSync("git branch", { cwd: tmpDir, encoding: "utf-8" });
-    assert.doesNotMatch(branches, /loopeng\/step-spec/);
+    assert.doesNotMatch(branches, /weavelog\/step-spec/);
   });
 
   it("handles multiple sequential checkpoints", async () => {
@@ -2223,7 +2223,7 @@ describe("rollback", () => {
     await discardCheckpoint(ref1, tmpDir);
 
     const ref2 = await createCheckpoint("code", tmpDir);
-    assert.match(ref2, /loopeng\/step-code/);
+    assert.match(ref2, /weavelog\/step-code/);
   });
 });
 ```
@@ -2256,7 +2256,7 @@ function git(args: string, cwd: string): string {
 }
 
 export async function createCheckpoint(stepId: string, cwd: string): Promise<string> {
-  const ref = `loopeng/step-${stepId}`;
+  const ref = `weavelog/step-${stepId}`;
   // Remove existing checkpoint branch if present
   try {
     git(`branch -D ${ref}`, cwd);
@@ -2394,7 +2394,7 @@ Expected: FAIL.
 import type { ExtensionAPI, EventContext } from "@earendil-works/pi-coding-agent";
 import type { WorkflowState } from "../shared/types.js";
 
-export const CUSTOM_TYPE = "loopeng-workflow";
+export const CUSTOM_TYPE = "weavelog-workflow";
 
 export async function saveWorkflowState(
   pi: ExtensionAPI,
@@ -2629,14 +2629,14 @@ describe("E2E smoke test", () => {
   let tmpDir: string;
 
   before(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), "loopeng-e2e-"));
+    tmpDir = mkdtempSync(join(tmpdir(), "weavelog-e2e-"));
   });
 
   after(() => {
     rmSync(tmpDir, { recursive: true, force: true });
   });
 
-  it("loopeng init creates a valid workspace", () => {
+  it("weavelog init creates a valid workspace", () => {
     const target = join(tmpDir, "e2e-project");
     execSync(`node --import tsx src/cli/index.ts init ${target}`, {
       encoding: "utf-8",
@@ -2652,11 +2652,11 @@ describe("E2E smoke test", () => {
     assert.ok(existsSync(join(target, ".pi", "workflows", "fix.json")));
   });
 
-  it("loopeng check produces output", () => {
+  it("weavelog check produces output", () => {
     const out = execSync("node --import tsx src/cli/index.ts check", {
       encoding: "utf-8",
     });
-    assert.match(out, /loopeng check/);
+    assert.match(out, /weavelog check/);
     // Should have found at least node
     assert.match(out, /✓ node/);
   });
@@ -2721,14 +2721,14 @@ describe("E2E smoke test", () => {
   let tmpDir: string;
 
   before(() => {
-    tmpDir = mkdtempSync(join(tmpdir(), "loopeng-e2e-"));
+    tmpDir = mkdtempSync(join(tmpdir(), "weavelog-e2e-"));
   });
 
   after(() => {
     rmSync(tmpDir, { recursive: true, force: true });
   });
 
-  it("loopeng init creates a valid workspace", () => {
+  it("weavelog init creates a valid workspace", () => {
     const target = join(tmpDir, "e2e-project");
     execSync(`node --import tsx src/cli/index.ts init ${target}`, { encoding: "utf-8" });
 
@@ -2770,7 +2770,7 @@ describe("E2E smoke test", () => {
     }
   });
 
-  it("loopeng check finds node (always present in test env)", () => {
+  it("weavelog check finds node (always present in test env)", () => {
     const out = execSync("node --import tsx src/cli/index.ts check", {
       encoding: "utf-8",
     });
@@ -2834,7 +2834,7 @@ git commit -m "test: add E2E smoke test — init, check, validation, agents"
 | Step rollback (git branch checkpoints) | Task 12 | ✓ |
 | Budget tracking ($5 default, pause) | Task 11 | ✓ |
 | Slash commands (/run, /status, etc.) | Task 14 | ✓ |
-| CLI (loopeng check, loopeng init) | Task 3, 4, 5 | ✓ |
+| CLI (weavelog check, weavelog init) | Task 3, 4, 5 | ✓ |
 | Headroom integration | Deferred to extension (pi-extension-headroom handles this) | — |
 | Settings isolation (--no-skills, --no-extensions) | Task 7 (spawn config includes flags) | ✓ |
 

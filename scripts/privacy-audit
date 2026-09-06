@@ -4,6 +4,7 @@ set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 
 EXCLUDES=(
+  ':(exclude)backlog'
   ':(exclude)NOTICE'
   ':(exclude)ATTRIBUTION.md'
   ':(exclude)README.md'

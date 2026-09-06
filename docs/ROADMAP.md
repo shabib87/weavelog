@@ -19,30 +19,30 @@ Releases are tag-driven release-please over conventional commits;
 
 ## v0.1.0 — opencode stranger test
 
-**Goal:** a stranger on arm64 macOS installs flightlead from npm, runs the
+**Goal:** a stranger on arm64 macOS installs weavelog from npm, runs the
 stranger test against opencode, and gets an auditable stack.
 
 **Deliverables:**
-- `flightlead init` — installs opinionated deps (headroom[proxy], opencode,
+- `weavelog init` — installs opinionated deps (headroom[proxy], opencode,
   markitdown, semgrep, backlog.md), materializes `~/.agents/*` +
   `~/.config/opencode/*` via the two-step user-modification flow, never
   silently overwrites managed files. Models are opinionated defaults; init
   asks and flags override.
-- `flightlead sync` — dev path: repo → live (dogfood loop).
-- `flightlead update` — release-driven dep bump + re-materialize.
-- `flightlead check` — deterministic gates: tests, lint, typecheck, semgrep
+- `weavelog sync` — dev path: repo → live (dogfood loop).
+- `weavelog update` — release-driven dep bump + re-materialize.
+- `weavelog check` — deterministic gates: tests, lint, typecheck, semgrep
   (telemetry off, pinned rulesets), secrets, frontmatter, manifest
   completeness.
-- `flightlead doctor` — installed? authenticated? config parses? proxy
+- `weavelog doctor` — installed? authenticated? config parses? proxy
   healthy? cache mode=cache? python3.13? :8788 launchd-owned? semgrep smoke?
   ledger tail? manifest drift? arm64 guard.
-- `flightlead scaffold --project` — backlog init, AGENTS.md, docs/research,
+- `weavelog scaffold --project` — backlog init, AGENTS.md, docs/research,
   ADRs, .gitignore, .env.example (never touches .env/.env.local).
-- Manifest: `flightlead.json` (JSON, CLI-managed): per-tool install channel
+- Manifest: `weavelog.json` (JSON, CLI-managed): per-tool install channel
   (brew/pipx/npm/uv) + version + doctor check id. Completeness rule:
   every external binary invoked in skills/src/payload must appear in the
   manifest (check-enforced).
-- Ledger: append-only JSONL at `~/.local/state/flightlead/`. Zero silent
+- Ledger: append-only JSONL at `~/.local/state/weavelog/`. Zero silent
   failure: refusal = log line + non-zero exit.
 - Post-flip `~/.agents`: only open-standard files (AGENTS.md,
   .agents/skills/, host-standard dirs). No git, no node_modules, no state.
@@ -52,9 +52,9 @@ stranger test against opencode, and gets an auditable stack.
 **Explicitly out:** pi, Claude Code, Codex hosts; plugin system; brew tap;
 docs site; governance/PR acceptance; LaunchAgent/scheduled checks.
 
-**Stranger test:** fresh arm64 Mac → `npm i -g flightlead` →
-`flightlead init` → `flightlead doctor` (all green) →
-`flightlead scaffold --project` → host loop runs in opencode.
+**Stranger test:** fresh arm64 Mac → `npm i -g weavelog` →
+`weavelog init` → `weavelog doctor` (all green) →
+`weavelog scaffold --project` → host loop runs in opencode.
 
 ---
 
@@ -124,7 +124,7 @@ evidence corpus public.
 - All four hosts passing the stranger test.
 - Public evidence corpus: gate receipts, run ledger aggregates, dated
   research docs, harness-vs-null comparisons with published honest numbers.
-- Proof projects shipped and documented (flightlead itself + blog; see
+- Proof projects shipped and documented (weavelog itself + blog; see
   PRODUCT.md PMF thesis).
 
 **Explicitly out (still):** unattended runs; governance/PR acceptance; docs

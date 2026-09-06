@@ -40,7 +40,7 @@ Pi's built-in footer (`dist/modes/interactive/components/footer.js`) is the auth
 ### Pi theme system
 
 - Pi themes define 51 mandatory color tokens in a JSON file.
-- Themes are **global TUI-wide**, not per-component. Setting `"theme": "loopeng-dark"` affects messages, tools, markdown, syntax highlighting, borders, and the footer.
+- Themes are **global TUI-wide**, not per-component. Setting `"theme": "weavelog-dark"` affects messages, tools, markdown, syntax highlighting, borders, and the footer.
 - `theme.fg()` accepts only semantic token names (e.g., `"accent"`, `"warning"`), not arbitrary hex values. Custom colors require defining or overriding theme tokens.
 - Hot-reload: editing the active theme file triggers automatic refresh.
 
@@ -62,11 +62,11 @@ Pi's agent loop generates one assistant message per tool-call cycle, not per use
 
 ## Decisions
 
-1. **loopeng-dark theme**: Created as a personal Pi theme based on the built-in dark theme with custom palette (dim orange, dim dark green, dim white, dim teal). Made the default via `settings.json`.
+1. **weavelog-dark theme**: Created as a personal Pi theme based on the built-in dark theme with custom palette (dim orange, dim dark green, dim white, dim teal). Made the default via `settings.json`.
 
 2. **Four-line footer layout**: Session identity / Model+runtime / Token flow / Cost+context+extensions. Explicit labels, no symbols, color-coded by semantic theme tokens.
 
-3. **Personal Pi config ≠ loopeng product**: The theme and footer live in `~/.pi/agent/`, not in the loopeng repo. Loopeng may ship a Pi package later (noted in ROADMAP post-v1). Separating these prevented category confusion.
+3. **Personal Pi config ≠ weavelog product**: The theme and footer live in `~/.pi/agent/`, not in the weavelog repo. Weavelog may ship a Pi package later (noted in ROADMAP post-v1). Separating these prevented category confusion.
 
 4. **No automated tests for footer**: The footer is a visual/presentation artifact whose primary correctness criteria are readability and label accuracy. Manual TUI verification is appropriate; automated tests would be mostly theater (testing string labels against mocked Pi APIs).
 
@@ -78,7 +78,7 @@ Pi's agent loop generates one assistant message per tool-call cycle, not per use
 
 2. **Wrong context thresholds**: Changed from 60%/85% to Pi's 70%/90%. Our thresholds were too aggressive.
 
-3. **Wrong scope framing**: First spec/plan incorrectly treated Pi workspace config as loopeng product code. Revised to document as author's personal setup with ROADMAP note for future formalization.
+3. **Wrong scope framing**: First spec/plan incorrectly treated Pi workspace config as weavelog product code. Revised to document as author's personal setup with ROADMAP note for future formalization.
 
 4. **Redundant model name**: First footer version showed model on both line 1 and line 2. Removed from line 1.
 

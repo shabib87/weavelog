@@ -111,8 +111,8 @@ enforce.ts create gate and the claim gate enforce the mandatory set.
   `spec-approved`, `dispatched`, `stuck`, `merged`, `housekeeping`, `wayfinder:map`;
   general tier hand-settable — `harness`, `dogfood`, `deferred`. Unknown labels refuse
   claim and block create/pre-commit. `harness`/`dogfood` are harness-dev-only: outside the
-  canonical repos (agents-harness, flightlead) they are validation failures; the future
-  flightlead scaffold ships scaffolds the reserved set plus `deferred` only. Decision
+  canonical repos (agents-harness, weavelog) they are validation failures; the future
+  weavelog scaffold ships scaffolds the reserved set plus `deferred` only. Decision
   table (first match): `harness` when the task modifies bin/plugins/config/AGENTS.md/
   docs/architecture/stack-versions.json; `dogfood` when the deliverable is real work run
   through the harness as the verification subject; `deferred` when an explicit revive

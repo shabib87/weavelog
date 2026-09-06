@@ -1738,7 +1738,7 @@ describe("checkConfigDrift (config/ vs live per harness manifest)", () => {
 			});
 			assert.equal(drift.length, 1);
 			assert.ok(drift[0].includes("AGENTS.md"));
-			assert.ok(drift[0].includes("flightlead sync"));
+			assert.ok(drift[0].includes("weavelog sync"));
 			assert.ok(drift[0].includes("commit"));
 		} finally {
 			f.cleanup();
@@ -1758,7 +1758,7 @@ describe("checkConfigDrift (config/ vs live per harness manifest)", () => {
 			});
 			assert.equal(drift.length, 1);
 			assert.ok(drift[0].includes("AGENTS.md"));
-			assert.ok(drift[0].includes("flightlead sync"));
+			assert.ok(drift[0].includes("weavelog sync"));
 			assert.ok(drift[0].includes("commit"));
 		} finally {
 			f.cleanup();
@@ -1933,7 +1933,7 @@ describe("checkConfigDrift (config/ vs live per harness manifest)", () => {
 		}
 	});
 
-	test("drift fix hint names the flightlead sync surface, not cwd-relative", () => {
+	test("drift fix hint names the weavelog sync surface, not cwd-relative", () => {
 		const f = makeConfigFixture({
 			tracked: { "AGENTS.md": "tracked-edited\n", "config/agents/a.md": "a\n" },
 			live: { "AGENTS.md": "live\n", "agents/a.md": "a\n" },
@@ -1944,7 +1944,7 @@ describe("checkConfigDrift (config/ vs live per harness manifest)", () => {
 				liveRoot: f.liveRoot,
 				harnessManifestPath: f.manifestPath,
 			});
-			assert.ok(drift[0].includes("flightlead sync"));
+			assert.ok(drift[0].includes("weavelog sync"));
 			// the old author-instance hint form is gone
 			assert.ok(!drift[0].includes("bin/src/config-sync.ts"));
 		} finally {
@@ -1979,7 +1979,7 @@ describe("checkPointerTargets (thin global AGENTS.md pointer validation, AC #10)
 			assert.equal(drift.length, 1);
 			assert.ok(drift[0].includes("AGENTS.md"));
 			assert.ok(drift[0].includes(join(home, "nope", "not-here")));
-			assert.ok(drift[0].includes("flightlead sync"));
+			assert.ok(drift[0].includes("weavelog sync"));
 			assert.ok(drift[0].includes("commit"));
 			assert.equal(check.pointers[0].exists, false);
 		} finally {
@@ -2022,7 +2022,7 @@ describe("stack-check config drift (CLI wiring, env overrides)", () => {
 			};
 			assert.ok(report.checks.configSync);
 			assert.equal(
-				report.drift.some((d) => d.includes("AGENTS.md") && d.includes("flightlead sync")),
+				report.drift.some((d) => d.includes("AGENTS.md") && d.includes("weavelog sync")),
 				true,
 			);
 			rmSync(home, { recursive: true, force: true });

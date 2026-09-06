@@ -1,12 +1,12 @@
-# loopeng Footer + Theme Implementation Plan
+# weavelog Footer + Theme Implementation Plan
 
-> **SUPERSEDED** — This plan incorrectly treated private Pi user configuration as loopeng product code. The revised plan is `2026-07-07-pi-workspace-footer-theme.md`.
+> **SUPERSEDED** — This plan incorrectly treated private Pi user configuration as weavelog product code. The revised plan is `2026-07-07-pi-workspace-footer-theme.md`.
 
 ---
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Replace the single-line Pi footer with a four-line, labeled, color-coded footer, and make the custom `loopeng-dark` theme the default.
+**Goal:** Replace the single-line Pi footer with a four-line, labeled, color-coded footer, and make the custom `weavelog-dark` theme the default.
 
 **Architecture:** The theme is a full Pi TUI theme JSON file based on the built-in dark theme with a custom palette. The footer extension renders four lines of session/model/token/cost data using semantic theme tokens. No runtime logic is shared between the theme and footer; the theme provides colors, the footer consumes them.
 
@@ -26,28 +26,28 @@
 
 ## File Structure
 
-- `~/.pi/agent/themes/loopeng-dark.json` — new full Pi theme
-- `~/.pi/agent/settings.json` — add `"theme": "loopeng-dark"`
+- `~/.pi/agent/themes/weavelog-dark.json` — new full Pi theme
+- `~/.pi/agent/settings.json` — add `"theme": "weavelog-dark"`
 - `~/.pi/agent/extensions/footer.ts` — rewrite render function
 - `tests/pi-extensions/footer.test.ts` — new unit tests for footer rendering
-- `docs/superpowers/specs/2026-07-07-loopeng-footer-theme-design.md` — approved spec
+- `docs/superpowers/specs/2026-07-07-weavelog-footer-theme-design.md` — approved spec
 
 ---
 
-## Task 1: Create the `loopeng-dark` theme file
+## Task 1: Create the `weavelog-dark` theme file
 
 **Files:**
-- Create: `~/.pi/agent/themes/loopeng-dark.json`
+- Create: `~/.pi/agent/themes/weavelog-dark.json`
 - Test: `tests/pi-extensions/theme-schema.test.ts`
 
 **Interfaces:**
-- Produces: a valid Pi theme file at `~/.pi/agent/themes/loopeng-dark.json`
+- Produces: a valid Pi theme file at `~/.pi/agent/themes/weavelog-dark.json`
 
 - [ ] **Step 1: Copy the built-in dark theme as the base**
 
-Read `~/.nvm/versions/node/v22.23.1/lib/node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/theme/dark.json` and copy it to `~/.pi/agent/themes/loopeng-dark.json`.
+Read `~/.nvm/versions/node/v22.23.1/lib/node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/theme/dark.json` and copy it to `~/.pi/agent/themes/weavelog-dark.json`.
 
-- [ ] **Step 2: Define the loopeng palette vars**
+- [ ] **Step 2: Define the weavelog palette vars**
 
 Replace the `vars` block with:
 
@@ -110,13 +110,13 @@ Keep all other tokens referencing the same vars as dark.json unless they were pu
 Run:
 
 ```bash
-node -e "const fs=require('fs'); const t=JSON.parse(fs.readFileSync(process.env.HOME+'/.pi/agent/themes/loopeng-dark.json','utf8')); console.log('name:', t.name); console.log('vars:', Object.keys(t.vars).length); console.log('colors:', Object.keys(t.colors).length);"
+node -e "const fs=require('fs'); const t=JSON.parse(fs.readFileSync(process.env.HOME+'/.pi/agent/themes/weavelog-dark.json','utf8')); console.log('name:', t.name); console.log('vars:', Object.keys(t.vars).length); console.log('colors:', Object.keys(t.colors).length);"
 ```
 
 Expected output:
 
 ```
-name: loopeng-dark
+name: weavelog-dark
 vars: 25
 colors: 51
 ```
@@ -124,20 +124,20 @@ colors: 51
 - [ ] **Step 5: Commit**
 
 ```bash
-git add ~/.pi/agent/themes/loopeng-dark.json
-git commit -m "feat: add loopeng-dark pi theme"
+git add ~/.pi/agent/themes/weavelog-dark.json
+git commit -m "feat: add weavelog-dark pi theme"
 ```
 
 ---
 
-## Task 2: Set `loopeng-dark` as the default theme
+## Task 2: Set `weavelog-dark` as the default theme
 
 **Files:**
 - Modify: `~/.pi/agent/settings.json`
 
 **Interfaces:**
-- Consumes: `loopeng-dark.json` from Task 1
-- Produces: updated settings with `"theme": "loopeng-dark"`
+- Consumes: `weavelog-dark.json` from Task 1
+- Produces: updated settings with `"theme": "weavelog-dark"`
 
 - [ ] **Step 1: Read current settings**
 
@@ -151,11 +151,11 @@ Ensure the top-level JSON object contains:
 
 ```json
 {
-  "theme": "loopeng-dark"
+  "theme": "weavelog-dark"
 }
 ```
 
-If a `"theme"` key already exists, change its value to `"loopeng-dark"`. Preserve all other keys.
+If a `"theme"` key already exists, change its value to `"weavelog-dark"`. Preserve all other keys.
 
 - [ ] **Step 3: Validate settings JSON**
 
@@ -168,14 +168,14 @@ node -e "const s=require(process.env.HOME+'/.pi/agent/settings.json'); console.l
 Expected output:
 
 ```
-loopeng-dark
+weavelog-dark
 ```
 
 - [ ] **Step 4: Commit**
 
 ```bash
 git add ~/.pi/agent/settings.json
-git commit -m "feat: set loopeng-dark as default pi theme"
+git commit -m "feat: set weavelog-dark as default pi theme"
 ```
 
 ---
@@ -187,7 +187,7 @@ git commit -m "feat: set loopeng-dark as default pi theme"
 - Test: `tests/pi-extensions/footer.test.ts`
 
 **Interfaces:**
-- Consumes: `loopeng-dark` theme tokens (accent, warning, success, text, muted, dim, error, thinking*)
+- Consumes: `weavelog-dark` theme tokens (accent, warning, success, text, muted, dim, error, thinking*)
 - Produces: four-line footer string array from `render(width)`
 
 - [ ] **Step 1: Write the failing test for four-line footer render**
@@ -482,7 +482,7 @@ git commit -m "docs: update progress and next session after footer/theme redesig
 
 ## Self-Review Checklist
 
-- [ ] Spec coverage: four-line footer, `loopeng-dark` theme, default theme setting, tests, docs updates — all have tasks.
+- [ ] Spec coverage: four-line footer, `weavelog-dark` theme, default theme setting, tests, docs updates — all have tasks.
 - [ ] Placeholder scan: no TBD/TODO/fill-in details.
 - [ ] Type consistency: `pi.getThinkingLevel()` returns string; `theme.fg()` tokens are strings; `ctx.getContextUsage()` shape matches existing code.
 - [ ] No new dependencies.

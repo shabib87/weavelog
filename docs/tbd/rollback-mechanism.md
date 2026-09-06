@@ -6,7 +6,7 @@ mechanism.
 
 ## The Problem
 
-Addy Osmani's S principle: "the agent forgets, the repo doesn't." Loopeng
+Addy Osmani's S principle: "the agent forgets, the repo doesn't." Weavelog
 sub-agents write files to disk during a step. If the human **rejects** the
 diff at the verification gate ("n — re-run with feedback"), the sub-agent's
 files are already in the working tree. There is no automatic rollback.
@@ -23,7 +23,7 @@ Pi ships an example that does exactly this:
   before changes.
 - `git stash apply <ref>` on fork — restores state.
 
-Loopeng should adopt this at the **step level**, not the turn level:
+Weavelog should adopt this at the **step level**, not the turn level:
 - Before each workflow step spawns, create a git stash ref (or a branch
   checkpoint).
 - On rejection: `git reset --hard <ref>` to restore, then re-run with
@@ -34,7 +34,7 @@ Loopeng should adopt this at the **step level**, not the turn level:
 
 1. **Stash vs branch vs commit-and-revert.** Stash is simplest but doesn't
    survive a Pi crash (in-memory map in git-checkpoint.ts). A branch
-   checkpoint (`git branch loopeng/step-<id>`) survives crashes and is
+   checkpoint (`git branch weavelog/step-<id>`) survives crashes and is
    inspectable. Recommend branch.
 2. **Where the checkpoint ref is stored.** If state lives in the Pi session
    tree (`pi.appendEntry`), the ref survives `/resume`. If state is

@@ -2,15 +2,15 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Improve the author's personal Pi TUI workspace with a readable four-line footer and a custom `loopeng-dark` theme. This is **not** loopeng product code; it is private Pi user configuration documented here for reference.
+**Goal:** Improve the author's personal Pi TUI workspace with a readable four-line footer and a custom `weavelog-dark` theme. This is **not** weavelog product code; it is private Pi user configuration documented here for reference.
 
-**Architecture:** The theme is a full Pi TUI theme JSON file based on the built-in `dark` theme. The footer is a Pi extension that renders four lines of session/model/token/cost data using semantic theme tokens. Both live in `~/.pi/agent/`, not in `~/Projects/loopeng`.
+**Architecture:** The theme is a full Pi TUI theme JSON file based on the built-in `dark` theme. The footer is a Pi extension that renders four lines of session/model/token/cost data using semantic theme tokens. Both live in `~/.pi/agent/`, not in `~/Projects/weavelog`.
 
 **Tech Stack:** TypeScript (Pi extension), JSON (Pi theme).
 
 ## Global Constraints
 
-- No production code or config in `~/Projects/loopeng` from this work.
+- No production code or config in `~/Projects/weavelog` from this work.
 - Theme must define all 51 required Pi theme tokens.
 - Footer must use semantic `theme.fg()` tokens only.
 - No new npm dependencies without explicit approval.
@@ -22,8 +22,8 @@
 
 ## File Structure
 
-- `~/.pi/agent/themes/loopeng-dark.json` — new full Pi theme (private config)
-- `~/.pi/agent/settings.json` — add `"theme": "loopeng-dark"` (private config)
+- `~/.pi/agent/themes/weavelog-dark.json` — new full Pi theme (private config)
+- `~/.pi/agent/settings.json` — add `"theme": "weavelog-dark"` (private config)
 - `~/.pi/agent/extensions/footer.ts` — rewrite render function (private config)
 - `docs/pi-workspace/2026-07-07-author-setup.md` — documentation of the private setup
 - `docs/ROADMAP.md` — note future Pi package formalization
@@ -32,21 +32,21 @@
 
 ---
 
-## Task 1: Create the `loopeng-dark` theme file
+## Task 1: Create the `weavelog-dark` theme file
 
 **Files:**
-- Create: `~/.pi/agent/themes/loopeng-dark.json`
+- Create: `~/.pi/agent/themes/weavelog-dark.json`
 
 **Interfaces:**
-- Produces: a valid Pi theme file at `~/.pi/agent/themes/loopeng-dark.json`
+- Produces: a valid Pi theme file at `~/.pi/agent/themes/weavelog-dark.json`
 
 - [ ] **Step 1: Copy the built-in dark theme as the base**
 
-Read `~/.nvm/versions/node/v22.23.1/lib/node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/theme/dark.json` and copy it to `~/.pi/agent/themes/loopeng-dark.json`.
+Read `~/.nvm/versions/node/v22.23.1/lib/node_modules/@earendil-works/pi-coding-agent/dist/modes/interactive/theme/dark.json` and copy it to `~/.pi/agent/themes/weavelog-dark.json`.
 
-- [ ] **Step 2: Update `name` and define the loopeng palette vars**
+- [ ] **Step 2: Update `name` and define the weavelog palette vars**
 
-Set `"name": "loopeng-dark"` and replace the `vars` block with:
+Set `"name": "weavelog-dark"` and replace the `vars` block with:
 
 ```json
 "vars": {
@@ -106,31 +106,31 @@ Also change any pure `#ffff00` values to `yellowPale`.
 Run:
 
 ```bash
-node -e "const fs=require('fs'); const t=JSON.parse(fs.readFileSync(process.env.HOME+'/.pi/agent/themes/loopeng-dark.json','utf8')); console.log('name:', t.name); console.log('vars:', Object.keys(t.vars).length); console.log('colors:', Object.keys(t.colors).length);"
+node -e "const fs=require('fs'); const t=JSON.parse(fs.readFileSync(process.env.HOME+'/.pi/agent/themes/weavelog-dark.json','utf8')); console.log('name:', t.name); console.log('vars:', Object.keys(t.vars).length); console.log('colors:', Object.keys(t.colors).length);"
 ```
 
 Expected output:
 
 ```
-name: loopeng-dark
+name: weavelog-dark
 vars: 25
 colors: 51
 ```
 
 - [ ] **Step 5: Verify visually via Pi `/reload`**
 
-In Pi, run `/settings`, choose `loopeng-dark`, and confirm the TUI colors load without errors.
+In Pi, run `/settings`, choose `weavelog-dark`, and confirm the TUI colors load without errors.
 
 ---
 
-## Task 2: Set `loopeng-dark` as the default theme
+## Task 2: Set `weavelog-dark` as the default theme
 
 **Files:**
 - Modify: `~/.pi/agent/settings.json`
 
 **Interfaces:**
-- Consumes: `loopeng-dark.json` from Task 1
-- Produces: updated settings with `"theme": "loopeng-dark"`
+- Consumes: `weavelog-dark.json` from Task 1
+- Produces: updated settings with `"theme": "weavelog-dark"`
 
 - [ ] **Step 1: Read current settings**
 
@@ -140,7 +140,7 @@ cat ~/.pi/agent/settings.json
 
 - [ ] **Step 2: Add or update the theme field**
 
-Ensure the top-level JSON object contains `"theme": "loopeng-dark"`. Preserve all other keys.
+Ensure the top-level JSON object contains `"theme": "weavelog-dark"`. Preserve all other keys.
 
 - [ ] **Step 3: Validate**
 
@@ -151,7 +151,7 @@ node -e "const s=require(process.env.HOME+'/.pi/agent/settings.json'); console.l
 Expected output:
 
 ```
-loopeng-dark
+weavelog-dark
 ```
 
 ---
@@ -162,7 +162,7 @@ loopeng-dark
 - Modify: `~/.pi/agent/extensions/footer.ts`
 
 **Interfaces:**
-- Consumes: `loopeng-dark` theme tokens (`accent`, `warning`, `success`, `text`, `muted`, `dim`, `error`, `thinking*`)
+- Consumes: `weavelog-dark` theme tokens (`accent`, `warning`, `success`, `text`, `muted`, `dim`, `error`, `thinking*`)
 - Produces: four-line footer string array from `render(width)`
 
 - [ ] **Step 1: Rewrite `~/.pi/agent/extensions/footer.ts`**
@@ -273,7 +273,7 @@ In Pi, run `/reload`. Confirm the footer renders four lines and labels are reada
 
 ---
 
-## Task 4: Document the private workspace setup in loopeng docs
+## Task 4: Document the private workspace setup in weavelog docs
 
 **Files:**
 - Create: `docs/pi-workspace/2026-07-07-author-setup.md`
@@ -288,15 +288,15 @@ Create `docs/pi-workspace/2026-07-07-author-setup.md` with:
 ```markdown
 # Author's Pi Workspace Setup
 
-This documents the private Pi workspace configuration used by the loopeng author. These files live in `~/.pi/agent/`, not in the loopeng repo.
+This documents the private Pi workspace configuration used by the weavelog author. These files live in `~/.pi/agent/`, not in the weavelog repo.
 
 ## Files
 
-- `~/.pi/agent/themes/loopeng-dark.json` — custom Pi theme
+- `~/.pi/agent/themes/weavelog-dark.json` — custom Pi theme
 - `~/.pi/agent/extensions/footer.ts` — four-line footer extension
-- `~/.pi/agent/settings.json` — Pi settings, including `"theme": "loopeng-dark"`
+- `~/.pi/agent/settings.json` — Pi settings, including `"theme": "weavelog-dark"`
 
-## loopeng-dark theme
+## weavelog-dark theme
 
 Based on Pi's built-in `dark` theme with a custom palette:
 
@@ -319,7 +319,7 @@ Four lines:
 
 ## Future
 
-This setup may become a distributable Pi package when loopeng is ready to offer it to users. Until then, it is author-only configuration.
+This setup may become a distributable Pi package when weavelog is ready to offer it to users. Until then, it is author-only configuration.
 ```
 
 - [ ] **Step 2: Commit**
@@ -331,7 +331,7 @@ git commit -m "docs: add author pi workspace setup reference"
 
 ---
 
-## Task 5: Update loopeng roadmap, progress, and next session
+## Task 5: Update weavelog roadmap, progress, and next session
 
 **Files:**
 - Modify: `docs/ROADMAP.md`
@@ -340,19 +340,19 @@ git commit -m "docs: add author pi workspace setup reference"
 
 - [ ] **Step 1: Update `docs/ROADMAP.md`**
 
-Add a note under a future milestone (e.g., v0.3 or later) that loopeng may ship a Pi package bundling the theme, footer, and other extensions. Example line:
+Add a note under a future milestone (e.g., v0.3 or later) that weavelog may ship a Pi package bundling the theme, footer, and other extensions. Example line:
 
 ```markdown
-- Pi package: offer `loopeng-dark` theme and footer extension as an installable Pi package
+- Pi package: offer `weavelog-dark` theme and footer extension as an installable Pi package
 ```
 
 - [ ] **Step 2: Update `docs/PROGRESS.md`**
 
-Add a clear note that the footer/theme work is **author workspace polish**, not a loopeng product phase. Do not inflate the phase list.
+Add a clear note that the footer/theme work is **author workspace polish**, not a weavelog product phase. Do not inflate the phase list.
 
 - [ ] **Step 3: Update `docs/NEXT_SESSION.md`**
 
-Correct the framing: the footer/theme work is done as private config. The next loopeng product work remains Phase 1.85c (doc system overhaul), plus the session-logger dogfood gate verification.
+Correct the framing: the footer/theme work is done as private config. The next weavelog product work remains Phase 1.85c (doc system overhaul), plus the session-logger dogfood gate verification.
 
 - [ ] **Step 4: Commit**
 
@@ -394,7 +394,7 @@ No automated tests are planned for this task. The deliverable is private Pi user
 
 ## Self-Review Checklist
 
-- [ ] No files created or modified in `~/Projects/loopeng` other than docs.
+- [ ] No files created or modified in `~/Projects/weavelog` other than docs.
 - [ ] Theme defines all 51 Pi tokens.
 - [ ] Footer uses only semantic theme tokens.
 - [ ] `cache-read` is labeled correctly, not reasoning.

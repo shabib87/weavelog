@@ -161,6 +161,6 @@ pointer note since its roster is provenance-only.
 - "ZDR and the open-weights cost/quality frontier": how turning on a single
   privacy toggle reshapes the model roster, and why the $0 slot is the first
   casualty.
-- "The checker does not need to be smarter": the loopeng maker/checker
+- "The checker does not need to be smarter": the weavelog maker/checker
   principle where a 59.4-coding model verifies a 68.8-coding model, and why
   different-family beats same-family-smarter.

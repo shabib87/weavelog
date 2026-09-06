@@ -9,12 +9,12 @@
 
 | Command | Job |
 |---|---|
-| `flightlead init` | install opinionated deps (headroom[proxy], opencode, markitdown, semgrep, backlog.md), materialize `~/.agents/*` + `~/.config/opencode/*` (two-step user-modification flow), never silently overwrite managed files |
-| `flightlead sync` | dev path: repo → live (dogfood loop; ported config-sync) |
-| `flightlead update` | release-driven dep bump + re-materialize |
-| `flightlead check` | deterministic gates: tests, lint, typecheck, semgrep (telemetry off, pinned rulesets), secrets, frontmatter, manifest completeness |
-| `flightlead doctor` | installed? authenticated? config parses? proxy healthy? cache mode=cache? python3.13? :8788 launchd-owned? semgrep smoke? ledger tail? |
-| `flightlead scaffold --project` | project scaffold: backlog init, AGENTS.md, docs/research, ADRs, .gitignore, .env.example (never touches .env/.env.local) |
+| `weavelog init` | install opinionated deps (headroom[proxy], opencode, markitdown, semgrep, backlog.md), materialize `~/.agents/*` + `~/.config/opencode/*` (two-step user-modification flow), never silently overwrite managed files |
+| `weavelog sync` | dev path: repo → live (dogfood loop; ported config-sync) |
+| `weavelog update` | release-driven dep bump + re-materialize |
+| `weavelog check` | deterministic gates: tests, lint, typecheck, semgrep (telemetry off, pinned rulesets), secrets, frontmatter, manifest completeness |
+| `weavelog doctor` | installed? authenticated? config parses? proxy healthy? cache mode=cache? python3.13? :8788 launchd-owned? semgrep smoke? ledger tail? |
+| `weavelog scaffold --project` | project scaffold: backlog init, AGENTS.md, docs/research, ADRs, .gitignore, .env.example (never touches .env/.env.local) |
 
 Models are opinionated defaults. `init` asks; flags override. No personal
 accounts or paths are baked into payloads.
@@ -42,7 +42,7 @@ Exit-code contract:
 
 ## Ledger
 
-Append-only JSONL at `~/.local/state/flightlead/`. Every command appends one
+Append-only JSONL at `~/.local/state/weavelog/`. Every command appends one
 record per run: files touched, decisions, errors, exit code. The ledger is
 the audit surface — gate receipts reference ledger positions, `doctor` tails
 it, the public corpus is built from it.
@@ -74,11 +74,11 @@ Field rules:
 - `run` — short run id; all events of one invocation share it.
 - `events[].type` — `install` | `materialize` | `gate` | `refusal` | `error` | `decision`.
 - Every `refusal` and `error` names the file and the reason.
-- The file is append-only. flightlead never rewrites or truncates it.
+- The file is append-only. weavelog never rewrites or truncates it.
 
 ### Manifest
 
-`flightlead.json` (JSON, CLI-managed). Per-tool: install channel
+`weavelog.json` (JSON, CLI-managed). Per-tool: install channel
 (brew/pipx/npm/uv), version, doctor check id. Completeness rule: every
 external binary invoked in skills/src/payload must appear in the manifest —
 `check` enforces this (manifest-completeness gate; drift is a `doctor`
@@ -88,7 +88,7 @@ check).
 
 ## Command detail
 
-### `flightlead init`
+### `weavelog init`
 
 | Aspect | Behavior |
 |---|---|
@@ -98,10 +98,10 @@ check).
 | Exit codes | `0` clean; `1` step failed; `3` managed-file conflict declined; `4` unsupported env |
 
 Managed-file rule: if a managed file exists and differs from the payload and
-was modified outside flightlead, init refuses and shows the diff; it never
+was modified outside weavelog, init refuses and shows the diff; it never
 silently overwrites. The two-step flow: propose → user confirms → write.
 
-### `flightlead sync`
+### `weavelog sync`
 
 | Aspect | Behavior |
 |---|---|
@@ -110,7 +110,7 @@ silently overwrites. The two-step flow: propose → user confirms → write.
 | Ledger events | `materialize` per synced file; `decision` for post-sync diff summary |
 | Exit codes | `0` clean (post-sync diff empty); `1` sync failed or diff non-empty after sync |
 
-### `flightlead update`
+### `weavelog update`
 
 | Aspect | Behavior |
 |---|---|
@@ -119,7 +119,7 @@ silently overwrites. The two-step flow: propose → user confirms → write.
 | Ledger events | `install` per bumped tool, `materialize` per re-written file |
 | Exit codes | `0` clean; `1` bump failed; `3` managed-file conflict |
 
-### `flightlead check`
+### `weavelog check`
 
 | Aspect | Behavior |
 |---|---|
@@ -131,7 +131,7 @@ silently overwrites. The two-step flow: propose → user confirms → write.
 Gate receipts: each gate emits a receipt (gate id, run id, timestamp, pass/
 fail, counts) to the ledger; `--json` prints them for programmatic use.
 
-### `flightlead doctor`
+### `weavelog doctor`
 
 | Aspect | Behavior |
 |---|---|
@@ -152,7 +152,7 @@ fail, counts) to the ledger; `--json` prints them for programmatic use.
 | `auth.openrouter` | OpenRouter auth file present and parses |
 | `opencode.config-parse` | emitted opencode config parses and loads |
 | `manifest.drift` | managed files match manifest; no unexplained drift |
-| `manifest.completeness` | every invoked external binary appears in `flightlead.json` |
+| `manifest.completeness` | every invoked external binary appears in `weavelog.json` |
 | `versions.pinned` | manifest versions pinned for all tools |
 | `platform.arm64` | arm64 macOS guard (hard exit `4` otherwise) |
 | `ledger.tail` | ledger exists, is readable, and its tail parses as JSONL |
@@ -160,7 +160,7 @@ fail, counts) to the ledger; `--json` prints them for programmatic use.
 Each subcheck prints one line: id, pass/fail, and on failure a single
 copy-paste fix.
 
-### `flightlead scaffold --project`
+### `weavelog scaffold --project`
 
 | Aspect | Behavior |
 |---|---|
@@ -187,7 +187,7 @@ absolute paths in launchd plists are substituted at install time by `init`).
 | Role agents | `~/.config/opencode/agents/{scout,diff-reviewer-*,plan-gate-*,qa,researcher,implementer,vision-*,security}.md` (from `payload/config/agents/` + `payload/config/prompts/`) |
 | Skills hub | `~/.agents/skills/` (canonical copies from `payload/skills/`; pi/claude symlink chains, codex real copies) |
 | Scripts | `src/` in this repo; live host `~/.agents/bin/src/` |
-| Manifest | `flightlead.json`; live host `~/.agents/stack-versions.json` |
+| Manifest | `weavelog.json`; live host `~/.agents/stack-versions.json` |
 | headroom binary | `~/.local/bin/headroom` (pipx venv `~/.local/pipx/venvs/headroom-ai`, python3.13) |
 | headroom proxy log | `~/.headroom/proxy-launchd.log` (dir must be 700) |
 | proxy plist | `~/Library/LaunchAgents/com.headroom.proxy.plist` |
@@ -211,12 +211,12 @@ absolute paths in launchd plists are substituted at install time by `init`).
 
 Opinionated defaults — `init` asks, flags override. Role → model table lives in
 `docs/architecture/model-routing.md`; the machine-readable default is the `models`
-list in `flightlead.json` (glm-5.3-flash, deepseek-v4-flash-0731, deepseek-v4-pro-0813,
+list in `weavelog.json` (glm-5.3-flash, deepseek-v4-flash-0731, deepseek-v4-pro-0813,
 qwen3.8-2.4t-a95b, kimi-k3, minimax-m3). The opencode keys are `model`
 (`openrouter/z-ai/glm-5.3-flash`, new-session workhorse) and `small_model`
 (`openrouter/deepseek/deepseek-v4-flash-0731`, cheap bulk); subagents inherit them
 unless their agent file sets its own `model`. Versions are manifest-pinned in
-`flightlead.json`; the headroom rollback pin is `headroom-ai[proxy]==0.30.0`.
+`weavelog.json`; the headroom rollback pin is `headroom-ai[proxy]==0.30.0`.
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 date: 2026-09-02
-topic: loopeng moat analysis (OSS readiness) — defensibility of assets (a)-(e), OSS moat patterns, compression-proxy prior art, auditable-process demand, positioning for OSS launch
+topic: weavelog moat analysis (OSS readiness) — defensibility of assets (a)-(e), OSS moat patterns, compression-proxy prior art, auditable-process demand, positioning for OSS launch
 status: complete
 sources:
   - "https://github.com/anomalyco/opencode (live metadata 2026-09-02: 203,243 stars, MIT)"
@@ -36,7 +36,7 @@ models_used_for_research:
 supersedes: none
 ---
 
-# loopeng moat analysis (OSS readiness) — 2026-09-02
+# weavelog moat analysis (OSS readiness) — 2026-09-02
 
 Companion to `2026-09-02-oss-agent-harnesses.md` (competitor scan; not superseded — this note
 answers the *moat* question that scan left open). Method: 3 web-search rounds this dispatch
@@ -59,7 +59,7 @@ agent-harness plan mode all ship them). The open question was (a), (b), (c).
 - Durability candidate: **"soul" (brand/trust) + distribution**, per the open-core literature
   (kody-w: protocol = bones, product = body, brand = soul; the protocol itself is not the moat).
   A protocol only becomes durable if it becomes a standard others implement — that requires
-  community gravity loopeng does not yet have.
+  community gravity weavelog does not yet have.
 - **Verdict: copyable in a weekend. Weakest structural moat; strongest as launch narrative.**
 
 ### (b) Research/scout subagent + dated indexed evidence archive — COPYABLE MECHANISM, DURABLE CORPUS
@@ -103,7 +103,7 @@ agent-harness plan mode all ship them). The open question was (a), (b), (c).
 - Copyable in minutes (add a second model as reviewer). What makes it *credible* is not the
   mechanism but the evidence: outrigger's own experiments found "layered independent (adversarial)
   review is the one mechanism no experiment ever demoted," while the blind merge gate cost 5.9×
-  without defect reduction on well-specified work. Publish loopeng's own numbers or the mechanism
+  without defect reduction on well-specified work. Publish weavelog's own numbers or the mechanism
   is just config.
 
 ### (e) HITL plan/merge gates — TABLE STAKES
@@ -145,12 +145,12 @@ numbers is a black box losing to native caching; (b) without (c) is a blog.
   signals. Don't optimize stars.
 
 ### Which pattern fits a harness ON TOP of opencode
-loopeng is not Astral (it isn't the toolchain — opencode is). The fitting pattern is
+weavelog is not Astral (it isn't the toolchain — opencode is). The fitting pattern is
 **protocol+evidence on a substrate you don't own**: open the *process protocol* (WHAT/HOW,
 decision tickets, evidence schema — bones), keep the operator-facing infra (headroom) productized,
 and build brand via the public research archive (soul). The harness layer's genuine moat lever is
 **standards ownership of process artifacts** — the way Hugging Face standardized hosting and
-Astral standardized the agent↔toolchain interface, loopeng can standardize "what an auditable
+Astral standardized the agent↔toolchain interface, weavelog can standardize "what an auditable
 agent run record looks like." If the run-record/evidence schema gets adopted by others (even
 competitors), the schema is the moat — the HF "give the standard, take the enterprise" pattern.
 
@@ -172,7 +172,7 @@ third-party Claude Code alternatives (doshby) and the SpaceX–Cursor $60B acqui
   existing v1 databases") and a documented, stable plugin hook surface (auth, provider,
   chat.headers, tool.execute.before/after, permission.ask, event, custom tools,
   experimental.session.compacting — deepwiki 2026-08-14, open-code.ai docs). Still, hooks are the
-  integration surface most likely to churn in a V2 rewrite (loopeng's own 2026-08-19/24 notes
+  integration surface most likely to churn in a V2 rewrite (weavelog's own 2026-08-19/24 notes
   show the SDK/config surface moving underfoot within weeks).
 - **Governance risk precedent:** the 2024-25 Charm/Crush fork dispute shows opencode's governance
   is contested terrain, but MIT licensing guarantees fork escape (doshby).
@@ -205,7 +205,7 @@ Three facts sharpen the verdict:
    built for RAG/chat; native caching only helps stable prefixes; the volatile middle (tool
    output, file reads, CLI noise) is exactly where a local, agent-aware proxy earns its keep.
    Headroom's design (toolResult compression, thresholds, cache mode) is already shaped for this.
-3. **The economics must be honest.** Loopeng's own measurements show the dashboard reporting ~5%
+3. **The economics must be honest.** Weavelog's own measurements show the dashboard reporting ~5%
    savings with a cache-attribution gap (2026-08-15 notes). Meanwhile a published study shows
    compression can *cost* net time outside its operating window (arxiv 2604.02985). If headroom
    launches on vibes, the first competent benchmark post will kill it. If it launches with a
@@ -243,7 +243,7 @@ Demand signals, all 2026:
   harnesses in the 2026-09-02 scan ship tamper-evident run records — only keel does (hash chain +
   Ed25519 checkpoints), and it's pre-alpha.**
 
-Mapping to loopeng: the dated evidence archive, backlog merge-gate decision records, and
+Mapping to weavelog: the dated evidence archive, backlog merge-gate decision records, and
 reviewer chains are 80% of an "auditable process" story — but they are currently *claims*, not
 *evidence*, by the standards the 2026 literature uses: no run-id → commit-trailer join (the
 "one-line, gets-harder-every-week" item), no authority snapshot at run start, no writer outside
@@ -266,7 +266,7 @@ becomes the standards play (§2).
 platform teams adopting opencode/Claude Code who must answer "which agent changed this, under
 whose authority, and what did it see?" Beats one-punch/tiller (zero evidence layer), beats keel
 (enforcement without process: no dialogue, no research layer), beats dashboards (they log events;
-loopeng produces joined records: run-id → diff → gate results → human approval). Why it wins:
+weavelog produces joined records: run-id → diff → gate results → human approval). Why it wins:
 unique asset (b) becomes the product's proof, (e) becomes structural via receipts, and the Dec-2027
 AI Act + NIST CAISI clock gives it urgency no competitor has packaged. Moat: **standards ownership
 of the run-record/evidence schema + the public corpus (b) + governance-wave timing.**
@@ -302,13 +302,13 @@ entry-level wedge that feeds #1/#2, not as the moat itself.
    reproducible per-workload savings/latency profile on real opencode traffic, with the cache-
    attribution fix so the number is defensible, framed as "cache the stable prefix, compress the
    volatile suffix, account for every token"; (ii) a harness-vs-null run ledger (outrigger's
-   discipline) showing which loopeng mechanisms earn their cost — including where the merge gate
+   discipline) showing which weavelog mechanisms earn their cost — including where the merge gate
    doesn't. The essay *is* the launch; unverified claims are the single biggest kill risk given
    arxiv 2604.02985 and TokenShift's existence.
 3. **Kill the single-upstream failure mode:** formalize the portable provider/CLI contract
    (opencode SDK + `run` CLI + plain OpenAI-compatible endpoint for headroom; second CLI target —
    Claude Code or Codex — demonstrably working), and ship the tiller-style `npx init` scaffold
-   with a minimal loopeng profile. Distribution to strangers' repos is the confirmed #1 gap from
+   with a minimal weavelog profile. Distribution to strangers' repos is the confirmed #1 gap from
    the competitor scan; multi-CLI support is also the only real mitigation for opencode absorption
    of proxy/compaction features.
 

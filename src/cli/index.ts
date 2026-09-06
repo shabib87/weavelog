@@ -17,17 +17,17 @@ import {
 import { homedir, tmpdir } from "node:os";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import type { FlightleadManifest } from "../flightlead-manifest.js";
+import type { WeavelogManifest } from "../weavelog-manifest.js";
 import { checkConfigDrift, checkMarkitdown } from "../stack-check.js";
 
 const USAGE =
-	"Usage: flightlead <command> [options]\n\nCommands:\n  init       Materialize the payload into a live root\n  sync       Repo -> live config materialization (author machine)\n  update     Report tool versions vs flightlead.json plus update and rollback hints\n  check      Verify the machine against flightlead.json (--stack-only: fast subset)\n  doctor     Run the subcheck battery\n  scaffold   Scaffold a backlog-driven project dir\n  stats      Show session usage statistics from .pi/logs/*.stats.json\n\nRun 'flightlead <command> --help' for command help.";
+	"Usage: weavelog <command> [options]\n\nCommands:\n  init       Materialize the payload into a live root\n  sync       Repo -> live config materialization (author machine)\n  update     Report tool versions vs weavelog.json plus update and rollback hints\n  check      Verify the machine against weavelog.json (--stack-only: fast subset)\n  doctor     Run the subcheck battery\n  scaffold   Scaffold a backlog-driven project dir\n  stats      Show session usage statistics from .pi/logs/*.stats.json\n\nRun 'weavelog <command> --help' for command help.";
 
 const COMMAND_HELP: Record<string, string> = {
-	init: `Usage: flightlead init [--force]
+	init: `Usage: weavelog init [--force]
 
 Materialize the payload into a live root. Template files resolve
-{{FLIGHTLEAD_HOME}} and {{FLIGHTLEAD_CONFIG_HOME}} from the .env at the target
+{{WEAVELOG_HOME}} and {{WEAVELOG_CONFIG_HOME}} from the .env at the target
 live root (zero secret values in payload templates). Copies payload/config to
 the live config locations and payload/skills to <live-root>/skills (excluding
 personal dirs by policy). Creates the diagram-design host symlink only when
@@ -37,51 +37,51 @@ template. Refuses (non-zero exit + ledger line) when the live root exists with
 conflicting unversioned files unless --force.
 
 Env seams:
-  FLIGHTLEAD_LIVE_ROOT       live root (default ~/.agents)
-  FLIGHTLEAD_CONFIG_HOME     opencode config dir (default ~/.config/opencode)
-  FLIGHTLEAD_STATE_DIR       ledger dir (default ~/.local/state/flightlead)`,
-	sync: `Usage: flightlead sync
+  WEAVELOG_LIVE_ROOT       live root (default ~/.agents)
+  WEAVELOG_CONFIG_HOME     opencode config dir (default ~/.config/opencode)
+  WEAVELOG_STATE_DIR       ledger dir (default ~/.local/state/weavelog)`,
+	sync: `Usage: weavelog sync
 
 Repo -> live materialization for the author machine. Runs the config-sync
 machinery against the payload harness manifest; no-op when everything is
 already in sync (exit 0).
 
 Env seams:
-  FLIGHTLEAD_CONFIG_HOME     live config root (default ~/.config/opencode)
-  FLIGHTLEAD_STATE_DIR       state + ledger dir (default ~/.local/state/flightlead)`,
-	update: `Usage: flightlead update
+  WEAVELOG_CONFIG_HOME     live config root (default ~/.config/opencode)
+  WEAVELOG_STATE_DIR       state + ledger dir (default ~/.local/state/weavelog)`,
+	update: `Usage: weavelog update
 
-Safe-update flow: checks every flightlead.json tool version against the
+Safe-update flow: checks every weavelog.json tool version against the
 installed tool and reports per-channel update notes (pipx/npm/app/git) plus
 rollback hints. Full automation is not required at 0.1.0. Exits 0 when the
 setup is healthy, refuses loudly (exit 1) on drift. Report-only: never applies
 updates.
 
-Env seams: same binary seams as 'flightlead check --stack-only'.`,
-	check: `Usage: flightlead check [--stack-only] [--pre-commit]
+Env seams: same binary seams as 'weavelog check --stack-only'.`,
+	check: `Usage: weavelog check [--stack-only] [--pre-commit]
 
-Verify the machine against flightlead.json. --pre-commit runs the backlog
-task validation gate (for git hooks installed by 'flightlead' worktree
+Verify the machine against weavelog.json. --pre-commit runs the backlog
+task validation gate (for git hooks installed by 'weavelog' worktree
 tooling) and exits 0/1. --stack-only runs ONLY the fast
-stack-version subset (one check per flightlead.json tool check id, plus the
+stack-version subset (one check per weavelog.json tool check id, plus the
 node-path guard) suitable for a launchd plist. Without the flag, adds the
 proxy :8788 health check and the config-drift check (composes src/stack-check
 machinery). Exits 0 when healthy, 1 on any failure.
 
 Env seams:
-  FLIGHTLEAD_HEADROOM_BIN    headroom binary (default ~/.local/bin/headroom)
-  FLIGHTLEAD_BACKLOG_BIN     backlog binary (default ~/.bun/bin/backlog)
-  FLIGHTLEAD_MARKITDOWN_BIN  markitdown binary (default ~/.local/bin/markitdown)
-  FLIGHTLEAD_OPENCODE_BIN    opencode binary (default 'opencode' from PATH)
-  FLIGHTLEAD_PI_BIN          pi binary (default 'pi' from PATH)
-  FLIGHTLEAD_SKILLS_DIR      skills dir for diagram-design (default <live>/skills)
-  FLIGHTLEAD_CHECK_PLIST     check launchd plist (default ~/Library/LaunchAgents/com.flightlead.check.plist)
-  FLIGHTLEAD_LIVE_ROOT       live root (default ~/.agents)
-  FLIGHTLEAD_CONFIG_HOME     live config root (default ~/.config/opencode)
-  FLIGHTLEAD_STATE_DIR       ledger dir (default ~/.local/state/flightlead)`,
-	doctor: `Usage: flightlead doctor
+  WEAVELOG_HEADROOM_BIN    headroom binary (default ~/.local/bin/headroom)
+  WEAVELOG_BACKLOG_BIN     backlog binary (default ~/.bun/bin/backlog)
+  WEAVELOG_MARKITDOWN_BIN  markitdown binary (default ~/.local/bin/markitdown)
+  WEAVELOG_OPENCODE_BIN    opencode binary (default 'opencode' from PATH)
+  WEAVELOG_PI_BIN          pi binary (default 'pi' from PATH)
+  WEAVELOG_SKILLS_DIR      skills dir for diagram-design (default <live>/skills)
+  WEAVELOG_CHECK_PLIST     check launchd plist (default ~/Library/LaunchAgents/com.weavelog.check.plist)
+  WEAVELOG_LIVE_ROOT       live root (default ~/.agents)
+  WEAVELOG_CONFIG_HOME     live config root (default ~/.config/opencode)
+  WEAVELOG_STATE_DIR       ledger dir (default ~/.local/state/weavelog)`,
+	doctor: `Usage: weavelog doctor
 
-Subcheck battery, one check per flightlead.json check id. Subchecks: manifest
+Subcheck battery, one check per weavelog.json check id. Subchecks: manifest
 parse, payload integrity, templating sanity ({{...}} tokens only resolve from
 .env), skills layout (no symlinks in payload; frontmatter license/upstream
 present), proxy :8788 health (skipped with a warning when headroom is absent),
@@ -90,23 +90,23 @@ backlog binary presence, node version >= engines.node, and the node-path guard
 when the plist is absent). Exits 0 iff all checks pass (warnings are ok,
 failures are not).
 
-Env seams: same as 'flightlead check', plus FLIGHTLEAD_PI_HOME for stats.`,
-	scaffold: `Usage: flightlead scaffold --project <name>
+Env seams: same as 'weavelog check', plus WEAVELOG_PI_HOME for stats.`,
+	scaffold: `Usage: weavelog scaffold --project <name>
 
 Scaffold a backlog-driven project dir relative to the current directory: git
 init, AGENTS.md stub from the payload template, backlog/ init via the backlog
 CLI if present (else skipped with a decision), and a .env.example copy.
 
 Env seams:
-  FLIGHTLEAD_BACKLOG_BIN     backlog binary (default 'backlog' from PATH)
-  FLIGHTLEAD_STATE_DIR       ledger dir (default ~/.local/state/flightlead)`,
-	stats: `Usage: flightlead stats
+  WEAVELOG_BACKLOG_BIN     backlog binary (default 'backlog' from PATH)
+  WEAVELOG_STATE_DIR       ledger dir (default ~/.local/state/weavelog)`,
+	stats: `Usage: weavelog stats
 
 Show session usage statistics from .pi/logs/*.stats.json.
 
 Env seams:
-  FLIGHTLEAD_PI_HOME         pi home (default ~/.pi)
-  FLIGHTLEAD_STATE_DIR       ledger dir (default ~/.local/state/flightlead)`,
+  WEAVELOG_PI_HOME         pi home (default ~/.pi)
+  WEAVELOG_STATE_DIR       ledger dir (default ~/.local/state/weavelog)`,
 };
 
 const HOME = homedir();
@@ -115,7 +115,7 @@ const REPO_ROOT = resolve(HERE, "..", "..");
 const PAYLOAD_DIR = join(REPO_ROOT, "payload");
 const LEDGER_FILE = "ledger.jsonl";
 const PERSONAL_SKILLS = new Set(["in-my-voice", "diagram-design"]);
-const KNOWN_TOKENS = new Set(["FLIGHTLEAD_HOME", "FLIGHTLEAD_CONFIG_HOME"]);
+const KNOWN_TOKENS = new Set(["WEAVELOG_HOME", "WEAVELOG_CONFIG_HOME"]);
 
 interface LedgerEntry {
 	ts: string;
@@ -135,7 +135,7 @@ interface CheckResult {
 }
 
 function stateDir(): string {
-	return process.env.FLIGHTLEAD_STATE_DIR ?? join(HOME, ".local", "state", "flightlead");
+	return process.env.WEAVELOG_STATE_DIR ?? join(HOME, ".local", "state", "weavelog");
 }
 
 function ledgerPath(): string {
@@ -160,8 +160,8 @@ function finish(entry: Omit<LedgerEntry, "ts">): never {
 
 function configHomeValue(dotenv?: Record<string, string>): string {
 	return (
-		process.env.FLIGHTLEAD_CONFIG_HOME ??
-		dotenv?.FLIGHTLEAD_CONFIG_HOME ??
+		process.env.WEAVELOG_CONFIG_HOME ??
+		dotenv?.WEAVELOG_CONFIG_HOME ??
 		join(HOME, ".config", "opencode")
 	);
 }
@@ -202,7 +202,7 @@ function readDotenv(liveRoot: string): Record<string, string> {
 function ensureDotenv(liveRoot: string): Record<string, string> {
 	const p = join(liveRoot, ".env");
 	if (!existsSync(p)) {
-		const content = `FLIGHTLEAD_HOME=${liveRoot}\nFLIGHTLEAD_CONFIG_HOME=${join(HOME, ".config", "opencode")}\n`;
+		const content = `WEAVELOG_HOME=${liveRoot}\nWEAVELOG_CONFIG_HOME=${join(HOME, ".config", "opencode")}\n`;
 		mkdirSync(liveRoot, { recursive: true });
 		writeFileSync(p, content);
 	}
@@ -249,15 +249,15 @@ function walkFiles(dir: string): string[] {
 }
 
 function liveRootValue(dotenv?: Record<string, string>): string {
-	return process.env.FLIGHTLEAD_LIVE_ROOT ?? dotenv?.FLIGHTLEAD_HOME ?? join(HOME, ".agents");
+	return process.env.WEAVELOG_LIVE_ROOT ?? dotenv?.WEAVELOG_HOME ?? join(HOME, ".agents");
 }
 
 function skillsDir(dotenv?: Record<string, string>): string {
-	return process.env.FLIGHTLEAD_SKILLS_DIR ?? join(liveRootValue(dotenv), "skills");
+	return process.env.WEAVELOG_SKILLS_DIR ?? join(liveRootValue(dotenv), "skills");
 }
 
-function readManifest(): FlightleadManifest {
-	return JSON.parse(readFileSync(join(REPO_ROOT, "flightlead.json"), "utf8")) as FlightleadManifest;
+function readManifest(): WeavelogManifest {
+	return JSON.parse(readFileSync(join(REPO_ROOT, "weavelog.json"), "utf8")) as WeavelogManifest;
 }
 
 function readEnginesNode(): number {
@@ -277,7 +277,7 @@ function runBin(bin: string, args: string[]): string {
 // --- ledger-adjacent helpers ------------------------------------------------
 
 function stackVersionChecks(
-	manifest: FlightleadManifest,
+	manifest: WeavelogManifest,
 ): { id: string; ok: boolean; detail: string }[] {
 	const results: { id: string; ok: boolean; detail: string }[] = [];
 	const resolveOnPath = (name: string): string => {
@@ -290,11 +290,11 @@ function stackVersionChecks(
 		return name;
 	};
 	const binFor: Record<string, string> = {
-		headroom: process.env.FLIGHTLEAD_HEADROOM_BIN ?? join(HOME, ".local", "bin", "headroom"),
-		backlog: process.env.FLIGHTLEAD_BACKLOG_BIN ?? join(HOME, ".bun", "bin", "backlog"),
-		markitdown: process.env.FLIGHTLEAD_MARKITDOWN_BIN ?? join(HOME, ".local", "bin", "markitdown"),
-		opencode: resolveOnPath(process.env.FLIGHTLEAD_OPENCODE_BIN ?? "opencode"),
-		pi: resolveOnPath(process.env.FLIGHTLEAD_PI_BIN ?? "pi"),
+		headroom: process.env.WEAVELOG_HEADROOM_BIN ?? join(HOME, ".local", "bin", "headroom"),
+		backlog: process.env.WEAVELOG_BACKLOG_BIN ?? join(HOME, ".bun", "bin", "backlog"),
+		markitdown: process.env.WEAVELOG_MARKITDOWN_BIN ?? join(HOME, ".local", "bin", "markitdown"),
+		opencode: resolveOnPath(process.env.WEAVELOG_OPENCODE_BIN ?? "opencode"),
+		pi: resolveOnPath(process.env.WEAVELOG_PI_BIN ?? "pi"),
 	};
 	for (const tool of ["headroom", "backlog", "markitdown", "opencode", "pi"] as const) {
 		const spec = manifest.tools[tool];
@@ -354,8 +354,8 @@ function extractPlistNode(xml: string): string | null {
 
 function checkNodePathGuard(): CheckResult {
 	const plistPath =
-		process.env.FLIGHTLEAD_CHECK_PLIST ??
-		join(HOME, "Library", "LaunchAgents", "com.flightlead.check.plist");
+		process.env.WEAVELOG_CHECK_PLIST ??
+		join(HOME, "Library", "LaunchAgents", "com.weavelog.check.plist");
 	if (!existsSync(plistPath)) {
 		return { skip: true, detail: `plist absent (${plistPath}) — node-path guard skipped` };
 	}
@@ -401,9 +401,9 @@ function checkNodeVersion(): CheckResult {
 function checkManifestParse(): CheckResult {
 	try {
 		readManifest();
-		return { ok: true, detail: "flightlead.json parses" };
+		return { ok: true, detail: "weavelog.json parses" };
 	} catch (err) {
-		return { ok: false, detail: `flightlead.json unparseable: ${(err as Error).message}` };
+		return { ok: false, detail: `weavelog.json unparseable: ${(err as Error).message}` };
 	}
 }
 
@@ -437,7 +437,7 @@ function checkTemplatingSanity(): CheckResult {
 		ok: bad.length === 0,
 		detail:
 			bad.length === 0
-				? "payload tokens resolve only from .env (FLIGHTLEAD_HOME, FLIGHTLEAD_CONFIG_HOME)"
+				? "payload tokens resolve only from .env (WEAVELOG_HOME, WEAVELOG_CONFIG_HOME)"
 				: `non-.env tokens found: ${bad.join(", ")}`,
 	};
 }
@@ -470,7 +470,7 @@ function checkSkillsLayout(): CheckResult {
 }
 
 async function checkProxyHealth(): Promise<CheckResult> {
-	const bin = process.env.FLIGHTLEAD_HEADROOM_BIN ?? join(HOME, ".local", "bin", "headroom");
+	const bin = process.env.WEAVELOG_HEADROOM_BIN ?? join(HOME, ".local", "bin", "headroom");
 	if (!existsSync(bin)) {
 		return { warn: true, detail: `proxy :8788 health skipped (headroom binary absent at ${bin})` };
 	}
@@ -488,7 +488,7 @@ async function checkProxyHealth(): Promise<CheckResult> {
 }
 
 function checkBacklogBinary(): CheckResult {
-	const bin = process.env.FLIGHTLEAD_BACKLOG_BIN ?? join(HOME, ".bun", "bin", "backlog");
+	const bin = process.env.WEAVELOG_BACKLOG_BIN ?? join(HOME, ".bun", "bin", "backlog");
 	if (existsSync(bin)) return { ok: true, detail: `backlog binary present at ${bin}` };
 	return { ok: false, detail: `backlog binary missing at ${bin}` };
 }
@@ -513,8 +513,8 @@ function buildInitPlan(dotenv: Record<string, string>): {
 	const configTarget = configHomeValue(dotenv);
 	const liveTarget = liveRootValue(dotenv);
 	const tokens: Record<string, string> = {
-		FLIGHTLEAD_HOME: dotenv.FLIGHTLEAD_HOME ?? liveTarget,
-		FLIGHTLEAD_CONFIG_HOME: dotenv.FLIGHTLEAD_CONFIG_HOME ?? configTarget,
+		WEAVELOG_HOME: dotenv.WEAVELOG_HOME ?? liveTarget,
+		WEAVELOG_CONFIG_HOME: dotenv.WEAVELOG_CONFIG_HOME ?? configTarget,
 	};
 	const planned: PlannedDest[] = [];
 	for (const full of walkFiles(join(PAYLOAD_DIR, "config"))) {
@@ -577,7 +577,7 @@ function scanInitConflicts(liveTarget: string, planned: PlannedDest[]): string[]
 }
 
 function runInit(force: boolean): never {
-	const seamLive = process.env.FLIGHTLEAD_LIVE_ROOT ?? join(HOME, ".agents");
+	const seamLive = process.env.WEAVELOG_LIVE_ROOT ?? join(HOME, ".agents");
 	const dotenv = readDotenv(seamLive);
 	const plan = buildInitPlan(dotenv);
 	const conflicts = scanInitConflicts(plan.liveTarget, plan.planned);
@@ -661,7 +661,7 @@ function runSync(): never {
 	const sync = resolveConfigSync();
 	const liveRoot = liveRootValue();
 	const dotenv = ensureDotenv(liveRoot);
-	const tokens = { FLIGHTLEAD_HOME: liveRoot, FLIGHTLEAD_CONFIG_HOME: configHomeValue(dotenv) };
+	const tokens = { WEAVELOG_HOME: liveRoot, WEAVELOG_CONFIG_HOME: configHomeValue(dotenv) };
 	const renderedRoot = renderPayloadToTemp(tokens);
 	const args = [
 		"--harness-manifest",
@@ -740,7 +740,7 @@ function runUpdate(): never {
 		console.error(`update: ${f.id} — ${f.detail}`);
 		console.error(`update:   apply: ${note}`);
 		console.error(
-			`update:   rollback hint: revert ${tool} to the previous pinned version from flightlead.json git history`,
+			`update:   rollback hint: revert ${tool} to the previous pinned version from weavelog.json git history`,
 		);
 		errors.push(`${f.id}: ${f.detail}`);
 	}
@@ -788,8 +788,8 @@ async function runCheck(stackOnly: boolean): Promise<never> {
 		const proxy = await checkProxyHealth();
 		const driftLiveRoot = configHomeValue();
 		const driftTokens = {
-			FLIGHTLEAD_HOME: liveRootValue(ensureDotenv(liveRootValue())),
-			FLIGHTLEAD_CONFIG_HOME: driftLiveRoot,
+			WEAVELOG_HOME: liveRootValue(ensureDotenv(liveRootValue())),
+			WEAVELOG_CONFIG_HOME: driftLiveRoot,
 		};
 		const drift = checkConfigDrift({
 			trackedRoot: renderPayloadToTemp(driftTokens),
@@ -875,7 +875,7 @@ async function runDoctor(): Promise<never> {
 // --- scaffold ---------------------------------------------------------------
 
 function resolveBacklogBin(): string | null {
-	const seam = process.env.FLIGHTLEAD_BACKLOG_BIN;
+	const seam = process.env.WEAVELOG_BACKLOG_BIN;
 	if (seam) return existsSync(seam) ? seam : null;
 	for (const dir of (process.env.PATH ?? "").split(":")) {
 		if (!dir) continue;
@@ -959,7 +959,7 @@ function runScaffold(project: string | null): never {
 // --- stats ------------------------------------------------------------------
 
 function runStats(): never {
-	const piHome = process.env.FLIGHTLEAD_PI_HOME ?? join(HOME, ".pi");
+	const piHome = process.env.WEAVELOG_PI_HOME ?? join(HOME, ".pi");
 	const logsDir = join(piHome, "logs");
 	if (!existsSync(logsDir)) {
 		console.log("stats: no .pi/logs dir — no stats files");
@@ -1080,7 +1080,7 @@ async function main(): Promise<void> {
 			break;
 		default:
 			console.error(`Unknown command: ${cmd}`);
-			console.error("Run 'flightlead --help' for usage");
+			console.error("Run 'weavelog --help' for usage");
 			finish({
 				command: cmd,
 				args: rest,
@@ -1094,7 +1094,7 @@ async function main(): Promise<void> {
 
 main().catch((err: unknown) => {
 	const msg = err instanceof Error ? err.message : String(err);
-	console.error(`flightlead error: ${msg}`);
+	console.error(`weavelog error: ${msg}`);
 	finish({
 		command: "fatal",
 		args: process.argv.slice(2),
