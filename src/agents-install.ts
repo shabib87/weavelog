@@ -38,7 +38,7 @@ Modes:
 
 Options:
   --manifest <p>  Manifest path (default: ~/.agents/stack-versions.json)
-  --state <p>     State file path (default: ~/.local/state/flightlead/install-state.json);
+  --state <p>     State file path (default: ~/.local/state/weavelog/install-state.json);
                   the lockfile is the same path with .json -> .lock
   --python <p>    python3.13 path to check (default: /opt/homebrew/bin/python3.13)
 
@@ -65,8 +65,8 @@ implemented=true when config-sync.ts exists AND the harness manifest parses;
 all other phases report implemented=false (not implemented yet).
 
 State file (defined here, written by --apply in later phases):
-  Location: ~/.local/state/flightlead/install-state.json
-  Lockfile: ~/.local/state/flightlead/install-state.lock — created exclusively by --apply
+  Location: ~/.local/state/weavelog/install-state.json
+  Lockfile: ~/.local/state/weavelog/install-state.lock — created exclusively by --apply
     before any mutation and removed on completion. A lockfile found by --check
     is stale (a crashed --apply) and fails the check; remove it manually after
     inspection.
@@ -147,7 +147,7 @@ const manifestPath = flagValue("--manifest") ?? join(HOME, ".agents", "stack-ver
 const statePath =
 	flagValue("--state") ??
 	process.env.AGENTS_INSTALL_STATE ??
-	join(HOME, ".local", "state", "flightlead", "install-state.json");
+	join(HOME, ".local", "state", "weavelog", "install-state.json");
 const lockPath = /\.json$/.test(statePath)
 	? statePath.replace(/\.json$/, ".lock")
 	: `${statePath}.lock`;

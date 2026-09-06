@@ -1,4 +1,4 @@
-# 2026-07-22 — Addy Osmani loop engineering vs loopeng (MoE research fanout)
+# 2026-07-22 — Addy Osmani loop engineering vs weavelog (MoE research fanout)
 
 Raw session material. Companion to 2026-07-22-moe-orchestration-audit.md.
 
@@ -6,7 +6,7 @@ Raw session material. Companion to 2026-07-22-moe-orchestration-audit.md.
 extraction. It is superseded as analysis by the firsthand two-model
 amendment: `docs/research/2026-07-22-osmani-firsthand-alignment-amendment.md`.
 Key corrections from the amendment: the philosophy has one center
-(verification bottleneck), "lit factory" was a category error (loopeng is a
+(verification bottleneck), "lit factory" was a category error (weavelog is a
 harness composer for lit loops, not a factory), and judgment-upstream plus
 workflow-as-graph are the deepest unclaimed alignments.
 
@@ -59,11 +59,11 @@ GLM-5.2 and DeepSeek v4 Pro handled a fetch hint with latitude.
 
 ## Alignment verdict
 
-loopeng's **documented design** maps, in Osmani's framing, to a harness
+weavelog's **documented design** maps, in Osmani's framing, to a harness
 composer for lit loops at autonomy Level 2 (scoped delegation, human-gated,
 manually triggered) with a human-owned outer loop. Three caveats keep this
 honest: (1) the mapping is SELF-ASSESSED — AI agents applied his taxonomy
-to our docs, so this is framework fidelity (loopeng was designed from his
+to our docs, so this is framework fidelity (weavelog was designed from his
 essay), not external validation; (2) it describes the design, not a running
 system — the CLI is a stub as of this date; (3) real validation requires
 operational telemetry from proof projects or independent review. The
@@ -74,16 +74,16 @@ with his published principles, but consistency is not evidence.
 Strong matches: maker/checker (his sub-agent checker on stop condition),
 state-on-disk (his exact phrase mirrors the constitution), deterministic
 gates, human owns the merge, model routing tiers (his "financial lever" =
-loopeng roster pattern), skills with progressive disclosure.
+weavelog roster pattern), skills with progressive disclosure.
 
 Conflicts/tensions:
 - Osmani's loop primitives (automations, worktrees, scheduling) belong to Pi
-  per loopeng's "does NOT run the loop" boundary. loopeng composes, Pi runs.
+  per weavelog's "does NOT run the loop" boundary. weavelog composes, Pi runs.
   No change needed, but the boundary should cite this framing.
 - "All-lit is a bottleneck" warning: human-gated-everything risks review
-  fatigue at volume. loopeng's small-ships discipline mitigates; untested
+  fatigue at volume. weavelog's small-ships discipline mitigates; untested
   at real throughput.
-- loopeng does not name intent debt / comprehension debt as risks. Both
+- weavelog does not name intent debt / comprehension debt as risks. Both
   apply directly (agent fills intent holes with confident guesses; generated
   code outpaces human understanding).
 
@@ -101,7 +101,7 @@ Conflicts/tensions:
    (DeepSeek + K2.7 convergence)
 4. **Agent contract template** — goal/scope/non-goals/tools/stop
    condition/evidence/escalation/budget per run. Maps 1:1 to pi-subagents
-   compact-contract prompting; could ship as a loopeng template. (DeepSeek)
+   compact-contract prompting; could ship as a weavelog template. (DeepSeek)
 5. **Tier review by blast radius + heterogeneous review at high-blast-radius
    gates** — two differently-built reviewers where it matters. (K2.7)
 6. **Name the debts** — add intent debt and comprehension debt to NORTH_STAR
@@ -131,18 +131,18 @@ careful. pi-fetch dropped; curl+textutil covers fetch needs for now (YAGNI).
 
 ## Author direction (2026-07-22 session, later)
 
-1. loopeng is based on Osman's loop-engineering philosophy (project started
+1. weavelog is based on Osman's loop-engineering philosophy (project started
    alongside his first post, 2026-06-07) and EVOLVES with it. His blog is a
    provenance source, not just a reference. Proposed: cite him in
    research/RESEARCH.md (needs author approval, MUST NOT list) and treat new
    Osmani posts as recurring alignment inputs.
 2. Loop primitives (automations, worktrees, skills, plugins, sub-agents,
-   state) map to loopeng's COMPOSITION surface: loopeng scaffolds/wires
+   state) map to weavelog's COMPOSITION surface: weavelog scaffolds/wires
    them, Pi runs them. No conflict with "does NOT run the loop"; the
-   boundary sharpens to "loopeng composes the harness, Pi executes it."
+   boundary sharpens to "weavelog composes the harness, Pi executes it."
 3. pi-search install REJECTED by author: 13 stars, young, iffy. curl
    suffices for fetch; web search gap accepted for now. Long-term
-   preference: build loopeng's own minimal research extension with Pi
+   preference: build weavelog's own minimal research extension with Pi
    (dogfooding), post-Phase 4.
 4. APPROVED and applied (2026-07-22): RESEARCH.md series-evolution
    amendment, PRODUCT.md provenance, spec compose-vs-run primitives table,

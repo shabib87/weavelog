@@ -1,4 +1,4 @@
-# loopeng: Agentic Loop Engineering Workspace
+# weavelog: Agentic Loop Engineering Workspace
 
 **Status:** Draft (revised July 4, 2026)
 **Date:** June 28, 2026 (original); revised July 4, 2026
@@ -23,7 +23,7 @@ This design replaces the SwarmForge orchestration layer with a lightweight Pi Ty
 
 1. **Pi-native orchestration.** All loop coordination lives in a Pi TypeScript extension. No separate orchestration tool is required.
 2. **Open standards first.** Skills follow the Agent Skills standard (`agentskills.io`). AGENTS.md follows `agents.md` conventions (<200 LOC). Roles use Pi's native `.pi/agents/<role>.md` convention. No bespoke formats where standards exist.
-3. **Two-tier setup.** Machine-level (`loopeng check`) verifies Pi, Headroom, env vars. Workspace-level (`loopeng init`) scaffolds project-local `.pi/agents/`, workflow configs, and associated files.
+3. **Two-tier setup.** Machine-level (`weavelog check`) verifies Pi, Headroom, env vars. Workspace-level (`weavelog init`) scaffolds project-local `.pi/agents/`, workflow configs, and associated files.
 4. **Headroom compression + learning.** The Headroom proxy compresses tool outputs before each LLM call (via `@ryan_nookpi/pi-extension-headroom`). The `--learn` flag writes observed failure patterns back to AGENTS.md. When `--learn` is enabled, `--memory-storage=project` prevents cross-project memory bleed.
 5. **Human-gated verification.** Every step gates on human approval of a deterministic verifier's results. The verifier provides signal; the human provides judgment. No unattended autonomous runs in v1.
 
@@ -44,16 +44,16 @@ This design implements the ETCSLV framework synthesized from Addy Osmani's "[Loo
 
 ### Osmani Loop Primitives: Compose vs Run Boundary
 
-Osmani's canonical primitives map onto loopeng's composition surface.
-loopeng scaffolds and wires each primitive; Pi executes it. loopeng
+Osmani's canonical primitives map onto weavelog's composition surface.
+weavelog scaffolds and wires each primitive; Pi executes it. weavelog
 composes the harness — it does not run the loop.
 
-| Primitive (Osmani) | loopeng composes (init/check) | Pi runs |
+| Primitive (Osmani) | weavelog composes (init/check) | Pi runs |
 |---|---|---|
 | **Automations** | Workflow JSON configs (`.pi/workflows/`) | Extension spawns steps; v1 trigger is manual `/run` |
 | **Worktrees** | Deferred post-v1 (v1: sequential, shared cwd) | Git worktree isolation |
 | **Skills** | `.pi/skills/<name>/SKILL.md` (Agent Skills standard) | Progressive disclosure at runtime |
-| **Plugins/connectors** | `loopeng plugin add` wrapper around `pi install` | Package loading |
+| **Plugins/connectors** | `weavelog plugin add` wrapper around `pi install` | Package loading |
 | **Sub-agents** | `.pi/agents/<role>.md` with per-role model/tools | Sub-agent processes, maker/checker split |
 | **State/memory** | PROGRESS/INDEX conventions + session-tree entries | `pi.appendEntry()` persistence |
 
@@ -62,11 +62,11 @@ composes the harness — it does not run the loop.
 - **The workflow config is the graph.** Osmani argues agent freedom should
   be constrained to the inside of a node of a predefined graph — "mostly
   deterministic code with LLM steps sprinkled in," back pressure drawn as a
-  diagram. loopeng workflow JSON (steps, `verify`, `gate`, rollback nodes)
+  diagram. weavelog workflow JSON (steps, `verify`, `gate`, rollback nodes)
   is exactly that graph.
 - **The spec gate is judgment upstream.** His lit-factory move is reviewing
   the decision before it is built ("a 200-line plan, not 2,000 lines of
-  generated code"). loopeng's human gate on the spec step embodies this —
+  generated code"). weavelog's human gate on the spec step embodies this —
   the deepest alignment in the design.
 
 ### LangChain's Four Loop Levels Mapped
@@ -112,14 +112,14 @@ V1 ships with the human invoking `/run <workflow> <task>` manually. This is inte
 
 ## 4. Two-Tier Setup Architecture
 
-### 4.1 Tier 1: Machine Setup (`loopeng check`)
+### 4.1 Tier 1: Machine Setup (`weavelog check`)
 
 A TypeScript CLI command that runs once per machine. It does not scaffold projects.
 
 **Verification sequence:**
 
 ```
-loopeng check
+weavelog check
 ├── Check Pi installed → if no, show install command
 │   └── If outdated (current: 0.80.3), show: "Update with: npm update -g @earendil-works/pi-coding-agent"
 ├── Check Pi packages: superpowers, pi-diff-review, pi-extension-headroom
@@ -142,13 +142,13 @@ export HEADROOM_OUTPUT_SHAPER=1
 
 **Pi model routing:** Model selection happens per sub-agent, not globally. Each role spawns Pi with `--model <provider/model>` via the extension. No monolithic models.json is required; the `--model` flag per invocation gives per-role routing.
 
-### 4.2 Tier 2: Workspace Scaffold (`loopeng init`)
+### 4.2 Tier 2: Workspace Scaffold (`weavelog init`)
 
 A TypeScript CLI command that scaffolds a project directory as a self-contained agentic workspace.
 
 **Interface:**
 ```bash
-loopeng init <path> [--mode <mode>...]
+weavelog init <path> [--mode <mode>...]
 ```
 Modes: `software`, `mobile`, `writing`, `research`. Additive (union of skill sets).
 
@@ -174,7 +174,7 @@ $PROJECT_ROOT/
 │       ├── feature.json               # spec → code → qa → docs
 │       └── fix.json                   # triage → fix → verify
 │
-├── .env.loopeng                       # Per-project env (gitignored)
+├── .env.weavelog                       # Per-project env (gitignored)
 ├── docs/tasks/.gitkeep                # Bounded task directory
 └── .workflow/                         # Runtime state (gitignored)
 ```
@@ -187,13 +187,13 @@ $PROJECT_ROOT/
 - **Workflows** are JSON configs: `.pi/workflows/<name>.json` with step definitions.
 - `.pi/` is the canonical Pi config directory. No `swarmforge/`, no `.agents/`, no bespoke directories.
 
-**Idempotency:** Running `loopeng init` twice on the same path exits 0 and does not overwrite existing files (skip, do not clobber).
+**Idempotency:** Running `weavelog init` twice on the same path exits 0 and does not overwrite existing files (skip, do not clobber).
 
 ---
 
-## 5. The Loop Extension (`pi-loopeng`)
+## 5. The Loop Extension (`pi-weavelog`)
 
-A Pi TypeScript extension distributed as an npm package (`loopeng/pi-loopeng`) that provides the ETCSLV orchestration layer. Installed via `pi install npm:loopeng/pi-loopeng (pre-rename scope)`.
+A Pi TypeScript extension distributed as an npm package (`weavelog/pi-weavelog`) that provides the ETCSLV orchestration layer. Installed via `pi install npm:weavelog/pi-weavelog (pre-rename scope)`.
 
 ### 5.1 Workflow Config Format
 
@@ -274,7 +274,7 @@ tools:
   - write
 ---
 
-You are the coder role in a loopeng workflow. You receive a specification
+You are the coder role in a weavelog workflow. You receive a specification
 from the specifier and implement it using test-driven development.
 
 Rules:
@@ -401,7 +401,7 @@ In v1, all non-`docs` steps use `gate: human`. This is the L2 (assisted fixes) m
 
 ### Problem
 
-The user's `~/.pi/agent/settings.json` carries personal `defaultModel`, `enabledModels`, `packages`, `skills`, and global context files. When loopeng spawns a sub-agent for a workflow step, the sub-agent inherits all of this by default — including the user's other extensions, skills, and global context files that have nothing to do with the workflow. A workflow meant to run exactly `specifier → coder → qa → writer` could derail mid-coder-step if, for example, the user's superpowers `brainstorming` skill activates (its description says "You MUST use this before any creative work") or a global extension intercepts a tool call unexpectedly. This breaks the determinism the North Star promises.
+The user's `~/.pi/agent/settings.json` carries personal `defaultModel`, `enabledModels`, `packages`, `skills`, and global context files. When weavelog spawns a sub-agent for a workflow step, the sub-agent inherits all of this by default — including the user's other extensions, skills, and global context files that have nothing to do with the workflow. A workflow meant to run exactly `specifier → coder → qa → writer` could derail mid-coder-step if, for example, the user's superpowers `brainstorming` skill activates (its description says "You MUST use this before any creative work") or a global extension intercepts a tool call unexpectedly. This breaks the determinism the North Star promises.
 
 ### Mechanism
 
@@ -415,11 +415,11 @@ Pi supports isolation flags that compose with sub-agent spawning:
 | `--tools <allowlist>` | Restricts to specific tool names. | When the agent role has a bounded tool set. |
 | `--model <provider/id>` | Overrides the default model. | Per-role model routing. |
 
-The loopeng extension constructs the sub-agent invocation with exactly the flags the role needs. A specifier might get `--tools read,bash,write --skill .pi/skills/technical-writing/SKILL.md`. A coder gets `--tools read,bash,edit,write --no-skills --no-context-files --no-extensions`.
+The weavelog extension constructs the sub-agent invocation with exactly the flags the role needs. A specifier might get `--tools read,bash,write --skill .pi/skills/technical-writing/SKILL.md`. A coder gets `--tools read,bash,edit,write --no-skills --no-context-files --no-extensions`.
 
 ### Precedence
 
-Project-local `.pi/settings.json` takes precedence over user-global `~/.pi/agent/settings.json`. This is Pi's built-in behavior. loopeng's `loopeng init` writes a project-local `.pi/settings.json` that disables global packages/skills for the workspace and enables only the loopeng extension and project skills.
+Project-local `.pi/settings.json` takes precedence over user-global `~/.pi/agent/settings.json`. This is Pi's built-in behavior. weavelog's `weavelog init` writes a project-local `.pi/settings.json` that disables global packages/skills for the workspace and enables only the weavelog extension and project skills.
 
 ---
 
@@ -453,20 +453,20 @@ State lives in Pi's session tree via `pi.appendEntry()`, not in a separate `.wor
 
 ```typescript
 // Save workflow progress
-pi.appendEntry("loopeng-workflow", {
+pi.appendEntry("weavelog-workflow", {
   workflow: "feature",
   task: "Add login screen",
   currentStep: "code",
   completedSteps: ["spec"],
   startedAt: new Date().toISOString(),
-  stepCheckpoint: "loopeng/step-code",   // git branch ref for rollback (Section 8)
+  stepCheckpoint: "weavelog/step-code",   // git branch ref for rollback (Section 8)
   budgetSpent: 0.82,
 });
 
 // Reconstruct on session_start
 pi.on("session_start", async (_event, ctx) => {
   for (const entry of ctx.sessionManager.getEntries()) {
-    if (entry.type === "custom" && entry.customType === "loopeng-workflow") {
+    if (entry.type === "custom" && entry.customType === "weavelog-workflow") {
       // entry.data contains the saved state
       // entry.id is the session entry ID (for rollback refs)
     }
@@ -524,7 +524,7 @@ Adopt Pi's `git-checkpoint.ts` pattern at the **step level** (not turn level):
 **Before each step:**
 ```typescript
 // Create a git branch checkpoint
-const ref = `loopeng/step-${step.id}`;
+const ref = `weavelog/step-${step.id}`;
 await pi.exec("git", ["branch", ref]);
 ```
 
@@ -544,19 +544,19 @@ await pi.exec("git", ["branch", "-D", ref]);
 **On crash recovery:**
 ```typescript
 // On session_start with reason: "resume", check for orphaned checkpoint branches
-const branches = await pi.exec("git", ["branch", "--list", "loopeng/step-*"]);
+const branches = await pi.exec("git", ["branch", "--list", "weavelog/step-*"]);
 // If current step has a checkpoint, the previous attempt crashed. Re-run from checkpoint.
 ```
 
 ### Why Branches (Not Stashes)
 
 - **Stashes don't survive Pi crashes.** The in-memory `Map` in `git-checkpoint.ts` is lost on crash — the stash ref is unrecoverable.
-- **Branches survive crashes** and are inspectable (`git log loopeng/step-code`).
+- **Branches survive crashes** and are inspectable (`git log weavelog/step-code`).
 - **Branches handle untracked files** when combined with `git clean -fd`.
 
 ### Decision
 
-Use `git branch loopeng/step-<id>` as the checkpoint mechanism. The ref is stored in the session tree entry so it survives `/resume`. Newly-created untracked files are cleaned on reset.
+Use `git branch weavelog/step-<id>` as the checkpoint mechanism. The ref is stored in the session tree entry so it survives `/resume`. Newly-created untracked files are cleaned on reset.
 
 ---
 
@@ -579,7 +579,7 @@ A workflow loops without explicit cost boundaries. A coder step with `maxRetries
 }
 ```
 
-**Enforcement in the loopeng extension** (not Headroom proxy), for per-workflow granularity:
+**Enforcement in the weavelog extension** (not Headroom proxy), for per-workflow granularity:
 
 ```typescript
 // Track spend from message_end events

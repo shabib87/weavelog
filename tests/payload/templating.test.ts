@@ -12,19 +12,19 @@ const implementer = readFileSync(
 );
 const agents = readFileSync(new URL("../../payload/AGENTS.md", import.meta.url), "utf8");
 
-test("researcher.md uses FLIGHTLEAD_HOME placeholder and no absolute home paths", () => {
-	assert.ok(researcher.includes("{{FLIGHTLEAD_HOME}}"));
+test("researcher.md uses WEAVELOG_HOME placeholder and no absolute home paths", () => {
+	assert.ok(researcher.includes("{{WEAVELOG_HOME}}"));
 	assert.ok(!researcher.includes("/Users/"));
 });
 
 test("implementer.md uses both home placeholders and no absolute home paths", () => {
-	assert.ok(implementer.includes("{{FLIGHTLEAD_CONFIG_HOME}}"));
-	assert.ok(implementer.includes("{{FLIGHTLEAD_HOME}}"));
+	assert.ok(implementer.includes("{{WEAVELOG_CONFIG_HOME}}"));
+	assert.ok(implementer.includes("{{WEAVELOG_HOME}}"));
 	assert.ok(!implementer.includes("/Users/"));
 });
 
-test("payload AGENTS.md references flightlead sync and no runbook machinery", () => {
-	assert.ok(agents.includes("flightlead sync"));
+test("payload AGENTS.md references weavelog sync and no runbook machinery", () => {
+	assert.ok(agents.includes("weavelog sync"));
 	assert.ok(!agents.includes("AGENT-STACK-RUNBOOK.md"));
 	assert.ok(!agents.includes("config-sync.ts"));
 });

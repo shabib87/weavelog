@@ -1,6 +1,6 @@
 # Research: Loop Engineering Foundations
 
-This document records the sources that ground `loopeng`'s design and the
+This document records the sources that ground `weavelog`'s design and the
 corrections made during research. It exists so future work can audit *why* a
 decision was made and detect drift. The North Star says *what* we build; this
 says *why we build it this way*.
@@ -26,12 +26,12 @@ says *why we build it this way*.
 - **Series evolution (reviewed 2026-07-22):** The essay became a series —
   eight posts from June 7 to July 20, 2026 (agentic code review, the new
   SDLC, autonomy levels, agent-era career, earning judgment, own the outer
-  loop, software factories light/dark). loopeng treats this series as a
+  loop, software factories light/dark). weavelog treats this series as a
   living provenance source: new posts trigger an alignment review. Full
   synthesis: `docs/learnings/2026-07-22-addy-osmani-loop-engineering-alignment.md`.
   - **Adopted from the series:** Back pressure ("only as much autonomy as
     you can cheaply and reliably verify") and autonomy as a per-task switch
-    (spec Section 7.4). The lit/dark factory framing — loopeng's design maps
+    (spec Section 7.4). The lit/dark factory framing — weavelog's design maps
     to a harness composer for lit loops at autonomy Level 2 (self-assessed mapping
     by AI agents; design-level, not operational), with human judgment at the
     gate and moved upstream into the constitution. Firsthand two-model
@@ -55,7 +55,7 @@ says *why we build it this way*.
 - **Adopted:** The L1/L2/L3 concept as *organizational rollout maturity*
   (documentation only — not a per-workflow config field, which was an earlier
   spec error). The pattern catalog as reference for future loop types.
-- **Rejected:** The per-tool matrix (loopeng is Pi-only). The seven specific
+- **Rejected:** The per-tool matrix (weavelog is Pi-only). The seven specific
   patterns (v1 ships one workflow: spec → code → QA → document).
 
 ### 3. LangChain — "The Art of Loop Engineering"
@@ -79,7 +79,7 @@ says *why we build it this way*.
 - **Adopted:** The first-principles ethos — we build on Pi's primitives, not a
   framework. The effective-agents patterns (orchestrator-workers,
   evaluator-optimizer, human-in-the-loop) as design vocabulary.
-- **Rejected:** The Python tutorial content (loopeng is TypeScript + bash on
+- **Rejected:** The Python tutorial content (weavelog is TypeScript + bash on
   Pi).
 
 ### 5. Anthropic — "Building Effective Agents"
@@ -237,5 +237,5 @@ Things research did not fully resolve; tracked for future sessions:
   human-gated.)
 - Does `pi install git:` support subdirectories? (Load-bearing for the
   repo-structure decision — see `docs/tbd/repo-structure.md`.)
-- How does loopeng isolate sub-agent settings from the user's global
+- How does weavelog isolate sub-agent settings from the user's global
   `~/.pi/agent/settings.json`? (Unresolved — see blindspots.)

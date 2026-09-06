@@ -26,15 +26,15 @@ Jobs (sequential gates — each must pass for the next to run):
 2. **typecheck** — `tsc --noEmit`.
 3. **test-unit** — `node --import tsx --test test/**/*.test.ts` (matches
    pi-diff-review's setup).
-4. **test-integration** — run `loopeng check` on a clean Ubuntu runner; run
-   `loopeng init ./smoke-test --mode mobile`; assert output structure
+4. **test-integration** — run `weavelog check` on a clean Ubuntu runner; run
+   `weavelog init ./smoke-test --mode mobile`; assert output structure
    matches spec. **Caveat:** can't test macOS-specific paths (e.g.
    `osascript` detection). Isolate macOS-specific code behind a guard
    interface and test the cross-platform core on Linux; mock the
    macOS-specific seam.
-5. **publish** (on tag only) — `npm publish` for `loopeng/pi-loopeng`
-   (extension) and `loopeng` (CLI); bump + push Homebrew formula for
-   `loopeng` (wraps the npm package with a `node` dependency).
+5. **publish** (on tag only) — `npm publish` for `weavelog/pi-weavelog`
+   (extension) and `weavelog` (CLI); bump + push Homebrew formula for
+   `weavelog` (wraps the npm package with a `node` dependency).
 
 ## Pre-commit (convenience, CI is the real gate)
 `.githooks/pre-commit` running `biome check` on staged files. Activate via
@@ -43,9 +43,9 @@ husky — overkill for solo dev.
 
 ## Release Pipeline (solo-dev sized)
 - Versioning: semver, tags trigger publish.
-- npm: `loopeng` (CLI) and `loopeng/pi-loopeng` (extension) — automated via
+- npm: `weavelog` (CLI) and `weavelog/pi-weavelog` (extension) — automated via
   GitHub Actions on tag.
-- Homebrew: `loopeng` CLI — formula in a `loopeng/homebrew-tap` repo, updated
+- Homebrew: `weavelog` CLI — formula in a `weavelog/homebrew-tap` repo, updated
   by a GitHub Action on tag; wraps the npm package.
 - Changelog: `CHANGELOG.md`, hand-curated per release.
 

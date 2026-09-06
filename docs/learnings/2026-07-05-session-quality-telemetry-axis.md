@@ -10,10 +10,10 @@
 ## Context
 
 Followed up on the session-logger derailment. I assessed `session-logger.ts`
-as "wrong shape for loopeng" because it didn't match the workflow-telemetry
-axis (loopeng's own spec→implement→verify→document steps). The user pushed
+as "wrong shape for weavelog" because it didn't match the workflow-telemetry
+axis (weavelog's own spec→implement→verify→document steps). The user pushed
 back: session-logger serves a *different* axis — session-quality telemetry —
-and on that axis it is first-relevance for loopeng. The user is correct.
+and on that axis it is first-relevance for weavelog. The user is correct.
 
 ## Findings
 
@@ -21,10 +21,10 @@ and on that axis it is first-relevance for loopeng. The user is correct.
 
 | Axis | Question it answers | Source | Granularity |
 |---|---|---|---|
-| Workflow telemetry | "did the loop ship useful features, which step fails" | loopeng run state | per-step, append-only JSONL |
+| Workflow telemetry | "did the loop ship useful features, which step fails" | weavelog run state | per-step, append-only JSONL |
 | Session-quality telemetry | "how does the human use the agent, is each session healthy" | Pi session branch | per-session, one JSON per session |
 
-`.pi/logs/<id>.stats.json` is axis 2. `.loopeng/metrics.jsonl` (planned) is
+`.pi/logs/<id>.stats.json` is axis 2. `.weavelog/metrics.jsonl` (planned) is
 axis 1. They are complementary, not competing. My prior assessment scored
 session-logger against axis 1 and dismissed it. Wrong yardstick.
 
@@ -79,11 +79,11 @@ actually prove "conflated sessions fail more."
    behind explicit opt-in. Not in v1.
 
 4. **JSONL linked to per-session log for cross-reference analysis.** The
-   join contract: `.loopeng/metrics.jsonl` entries carry a `piSessionId`
+   join contract: `.weavelog/metrics.jsonl` entries carry a `piSessionId`
    field referencing `.pi/logs/<piSessionId>.stats.json`. This is the
    cross-reference key that lets the daily/weekly summary join
    session-quality data (axis 2) with workflow-outcome data (axis 1). Pi
-   session ID is the natural key. Open question: loopeng workflow runs may
+   session ID is the natural key. Open question: weavelog workflow runs may
    span or sit inside Pi sessions in ways that are not 1:1 — the join
    cardinality (1:1, 1:many, many:1) needs a real decision before the
    metrics.jsonl schema is finalized.
@@ -106,7 +106,7 @@ content or paths beyond counts.
 ### Downstream feature (noted, Phase 4+)
 
 The daily/weekly summary is the display layer. The user also named a
-**guide-suggestion** layer: loopeng proactively suggesting optimizations
+**guide-suggestion** layer: weavelog proactively suggesting optimizations
 from usage patterns (e.g. "your coding sessions after turn 25 cost 3x more,
 consider splitting"). This is a Phase-4+ analysis feature built on top of
 the joined telemetry. It depends on (a) the session-quality signals being
@@ -117,11 +117,11 @@ scope.
 ## Corrections
 
 - **Prior framing was wrong.** I called session-logger "personal Pi tooling,
-  wrong shape for loopeng." It is first-relevance on the session-quality
-  axis. The footer + session-logger work stays; the `loopeng stats` CLI
+  wrong shape for weavelog." It is first-relevance on the session-quality
+  axis. The footer + session-logger work stays; the `weavelog stats` CLI
   stays deferred to Phase 4 with TDD-first.
 - **The two log locations are not a namespace collision.** `.pi/logs/`
-  (session-quality, per-session JSON) and `.loopeng/metrics.jsonl`
+  (session-quality, per-session JSON) and `.weavelog/metrics.jsonl`
   (workflow-outcome, append-only JSONL) measure different axes and are
   joined via `piSessionId`. Both are opt-in with telemetry.
 

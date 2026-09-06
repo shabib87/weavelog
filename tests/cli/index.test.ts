@@ -43,7 +43,7 @@ afterEach(() => {
 
 let n = 0;
 function makeDir(prefix: string): string {
-	const dir = join(tmpdir(), `flightlead-cli-${prefix}-${Date.now()}-${n++}`);
+	const dir = join(tmpdir(), `weavelog-cli-${prefix}-${Date.now()}-${n++}`);
 	mkdirSync(dir, { recursive: true });
 	created.push(dir);
 	return dir;
@@ -59,7 +59,7 @@ function lastLedgerLine(stateDir: string): Record<string, unknown> {
 	return JSON.parse(ledger[ledger.length - 1]);
 }
 
-const manifest = JSON.parse(readFileSync(join(REPO, "flightlead.json"), "utf8")) as {
+const manifest = JSON.parse(readFileSync(join(REPO, "weavelog.json"), "utf8")) as {
 	tools: Record<string, { version: string }>;
 };
 
@@ -74,15 +74,15 @@ function versionEnv(dir: string): Record<string, string> {
 	const bins = join(dir, "bins");
 	mkdirSync(bins, { recursive: true });
 	return {
-		FLIGHTLEAD_HEADROOM_BIN: fakeBin(bins, "headroom", manifest.tools.headroom.version),
-		FLIGHTLEAD_BACKLOG_BIN: fakeBin(bins, "backlog", manifest.tools.backlog.version),
-		FLIGHTLEAD_MARKITDOWN_BIN: fakeBin(bins, "markitdown", manifest.tools.markitdown.version),
-		FLIGHTLEAD_OPENCODE_BIN: fakeBin(bins, "opencode", manifest.tools.opencode.version),
-		FLIGHTLEAD_PI_BIN: fakeBin(bins, "pi", manifest.tools.pi.version),
+		WEAVELOG_HEADROOM_BIN: fakeBin(bins, "headroom", manifest.tools.headroom.version),
+		WEAVELOG_BACKLOG_BIN: fakeBin(bins, "backlog", manifest.tools.backlog.version),
+		WEAVELOG_MARKITDOWN_BIN: fakeBin(bins, "markitdown", manifest.tools.markitdown.version),
+		WEAVELOG_OPENCODE_BIN: fakeBin(bins, "opencode", manifest.tools.opencode.version),
+		WEAVELOG_PI_BIN: fakeBin(bins, "pi", manifest.tools.pi.version),
 	};
 }
 
-const CHECK_PLIST = "com.flightlead.check.plist";
+const CHECK_PLIST = "com.weavelog.check.plist";
 
 function fakePlist(path: string, nodePath: string): void {
 	write(
@@ -90,7 +90,7 @@ function fakePlist(path: string, nodePath: string): void {
 		`<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
-<key>Label</key><string>com.flightlead.check</string>
+<key>Label</key><string>com.weavelog.check</string>
 <key>ProgramArguments</key>
 <array>
 <string>${nodePath}</string>
@@ -120,7 +120,7 @@ function initFixture(
 	for (const [rel, content] of Object.entries(extraLiveFiles)) {
 		write(join(live, rel), content);
 	}
-	write(join(live, ".env"), `FLIGHTLEAD_HOME=${live}\nFLIGHTLEAD_CONFIG_HOME=${config}\n`);
+	write(join(live, ".env"), `WEAVELOG_HOME=${live}\nWEAVELOG_CONFIG_HOME=${config}\n`);
 	if (withDiagramDesign) {
 		mkdirSync(join(dir, "code", "diagram-design", "skills", "diagram-design"), { recursive: true });
 	}
@@ -147,16 +147,16 @@ describe("cli init", () => {
 	test("materializes config + skills + AGENTS.md, resolves .env tokens, symlinks diagram-design, writes ledger", () => {
 		const f = initFixture(true);
 		const r = run(["init"], {
-			env: { FLIGHTLEAD_LIVE_ROOT: f.live, FLIGHTLEAD_STATE_DIR: f.state },
+			env: { WEAVELOG_LIVE_ROOT: f.live, WEAVELOG_STATE_DIR: f.state },
 		});
 		assert.equal(r.status, 0);
 		assert.ok(existsSync(join(f.config, "opencode.jsonc")), "opencode.jsonc materialized");
 		assert.ok(existsSync(join(f.config, "AGENTS.md")), "live AGENTS.md written");
 		assert.ok(existsSync(join(f.live, "skills", "as-tdd", "SKILL.md")), "skills materialized");
 		const researcher = readFileSync(join(f.config, "agents", "researcher.md"), "utf8");
-		assert.ok(researcher.includes(f.live), "FLIGHTLEAD_HOME token resolved from .env");
+		assert.ok(researcher.includes(f.live), "WEAVELOG_HOME token resolved from .env");
 		const implementer = readFileSync(join(f.config, "agents", "implementer.md"), "utf8");
-		assert.ok(implementer.includes(f.config), "FLIGHTLEAD_CONFIG_HOME token resolved from .env");
+		assert.ok(implementer.includes(f.config), "WEAVELOG_CONFIG_HOME token resolved from .env");
 		assert.ok(!researcher.includes("{{"), "no unresolved tokens in researcher.md");
 		assert.equal(
 			lstatSync(join(f.live, "skills", "diagram-design")).isSymbolicLink(),
@@ -183,7 +183,7 @@ describe("cli init", () => {
 
 	test("re-init on a materialized live root is a no-op exit 0 (managed files unchanged)", () => {
 		const f = initFixture(true);
-		const env = { FLIGHTLEAD_LIVE_ROOT: f.live, FLIGHTLEAD_STATE_DIR: f.state };
+		const env = { WEAVELOG_LIVE_ROOT: f.live, WEAVELOG_STATE_DIR: f.state };
 		assert.equal(run(["init"], { env }).status, 0);
 		const r2 = run(["init"], { env });
 		assert.equal(r2.status, 0);
@@ -192,7 +192,7 @@ describe("cli init", () => {
 	test("diagram-design symlink skipped with a warning when the host target is absent", () => {
 		const f = initFixture(false);
 		const r = run(["init"], {
-			env: { FLIGHTLEAD_LIVE_ROOT: f.live, FLIGHTLEAD_STATE_DIR: f.state },
+			env: { WEAVELOG_LIVE_ROOT: f.live, WEAVELOG_STATE_DIR: f.state },
 		});
 		assert.equal(r.status, 0);
 		assert.equal(existsSync(join(f.live, "skills", "diagram-design")), false);
@@ -206,7 +206,7 @@ describe("cli init", () => {
 
 	test("init refuses on an existing unversioned live file (non-zero + ledger), --force proceeds without deleting it", () => {
 		const f = initFixture(false, { "notes.txt": "personal notes\n" });
-		const env = { FLIGHTLEAD_LIVE_ROOT: f.live, FLIGHTLEAD_STATE_DIR: f.state };
+		const env = { WEAVELOG_LIVE_ROOT: f.live, WEAVELOG_STATE_DIR: f.state };
 		const r = run(["init"], { env });
 		assert.equal(r.status, 3);
 		assert.ok((r.stdout + r.stderr).includes("notes.txt"), "refusal names the file");
@@ -223,7 +223,7 @@ describe("cli sync", () => {
 		const dir = makeDir("sync");
 		const config = join(dir, "config");
 		const state = join(dir, "state");
-		const env = { FLIGHTLEAD_CONFIG_HOME: config, FLIGHTLEAD_STATE_DIR: state };
+		const env = { WEAVELOG_CONFIG_HOME: config, WEAVELOG_STATE_DIR: state };
 		const r = run(["sync"], { env });
 		assert.equal(r.status, 0);
 		assert.ok(existsSync(join(config, "opencode.jsonc")), "payload config materialized to live");
@@ -240,25 +240,22 @@ describe("cli sync", () => {
 		const config = join(dir, "config");
 		const state = join(dir, "state");
 		mkdirSync(live, { recursive: true });
-		writeFileSync(
-			join(live, ".env"),
-			`FLIGHTLEAD_HOME=${live}\nFLIGHTLEAD_CONFIG_HOME=${config}\n`,
-		);
+		writeFileSync(join(live, ".env"), `WEAVELOG_HOME=${live}\nWEAVELOG_CONFIG_HOME=${config}\n`);
 		const r = run(["sync"], {
 			env: {
-				FLIGHTLEAD_LIVE_ROOT: live,
-				FLIGHTLEAD_CONFIG_HOME: config,
-				FLIGHTLEAD_STATE_DIR: state,
+				WEAVELOG_LIVE_ROOT: live,
+				WEAVELOG_CONFIG_HOME: config,
+				WEAVELOG_STATE_DIR: state,
 			},
 		});
 		assert.equal(r.status, 0);
 		const researcher = readFileSync(join(config, "agents", "researcher.md"), "utf8");
-		assert.ok(researcher.includes(`${live}/docs/research/**`), "FLIGHTLEAD_HOME resolved from .env");
-		assert.ok(!researcher.includes("{{FLIGHTLEAD_HOME}}"), "no raw tokens in materialized file");
+		assert.ok(researcher.includes(`${live}/docs/research/**`), "WEAVELOG_HOME resolved from .env");
+		assert.ok(!researcher.includes("{{WEAVELOG_HOME}}"), "no raw tokens in materialized file");
 		const implementer = readFileSync(join(config, "agents", "implementer.md"), "utf8");
-		assert.ok(implementer.includes(config), "FLIGHTLEAD_CONFIG_HOME resolved from .env");
+		assert.ok(implementer.includes(config), "WEAVELOG_CONFIG_HOME resolved from .env");
 		const agents = readFileSync(join(config, "AGENTS.md"), "utf8");
-		assert.ok(agents.includes("flightlead sync"), "AGENTS.md template materialized");
+		assert.ok(agents.includes("weavelog sync"), "AGENTS.md template materialized");
 	});
 });
 
@@ -272,11 +269,11 @@ describe("cli doctor", () => {
 		mkdirSync(live, { recursive: true });
 		const env = {
 			HOME: dir,
-			FLIGHTLEAD_LIVE_ROOT: live,
-			FLIGHTLEAD_CONFIG_HOME: config,
-			FLIGHTLEAD_STATE_DIR: state,
-			FLIGHTLEAD_CHECK_PLIST: join(dir, "no-plist.plist"),
-			FLIGHTLEAD_SKILLS_DIR: join(dir, "skills"),
+			WEAVELOG_LIVE_ROOT: live,
+			WEAVELOG_CONFIG_HOME: config,
+			WEAVELOG_STATE_DIR: state,
+			WEAVELOG_CHECK_PLIST: join(dir, "no-plist.plist"),
+			WEAVELOG_SKILLS_DIR: join(dir, "skills"),
 			...bins,
 		};
 		const r = run(["doctor"], { env });
@@ -291,11 +288,11 @@ describe("cli doctor", () => {
 		fakePlist(join(dir, "Library", "LaunchAgents", CHECK_PLIST), missingNode);
 		const env = {
 			HOME: dir,
-			FLIGHTLEAD_LIVE_ROOT: join(dir, "live"),
-			FLIGHTLEAD_CONFIG_HOME: join(dir, "config"),
-			FLIGHTLEAD_STATE_DIR: join(dir, "state"),
-			FLIGHTLEAD_CHECK_PLIST: join(dir, "Library", "LaunchAgents", CHECK_PLIST),
-			FLIGHTLEAD_SKILLS_DIR: join(dir, "skills"),
+			WEAVELOG_LIVE_ROOT: join(dir, "live"),
+			WEAVELOG_CONFIG_HOME: join(dir, "config"),
+			WEAVELOG_STATE_DIR: join(dir, "state"),
+			WEAVELOG_CHECK_PLIST: join(dir, "Library", "LaunchAgents", CHECK_PLIST),
+			WEAVELOG_SKILLS_DIR: join(dir, "skills"),
 			...bins,
 		};
 		const r = run(["doctor"], { env });
@@ -312,11 +309,11 @@ describe("cli doctor", () => {
 		fakePlist(join(dir, "Library", "LaunchAgents", CHECK_PLIST), process.execPath);
 		const env = {
 			HOME: dir,
-			FLIGHTLEAD_LIVE_ROOT: join(dir, "live"),
-			FLIGHTLEAD_CONFIG_HOME: join(dir, "config"),
-			FLIGHTLEAD_STATE_DIR: join(dir, "state"),
-			FLIGHTLEAD_CHECK_PLIST: join(dir, "Library", "LaunchAgents", CHECK_PLIST),
-			FLIGHTLEAD_SKILLS_DIR: join(dir, "skills"),
+			WEAVELOG_LIVE_ROOT: join(dir, "live"),
+			WEAVELOG_CONFIG_HOME: join(dir, "config"),
+			WEAVELOG_STATE_DIR: join(dir, "state"),
+			WEAVELOG_CHECK_PLIST: join(dir, "Library", "LaunchAgents", CHECK_PLIST),
+			WEAVELOG_SKILLS_DIR: join(dir, "skills"),
 			...bins,
 		};
 		const r = run(["doctor"], { env });
@@ -331,10 +328,10 @@ describe("cli check", () => {
 		mkdirSync(join(skills, "diagram-design"), { recursive: true });
 		const env = {
 			HOME: dir,
-			FLIGHTLEAD_LIVE_ROOT: join(dir, "live"),
-			FLIGHTLEAD_STATE_DIR: join(dir, "state"),
-			FLIGHTLEAD_CHECK_PLIST: join(dir, "no-plist.plist"),
-			FLIGHTLEAD_SKILLS_DIR: skills,
+			WEAVELOG_LIVE_ROOT: join(dir, "live"),
+			WEAVELOG_STATE_DIR: join(dir, "state"),
+			WEAVELOG_CHECK_PLIST: join(dir, "no-plist.plist"),
+			WEAVELOG_SKILLS_DIR: skills,
 			...versionEnv(dir),
 		};
 		const r = run(["check", "--stack-only"], { env });
@@ -347,10 +344,10 @@ describe("cli check", () => {
 		mkdirSync(join(skills, "diagram-design"), { recursive: true });
 		const env = {
 			HOME: dir,
-			FLIGHTLEAD_LIVE_ROOT: join(dir, "live"),
-			FLIGHTLEAD_STATE_DIR: join(dir, "state"),
-			FLIGHTLEAD_CHECK_PLIST: join(dir, "no-plist.plist"),
-			FLIGHTLEAD_SKILLS_DIR: skills,
+			WEAVELOG_LIVE_ROOT: join(dir, "live"),
+			WEAVELOG_STATE_DIR: join(dir, "state"),
+			WEAVELOG_CHECK_PLIST: join(dir, "no-plist.plist"),
+			WEAVELOG_SKILLS_DIR: skills,
 			...versionEnv(dir),
 		};
 		const bins = join(dir, "bins");
@@ -366,8 +363,8 @@ describe("cli scaffold", () => {
 	test("scaffold --project creates dir + git repo + AGENTS.md stub + .env.example, exits 0", () => {
 		const dir = makeDir("scaffold");
 		const env = {
-			FLIGHTLEAD_STATE_DIR: join(dir, "state"),
-			FLIGHTLEAD_BACKLOG_BIN: join(dir, "no-backlog"),
+			WEAVELOG_STATE_DIR: join(dir, "state"),
+			WEAVELOG_BACKLOG_BIN: join(dir, "no-backlog"),
 		};
 		const r = spawnSync(
 			process.execPath,

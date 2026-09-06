@@ -1,7 +1,7 @@
 # HARNESS-001: Implement harness-init
 
 > **Archived.** This was the acceptance-criteria task spec for the original
-> `harness-init` bash CLI. It is superseded by the `loopeng` design.
+> `harness-init` bash CLI. It is superseded by the `weavelog` design.
 > Preserved for provenance only — do not implement against this. See
 > `docs/archive/README.md` and `docs/NORTH_STAR.md`.
 

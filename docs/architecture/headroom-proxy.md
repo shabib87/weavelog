@@ -21,7 +21,7 @@ sources:
 Headroom is a local compression/telemetry proxy that sits between opencode and
 OpenRouter. Every model request from the host routes through `http://localhost:8788/v1`;
 the proxy compresses context, forwards byte-faithful prior turns, tracks usage, and
-reports dollar savings. Its version is pinned in the manifest (`flightlead.json`; on a
+reports dollar savings. Its version is pinned in the manifest (`weavelog.json`; on a
 live host `~/.agents/stack-versions.json`) — the rollback pin is
 `headroom-ai[proxy]==0.30.0`.
 

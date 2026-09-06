@@ -1,7 +1,7 @@
 # Next Session Handoff
 
-**Project:** loopeng
-**Working dir:** `~/Projects/loopeng`
+**Project:** weavelog
+**Working dir:** `~/Projects/weavelog`
 
 **READ `docs/PROGRESS.md` FIRST.** This file is narrative context only.
 PROGRESS.md owns all status.
@@ -37,7 +37,7 @@ Install acts need author approval first; keep gates between runs.
 - All 8 Osmani loop-engineering posts (Jun 7–Jul 20) read firsthand after
   the secondhand synthesis overclaimed ("strong external validation" —
   corrected to framework fidelity, self-assessed). Accurate positioning:
-  **loopeng is a harness composer for lit loops at autonomy Level 2 —
+  **weavelog is a harness composer for lit loops at autonomy Level 2 —
   design-level, not yet operational.**
 - Author-approved amendments applied: RESEARCH.md Source 1 series
   evolution, PRODUCT.md provenance + telemetry metrics, spec compose-vs-run
@@ -54,15 +54,15 @@ Install acts need author approval first; keep gates between runs.
 | 1.95 | Gate realism | ✅ done 2026-07-22 |
 | 2/3 | Global + project setup (.pi/agents, workflows, settings) | next — Chain 2 |
 | 1.85c | Doc system overhaul (templates, ADR split, conventions.md) | queued after Chain 2 |
-| 4 | CLI: `loopeng init` / `check` / `plugin add` | Chain 3 (TDD slices) |
+| 4 | CLI: `weavelog init` / `check` / `plugin add` | Chain 3 (TDD slices) |
 
 ## Known items (carried)
 
 - Session-logger runtime verification still pending (see
   `docs/learnings/2026-07-05-session-logger-dogfood-gate.md`). Confirm
   `.pi/logs/<id>.stats.json` appears after a session shutdown.
-- `loopeng check` scope must resolve `tbd/configuration-failure-seam.md`
-  (who owns agent-failure diagnosis: loopeng vs Pi vs user).
+- `weavelog check` scope must resolve `tbd/configuration-failure-seam.md`
+  (who owns agent-failure diagnosis: weavelog vs Pi vs user).
 - Eval layer (output + trajectory rubrics) accepted gap, deferred Phase 4+.
 - INDEX.md re-synced 2026-07-22; keep it current per session (1.85c will
   automate conventions).

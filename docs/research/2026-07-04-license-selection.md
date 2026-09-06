@@ -6,14 +6,14 @@
 
 ## The question
 
-loopeng is currently MIT (inherited from the initial scaffold). The user is
+weavelog is currently MIT (inherited from the initial scaffold). The user is
 rethinking this stance: *"should it be MIT or changed to Apache 2.0? what
 gives me most benefit based on my what i just said."* The user's goals:
 personal leverage + influence, credibility, direction control, built on OSS.
 
 ## Dependency license audit (evidence-based)
 
-Every tool in the loopeng stack, verified from PyPI/GitHub/package metadata:
+Every tool in the weavelog stack, verified from PyPI/GitHub/package metadata:
 
 | Dependency | License | Role | Compatible with? |
 |---|---|---|---|
@@ -32,11 +32,11 @@ Every tool in the loopeng stack, verified from PyPI/GitHub/package metadata:
 | Semgrep | LGPL-2.1* | Custom SAST rules (v0.2) | Used-not-linked, no conflict |
 
 *Semgrep is LGPL-2.1, not MIT/Apache 2.0, but the user explicitly approved it.
-It's used as a tool (not linked into loopeng's code), so LGPL doesn't
-contaminate loopeng's license. The rules loopeng writes are its own.
+It's used as a tool (not linked into weavelog's code), so LGPL doesn't
+contaminate weavelog's license. The rules weavelog writes are its own.
 
 **Conclusion:** All dependencies are MIT or Apache 2.0 (Semgrep exception
-approved). loopeng can choose MIT, Apache 2.0, or AGPL-3.0 — all are
+approved). weavelog can choose MIT, Apache 2.0, or AGPL-3.0 — all are
 compatible. No dependency forces a license constraint.
 
 ## The three options
@@ -69,12 +69,12 @@ compatible. No dependency forces a license constraint.
 
 ### AGPL-3.0 + trademark policy (Tolaria's choice)
 
-- **What it is:** Strong copyleft. Anyone who modifies and deploys loopeng
+- **What it is:** Strong copyleft. Anyone who modifies and deploys weavelog
   (including as a network service) must open-source their modifications.
   Trademark policy (separate) keeps name/logo under creator control.
 - **Patent grant:** Yes (GPL family includes patent provisions).
 - **Copyleft:** Strong. Modified versions must be AGPL-3.0.
-- **Direction control:** Strongest. If someone forks and improves loopeng,
+- **Direction control:** Strongest. If someone forks and improves weavelog,
   they must share those improvements publicly. This is the legal lever.
 - **Adoption friction:** High. Some companies (Google, etc.) ban AGPL
   internally. Reduces adoption potential.
@@ -104,12 +104,12 @@ directions:
 
 **Important:** for a CLI tool (not a SaaS), AGPL's network clause is mostly
 irrelevant. Nobody runs a CLI as a network service. The main AGPL effect for
-loopeng is: modified distributions must be open-sourced. This is the
+weavelog is: modified distributions must be open-sourced. This is the
 "direction control" lever, but it also scares adopters.
 
 **Trademark is separate from code license.** The user can add a trademark
 policy (like Tolaria) to ANY of the three licenses. This prevents others from
-using the "loopeng" name/logo, regardless of code license. This is the
+using the "weavelog" name/logo, regardless of code license. This is the
 "direction control" lever that doesn't cost adoption.
 
 ## Recommendation
@@ -126,10 +126,10 @@ Reasoning:
 4. **"Serious project" credibility** — Apache 2.0 signals maturity without the
    AGPL controversy.
 5. **Trademark policy** — adds the direction-control lever (nobody else can
-   call their fork "loopeng") without sacrificing adoption.
+   call their fork "weavelog") without sacrificing adoption.
 6. **YAGNI on AGPL** — the "must-share improvements" protection is valuable
    for SaaS tools (where Tolaria sits — a desktop app could become a hosted
-   service). loopeng is a CLI; the SaaS scenario is speculative. If loopeng
+   service). weavelog is a CLI; the SaaS scenario is speculative. If weavelog
    ever adds a hosted component, revisit then.
 
 **If the user wants stronger must-share protection** (prevent closed-source

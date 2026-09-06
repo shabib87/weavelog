@@ -29,7 +29,7 @@ Options:
   --tracked-root <dir>     Tracked config root (default: <repo>/<manifest.trackedRoot>)
   --live-root <dir>        Live config root (default: <manifest.liveRoot>, homedir-expanded)
   --harness-manifest <p>   Harness manifest path (default: <repo>/config/harnesses/opencode.json)
-  --state <p>              Materialize state path (default: ~/.local/state/flightlead/config-materialize.json)
+  --state <p>              Materialize state path (default: ~/.local/state/weavelog/config-materialize.json)
   --force                  Overwrite a live file that differs from the last materialized
                            state (local-edit rescue). Does NOT rescue conflicts.
   --adopt                  Adopt a live file that differs from the last materialized state
@@ -71,7 +71,7 @@ branch above re-records the manifest and continues instead of dead-ending in a
 permanent CONFLICT. The all-or-nothing refusals exit leaves the state untouched
 too.
 
-State manifest (~/.local/state/flightlead/config-materialize.json):
+State manifest (~/.local/state/weavelog/config-materialize.json):
   { "version": 1, "updatedAt": "<ISO>", "files": { "<live-relative path>": "<sha256>" } }
   The hash records the sha256 of the bytes written to live (AC #12), so a future
   personal-to-portable render layer can slot between repo-read and live-write
@@ -358,7 +358,7 @@ function main(): void {
 		: resolve(expandHome(manifest.liveRoot));
 	const statePath = statePathFlag
 		? resolve(expandHome(statePathFlag))
-		: resolve(join(HOME, ".local", "state", "flightlead", "config-materialize.json"));
+		: resolve(join(HOME, ".local", "state", "weavelog", "config-materialize.json"));
 
 	// Normalize + assert containment BEFORE anything else: manifest live/tracked
 	// rels are resolved against their roots; a rel that escapes its root

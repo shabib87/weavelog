@@ -228,7 +228,7 @@ describe("mdconvert (binary conversion + cache)", () => {
 		);
 	});
 
-	test("default cache layout is <home>/.local/state/flightlead/mdconvert/converted and is created recursively", () => {
+	test("default cache layout is <home>/.local/state/weavelog/mdconvert/converted and is created recursively", () => {
 		const dir = tmpDir("md-layout");
 		const file = binaryDoc(dir, "report.doox");
 		const fakeHome = join(dir, "fake-home");
@@ -238,7 +238,7 @@ describe("mdconvert (binary conversion + cache)", () => {
 		});
 		assert.equal(r.status, 0);
 		assert.equal(r.stdout, "# hi\n");
-		const cacheDir = join(fakeHome, ".local", "state", "flightlead", "mdconvert", "converted");
+		const cacheDir = join(fakeHome, ".local", "state", "weavelog", "mdconvert", "converted");
 		assert.equal(existsSync(cacheDir), true);
 		assert.equal(readdirSync(cacheDir).length, 1);
 	});

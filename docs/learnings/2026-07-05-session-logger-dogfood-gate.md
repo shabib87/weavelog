@@ -9,7 +9,7 @@
 ## Context
 
 User asked to "add the session logger at the very beginning" to dogfood
-loopeng's session-quality telemetry. Before enabling it, I audited whether
+weavelog's session-quality telemetry. Before enabling it, I audited whether
 it was actually running. It was not — and it could not be "enabled" the way
 the docs implied.
 
@@ -36,7 +36,7 @@ default factory is a function, and calling it with a stub `pi` registers
 both `session_start` and `session_shutdown` handlers without error. The
 code is sound in isolation.
 
-But: there is no `.pi/logs/` directory in the loopeng repo, and zero
+But: there is no `.pi/logs/` directory in the weavelog repo, and zero
 `*.stats.json` files anywhere under `~/Projects`. The extensions were
 created at 18:20-18:25 today; every prior session this thread references
 (model-selection 17:36Z, config-fix, ZDR) ran before the logger existed.
@@ -47,7 +47,7 @@ unverified. It should read "code complete, not yet confirmed running."
 
 - **Cause 1 (likely): no shutdown has fired in this cwd since creation.**
   The `session_shutdown` handler only writes on exit. This session may be
-  the first in the loopeng cwd with the logger loaded, and it has not
+  the first in the weavelog cwd with the logger loaded, and it has not
   ended. If so, the log appears on session end and there is nothing to fix.
 - **Cause 2 (suspect): a latent silent-failure in aggregation.** Before
   the file-write try/catch, the handler does `input += m.usage.input` with

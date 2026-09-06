@@ -23,7 +23,7 @@ Command, args, expected exit code, expected ledger events. See
 
 **Evidence it would produce**
 
-flightlead is evidence-first: what receipt, ledger event, or record does
+weavelog is evidence-first: what receipt, ledger event, or record does
 this add?
 
 **Alternative**

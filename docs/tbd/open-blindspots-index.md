@@ -14,13 +14,13 @@ deprecated, or repriced. A workflow config hardcoding `z-ai/glm-5.2` breaks
 silently the day Z.ai ships glm-5.3 and deprecates 5.2.
 
 **Options:**
-- A model alias layer in loopeng (`research: latest-glm` → resolve at runtime).
-- A `loopeng check` step that validates workflow configs against the live
+- A model alias layer in weavelog (`research: latest-glm` → resolve at runtime).
+- A `weavelog check` step that validates workflow configs against the live
   OpenRouter `/api/v1/models` before running.
 - Both.
 
 **Decision needed:** alias layer vs pre-run validation vs both. Recommend:
-pre-run validation in `loopeng check` for v1 (simple, catches breakage
+pre-run validation in `weavelog check` for v1 (simple, catches breakage
 early); alias layer deferred.
 
 ## Non-Code Workflow Verification
@@ -53,7 +53,7 @@ Feeds both debugging and future self-improvement. Low effort, high value.
 include — it's cheap and unblocks Level 4 later.
 
 ## First-Run Experience Without OpenRouter Key
-`loopeng check` verifies `OPENAI_API_KEY` is set. For someone cloning loopeng
+`weavelog check` verifies `OPENAI_API_KEY` is set. For someone cloning weavelog
 to try it, requiring an OpenRouter key upfront is friction.
 
 **Options:**
@@ -75,14 +75,14 @@ the revised design spec as its detailed appendix. The spec should not do
 double duty as both ADR and design.
 
 ## Workspace Scaffold Versioning
-`loopeng init` v0.1 scaffolds certain files. v0.2 changes the scaffold. How
-does an *existing* workspace upgrade? `loopeng init` is idempotent (skip,
+`weavelog init` v0.1 scaffolds certain files. v0.2 changes the scaffold. How
+does an *existing* workspace upgrade? `weavelog init` is idempotent (skip,
 don't clobber), so it won't update stale scaffolds.
 
 **Options:**
-- A `.loopeng-version` file in scaffolded workspaces that `loopeng check`
+- A `.weavelog-version` file in scaffolded workspaces that `weavelog check`
   reads and warns about.
-- A `loopeng upgrade` command that applies scaffold migrations.
+- A `weavelog upgrade` command that applies scaffold migrations.
 
 **Decision needed:** version file + warning (v1) vs upgrade command (post-v1).
 Recommend: version file in v1, upgrade command deferred.

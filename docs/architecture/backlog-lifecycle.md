@@ -53,7 +53,7 @@ Closed label vocabulary, case-insensitive, enforced at claim + create + pre-comm
 reserved tier (machinery-only) `spec-approved` `dispatched` `stuck` `merged` `housekeeping`
 `wayfinder:map`; general tier (hand-settable) `harness` `dogfood` `deferred`. Unknown
 labels refuse the claim. `harness`/`dogfood` are harness-dev-only (agents-harness and
-flightlead repos); in any other repo they are validation failures. Decision table for
+weavelog repos); in any other repo they are validation failures. Decision table for
 general labels, first match: `harness` (task modifies bin/plugins/config/AGENTS.md/
 docs/architecture/stack-versions.json), `dogfood` (deliverable is real work run through
 the harness as the verification subject), `deferred` (explicit revive trigger), otherwise

@@ -6,7 +6,7 @@
 ## The Problem
 
 The user's `~/.pi/agent/settings.json` carries their personal `defaultModel`,
-`enabledModels`, `packages`, `skills`, and global `AGENTS.md`. When loopeng
+`enabledModels`, `packages`, `skills`, and global `AGENTS.md`. When weavelog
 spawns a sub-agent for a workflow step, that sub-agent **inherits all of it**
 by default — including the user's other extensions, skills, and global
 context files.
@@ -21,7 +21,7 @@ This breaks the determinism the North Star promises.
 
 ## Options to Evaluate
 
-1. **Per-workspace `.pi/settings.json`** — loopeng writes a project-local
+1. **Per-workspace `.pi/settings.json`** — weavelog writes a project-local
    settings file that scopes what loads. Question: does project-local
    settings *override* or *merge* with global? (Read Pi's settings.md to
    confirm precedence.)

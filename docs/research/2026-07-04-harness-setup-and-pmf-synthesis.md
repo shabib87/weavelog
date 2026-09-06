@@ -17,7 +17,7 @@ headers + grep until that breaks (YAGNI).
 3. [Pi architecture: openrouter-direct + side-compressor](#3-pi-architecture-openrouter-direct--side-compressor)
 4. [Tolaria reference: the credibility model](#4-tolaria-reference-the-credibility-model)
 5. [PMF lock: three proof projects](#5-pmf-lock-three-proof-projects)
-6. [Superpowers fit: loopeng composes, does not reinvent](#6-superpowers-fit-loopeng-composes-does-not-reinvent)
+6. [Superpowers fit: weavelog composes, does not reinvent](#6-superpowers-fit-weavelog-composes-does-not-reinvent)
 7. [Doc-chain decision: BRD/PRD/TRD collapsed](#7-doc-chain-decision-brdprdtrd-collapsed)
 8. [Engineering philosophy synthesized](#8-engineering-philosophy-synthesized)
 9. [Tooling stack (verified)](#9-tooling-stack-verified)
@@ -184,7 +184,7 @@ created 2026-02-14, ~5 months old). HN Show: 318 points, 142 comments.
 > of 10,000+ notes, and I use it every day. Every feature exists because it
 > solved a real problem."
 
-This is the exact model loopeng adopts: **personal need → opinionated tool
+This is the exact model weavelog adopts: **personal need → opinionated tool
 → public OSS → credibility from "built from real use."** Luca was the
 primary user, built for himself, shared it, got 18k stars in 5 months.
 
@@ -194,9 +194,9 @@ primary user, built for himself, shared it, got 18k stars in 5 months.
    MIT/Apache 2.0. AGPL forces anyone shipping Tolaria-as-a-service to
    open-source changes; trademark keeps name/logo controlled. For a tool
    where credibility + direction-control matters, this is a deliberate
-   choice. Loopeng's MIT-vs-Apache-2.0 question is incomplete — AGPL is a
+   choice. Weavelog's MIT-vs-Apache-2.0 question is incomplete — AGPL is a
    third option. (Phase 1.95 will research all three.)
-2. **"Built from real use" as explicit principle:** loopeng should list this
+2. **"Built from real use" as explicit principle:** weavelog should list this
    as a project principle. The three proof projects (§5) are the evidence.
 3. **Sponsor model, not revenue:** Tolaria is backed by tool sponsors
    (Codacy, CodeScene, CircleCI, Unblocked), not user payments. Relevant
@@ -210,15 +210,15 @@ layer; that's worth researching, not assuming.
 
 ## 5. PMF lock: three proof projects
 
-**Outcome:** loopeng's credibility comes from the builder's own real work,
+**Outcome:** weavelog's credibility comes from the builder's own real work,
 demonstrated across three project types, with the blog as the demo channel.
 
 **Three proof projects (paths verified):**
 
-1. **loopeng itself** (`~/Projects/loopeng`) — dogfooding. The system loop
-   / hill-climbing loop made literal. loopeng builds loopeng. Strongest
+1. **weavelog itself** (`~/Projects/weavelog`) — dogfooding. The system loop
+   / hill-climbing loop made literal. weavelog builds weavelog. Strongest
    possible demonstration that the tool works. (Sequenced post-v0.3: hand-
-   build through v0.3, then v0.4+ features built *using* loopeng v0.3.)
+   build through v0.3, then v0.4+ features built *using* weavelog v0.3.)
 2. **codewithshabib blog** (`~/Projects/Claude-Cowork/CodeWithShabib/
    shabib87.github.io`, main branch, active, codex-trusted) — content/web
    proof point. spec→implement→verify→document on a real site. The blog
@@ -234,7 +234,7 @@ proven credible by the builder's own real work. Broader than "mobile
 engineers," narrower than "any solo dev." Matches Tolaria's audience shape.
 
 **Why this is stronger than Tolaria:** Tolaria had one proof point (Luca's
-notes). loopeng has three, across three project shapes (devex tool, content
+notes). weavelog has three, across three project shapes (devex tool, content
 site, mobile app). Each generates different telemetry. The blog publishes
 all of it.
 
@@ -244,11 +244,11 @@ proof projects make the claim falsifiable.
 
 ---
 
-## 6. Superpowers fit: loopeng composes, does not reinvent
+## 6. Superpowers fit: weavelog composes, does not reinvent
 
 **Discovery:** Superpowers (`github.com/obra/superpowers`, MIT, installed at
 `~/.pi/agent/git/github.com/obra/superpowers/`) is a near-exact
-implementation of loopeng's engineering philosophy, already running in this
+implementation of weavelog's engineering philosophy, already running in this
 session.
 
 **Superpowers' own description (verbatim from README):**
@@ -261,7 +261,7 @@ session.
 > and DRY. Next up, once you say 'go', it launches a subagent-driven-
 > development process… inspecting and reviewing their work."
 
-That IS loopeng's philosophy: shift-left, spec-first, TDD, YAGNI, sub-agent
+That IS weavelog's philosophy: shift-left, spec-first, TDD, YAGNI, sub-agent
 maker/checker, verification before completion.
 
 **Skills inventory maps 1:1 to NORTH_STAR non-negotiables:**
@@ -279,14 +279,14 @@ maker/checker, verification before completion.
 | Debugging discipline | `systematic-debugging` |
 
 **Where superpowers fits:** it's the **skills layer** — the codified
-engineering methodology that makes the loop behave according to loopeng's
+engineering methodology that makes the loop behave according to weavelog's
 principles. Loop engineering (Voss/Osmani) names "skills" as one of the
 five loop components. Superpowers IS that layer, pre-built, MIT, Pi-native.
 
-**Decision:** loopeng **composes** superpowers; it does not reinvent it.
-This shrinks loopeng's scope (YAGNI) and strengthens the integration story.
+**Decision:** weavelog **composes** superpowers; it does not reinvent it.
+This shrinks weavelog's scope (YAGNI) and strengthens the integration story.
 
-- loopeng = deterministic CLI (workspace setup, model config, `loopeng
+- weavelog = deterministic CLI (workspace setup, model config, `weavelog
   check` verifier, workflow configs)
 - superpowers = skills layer (the *how* of TDD, review, verification)
 - Pi = host (executes the loop, spawns sub-agents)
@@ -305,19 +305,19 @@ features" — it's "don't rebuild what you can compose."
 ## 7. Doc-chain decision: BRD/PRD/TRD collapsed
 
 **Question:** the enterprise chain (BRD → PRD → TRD → ADR → Spec → Task) —
-how does it fit loopeng?
+how does it fit weavelog?
 
-**Decision:** loopeng does NOT adopt separate BRD/PRD/TRD files. That's
+**Decision:** weavelog does NOT adopt separate BRD/PRD/TRD files. That's
 enterprise ceremony violating YAGNI. The chain collapses to:
 
-| Enterprise doc | loopeng equivalent | Status |
+| Enterprise doc | weavelog equivalent | Status |
 |---|---|---|
 | BRD (business requirements) | `NORTH_STAR.md` + PMF/blog narrative | ✅ Exists |
 | PRD (product requirements) | `ROADMAP.md` (milestones, metrics, telemetry) | ⏳ Pending 1.95 |
 | TRD (technical requirements) | `adr.md` + `specs/2026-06-28-...md` | ✅ Exists |
 | ADR | `adr.md` | ✅ Exists |
-| Spec | `specs/2026-06-28-loopeng-design.md` | ✅ Exists |
-| Task | `superpowers/plans/2026-07-04-loopeng-implementation.md` | ✅ Exists |
+| Spec | `specs/2026-06-28-weavelog-design.md` | ✅ Exists |
+| Task | `superpowers/plans/2026-07-04-weavelog-implementation.md` | ✅ Exists |
 
 4 of 5 exist. ROADMAP is the missing one. This validates the ROADMAP draft
 as the next deliverable and rejects inventing BRD/TRD as separate docs.
@@ -339,7 +339,7 @@ fills all roles — the chain collapses. Don't cargo-cult ceremony.
 **Six pillars, all anchored in NORTH_STAR:**
 
 1. **YAGNI + SOLID + KISS** — the constitution. Every artifact obeys these.
-2. **Shift-left testing** — TDD first-class, test-first in loopeng and in
+2. **Shift-left testing** — TDD first-class, test-first in weavelog and in
    every workspace it produces. Tests are the first artifact, not a phase.
 3. **Two-layer QA** — maker/checker split (different models review) +
    verification gates (deterministic: tests, lint, build, SAST). The loop
@@ -347,7 +347,7 @@ fills all roles — the chain collapses. Don't cargo-cult ceremony.
 4. **Small ships, clean commits** — atomic commits, reviewable diffs.
    Anti-bloat.
 5. **Security woven in, not bolted on** — SAST in the loop, secrets policy
-   in `loopeng check`, security verifier in the gate.
+   in `weavelog check`, security verifier in the gate.
 6. **Open-weights primary, frontier as targeted escalation** — cost/quality
    maximized.
 
@@ -378,7 +378,7 @@ credibility + audience + patterns are the moat.
 | markitdown | 0.1.6 | PDF/doc ingestion | Context | ✅ Installed |
 | OpenRouter | — | Model routing | — | ✅ 8 models verified live |
 | Superpowers | (git main) | Skills layer | Methodology | ✅ Installed, MIT (LICENSE TBC) |
-| Codex | 0.142.5 | Personal backup (NOT loopeng target) | — | ✅ Fixed |
+| Codex | 0.142.5 | Personal backup (NOT weavelog target) | — | ✅ Fixed |
 | beads | — | Task/memory graph | Context | ⏳ Phase A+ (not installed) |
 | biome + tsc + node:test | — | Lint/typecheck/test | Engineering | ⏳ Pending |
 
@@ -405,10 +405,10 @@ Adding anything now violates YAGNI.
    gates, how security verifier composes (dedicated agent vs SAST-in-gate
    vs both, phased).
 6. **Security scope mechanisms** — which SAST (CodeQL / Semgrep), how
-   `loopeng check` enforces (dependency vuln scan, secret detection,
+   `weavelog check` enforces (dependency vuln scan, secret detection,
    AGENTS.md policy), security agent vs gate.
 7. **Superpowers license + dependency check** — confirm MIT, confirm no
-   commercial-use restrictions that conflict with loopeng OSS stance.
+   commercial-use restrictions that conflict with weavelog OSS stance.
 
 ---
 
@@ -440,7 +440,7 @@ from this session's material:
 - "The headroom bug I chased and shouldn't have" (§2)
 - "Why my Pi setup was never broken" (§3)
 - "What Tolaria taught me about OSS credibility" (§4)
-- "Three proof projects: how I'll demonstrate loopeng works" (§5)
+- "Three proof projects: how I'll demonstrate weavelog works" (§5)
 - "I almost rebuilt superpowers. Then I read it." (§6)
 - "Why I collapsed BRD/PRD/TRD into NORTH_STAR/ROADMAP/ADR" (§7)
 - "The honest moat of a solo OSS devex tool" (§8)

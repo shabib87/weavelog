@@ -482,27 +482,25 @@ ${acs}
 		assert.equal(setup.status, 0);
 	}
 
-	function fakeFlightleadShim(): string {
+	function fakeWeavelogShim(): string {
 		const bin = join(
 			tmpdir(),
-			`fake-flightlead-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+			`fake-weavelog-${Date.now()}-${Math.random().toString(36).slice(2)}`,
 		);
 		mkdirSync(bin, { recursive: true });
 		const cli = fileURLToPath(new URL("../src/cli/index.ts", import.meta.url));
 		const tsxUrl = String(import.meta.resolve("tsx"));
 		writeFileSync(
-			join(bin, "flightlead"),
+			join(bin, "weavelog"),
 			`#!/bin/sh\nexec ${process.execPath} --import ${tsxUrl} ${cli} check --pre-commit "$@"\n`,
 		);
-		chmodSync(join(bin, "flightlead"), 0o755);
+		chmodSync(join(bin, "weavelog"), 0o755);
 		return bin;
 	}
 
-	function runHook(opts: { withFlightlead?: boolean } = {}) {
+	function runHook(opts: { withWeavelog?: boolean } = {}) {
 		const path =
-			opts.withFlightlead === false
-				? process.env.PATH
-				: `${fakeFlightleadShim()}:${process.env.PATH}`;
+			opts.withWeavelog === false ? process.env.PATH : `${fakeWeavelogShim()}:${process.env.PATH}`;
 		return spawnSync("sh", [join(repoDir, ".git", "hooks", "pre-commit")], {
 			cwd: repoDir,
 			env: { ...process.env, PATH: path },
@@ -510,14 +508,14 @@ ${acs}
 		});
 	}
 
-	test("generated hook calls flightlead check --pre-commit behind a command-presence guard", () => {
+	test("generated hook calls weavelog check --pre-commit behind a command-presence guard", () => {
 		setList([{ id: SAMPLE_TASK.id, title: SAMPLE_TASK.title }]);
 		setView(SAMPLE_TASK);
 		const r = run(["--ready"]);
 		assert.equal(r.status, 0);
 		const content = readFileSync(join(repoDir, ".git", "hooks", "pre-commit"), "utf8");
-		assert.ok(content.includes("flightlead check --pre-commit"));
-		assert.ok(content.includes("command -v flightlead"));
+		assert.ok(content.includes("weavelog check --pre-commit"));
+		assert.ok(content.includes("command -v weavelog"));
 	});
 
 	test("end-to-end: hook blocks a commit that guts a spec-approved task's ACs", () => {
@@ -548,19 +546,19 @@ ${acs}
 		assert.equal(ok.status, 0);
 	});
 
-	test("fail-open: repo without flightlead on PATH never blocks", () => {
+	test("fail-open: repo without weavelog on PATH never blocks", () => {
 		setList([{ id: SAMPLE_TASK.id, title: SAMPLE_TASK.title }]);
 		setView(SAMPLE_TASK);
 		const r = run(["--ready"]);
 		assert.equal(r.status, 0);
-		// No flightlead on PATH — the guard skips the validator entirely
+		// No weavelog on PATH — the guard skips the validator entirely
 		spawnSync("git", ["checkout", "-b", "task/TASK-9"], {
 			cwd: repoDir,
 			encoding: "utf8",
 		});
 		writeFileSync(join(repoDir, "README.md"), "# changed\n");
 		spawnSync("git", ["add", "README.md"], { cwd: repoDir, encoding: "utf8" });
-		const ok = runHook({ withFlightlead: false });
+		const ok = runHook({ withWeavelog: false });
 		assert.equal(ok.status, 0);
 	});
 });

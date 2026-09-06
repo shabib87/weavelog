@@ -29,7 +29,7 @@
 | File | Type | Purpose | When | LOC |
 |---|---|---|---|---|
 | `AGENTS.md` | Constitution | Build commands, MUST NOTs, standards | Every session | 106 |
-| `README.md` | Project overview | What loopeng is, quickstart | First read only | 58 |
+| `README.md` | Project overview | What weavelog is, quickstart | First read only | 58 |
 | `NORTH_STAR.md` | Constitution | Non-negotiables, scope, success criteria | Every session | 51 |
 | `PRODUCT.md` | Strategy | Product definition, moat, PMF | On product decisions | 300 |
 | `ROADMAP.md` | Roadmap | Version milestones, release plan | On phase transitions | 301 |
@@ -50,7 +50,7 @@
 | File | Type | Purpose | When | LOC | Last updated |
 |---|---|---|---|---|---|
 | `research/RESEARCH.md` | Provenance | WHY behind every design decision, source-by-source | On unfamiliar territory | 241 | 2026-07-22 |
-| `adr/0001-loopeng-architecture-decisions.md` | ADR | Architecture decisions (monolithic — needs splitting) | On design changes | 303 | 2026-07-08 |
+| `adr/0001-weavelog-architecture-decisions.md` | ADR | Architecture decisions (monolithic — needs splitting) | On design changes | 303 | 2026-07-08 |
 | `adr/0002-bash-homebrew-tooling.md` | ADR | Bash/Homebrew decision (RESOLVED: TypeScript only) | On distribution/language | 49 | 2026-07-22 |
 
 ---
@@ -91,7 +91,7 @@ Each captures what went wrong, root cause, and blog candidate.
 
 | File | Topic | When | LOC |
 |---|---|---|---|
-| `learnings/2026-07-04-loopeng-foundation-harness-to-product-strategy.md` | Foundation synthesis + PMF decisions | On convergence decisions | 338 |
+| `learnings/2026-07-04-weavelog-foundation-harness-to-product-strategy.md` | Foundation synthesis + PMF decisions | On convergence decisions | 338 |
 | `learnings/2026-07-05-codex-profile-naming-and-registry.md` | Codex renaming + model registry creation | On model config | 66 |
 | `learnings/2026-07-05-config-consistency-fix.md` | Config audit — invalid TOML, phantom models, naming contradictions | On config audits | 144 |
 | `learnings/2026-07-05-model-selection-audit.md` | Live OpenRouter API validation + red team | On model confidence | 70 |
@@ -99,7 +99,7 @@ Each captures what went wrong, root cause, and blog candidate.
 | `learnings/2026-07-05-session-logger-derailment.md` | TDD violation post-mortem, derailment audit | On process discipline | 45 |
 | `learnings/2026-07-05-session-logger-dogfood-gate.md` | Session-logger runtime verification gate | On telemetry dogfooding | 98 |
 | `learnings/2026-07-05-session-quality-telemetry-axis.md` | Session-quality telemetry axis design | On telemetry design | 135 |
-| `learnings/2026-07-07-pi-footer-redesign-and-theme.md` | Pi footer redesign + loopeng-dark theme | On author workspace | 93 |
+| `learnings/2026-07-07-pi-footer-redesign-and-theme.md` | Pi footer redesign + weavelog-dark theme | On author workspace | 93 |
 | `learnings/2026-07-08-scope-refinement-and-yak-shaving-research.md` | 1.99a scope refinement session | On scope decisions | 197 |
 | `learnings/2026-07-22-moe-orchestration-audit.md` | MoE fanout audit — repo state, pi-subagents gaps, roster decision | On audit findings | 95 |
 | `learnings/2026-07-22-pi-web-access-install.md` | pi-web-access install decision, source review, Exa egress scope | On web-search tooling | 60 |
@@ -113,8 +113,8 @@ Each captures what went wrong, root cause, and blog candidate.
 
 | File | Topic | When | LOC |
 |---|---|---|---|
-| `specs/2026-06-28-loopeng-design.md` | Full architecture design — ETCSLV, isolation, budgets, rollback | On implementation | 675 |
-| `superpowers/specs/2026-07-07-loopeng-footer-theme-design.md` | Author footer/theme design (not product) | On author workspace | 151 |
+| `specs/2026-06-28-weavelog-design.md` | Full architecture design — ETCSLV, isolation, budgets, rollback | On implementation | 675 |
+| `superpowers/specs/2026-07-07-weavelog-footer-theme-design.md` | Author footer/theme design (not product) | On author workspace | 151 |
 
 ---
 
@@ -129,7 +129,7 @@ Each file = one unresolved question blocking progress.
 | `tbd/open-blindspots-index.md` | Master list of all known blind spots | Medium | On design reviews | 96 |
 | `tbd/rollback-mechanism.md` | Git-based step rollback | Medium | On loop design | 53 |
 | `tbd/settings-isolation.md` | Sub-agent settings isolation from user config | High | On sub-agent impl | 46 |
-| `tbd/configuration-failure-seam.md` | Agent-failure ownership: loopeng vs Pi runtime vs user | Medium | Before Phase 4 check scope | 39 |
+| `tbd/configuration-failure-seam.md` | Agent-failure ownership: weavelog vs Pi runtime vs user | Medium | Before Phase 4 check scope | 39 |
 
 ---
 
@@ -137,8 +137,8 @@ Each file = one unresolved question blocking progress.
 
 | File | Topic | When | LOC |
 |---|---|---|---|
-| `superpowers/plans/2026-07-04-loopeng-implementation.md` | Full implementation plan (pre-revision, needs chunking) | On implementation | 2848 |
-| `superpowers/plans/2026-07-07-loopeng-footer-theme.md` | Footer/theme plan (author workspace) | On author workspace | 489 |
+| `superpowers/plans/2026-07-04-weavelog-implementation.md` | Full implementation plan (pre-revision, needs chunking) | On implementation | 2848 |
+| `superpowers/plans/2026-07-07-weavelog-footer-theme.md` | Footer/theme plan (author workspace) | On author workspace | 489 |
 | `superpowers/plans/2026-07-07-pi-workspace-footer-theme.md` | Pi workspace footer/theme plan (author workspace) | On author workspace | 403 |
 
 ---

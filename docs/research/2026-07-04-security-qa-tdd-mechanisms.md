@@ -9,7 +9,7 @@
 ## Scope
 
 This doc covers three interrelated 1.95 research threads:
-1. Security scope mechanisms (which SAST, how `loopeng check` enforces)
+1. Security scope mechanisms (which SAST, how `weavelog check` enforces)
 2. Two-layer QA mechanism (maker/checker + verification gates)
 3. TDD with AI agents (test-first + small-ships + clean-commits design)
 
@@ -22,11 +22,11 @@ They're combined because they compose into a single enforcement architecture.
 | 1. Prompt-level | AGENTS.md rules, NORTH_STAR principles, superpowers skills | ✅ Now | v0.1 |
 | 2. Git hooks | commit-msg (format), pre-commit (secrets + sanitization) | ❌ Pending (1.98b) | v0.1 |
 | 3. CI | CodeQL (SAST), gitleaks (secrets), commitlint (format) | ❌ Pending | v0.1 |
-| 4. `loopeng check` | deterministic verifier (tests, lint, SAST, secrets, policy) | ❌ Not built | v0.2+ |
+| 4. `weavelog check` | deterministic verifier (tests, lint, SAST, secrets, policy) | ❌ Not built | v0.2+ |
 
 Layers 1–3 are infrastructure (tools + config). Layer 4 is the product —
 the deterministic CLI that bundles all checks into one command. This is
-where loopeng adds value beyond what the individual tools do alone.
+where weavelog adds value beyond what the individual tools do alone.
 
 ## Security mechanisms (thread 6)
 
@@ -36,8 +36,8 @@ The user confirmed all three are non-negotiable:
 
 | Scope | What | Mechanism | Phase |
 |---|---|---|---|
-| (i) loopeng's own code is scanned | Standard OSS hygiene | CodeQL in CI + gitleaks pre-commit | v0.1 |
-| (ii) `loopeng check` enforces on workspaces | The CLI validates workspaces it produces | `loopeng check` runs: dependency vuln scan, secret detection, AGENTS.md policy, sanitization scan | v0.2 |
+| (i) weavelog's own code is scanned | Standard OSS hygiene | CodeQL in CI + gitleaks pre-commit | v0.1 |
+| (ii) `weavelog check` enforces on workspaces | The CLI validates workspaces it produces | `weavelog check` runs: dependency vuln scan, secret detection, AGENTS.md policy, sanitization scan | v0.2 |
 | (iii) Security verification in the loop | Security is a step in spec→implement→verify→document | SAST runs as a verify gate; optional security-focused QA agent reviews diffs | v0.3+ |
 
 ### Tool mapping (all activity-audited, MIT unless noted)
@@ -45,31 +45,31 @@ The user confirmed all three are non-negotiable:
 | Tool | License | Role | Scope | Phase |
 |---|---|---|---|---|
 | GitHub CodeQL | MIT | Semantic SAST for TypeScript | (i) CI | v0.1 |
-| gitleaks | MIT | Secrets scanning | (i)+(ii) pre-commit + CI + `loopeng check` | v0.1 |
-| Semgrep | LGPL-2.1* | Custom rules (AGENTS.md policy, sanitization patterns) | (ii) `loopeng check` | v0.2 |
-| `loopeng check` | (loopeng) | Bundles: gitleaks + Semgrep rules + dependency audit + sanitization grep | (ii) on-demand | v0.2 |
+| gitleaks | MIT | Secrets scanning | (i)+(ii) pre-commit + CI + `weavelog check` | v0.1 |
+| Semgrep | LGPL-2.1* | Custom rules (AGENTS.md policy, sanitization patterns) | (ii) `weavelog check` | v0.2 |
+| `weavelog check` | (weavelog) | Bundles: gitleaks + Semgrep rules + dependency audit + sanitization grep | (ii) on-demand | v0.2 |
 
 *Semgrep is LGPL-2.1, approved exception (used-not-linked).
 
-### What `loopeng check` enforces (scope ii design)
+### What `weavelog check` enforces (scope ii design)
 
 ```
-loopeng check
+weavelog check
 ├── Secret detection        → gitleaks (API keys, tokens, passwords)
 ├── Sanitization scan       → grep for /Users/<name>, absolute paths, personal emails
 ├── Dependency audit        → npm audit (vuln DB) for the workspace
 ├── AGENTS.md policy        → verify AGENTS.md exists, <200 LOC, has MUST NOT section
 ├── License scan            → verify all deps are MIT/Apache 2.0 (flag copyleft)
-└── SAST (custom rules)     → Semgrep rules for loopeng-specific patterns
+└── SAST (custom rules)     → Semgrep rules for weavelog-specific patterns
 ```
 
-This is the deterministic verifier. It runs on-demand (`loopeng check`) and
+This is the deterministic verifier. It runs on-demand (`weavelog check`) and
 in the verify gate (scope iii). Every check is a pass/fail — no ambiguity.
 
 ### Security in the loop (scope iii design)
 
 The verify step of spec→implement→verify→document runs:
-1. `loopeng check` (deterministic — all checks above)
+1. `weavelog check` (deterministic — all checks above)
 2. Tests pass (`node --import tsx --test`)
 3. Lint clean (`biome check`)
 4. Typecheck clean (`tsc --noEmit`)
@@ -85,7 +85,7 @@ that SAST rules miss contextual issues.
 
 | Layer | What | Source | Mechanism |
 |---|---|---|---|
-| 1. Verification gate (deterministic) | Tests, lint, build, SAST pass | LangChain "verification loop"; Voss "task loop ends on spec compliance + passing tests" | `loopeng check` + CI |
+| 1. Verification gate (deterministic) | Tests, lint, build, SAST pass | LangChain "verification loop"; Voss "task loop ends on spec compliance + passing tests" | `weavelog check` + CI |
 | 2. QA agent (agentic) | Different model reviews diff against spec | Addy Osmani "maker/checker split"; superpowers `requesting-code-review` | Sub-agent with different model |
 
 ### Maker/checker model pairs (from model-selection.md)
@@ -107,7 +107,7 @@ Frontier escalation (targeted, last-resort):
 ```
 spec → implement → verify → document
                      │
-                     ├── (1) Deterministic gate: loopeng check + tests + lint + tsc
+                     ├── (1) Deterministic gate: weavelog check + tests + lint + tsc
                      │     └── fail → back to implement
                      │
                      ├── (2) QA agent: different model reviews diff vs spec
@@ -131,9 +131,9 @@ stack: execution loop (implement) → task loop (verify) → oversight loop (hum
 | Small ships | `subagent-driven-development` | One implementer per task, commit after tests pass |
 | Plan-first | `writing-plans` + `brainstorming` | Design before implementation |
 
-loopeng composes these skills (doesn't reinvent them). The workflow config
+weavelog composes these skills (doesn't reinvent them). The workflow config
 specifies which skill applies at which step. The verify gate runs
-`loopeng check` mechanically; the QA agent uses `requesting-code-review`.
+`weavelog check` mechanically; the QA agent uses `requesting-code-review`.
 
 ## TDD with AI agents (thread 4)
 
@@ -188,7 +188,7 @@ For each task in the implementation plan:
 
 | Phase | TDD enforcement | Small ships | Clean commits |
 |---|---|---|---|
-| v0.1 (loopeng itself) | Manual (superpowers skill) | Manual (one task per commit) | Manual (commitlint) |
+| v0.1 (weavelog itself) | Manual (superpowers skill) | Manual (one task per commit) | Manual (commitlint) |
 | v0.3 (task loop exists) | Workflow checks test-first | Workflow enforces task-per-commit | QA agent reviews |
 | v1.0 (product loop) | Full TDD-in-loop | Automated decomposition | Full maker/checker |
 
@@ -197,7 +197,7 @@ For each task in the implementation plan:
 | Question | Answer |
 |---|---|
 | Which SAST? | CodeQL (CI) + gitleaks (pre-commit + CI) + Semgrep (custom, v0.2) |
-| How does `loopeng check` enforce? | Bundles: gitleaks + Semgrep + dep audit + sanitization + policy |
+| How does `weavelog check` enforce? | Bundles: gitleaks + Semgrep + dep audit + sanitization + policy |
 | Security agent vs gate? | Gate first (v0.1–v0.2), agent later (v0.3+) — phased |
 | Which models for maker/checker? | GLM 5.2 → DeepSeek V4 Pro (code); GLM 5.2 → Kimi K2.7 (UI) |
 | How does security verifier compose? | SAST-in-gate (deterministic) at v1; security QA agent at v0.3+ |
@@ -210,4 +210,4 @@ For each task in the implementation plan:
 - Frontier model selection (GPT 5.5/5.6 for escalation) — separate thread
 - Evals + telemetry design — separate thread
 - Doc indexing — separate thread
-- `loopeng check` implementation details — ROADMAP + implementation plan
+- `weavelog check` implementation details — ROADMAP + implementation plan

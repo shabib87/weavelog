@@ -32,7 +32,7 @@
 | Codex CLI binary | ❌ Not installed (brew cask removed) |
 | `~/.codex/config.toml` | ✅ Preserved with OpenRouter + 8 profiles |
 | Headroom proxy | ⚠️ Running manually on port 8788 (won't survive restart) |
-| Headroom deployment `init-loopeng-06391025` | ❌ Stopped, no supervisor |
+| Headroom deployment `init-weavelog-06391025` | ❌ Stopped, no supervisor |
 | `headroom init codex` / `headroom init claude` | Previously run but config.toml not yet routed |
 
 ---
@@ -114,11 +114,11 @@ Expected: `stopped (expected)`
 - [ ] **Step 1: Remove the broken deployment**
 
 ```bash
-headroom install remove --profile init-loopeng-06391025
+headroom install remove --profile init-weavelog-06391025
 ```
 If this errors because the deployment is already broken, manually remove the manifest:
 ```bash
-rm -f ~/.headroom/manifests/init-loopeng-06391025.json
+rm -f ~/.headroom/manifests/init-weavelog-06391025.json
 ```
 
 ---

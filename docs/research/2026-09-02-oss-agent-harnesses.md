@@ -1,6 +1,6 @@
 ---
 date: 2026-09-02
-topic: OSS AI coding-agent harnesses/orchestrators (outrigger, one-punch, keel, trammel, tiller-ai, baton, agent-harness, microsoft/conductor, AO, SupaConductor, llm-conductor) vs loopeng
+topic: OSS AI coding-agent harnesses/orchestrators (outrigger, one-punch, keel, trammel, tiller-ai, baton, agent-harness, microsoft/conductor, AO, SupaConductor, llm-conductor) vs weavelog
 status: complete
 sources:
   - "https://github.com/dwijenpatel/outrigger"
@@ -21,14 +21,14 @@ models_used_for_research:
 supersedes: none
 ---
 
-# OSS agent-harness competitors vs loopeng (2026-09-02)
+# OSS agent-harness competitors vs weavelog (2026-09-02)
 
 Method: all primary READMEs fetched live from GitHub HTML pages this dispatch; metadata
 (stars/created/pushed/license) pulled live from the GitHub REST API the same day. Last-verified
 date for every claim: **2026-09-02**. All repos are 2026-vintage and young; star counts are
 small except where noted.
 
-The reference design ("loopeng"): CONDUCTOR main agent + specialized subagents (scout/researcher,
+The reference design ("weavelog"): CONDUCTOR main agent + specialized subagents (scout/researcher,
 TDD implementer, QA gate, security gate/Semgrep, vision gates, multi-model diff reviewers); human
 owns plan gate + merge gate; WHAT loop (design dialogue) vs HOW loop (TDD execution); backlog.md
 CLI tracker + wayfinder multi-session mapping; skills catalog + model-routing runbook +
@@ -60,13 +60,13 @@ cluster at cross-artifact seams; **layered independent (adversarial) review is t
 no experiment ever demoted**; error compounding over run length is real but "fresh links + gates
 beats one long session" is still an open bet, not a settled fact.
 
-**vs loopeng:** spec-interview ≈ WHAT loop / grilling; adversarial plan review ≈ loopeng's diff
-reviewers; exec-loop ≈ HOW loop. Differences: loopeng has NO held-out examiner (separate worker
+**vs weavelog:** spec-interview ≈ WHAT loop / grilling; adversarial plan review ≈ weavelog's diff
+reviewers; exec-loop ≈ HOW loop. Differences: weavelog has NO held-out examiner (separate worker
 authors the acceptance suite, OS-level read denial keeps the implementer blind) and NO
 harness-vs-null measurement discipline; outrigger has NO model routing, no task tracker, no
 skills catalog, no proxy/compression, and no productized onboarding. Notably, outrigger's own
-evidence **partially contradicts** loopeng's merge gate on well-specified work (cost without
-defect reduction) — loopeng's merge gate is justified by human ownership, not defect-catching,
+evidence **partially contradicts** weavelog's merge gate on well-specified work (cost without
+defect reduction) — weavelog's merge gate is justified by human ownership, not defect-catching,
 but the 5.9× number is a live counter-data-point.
 
 **Pros:** unmatched epistemic discipline; runnable evidence; demotes its own failed ideas on the
@@ -75,7 +75,7 @@ record. **Cons:** experiment rig, not a product; single experimenter; active wor
 **Maturity:** 0 stars · created 2026-07-07 · last push 2026-07-29 · 249 commits · MIT · Python ·
 no releases. **Successor:** one-punch (below) is where the surviving artifacts live.
 
-**Verdict:** loopeng **AHEAD** on productization breadth (routing, tracker, skills, proxy,
+**Verdict:** weavelog **AHEAD** on productization breadth (routing, tracker, skills, proxy,
 multi-session) — **BEHIND** on exactly two things: (1) the held-out examiner pattern, (2) the
 measurement regime (pre-registered predictions, null arms, deletion criteria). Both are cheap to
 adopt as a skill + gate rather than a fork.
@@ -92,7 +92,7 @@ the mattpocock/skills plugin: destination → decision map (grilling/spike/proto
 **one at a time** on decision tickets; v1's total-spec AFK runner + plan-review rounds were
 *removed by evidence* (4 review rounds, 79 findings, 1 plan) — v2 ratified 2026-07-27.
 
-**vs loopeng:** this is loopeng's closest sibling — same upstream skill DNA (wayfinder, grilling,
+**vs weavelog:** this is weavelog's closest sibling — same upstream skill DNA (wayfinder, grilling,
 prototype), same one-question-at-a-time decision protocol, same human merge gate, same WHAT→HOW
 shape. Divergence: one-punch *compiles* contracts from resolved decisions (rather than
 interviewing specs into existence), uses probe-transcript spikes as the only admissible source of
@@ -100,7 +100,7 @@ external-behavior claims, and demoted its own runner. It has no model routing, n
 own, no proxy stack, opencode absent.
 
 **Verdict:** **PARITY** on process philosophy (independent convergence on the WHAT/HOW +
-one-decision-at-a-time design); loopeng **AHEAD** on infrastructure (opencode SDK/plugins,
+one-decision-at-a-time design); weavelog **AHEAD** on infrastructure (opencode SDK/plugins,
 backlog CLI, compression proxy, model routing) and **BEHIND** on decision-hygiene details worth
 stealing: spike transcripts as evidence artifacts, and the willingness to delete stages that
 don't re-earn their cost.
@@ -127,9 +127,9 @@ its own mode). Cost knobs: `KEEL_MAX_TOKENS` (cost-true spend cap), `KEEL_MAX_TU
 `KEEL_MAX_WALL_SEC`. Evidence: 7,528 tests, 1,123 adversarial denied-path tests, 97.79%
 statement coverage gate; TerminalBench run explicitly caveated as single-trial/subset.
 
-**vs loopeng:** loopeng's enforcement is conventions + hooks + HITL gates; there is **no OS-level
-boundary, no out-of-process anything, no audit chain** — a misbehaving subagent in loopeng is
-stopped by instruction and by the human, not by the OS. loopeng is AHEAD on: subagent
+**vs weavelog:** weavelog's enforcement is conventions + hooks + HITL gates; there is **no OS-level
+boundary, no out-of-process anything, no audit chain** — a misbehaving subagent in weavelog is
+stopped by instruction and by the human, not by the OS. weavelog is AHEAD on: subagent
 specialization, WHAT/HOW dialogue, research layer, routing runbook, wayfinder multi-session,
 proxy/compression, opencode-native depth. keel is AHEAD on: containment, egress control, audit,
 publication authority, and the cost-true spend cap.
@@ -141,7 +141,7 @@ not independently audited; no subagent/conductor model; dialogue-free.
 **Maturity:** 6 stars · created 2026-07-31 (public history import) · pushed 2026-08-28 · 168
 commits · Apache-2.0 · TypeScript/Node 20+/pnpm · npm `keel-harness@0.1.2` (pre-alpha).
 
-**Verdict:** loopeng **BEHIND** on enforcement architecture (OS sandbox, warden, audit —
+**Verdict:** weavelog **BEHIND** on enforcement architecture (OS sandbox, warden, audit —
 structurally absent) — **AHEAD** on everything above the kernel: collaboration model, gates as
 dialogue, research, routing, and multi-session orchestration. Adoptable: hard budget caps
 (cost-true) and an intent-before-effect audit trail.
@@ -165,12 +165,12 @@ direct SQLite. Multi-agent: `claim_step`/`release_step` (10-min auto-expiry) + D
 CI 3.10–3.13. Companion tools Stele (context) and Chisel (code analysis) via MCP, no
 cross-dependencies.
 
-**vs loopeng:** dependency-aware decomposition ≈ backlog `depends_on` + wayfinder tickets;
-per-step verification in isolated copies ≈ loopeng's worktree discipline (different mechanism,
+**vs weavelog:** dependency-aware decomposition ≈ backlog `depends_on` + wayfinder tickets;
+per-step verification in isolated copies ≈ weavelog's worktree discipline (different mechanism,
 same goal); multi-agent claiming ≈ backlog task assignment. Trammel has **no** HITL gates, no
 security, no reviewer diversity, no model routing — the LLM client orchestrates; Trammel only
 supplies deterministic planning muscle. Recipe memory (mined, similarity-retrieved,
-success-weighted) has no loopeng equivalent; loopeng's memory/research notes are curated, not
+success-weighted) has no weavelog equivalent; weavelog's memory/research notes are curated, not
 mined.
 
 **Pros:** deterministic, dependency-free, genuinely novel plan-search + failure-constraint ideas.
@@ -181,7 +181,7 @@ stdlib-only · PyPI `trammel` v3.15.2.
 
 **Verdict:** **ORTHOGONAL** with two concrete borrowables: beam/strategy branching over backlog
 task plans, and mined failure-constraint memory (persist "what failed and why" as machine-checked
-constraints). loopeng AHEAD on governance, security, dialogue; BEHIND on nothing critical here.
+constraints). weavelog AHEAD on governance, security, dialogue; BEHIND on nothing critical here.
 
 ---
 
@@ -201,13 +201,13 @@ MCP server (10 tools: agent registry, inbox messaging, compass, sessions) to bac
 CLI's missing coordination, live web dashboard. Modes: simple/detailed (detailed waits for
 approval before touching files); workflows: solo (auto-merge to main!) / team (PR via gh).
 
-**vs loopeng:** closest surface overlap: skills + agent roster + hooks + OpenCode support
-(experimental there; native in loopeng). Quartermaster review ≈ loopeng's QA/diff gates, but
+**vs weavelog:** closest surface overlap: skills + agent roster + hooks + OpenCode support
+(experimental there; native in weavelog). Quartermaster review ≈ weavelog's QA/diff gates, but
 single reviewer, single negotiation, and **solo mode merges to main without a human gate** —
-weaker HITL than loopeng's mandatory merge gate. No security gate beyond secret-scan, no
+weaker HITL than weavelog's mandatory merge gate. No security gate beyond secret-scan, no
 research/scout depth (a `/scout` exists but is a ticket producer), no model routing, no
 multi-session wayfinding. `/dock` changelog discipline and Bosun's automatic every-3-features
-debt sweep are nice loopeng borrowables.
+debt sweep are nice weavelog borrowables.
 
 **Pros:** best-in-class onboarding UX (`npx init` → structured repo), genuinely multi-tool.
 **Cons:** dormant — last push 2026-03-09 (~6 months stale at research date); enforcement is
@@ -216,9 +216,9 @@ advisory; 2 stars.
 **Maturity:** 2 stars · created 2026-02-27 · pushed 2026-03-09 · 435 commits · MIT · TypeScript
 (Node 22+, tsup/vitest) · npm `tiller-ai`.
 
-**Verdict:** loopeng **AHEAD** on gate rigor, security depth, research layer, routing, and
+**Verdict:** weavelog **AHEAD** on gate rigor, security depth, research layer, routing, and
 OpenCode-native depth — **BEHIND** only on distributable packaging (`npx init` scaffold for
-strangers' repos) which loopeng hasn't attempted (it's personal-config today; OSS-bound this is
+strangers' repos) which weavelog hasn't attempted (it's personal-config today; OSS-bound this is
 the gap that matters).
 
 ---
@@ -235,13 +235,13 @@ links, xterm.js-over-WebSocket interactive terminal into any remote worker (pty,
 port), worker-to-worker delegation via global W-N handles. Enforcement: none (collaboration
 dimension only).
 
-**vs loopeng:** solves multi-machine human↔agent relay, not quality. loopeng's per-worktree
+**vs weavelog:** solves multi-machine human↔agent relay, not quality. weavelog's per-worktree
 session model is similar but single-machine and conductor-mediated.
 
 **Maturity:** 1 star · created 2026-05-26 · pushed 2026-08-05 · 321 commits · MIT · TypeScript
 monorepo · npm `@lesscap/baton-cli`.
-**Verdict:** **ORTHOGONAL**; loopeng AHEAD on quality machinery, baton AHEAD on distributed
-collaboration/observability (relevant only if loopeng ever goes fleet).
+**Verdict:** **ORTHOGONAL**; weavelog AHEAD on quality machinery, baton AHEAD on distributed
+collaboration/observability (relevant only if weavelog ever goes fleet).
 
 ---
 
@@ -261,14 +261,14 @@ trace + timeline viewer, memory reconciliation (LLM-arbitrated ADD/UPDATE/MERGE/
 demoted by default), MCP adapter, SKILL.md-style skills (instructions only; tool access never
 granted by skills). Dispatch classifies simple-vs-complex with one cheap call.
 
-**vs loopeng:** the SubAgentTool/coordinator pattern ≈ CONDUCTOR; plan-mode HITL ≈ plan gate;
-skills-dir support ≈ loopeng's catalog. But it is a *library for writing agent systems*, not a
+**vs weavelog:** the SubAgentTool/coordinator pattern ≈ CONDUCTOR; plan-mode HITL ≈ plan gate;
+skills-dir support ≈ weavelog's catalog. But it is a *library for writing agent systems*, not a
 coding-workflow harness: no TDD discipline, no tracker, no reviewer diversity, no security
 scanning, no dialogue protocol. Most active repo in the primary set (pushed 2026-09-02).
 
 **Maturity:** 3 stars · created 2026-05-11 · pushed 2026-09-02 · 66 commits · MIT · Python.
-**Verdict:** loopeng **AHEAD** on coding-specific gates and process; **BEHIND** on runtime
-plumbing loopeng lacks: hard budget guard, checkpoint/resume, tool-result caching, observation
+**Verdict:** weavelog **AHEAD** on coding-specific gates and process; **BEHIND** on runtime
+plumbing weavelog lacks: hard budget guard, checkpoint/resume, tool-result caching, observation
 caps, persistent tool policy. These are the cheapest adoptable ideas in this entire landscape.
 
 ---
@@ -279,30 +279,30 @@ caps, persistent tool policy. These are the cheapest adoptable ideas in this ent
 pushed 2026-09-02, Python): YAML-defined multi-agent workflows over Copilot SDK/Anthropic;
 **no LLM in the routing loop** (Jinja2 condition routing, first-match wins); parallel groups,
 sub-workflows, AGENTS.md injection, web dashboard with in-browser **human gates**, Fleet Manager
-TUI, Azure Container Apps sandboxed provider. Validates loopeng's human-gates + deterministic
-scaffolding thesis, at Microsoft scale; has zero dialogue/spec-discovery layer. loopeng AHEAD on
+TUI, Azure Container Apps sandboxed provider. Validates weavelog's human-gates + deterministic
+scaffolding thesis, at Microsoft scale; has zero dialogue/spec-discovery layer. weavelog AHEAD on
 WHAT-loop dialogue + gates-with-evidence; BEHIND on fleet observability and distribution.
 
 **Untrivial-ai/agent-orchestrator (AO) — https://github.com/Untrivial-ai/agent-orchestrator**
 (10,866★ — the field's giant, Apache-2.0, Go desktop app, created 2026-02-13, pushed 2026-09-03):
 desktop workspace; per-worker branch+worktree; project orchestrator plans/delegates/spawns;
 26 supported agent CLIs (incl. opencode); Kanban with PR/CI/review state; agent reviews returned
-to the owning worker. Converges hard with loopeng on worktrees + conductor-style planning;
-diverges by being a GUI product optimizing operator throughput, not gate rigor. loopeng BEHIND on
+to the owning worker. Converges hard with weavelog on worktrees + conductor-style planning;
+diverges by being a GUI product optimizing operator throughput, not gate rigor. weavelog BEHIND on
 reach/maturity; AHEAD on gate/evidence rigor.
 
 **Ibrahim-3d/orchestrator-supaconductor (SupaConductor) — https://github.com/Ibrahim-3d/orchestrator-supaconductor**
 (375★, AGPL-3.0, created 2026-02-17, pushed 2026-04-08 — dormant): Claude Code plugin;
 Evaluate-Loop (plan → evaluate plan → execute → evaluate → fix, ≤5 cycles); Board of Directors
 (5 deliberating directors); 15 agents/4 evaluators; **Opus for plan+eval, Sonnet for execution**
-(model routing, convergent with loopeng's runbook); bundles obra/superpowers v4.3.0; optional
-human-in-the-loop mode (default is autonomous — opposite of loopeng).
+(model routing, convergent with weavelog's runbook); bundles obra/superpowers v4.3.0; optional
+human-in-the-loop mode (default is autonomous — opposite of weavelog).
 
 **Vibecodelicious/llm-conductor — https://github.com/Vibecodelicious/llm-conductor** (5★, MIT,
 created 2026-01-16, pushed 2026-08-19): pure-markdown orchestrator instructions
 (developer/reviewer/judge subagents, develop-review-judge loop ≤5 iterations) portable across 7
-agent CLIs incl. OpenCode. Convergent: reviewer/judge separation ≈ loopeng's gate diversity; but
-zero machine enforcement — closest cousin to loopeng's AGENTS.md-as-protocol approach, and proof
+agent CLIs incl. OpenCode. Convergent: reviewer/judge separation ≈ weavelog's gate diversity; but
+zero machine enforcement — closest cousin to weavelog's AGENTS.md-as-protocol approach, and proof
 that instruction-only enforcement is the common floor.
 
 Also noted: **neul-labs/conductor** (0★, supervisor over Claude/Codex/Gemini CLIs,
@@ -315,10 +315,10 @@ opencode-native harness found).
 
 ## Competitive landscape
 
-**Where the field converges (loopeng is not differentiated on these):**
+**Where the field converges (weavelog is not differentiated on these):**
 1. Deterministic scaffolding around LLM judgment — universal (every repo above).
 2. Human gates at plan and merge — common (one-punch, keel Guided, microsoft/conductor dashboard
-   gates, agent-harness plan mode). loopeng's plan/merge gates are **table stakes**, not USPs.
+   gates, agent-harness plan mode). weavelog's plan/merge gates are **table stakes**, not USPs.
 3. Specialized subagent rosters with adversarial review — common (tiller's Quartermaster,
    llm-conductor's dev/review/judge, SupaConductor's evaluators/board). Multi-model reviewer
    diversity specifically is directionally common (EtroxTaran's 4-eyes, SupaConductor Opus/Sonnet).
@@ -327,7 +327,7 @@ opencode-native harness found).
    AO Kanban). backlog.md is a good implementation, not a differentiator.
 6. Model routing for cost — common (agent-harness per-call-site, SupaConductor tiers).
 
-**Where the field differentiates (loopeng's unique or rare assets):**
+**Where the field differentiates (weavelog's unique or rare assets):**
 - One-question-at-a-time dialogue protocol + wayfinder decision-ticket mapping: matched only by
   one-punch (same skill lineage). Rare and defensible.
 - Research/scout as a first-class subagent with a dated, indexed evidence archive: essentially
@@ -335,17 +335,17 @@ opencode-native harness found).
 - Compression proxy stack (headroom between agent and provider): no competitor ships anything
   like it; keel caps spend but doesn't compress.
 - Evidence-grade process hygiene (outrigger's held-out examiner, null arms, deletion criteria):
-  unique to outrigger/one-punch — loopeng's main borrowable gap.
-- Out-of-process warden + OS sandbox + tamper-evident audit: unique to keel — loopeng's
+  unique to outrigger/one-punch — weavelog's main borrowable gap.
+- Out-of-process warden + OS sandbox + tamper-evident audit: unique to keel — weavelog's
   structural gap if security posture ever matters for adoption.
 
-**Overall verdict:** loopeng is **AHEAD on process** (WHAT/HOW separation, dialogue discipline,
+**Overall verdict:** weavelog is **AHEAD on process** (WHAT/HOW separation, dialogue discipline,
 gates-with-evidence, research layer) and **orthogonal on enforcement** (nobody else combines
 conductor dialogue with keel-style containment, and nobody else has the proxy stack). It is
 **behind on**: (1) held-out acceptance suites authored by a separate worker (outrigger), (2)
 hard budget/cost caps and checkpoint/resume (agent-harness, keel), (3) packaged distribution to
 other repos/users (tiller's `npx init`, keel's npm, AO's desktop), (4) fleet-level observability
-(microsoft/conductor, AO). No competitor replicates the full loopeng stack; the nearest overall
+(microsoft/conductor, AO). No competitor replicates the full weavelog stack; the nearest overall
 rival in spirit is one-punch (process) and keel (rigor), and neither has model routing, a
 tracker-native spec store, or a research layer.
 

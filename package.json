@@ -1,43 +1,43 @@
 {
-  "name": "flightlead",
-  "version": "0.1.0",
-  "description": "The inner harness: agent work you can audit",
-  "type": "module",
-  "bin": {
-    "flightlead": "./dist/cli/index.js"
-  },
-  "files": [
-    "dist/",
-    "payload/",
-    "docs/architecture/",
-    "docs/cli.md",
-    "README.md",
-    "LICENSE",
-    "NOTICE",
-    "ATTRIBUTION.md",
-    "CHANGELOG.md",
-    "flightlead.json",
-    ".env.example"
-  ],
-  "license": "Apache-2.0",
-  "engines": {
-    "node": ">=20"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^2.5.5",
-    "@types/node": "^22.20.1",
-    "tsx": "^4.23.1",
-    "typescript": "^5.9.3"
-  },
-  "scripts": {
-    "stats": "node --import tsx src/cli/index.ts stats",
-    "test": "node --import tsx --test \"tests/**/*.test.ts\"",
-    "typecheck": "tsc --noEmit",
-    "lint": "biome check",
-    "build": "tsc -p tsconfig.build.json",
-    "prepublishOnly": "npm run build && npm test"
-  },
-  "dependencies": {
-    "yaml": "^2.9.0"
-  }
+	"name": "weavelog",
+	"version": "0.1.0",
+	"description": "The inner harness: agent work you can audit",
+	"type": "module",
+	"bin": {
+		"weavelog": "./dist/cli/index.js"
+	},
+	"files": [
+		"dist/",
+		"payload/",
+		"docs/architecture/",
+		"docs/cli.md",
+		"README.md",
+		"LICENSE",
+		"NOTICE",
+		"ATTRIBUTION.md",
+		"CHANGELOG.md",
+		"weavelog.json",
+		".env.example"
+	],
+	"license": "Apache-2.0",
+	"engines": {
+		"node": ">=20"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.5.5",
+		"@types/node": "^22.20.1",
+		"tsx": "^4.23.1",
+		"typescript": "^5.9.3"
+	},
+	"scripts": {
+		"stats": "node --import tsx src/cli/index.ts stats",
+		"test": "node --import tsx --test \"tests/**/*.test.ts\"",
+		"typecheck": "tsc --noEmit",
+		"lint": "biome check",
+		"build": "tsc -p tsconfig.build.json",
+		"prepublishOnly": "npm run build && npm test"
+	},
+	"dependencies": {
+		"yaml": "^2.9.0"
+	}
 }

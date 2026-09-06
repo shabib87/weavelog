@@ -591,7 +591,7 @@ export function createHooks(deps: EnforceDeps): EnforceHooks {
 				.join("\n");
 			return `config-sync refused (out-of-band live edit):\n${lines}\nNever adopted silently — resolve explicitly, then re-run.`;
 		} catch {
-			return "config-sync refused (out-of-band live edit) — run `flightlead sync` for the refusal report. Never adopted silently — resolve explicitly (--adopt / --force), then re-run.";
+			return "config-sync refused (out-of-band live edit) — run `weavelog sync` for the refusal report. Never adopted silently — resolve explicitly (--adopt / --force), then re-run.";
 		}
 	}
 

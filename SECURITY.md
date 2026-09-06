@@ -10,9 +10,9 @@ the maintainer directly and mark the message as a security report.
 
 Include:
 
-- Affected command and version (`flightlead --version`)
+- Affected command and version (`weavelog --version`)
 - Reproduction steps and exit code
-- Relevant ledger lines from `~/.local/state/flightlead/`
+- Relevant ledger lines from `~/.local/state/weavelog/`
 - Impact assessment, if you have one
 
 ## Response window
@@ -24,18 +24,18 @@ high-severity issues.
 
 ## Scope
 
-In scope: the flightlead CLI, its managed-file materialization flow, the
-manifest (`flightlead.json`), the ledger, gate enforcement, and anything
-flightlead writes to `~/.agents` or `~/.config`.
+In scope: the weavelog CLI, its managed-file materialization flow, the
+manifest (`weavelog.json`), the ledger, gate enforcement, and anything
+weavelog writes to `~/.agents` or `~/.config`.
 
 Out of scope: vulnerabilities in the composed hosts and installed tools
 themselves (opencode, pi, headroom, semgrep, etc.) — report those upstream;
-file an issue here only if flightlead's configuration of them is at fault.
+file an issue here only if weavelog's configuration of them is at fault.
 
 ## Hard guarantees
 
-- flightlead never silently overwrites managed files (two-step
+- weavelog never silently overwrites managed files (two-step
   user-modification flow).
-- flightlead never touches `.env` or `.env.local` in scaffolded projects
+- weavelog never touches `.env` or `.env.local` in scaffolded projects
   (hardcoded exclusion, gate-enforced).
 - Every refusal is a ledger line + non-zero exit. Zero silent failure.

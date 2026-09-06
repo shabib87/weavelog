@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Report a failure in a flightlead command (exit code, ledger line, doctor subcheck)
+about: Report a failure in a weavelog command (exit code, ledger line, doctor subcheck)
 title: ''
 labels: bug
 assignees: ''
@@ -11,7 +11,7 @@ assignees: ''
 - macOS version:
 - Chip (arm64 required):
 - Node version:
-- flightlead version:
+- weavelog version:
 - Host (opencode / pi) and version:
 
 **What you ran**
@@ -26,7 +26,7 @@ assignees: ''
 
 **Ledger lines**
 
-Relevant lines from `~/.local/state/flightlead/` (redact private paths):
+Relevant lines from `~/.local/state/weavelog/` (redact private paths):
 
 ```
 ```

@@ -20,17 +20,17 @@ Headroom's proxy supports `--budget` and `--budget-period` (read in
 > `--budget FLOAT RANGE` — Budget limit in USD per `--budget-period`.
 > Requests are rejected with 429 once the limit is reached.
 
-So the mechanism exists at the proxy layer. Loopeng needs to:
+So the mechanism exists at the proxy layer. Weavelog needs to:
 1. Expose a per-workflow `budget` field in the workflow config (USD).
 2. Pass it to the Headroom proxy when starting a workflow run, OR enforce it
-   in the loopeng extension by tracking spend per step.
+   in the weavelog extension by tracking spend per step.
 3. On budget exhaustion: abort the workflow with a clear message, not a
    silent 429 retry storm.
 
 ## Decisions to Make
 
 1. **Where to enforce** — Headroom proxy `--budget` (proxy-level, simple,
-   but shared across concurrent workflows on the same proxy) vs. loopeng
+   but shared across concurrent workflows on the same proxy) vs. weavelog
    extension (per-workflow, but requires parsing token usage from
    `message_end` events). Recommend extension-level for per-workflow
    granularity.

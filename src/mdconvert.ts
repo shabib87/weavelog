@@ -15,7 +15,7 @@
  *     NUL means binary, otherwise the file is treated as text
  *
  * Cache: converted output is written to
- *   <home>/.local/state/flightlead/mdconvert/converted/<sha1(path+mtimeNs)>-<name>.md
+ *   <home>/.local/state/weavelog/mdconvert/converted/<sha1(path+mtimeNs)>-<name>.md
  * (created recursively). Only SUCCESSFUL conversions are cached, and the cache
  * holds the FULL converted markdown (the 2000-line cap applies to what is
  * PRINTED, so a cached document can still be located with grep/offset-read). A
@@ -34,7 +34,7 @@
  *
  * Env overrides (tests/CI only; HOME is the only assumed env):
  *   MDCONVERT_BINARY    converter command (default $HOME/.local/bin/markitdown)
- *   MDCONVERT_CACHE_DIR cache root (default $HOME/.local/state/flightlead/mdconvert/converted)
+ *   MDCONVERT_CACHE_DIR cache root (default $HOME/.local/state/weavelog/mdconvert/converted)
  */
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
@@ -83,7 +83,7 @@ export type RunCmd = (cmd: string, args: string[]) => RunResult;
 export interface MdconvertOptions {
 	/** Converter command. Default: $MDCONVERT_BINARY or $HOME/.local/bin/markitdown. */
 	binaryPath?: string;
-	/** Cache root. Default: $MDCONVERT_CACHE_DIR or $HOME/.local/state/flightlead/mdconvert/converted. */
+	/** Cache root. Default: $MDCONVERT_CACHE_DIR or $HOME/.local/state/weavelog/mdconvert/converted. */
 	cacheDir?: string;
 	/** Subprocess runner injection point (tests). */
 	run?: RunCmd;
@@ -148,7 +148,7 @@ export async function mdconvert(file: string, opts: MdconvertOptions = {}): Prom
 	const cacheDir =
 		opts.cacheDir ??
 		process.env.MDCONVERT_CACHE_DIR ??
-		join(home, ".local", "state", "flightlead", "mdconvert", "converted");
+		join(home, ".local", "state", "weavelog", "mdconvert", "converted");
 	const run: RunCmd =
 		opts.run ??
 		((cmd: string, args: string[]): RunResult => {
@@ -220,7 +220,7 @@ Text-vs-binary decision:
       NUL means binary, otherwise the file is treated as text
 
 Cache: converted output is written to
-  <home>/.local/state/flightlead/mdconvert/converted/<sha1(path+mtimeNs)>-<name>.md
+  <home>/.local/state/weavelog/mdconvert/converted/<sha1(path+mtimeNs)>-<name>.md
   (created recursively). Only SUCCESSFUL conversions are cached, and the cache
   holds the FULL markdown — the 2000-line cap applies to what is PRINTED, so a
   cached document can still be located with grep/offset-read. A re-dispatch on
@@ -238,7 +238,7 @@ not a file).
 
 Env overrides (tests/CI only):
   MDCONVERT_BINARY    converter command (default $HOME/.local/bin/markitdown)
-  MDCONVERT_CACHE_DIR cache root (default $HOME/.local/state/flightlead/mdconvert/converted)`;
+  MDCONVERT_CACHE_DIR cache root (default $HOME/.local/state/weavelog/mdconvert/converted)`;
 
 if (
 	process.argv[1] !== undefined &&
