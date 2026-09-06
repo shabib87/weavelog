@@ -32,7 +32,7 @@ Jobs (sequential gates — each must pass for the next to run):
    `osascript` detection). Isolate macOS-specific code behind a guard
    interface and test the cross-platform core on Linux; mock the
    macOS-specific seam.
-5. **publish** (on tag only) — `npm publish` for `@loopeng/pi-loopeng`
+5. **publish** (on tag only) — `npm publish` for `loopeng/pi-loopeng`
    (extension) and `loopeng` (CLI); bump + push Homebrew formula for
    `loopeng` (wraps the npm package with a `node` dependency).
 
@@ -43,7 +43,7 @@ husky — overkill for solo dev.
 
 ## Release Pipeline (solo-dev sized)
 - Versioning: semver, tags trigger publish.
-- npm: `loopeng` (CLI) and `@loopeng/pi-loopeng` (extension) — automated via
+- npm: `loopeng` (CLI) and `loopeng/pi-loopeng` (extension) — automated via
   GitHub Actions on tag.
 - Homebrew: `loopeng` CLI — formula in a `loopeng/homebrew-tap` repo, updated
   by a GitHub Action on tag; wraps the npm package.

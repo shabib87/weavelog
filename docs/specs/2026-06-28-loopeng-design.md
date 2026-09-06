@@ -193,7 +193,7 @@ $PROJECT_ROOT/
 
 ## 5. The Loop Extension (`pi-loopeng`)
 
-A Pi TypeScript extension distributed as an npm package (`@loopeng/pi-loopeng`) that provides the ETCSLV orchestration layer. Installed via `pi install npm:@loopeng/pi-loopeng`.
+A Pi TypeScript extension distributed as an npm package (`loopeng/pi-loopeng`) that provides the ETCSLV orchestration layer. Installed via `pi install npm:loopeng/pi-loopeng (pre-rename scope)`.
 
 ### 5.1 Workflow Config Format
 

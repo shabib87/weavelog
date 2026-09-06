@@ -27,7 +27,7 @@ decisions; the spec is the detailed design appendix.
 
 Pi is the host. No separate orchestration runtime (no SwarmForge, no tmux
 layer, no Babashka scripts). All loop coordination lives in a Pi TypeScript
-extension (`@loopeng/pi-loopeng`).
+extension (`loopeng/pi-loopeng`).
 
 **Why Pi:**
 - MIT-licensed terminal coding agent with a TypeScript extension system.
@@ -240,10 +240,10 @@ file after. The tier structure (primary, verifier, budget, frontier
 escalation) is Layer 1. Model churn does not block core releases.
 
 **Official plugin packages (v1.1):**
-- `@loopeng/plugin-mobile-ios` (native iOS: Swift, SwiftUI, Xcode)
-- `@loopeng/plugin-mobile-android` (native Android: Kotlin, Compose, Gradle)
-- `@loopeng/plugin-mobile-kmp` (Kotlin Multiplatform)
-- `@loopeng/plugin-mobile-react-native` (React Native)
+- `loopeng/plugin-mobile-ios` (native iOS: Swift, SwiftUI, Xcode)
+- `loopeng/plugin-mobile-android` (native Android: Kotlin, Compose, Gradle)
+- `loopeng/plugin-mobile-kmp` (Kotlin Multiplatform)
+- `loopeng/plugin-mobile-react-native` (React Native)
 
 Each plugin ships skills conforming to the Agent Skills standard with
 `compatibility` frontmatter validated by `loopeng plugin add`.

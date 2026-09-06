@@ -40,8 +40,8 @@ as core loopeng features.
 
 **Distribution:** Pi-native `pi install` mechanism.
 
-- Official packages: `pi install npm:@loopeng/plugin-mobile-ios`,
-  `pi install npm:@loopeng/plugin-mobile-android`, etc.
+- Official packages: `pi install npm:loopeng/plugin-mobile-ios (pre-rename scope)`,
+  `pi install npm:loopeng/plugin-mobile-android (pre-rename scope)`, etc.
 - Community packages: any Pi-installable repo that conforms to Agent Skills
   standard.
 - User's own skills: drop into `.agents/skills/` (project-local) or

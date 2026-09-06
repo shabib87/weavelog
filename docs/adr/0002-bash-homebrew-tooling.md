@@ -23,7 +23,7 @@ needed (none anticipated in v1).
 - **Primary:** npm — `npx loopeng@latest init` works with zero install.
 - **Secondary:** Homebrew formula wrapping the npm package with a `node`
   dependency (how TS-based taps like `serve`/`bun` distribute).
-- The extension: `pi install npm:@loopeng/pi-loopeng`.
+- The extension: `pi install npm:loopeng/pi-loopeng (pre-rename scope)`.
 
 ## What was considered and rejected (preserved for provenance)
 

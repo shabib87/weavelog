@@ -22,7 +22,7 @@ loopeng/
 ├── biome.json                 # Linter/formatter config
 ├── src/                       # TypeScript source
 │   ├── cli/                   # loopeng CLI (loopeng check, loopeng init)
-│   └── extension/             # @loopeng/pi-loopeng (Pi extension)
+│   └── extension/             # loopeng/pi-loopeng (Pi extension, pre-rename npm scope)
 ├── tests/                     # Test suite
 ├── docs/                      # Project documentation
 │   ├── NORTH_STAR.md          # The anchor

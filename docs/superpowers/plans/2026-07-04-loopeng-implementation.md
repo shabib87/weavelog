@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build the loopeng CLI (`loopeng check`, `loopeng init`) and Pi extension (`@loopeng/pi-loopeng`) in TypeScript, with full test coverage.
+**Goal:** Build the loopeng CLI (`loopeng check`, `loopeng init`) and Pi extension (`loopeng/pi-loopeng`) in TypeScript, with full test coverage.
 
 **Architecture:** Two independent subsystems sharing a types package. Phase 1: CLI for machine verification and workspace scaffolding. Phase 2: Pi extension for the ETCSLV orchestration loop — sub-agent spawning, verification gates, budget tracking, rollback, and isolation. Both tested with `node --import tsx --test` and typechecked with `tsc --noEmit`.
 
