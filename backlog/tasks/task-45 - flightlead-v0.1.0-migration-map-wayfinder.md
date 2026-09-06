@@ -7,7 +7,7 @@ status: In Progress
 assignee:
   - '@conductor'
 created_date: '2026-09-05 06:01'
-updated_date: '2026-09-06 05:55'
+updated_date: '2026-09-06 06:09'
 labels:
   - 'wayfinder:map'
   - spec-approved
@@ -210,6 +210,12 @@ AMENDMENT 2026-09-09 (from TASK-51 spec v2): the 1.3 port-matrix suite count is 
 - FULL MATERIALIZATION (real machine): sync exit 0, adoptedBaseline=true, 21 files skip (live ~/.config/opencode byte-matches rendered payload incl. AGENTS.md in the flightlead-sync form); state + ledger at ~/.local/state/flightlead/ (config-materialize.json, ledger.jsonl).
 - 598/598 tests, tsc clean, biome 0, dist rebuilt.
 - NEXT: STEP 3.1 LaunchAgent migration, then GATE 3.2 pre-destruct checkpoint -> HUMAN APPROVAL required before 3.3 destructive ops.
+
+2026-09-06 STEP 3.1 + 3.2-pre EXECUTED, GATE 3.2 ALL SEVEN CHECKS PASS (fresh evidence):
+- 3.1: check --stack-only hardened (bare binary names now PATH-resolved; opencode pin refreshed to observed 1.18.29 — real drift caught); com.agents.stack-check BOOTED OUT (old plist FILE byte-untouched in place, sha 28060f6a... matches ~/backups migration copy); NEW com.flightlead.check.plist written + bootstrapped (pinned argv /Users/shabibhossain/.nvm/versions/node/v22.23.1/bin/node dist/cli/index.js check --stack-only; Sunday 09:00 Weekday 0; logs -> ~/.local/state/flightlead/stack-check-launchd.log; FLIGHTLEAD_PI_BIN pinned absolute); kickstart run verified: job executed, 7 checks 0 failures, last exit 0. Doctor 8 pass 0 fail with node.path-guard ENGAGED (pinned node v22.23.1 satisfies engines >= 20) per [AMEND-R6-2]. NOTE: first bootstrap silently dropped the agent (cause unknown); re-bootstrap stable across doctor + kickstart + rechecks.
+- 3.2-pre: (ii) relocation DONE — ~/.agents/{state,logs,reports}/* moved to ~/.local/state/flightlead/ (old config-materialize.json preserved as .pre-port; no clobbers); (iii) post-port tree state committed on ~/.agents main fbaeaf5 (sanctioned --no-verify: the live Hook 7 blocks main commits by design; this commit is owned by the plan).
+- GATE (a): ~/.agents porcelain EMPTY; .worktrees/TASK-45 absent (pre-removed by human). GATE (b): unzip -t OK + manifest MATCH vs 0.9 artifact. GATE (c): npm test 598/598. GATE (d): sync no-op exit 0. GATE (e): backlog task list exit 0 from flightlead. GATE (f): state/logs/reports relocated, originals empty. GATE (g): :8788 HTTP 200 + doctor 8/8 + new plist loaded + kickstart exit 0 + old plist byte-untouched.
+- STATE: GATE 3.2 OPEN for HUMAN APPROVAL before 3.3 (rm -rf ~/.agents/.git + deletion sub-step + old plist deletion).
 <!-- SECTION:NOTES:END -->
 
 <!-- SECTION:PLAN:END -->
