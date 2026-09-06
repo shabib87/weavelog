@@ -233,6 +233,33 @@ describe("cli sync", () => {
 		const r2 = run(["sync"], { env });
 		assert.equal(r2.status, 0);
 	});
+
+	test("sync resolves template tokens from the live-root .env (AC#4 resolved-value assertions)", () => {
+		const dir = makeDir("sync-resolved");
+		const live = join(dir, "live");
+		const config = join(dir, "config");
+		const state = join(dir, "state");
+		mkdirSync(live, { recursive: true });
+		writeFileSync(
+			join(live, ".env"),
+			`FLIGHTLEAD_HOME=${live}\nFLIGHTLEAD_CONFIG_HOME=${config}\n`,
+		);
+		const r = run(["sync"], {
+			env: {
+				FLIGHTLEAD_LIVE_ROOT: live,
+				FLIGHTLEAD_CONFIG_HOME: config,
+				FLIGHTLEAD_STATE_DIR: state,
+			},
+		});
+		assert.equal(r.status, 0);
+		const researcher = readFileSync(join(config, "agents", "researcher.md"), "utf8");
+		assert.ok(researcher.includes(`${live}/docs/research/**`), "FLIGHTLEAD_HOME resolved from .env");
+		assert.ok(!researcher.includes("{{FLIGHTLEAD_HOME}}"), "no raw tokens in materialized file");
+		const implementer = readFileSync(join(config, "agents", "implementer.md"), "utf8");
+		assert.ok(implementer.includes(config), "FLIGHTLEAD_CONFIG_HOME resolved from .env");
+		const agents = readFileSync(join(config, "AGENTS.md"), "utf8");
+		assert.ok(agents.includes("flightlead sync"), "AGENTS.md template materialized");
+	});
 });
 
 describe("cli doctor", () => {

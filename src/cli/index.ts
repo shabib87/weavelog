@@ -7,13 +7,14 @@ import {
 	lstatSync,
 	mkdirSync,
 	readdirSync,
+	mkdtempSync,
 	readFileSync,
 	readlinkSync,
 	rmSync,
 	symlinkSync,
 	writeFileSync,
 } from "node:fs";
-import { homedir } from "node:os";
+import { homedir, tmpdir } from "node:os";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { FlightleadManifest } from "../flightlead-manifest.js";
@@ -159,8 +160,8 @@ function finish(entry: Omit<LedgerEntry, "ts">): never {
 
 function configHomeValue(dotenv?: Record<string, string>): string {
 	return (
-		dotenv?.FLIGHTLEAD_CONFIG_HOME ??
 		process.env.FLIGHTLEAD_CONFIG_HOME ??
+		dotenv?.FLIGHTLEAD_CONFIG_HOME ??
 		join(HOME, ".config", "opencode")
 	);
 }
@@ -196,6 +197,28 @@ function readDotenv(liveRoot: string): Record<string, string> {
 	const p = join(liveRoot, ".env");
 	if (!existsSync(p)) return {};
 	return parseDotenv(readFileSync(p, "utf8"));
+}
+
+function ensureDotenv(liveRoot: string): Record<string, string> {
+	const p = join(liveRoot, ".env");
+	if (!existsSync(p)) {
+		const content = `FLIGHTLEAD_HOME=${liveRoot}\nFLIGHTLEAD_CONFIG_HOME=${join(HOME, ".config", "opencode")}\n`;
+		mkdirSync(liveRoot, { recursive: true });
+		writeFileSync(p, content);
+	}
+	return readDotenv(liveRoot);
+}
+
+function renderPayloadToTemp(tokens: Record<string, string>): string {
+	const tempRoot = mkdtempSync(join(tmpdir(), "fl-sync-render-"));
+	writeFileSync(join(tempRoot, "AGENTS.md"), renderToBuffer(join(PAYLOAD_DIR, "AGENTS.md"), tokens));
+	for (const full of walkFiles(join(PAYLOAD_DIR, "config"))) {
+		const rel = relative(PAYLOAD_DIR, full);
+		const dest = join(tempRoot, rel);
+		mkdirSync(dirname(dest), { recursive: true });
+		writeFileSync(dest, renderToBuffer(full, tokens));
+	}
+	return tempRoot;
 }
 
 function renderTemplate(
@@ -627,13 +650,17 @@ function resolveConfigSync(): { path: string; tsx: boolean } {
 
 function runSync(): never {
 	const sync = resolveConfigSync();
+	const liveRoot = liveRootValue();
+	const dotenv = ensureDotenv(liveRoot);
+	const tokens = { FLIGHTLEAD_HOME: liveRoot, FLIGHTLEAD_CONFIG_HOME: configHomeValue(dotenv) };
+	const renderedRoot = renderPayloadToTemp(tokens);
 	const args = [
 		"--harness-manifest",
 		join(PAYLOAD_DIR, "config", "harnesses", "opencode.json"),
 		"--tracked-root",
-		PAYLOAD_DIR,
+		renderedRoot,
 		"--live-root",
-		configHomeValue(),
+		configHomeValue(dotenv),
 		"--state",
 		join(stateDir(), "config-materialize.json"),
 	];
