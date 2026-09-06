@@ -4,11 +4,13 @@ title: 'Step 0 — Spike: opencode SDK non-interactive invocation'
 status: To Do
 assignee: []
 created_date: '2026-08-24 02:48'
-updated_date: '2026-09-05 23:01'
+updated_date: '2026-09-06 16:51'
 labels: []
 milestone: m-4
 dependencies:
   - TASK-11
+  - TASK-55
+  - TASK-56
 priority: high
 type: spike
 ordinal: 2000
@@ -35,3 +37,9 @@ Blocking spike — gate everything on this. Verify opencode SDK (`@opencode-ai/s
 - [ ] #11 Agent steps limit verified — steps: N caps iterations and triggers summarize-and-recommend
 - [ ] #12 WHEN the spike probes #9/#10 through the headroom proxy THEN a request with usage: {include: true} SHALL return cost data unstripped by the proxy, and the per-request cost as seen by the caller SHALL be recorded in the spike findings
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+2026-09-06 DAG update (human-approved): dependencies extended to TASK-55 (re-activate live enforcement) and TASK-56 (repo cleanup pass) — driver chain starts on a clean, enforcement-protected repo.
+<!-- SECTION:NOTES:END -->
