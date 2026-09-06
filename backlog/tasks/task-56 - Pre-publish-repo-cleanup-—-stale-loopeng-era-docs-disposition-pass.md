@@ -4,7 +4,7 @@ title: 'Pre-publish: repo cleanup — stale loopeng-era docs disposition pass'
 status: To Do
 assignee: []
 created_date: '2026-09-06 07:08'
-updated_date: '2026-09-06 18:00'
+updated_date: '2026-09-06 18:19'
 labels:
   - harness
 milestone: m-7
@@ -34,10 +34,13 @@ Outcome: ~/Projects/flightlead docs/ and root carry zero stale loopeng-era artif
 - [ ] #2 Worktree is clean (no uncommitted changes)
 - [ ] #3 Branch is rebased on main and green
 - [ ] #4 All acceptance criteria checked with fresh evidence (one at a time, never batched)
+- [ ] #5 docs/architecture/config-sync-flow diagram produced (TASK-35 absorbed; scope carve-out to the fresh-docs exclusion)
 <!-- DOD:END -->
 
 ## Implementation Notes
 
 <!-- SECTION:NOTES:BEGIN -->
 2026-09-06: harness label added per the TASK-51 decision table (task dispositions root AGENTS.md -> first match: harness). FLAGGED for this task's thread: backlog/config.yml project_name is 'agents-harness' (copied verbatim per the TASK-45 1.6 amendment); it makes harness-dev-context detection treat flightlead as agents-harness. Decide in-thread whether to correct it to 'flightlead' (deviation from the travels-unchanged amendment) or leave it.
+
+2026-09-06 dangling-task sweep (human-approved): absorbs TASK-35 — the config-sync-flow architecture diagram is produced as part of this cleanup pass so m-3 closes clean. Scope carve-out to the docs/architecture exclusion (diagram only, no other fresh-doc changes).
 <!-- SECTION:NOTES:END -->

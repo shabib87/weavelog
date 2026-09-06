@@ -4,8 +4,9 @@ title: OpenRouter usage telemetry — continuous local trend dashboard skill
 status: To Do
 assignee: []
 created_date: '2026-09-05 16:59'
-updated_date: '2026-09-05 16:59'
+updated_date: '2026-09-06 18:19'
 labels: []
+milestone: m-7
 dependencies: []
 priority: medium
 type: feature
