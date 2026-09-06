@@ -10,10 +10,7 @@ const implementer = readFileSync(
 	new URL("../../payload/config/agents/implementer.md", import.meta.url),
 	"utf8",
 );
-const agents = readFileSync(
-	new URL("../../payload/AGENTS.md", import.meta.url),
-	"utf8",
-);
+const agents = readFileSync(new URL("../../payload/AGENTS.md", import.meta.url), "utf8");
 
 test("researcher.md uses FLIGHTLEAD_HOME placeholder and no absolute home paths", () => {
 	assert.ok(researcher.includes("{{FLIGHTLEAD_HOME}}"));

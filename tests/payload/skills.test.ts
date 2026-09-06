@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
-import { readdirSync, readFileSync, lstatSync } from "node:fs";
-import { fileURLToPath } from "node:url";
+import { lstatSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { test } from "node:test";
+import { fileURLToPath } from "node:url";
 
 const SKILLS_ROOT = new URL("../../payload/skills/", import.meta.url);
 const SKILLS_DIR = fileURLToPath(SKILLS_ROOT);
