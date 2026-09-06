@@ -7,7 +7,7 @@ status: In Progress
 assignee:
   - '@opencode'
 created_date: '2026-09-06 07:27'
-updated_date: '2026-09-06 08:09'
+updated_date: '2026-09-06 08:33'
 labels:
   - harness
   - spec-approved
@@ -62,4 +62,6 @@ The name `Weavelog` comes straight from the project's own non-negotiables. North
 A version of this should be added to README.
 
 2026-09-06 SPEC APPROVED (HITL gate, human in-thread): ACs ratified AS SPECIFIED plus one human-approved amendment: SWEEP BOTH OLD NAMES (loopeng AND flightlead) and ABSORB TASK-39 (its loopeng->flightlead docs rename is superseded; one sweep covers both). Conflict evidence (recorded in TASK-57 closure): npm weavelog 404/free, GitHub clear, weavelog.net near-match = 0-star personal HTML site (no conflict), wandb/weave + opencode-weave = adjacency awareness only. Name-origin paragraph from the ratified rationale goes into README.
+
+2026-09-06 IMPLEMENTATION COMPLETE on task/TASK-58 (commits 96edcc8 + 7e17fcf, executed via implementer then conductor-verified): full sweep of BOTH old names (flightlead 363 + loopeng 567 occurrences at baseline). Renames: flightlead.json->weavelog.json, src/weavelog-manifest.ts, ADR/learnings/research/specs/superpowers filenames; FLIGHTLEAD_* tokens -> WEAVELOG_*; CLI strings; plist label com.weavelog.check in src; README + name-origin rationale; AGENTS.md reconciled to real repo layout + Apache-2.0 + payload/AGENTS.md aligned. GATE EVIDENCE: npm test 598/598 pass 0 fail 0 skip; tsc --noEmit 0; build 0; node dist/cli/index.js --help exit 0 shows weavelog; privacy-audit exit 0 (after implementing recorded [AMEND-R4-3] backlog/ exclusion that was missing from the script); zero-occurrence grep: flightlead 0, loopeng 0, flighlead-typo 0, weavelog 940. ENV FIXES (worktree-local, not repo changes): symlinked node_modules into worktree (was absent -> absolute TSX_LOADER spawn failed); biome format --write on 4 files (package.json, cli/index.test.ts, payload/manifest.test.ts, worktree-create.test.ts). KNOWN PRE-EXISTING BLOCKER (NOT caused by sweep, evidence recorded): biome gate broken repo-wide — main tree fails config parse ('Biome exited because the configuration resulted in errors', biome 2.5.5 wants migrate); worktree run flags style findings (noExplicitAny, noNonNullAssertion, useTemplate) in files BYTE-IDENTICAL to main (verified src/reviewer-loop.ts). AC#4 biome clause cannot go green without a biome-config fix task. Node-modules-symlink + TASK.md stub accidentally committed then amended out; .gitignore hardened (node_modules without trailing slash + TASK.md).
 <!-- SECTION:NOTES:END -->
