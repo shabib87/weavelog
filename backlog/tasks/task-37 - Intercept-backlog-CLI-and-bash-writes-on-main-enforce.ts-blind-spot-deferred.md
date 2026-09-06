@@ -12,7 +12,7 @@ dependencies: []
 references:
   - docs/research/2026-08-29-backlog-mcp-enforcement-bypass.md
 priority: low
-ordinal: 29000
+ordinal: 29500
 ---
 
 ## Description

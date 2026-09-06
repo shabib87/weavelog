@@ -6,9 +6,10 @@ title: >-
 status: To Do
 assignee: []
 created_date: '2026-09-06 16:14'
-updated_date: '2026-09-06 16:23'
+updated_date: '2026-09-06 21:54'
 labels:
   - harness
+  - deferred
 dependencies: []
 references:
   - 'https://github.com/abiosoft/colima'

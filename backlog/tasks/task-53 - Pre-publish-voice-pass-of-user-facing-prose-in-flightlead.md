@@ -4,11 +4,14 @@ title: 'Pre-publish: voice-pass of user-facing prose in flightlead'
 status: To Do
 assignee: []
 created_date: '2026-09-05 23:39'
-updated_date: '2026-09-06 18:00'
+updated_date: '2026-09-06 21:54'
 labels: []
 milestone: m-7
 dependencies:
   - TASK-58
+  - TASK-56
+  - TASK-59
+priority: high
 ordinal: 41000
 ---
 

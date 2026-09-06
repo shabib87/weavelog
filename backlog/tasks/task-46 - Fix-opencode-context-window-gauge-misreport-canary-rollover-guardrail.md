@@ -4,13 +4,14 @@ title: Fix opencode context-window gauge misreport + canary rollover guardrail
 status: To Do
 assignee: []
 created_date: '2026-09-05 16:58'
-updated_date: '2026-09-06 18:19'
+updated_date: '2026-09-06 21:54'
 labels: []
 milestone: m-7
-dependencies: []
+dependencies:
+  - TASK-59
 priority: high
 type: bug
-ordinal: 35000
+ordinal: 35500
 ---
 
 ## Description

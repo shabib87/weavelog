@@ -6,14 +6,15 @@ title: >-
 status: To Do
 assignee: []
 created_date: '2026-09-04 19:35'
-updated_date: '2026-09-06 18:19'
+updated_date: '2026-09-06 21:54'
 labels:
   - harness
 milestone: m-7
-dependencies: []
+dependencies:
+  - TASK-59
 priority: high
 type: bug
-ordinal: 30000
+ordinal: 30500
 ---
 
 ## Description
