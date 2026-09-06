@@ -6,12 +6,13 @@ title: >-
 status: To Do
 assignee: []
 created_date: '2026-09-06 20:06'
-updated_date: '2026-09-06 20:36'
+updated_date: '2026-09-06 23:51'
 labels:
   - harness
 milestone: m-7
 dependencies:
   - TASK-59
+  - TASK-68
 priority: high
 ordinal: 50000
 ---
@@ -45,4 +46,6 @@ Enforce the ratified machine standard (brew for native, npm for JS, uv for Pytho
 
 <!-- SECTION:NOTES:BEGIN -->
 2026-09-06 cross-thread reconciliation: closure-set AC updated to explicit IDs (canonical set {53,54,56,62,63,64,66,67} recorded in the TASK-45 pointer note; mechanical enumeration owned by the publish-gate CI). ORDERING: TASK-66 (doctor/check clean-machine fix) lands BEFORE this ticket closes — re-run doctor-exit-0 evidence after TASK-66 merges.
+
+2026-09-06 DAG integration: hard edge on TASK-68 added — the headroom proxy plist argv changes there first (--no-memory-tools), this migration then preserves that argv byte-identically.
 <!-- SECTION:NOTES:END -->

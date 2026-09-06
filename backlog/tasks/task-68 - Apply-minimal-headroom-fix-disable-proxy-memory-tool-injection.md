@@ -4,10 +4,13 @@ title: Apply minimal headroom fix - disable proxy memory-tool injection
 status: To Do
 assignee: []
 created_date: '2026-09-06 22:11'
-updated_date: '2026-09-06 22:12'
+updated_date: '2026-09-06 23:51'
 labels:
   - harness
-dependencies: []
+milestone: m-7
+dependencies:
+  - TASK-59
+priority: high
 ordinal: 56000
 ---
 
