@@ -228,7 +228,7 @@ describe("mdconvert (binary conversion + cache)", () => {
 		);
 	});
 
-	test("default cache layout is <home>/.agents/state/mdconvert/converted and is created recursively", () => {
+	test("default cache layout is <home>/.local/state/flightlead/mdconvert/converted and is created recursively", () => {
 		const dir = tmpDir("md-layout");
 		const file = binaryDoc(dir, "report.doox");
 		const fakeHome = join(dir, "fake-home");

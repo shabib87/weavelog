@@ -7,7 +7,7 @@ status: In Progress
 assignee:
   - '@conductor'
 created_date: '2026-09-05 06:01'
-updated_date: '2026-09-06 05:20'
+updated_date: '2026-09-06 05:55'
 labels:
   - 'wayfinder:map'
   - spec-approved
@@ -201,6 +201,15 @@ AMENDMENT 2026-09-09 (from TASK-51 spec v2): the 1.3 port-matrix suite count is 
 - 1.11b BUILD/BUNDLE: tsconfig.json -> nodenext (allowImportingTsExtensions dropped, remaining .ts imports converted to .js; tsx maps .js->.ts in dev); tsconfig.build.json (outDir dist, rootDir src) emits dist/cli/index.js matching bin; package.json bin -> ./dist/cli/index.js, files -> [dist/, payload/, docs, LICENSE, NOTICE, ATTRIBUTION, CHANGELOG, flightlead.json, .env.example], build + prepublishOnly wired. node dist/cli/index.js runs with ZERO tsx/bun runtime dependency. Stale author-layout references eliminated: enforce.ts messages -> flightlead sync; worktree-create hook template -> flightlead check --pre-commit behind command -v guard; stack-check pricing spawn -> STACK_CHECK_PRICING_BIN seam with package-relative default; configSyncArgv/machinery resolution probes dist .js then dev .ts.
 - 1.13 VERIFY GATES: npm test = 597/597 pass 0 fail 0 skip (dist artifact test now runs: plain node dist/cli/index.js --help exit 0); tsc --noEmit clean; biome exit 0; scripts/privacy-audit exit 0; node dist/cli/index.js doctor exit 0 on the real machine (plist absent -> guard skipped, proxy :8788 healthy). FULL DIFF for HITL review: d5cb67a..9de0988 = 13 commits, 146 files, +28404/-801.
 - NEXT: human reviews full diff (HITL) -> 1.6 backlog COPY switchover -> STEP 2.
+
+2026-09-06 1.6 SWITCHOVER DONE: backlog/ COPIED to flightlead (commit 3c98695, 62 files); dual-sided backlog task list exit 0 from BOTH ~/Projects/flightlead AND ~/.agents (source kept per plan, deleted only at 3.3). All backlog ops now run from flightlead.
+
+2026-09-06 STEP 2 SYNC PROVEN (checkpoint-ordered):
+- GAP FOUND AND FIXED (commit 2ac9b40): sync materialized RAW {{FLIGHTLEAD_HOME}} tokens (config-sync is verbatim) — the CLI now renders payload templates from the live-root .env into a temp tracked root before config-sync runs; .env auto-created from true defaults when absent (0.7 mechanism; real ~/.agents/.env now exists with FLIGHTLEAD_HOME + FLIGHTLEAD_CONFIG_HOME); env-var precedence over .env fixed (configHomeValue order bug). AC#4 resolved-value test added to cli suite.
+- SANDBOX: sync exit 0; opencode.jsonc BYTE-IDENTICAL to payload (AC#4 non-templated); researcher.md RESOLVED (0 raw tokens); second sync no-op exit 0.
+- FULL MATERIALIZATION (real machine): sync exit 0, adoptedBaseline=true, 21 files skip (live ~/.config/opencode byte-matches rendered payload incl. AGENTS.md in the flightlead-sync form); state + ledger at ~/.local/state/flightlead/ (config-materialize.json, ledger.jsonl).
+- 598/598 tests, tsc clean, biome 0, dist rebuilt.
+- NEXT: STEP 3.1 LaunchAgent migration, then GATE 3.2 pre-destruct checkpoint -> HUMAN APPROVAL required before 3.3 destructive ops.
 <!-- SECTION:NOTES:END -->
 
 <!-- SECTION:PLAN:END -->

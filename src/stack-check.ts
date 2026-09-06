@@ -23,7 +23,7 @@ import { excludedBy, normalizeRel } from "./config-sync.js";
 const HELP = `Usage: bun stack-check.ts [options]
 
 Options:
-  --json <path>   Write report JSON here (default: ~/.agents/state/stack-check/stack-check-<date>.json,
+  --json <path>   Write report JSON here (default: ~/.local/state/flightlead/stack-check/stack-check-<date>.json,
                   or stack-check-proxy-<date>.json with --proxy)
   --no-notify     Skip the macOS notification
   --proxy         Run ONLY the proxy-wiring doctor (AC #4/#5): checks headroom
@@ -53,7 +53,7 @@ Note: STACK_CHECK_PI_BASE_URL and STACK_CHECK_OPENCODE_BASE_URL track independen
 
 const HOME = homedir();
 const manifestPath = join(HOME, ".agents", "stack-versions.json");
-const reportsDir = join(HOME, ".agents", "state", "stack-check");
+const reportsDir = join(HOME, ".local", "state", "flightlead", "stack-check");
 const authPath = join(HOME, ".local", "share", "opencode", "auth.json");
 const repoRoot = fileURLToPath(new URL("..", import.meta.url));
 

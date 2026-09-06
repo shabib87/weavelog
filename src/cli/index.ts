@@ -280,12 +280,21 @@ function stackVersionChecks(
 	manifest: FlightleadManifest,
 ): { id: string; ok: boolean; detail: string }[] {
 	const results: { id: string; ok: boolean; detail: string }[] = [];
+	const resolveOnPath = (name: string): string => {
+		if (name.includes("/")) return name;
+		for (const dir of (process.env.PATH ?? "").split(":")) {
+			if (!dir) continue;
+			const candidate = join(dir, name);
+			if (existsSync(candidate)) return candidate;
+		}
+		return name;
+	};
 	const binFor: Record<string, string> = {
 		headroom: process.env.FLIGHTLEAD_HEADROOM_BIN ?? join(HOME, ".local", "bin", "headroom"),
 		backlog: process.env.FLIGHTLEAD_BACKLOG_BIN ?? join(HOME, ".bun", "bin", "backlog"),
 		markitdown: process.env.FLIGHTLEAD_MARKITDOWN_BIN ?? join(HOME, ".local", "bin", "markitdown"),
-		opencode: process.env.FLIGHTLEAD_OPENCODE_BIN ?? "opencode",
-		pi: process.env.FLIGHTLEAD_PI_BIN ?? "pi",
+		opencode: resolveOnPath(process.env.FLIGHTLEAD_OPENCODE_BIN ?? "opencode"),
+		pi: resolveOnPath(process.env.FLIGHTLEAD_PI_BIN ?? "pi"),
 	};
 	for (const tool of ["headroom", "backlog", "markitdown", "opencode", "pi"] as const) {
 		const spec = manifest.tools[tool];
