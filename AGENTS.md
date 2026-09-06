@@ -1,9 +1,15 @@
-# AGENTS.md — loopeng
+# AGENTS.md — weavelog
 
-loopeng is a minimal, open-source developer-experience setup that turns any
+weavelog is a minimal, open-source developer-experience setup that turns any
 project into a self-contained agentic workspace. A pre-defined agent team
 runs an end-to-end loop — spec, implement, verify, document — with the human
 in the loop only for verification.
+
+<CRITICAL_INSTRUCTION>
+@payload/AGENTS.md is a conductor protocol reference for the agents, skills, and
+workflows that make up the weavelog agentic workspace.
+</CRITICAL_INSTRUCTION>
+
 
 Read [`docs/NORTH_STAR.md`](docs/NORTH_STAR.md) first. It is the anchor for
 every decision. If a task cannot trace back to a non-negotiable there, it is
@@ -12,7 +18,7 @@ out of scope for v1 or requires amending the North Star first.
 ## Repo layout
 
 ```
-loopeng/
+weavelog/
 ├── AGENTS.md                  # This file
 ├── README.md                  # Project overview and quickstart
 ├── LICENSE                    # MIT
@@ -21,8 +27,8 @@ loopeng/
 ├── tsconfig.json              # TypeScript config
 ├── biome.json                 # Linter/formatter config
 ├── src/                       # TypeScript source
-│   ├── cli/                   # loopeng CLI (loopeng check, loopeng init)
-│   └── extension/             # loopeng/pi-loopeng (Pi extension, pre-rename npm scope)
+│   ├── cli/                   # weavelog CLI (weavelog check, weavelog init)
+│   └── extension/             # weavelog/pi-weavelog (Pi extension, pre-rename npm scope)
 ├── tests/                     # Test suite
 ├── docs/                      # Project documentation
 │   ├── NORTH_STAR.md          # The anchor
@@ -51,7 +57,7 @@ loopeng/
 | `docs/PROGRESS.md` | Phase tracker (where we are) | Active, authoritative |
 | `docs/ROADMAP.md` | Product roadmap (version milestones) | Active, authoritative |
 | `docs/NEXT_SESSION.md` | Narrative handoff | Active |
-| `docs/specs/2026-06-28-loopeng-design.md` | Detailed design | Active |
+| `docs/specs/2026-06-28-weavelog-design.md` | Detailed design | Active |
 | `docs/research/` | Research logs (dated, lab notebooks) | Active |
 | `docs/learnings/` | Session learning logs (dated, for blog) | Active |
 | `docs/superpowers/plans/` | Implementation plans (superpowers convention) | Active |
@@ -91,13 +97,13 @@ node --import tsx --test tests/cli/check.test.ts
 - MUST NOT commit absolute home-dir paths, personal emails, API keys, or
   machine-specific identifiers. Use `~` for home paths. Run a sanitization
   scan (grep for `/Users/`, personal identifiers, secret patterns) before
-  any commit. `loopeng check` will automate this when available.
+  any commit. `weavelog check` will automate this when available.
 
 ## Standards
 
 - **Conventional commits:** `feat:`, `fix:`, `chore:`, `docs:`, `style:`,
   `refactor:`, `test:`, `perf:`, `ci:`, `build:` prefixes. Enforced by
-  commit-msg hook (pending install) and `loopeng check` (pending build).
+  commit-msg hook (pending install) and `weavelog check` (pending build).
 - **Agent Skills:** `agentskills.io` — `.pi/skills/<name>/SKILL.md`
 - **AGENTS.md:** `agents.md` — this file, <200 LOC
 - **Agents:** Pi-native `.pi/agents/<name>.md` with YAML frontmatter

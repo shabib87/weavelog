@@ -6,6 +6,7 @@ title: >-
 status: To Do
 assignee: []
 created_date: '2026-09-06 07:27'
+updated_date: '2026-09-06 07:54'
 labels:
   - harness
 dependencies:
@@ -36,3 +37,15 @@ Outcome: the project carries ONE name everywhere — code, docs, npm, GitHub, ma
 - [ ] #3 Branch is rebased on main and green
 - [ ] #4 All acceptance criteria checked with fresh evidence (one at a time, never batched)
 <!-- DOD:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+I have chosen `Weavelog ` as the name of this project. And here's the reasoning that aligns with NORTH_STAR and PRODUCT:
+
+```
+The name `Weavelog` comes straight from the project's own non-negotiables. North Star describes verification gates as "woven into every loop," a phrase used for both the general loop and security specifically. Weave is the composition principle: this harness composes an opinionated stack from existing tools rather than building new ones. Log is the evidence principle: every gate produces a receipt, every run appends to the JSONL ledger. Weavelog names both halves of the tool in one word: what it composes, and what it proves.
+```
+
+A version of this should be added to README.
+<!-- SECTION:NOTES:END -->
