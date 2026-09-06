@@ -1,9 +1,10 @@
 ---
 id: TASK-39
 title: 'Complete loopeng-to-flightlead rename across docs, specs, and research notes'
-status: To Do
+status: Done
 assignee: []
 created_date: '2026-09-04 17:52'
+updated_date: '2026-09-06 08:09'
 labels: []
 dependencies: []
 references:
@@ -27,3 +28,15 @@ The OSS name is now flightlead: repo renamed and pushed to github.com/shabib87/f
 - [ ] #3 package.json name, bin key, and CLI --help all say flightlead (already done, verify)
 - [ ] #4 npm view flightlead confirms registry name is available before any publish attempt
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+2026-09-06 ABSORBED into TASK-58 (human-approved): with the final name ratified as Weavelog, a loopeng->flightlead pass would be wasted motion; TASK-58's sweep covers both old names in one mechanical pass.
+<!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Superseded by TASK-58 which sweeps both loopeng and flightlead in one pass (human decision 2026-09-06, spec-approved amendment).
+<!-- SECTION:FINAL_SUMMARY:END -->

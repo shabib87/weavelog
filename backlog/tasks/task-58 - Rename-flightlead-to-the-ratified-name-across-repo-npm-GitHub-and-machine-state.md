@@ -3,12 +3,14 @@ id: TASK-58
 title: >-
   Rename flightlead to the ratified name across repo, npm, GitHub, and machine
   state
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@opencode'
 created_date: '2026-09-06 07:27'
-updated_date: '2026-09-06 07:54'
+updated_date: '2026-09-06 08:09'
 labels:
   - harness
+  - spec-approved
 dependencies:
   - TASK-57
 priority: high
@@ -38,6 +40,16 @@ Outcome: the project carries ONE name everywhere — code, docs, npm, GitHub, ma
 - [ ] #4 All acceptance criteria checked with fresh evidence (one at a time, never batched)
 <!-- DOD:END -->
 
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+1. SCOPE: old names = loopeng AND flightlead (TASK-39 absorbed). Exclusions: .git history, backlog/ (historical task text). Survey baseline 2026-09-06: 363 flightlead + 567 loopeng occurrences in tracked files excl. backlog.
+2. IN-REPO SWEEP (agent, worktree): package.json name+bin; git mv flightlead.json -> weavelog.json + all references; payload tokens FLIGHTLEAD_* -> WEAVELOG_* (env example, templates, src defaults incl. config-sync state path, agents-install, FLIGHTLEAD_PI_BIN seam); CLI help/output strings; tests pinning strings; README (incl. name-origin paragraph from ratified rationale) / NOTICE / ATTRIBUTION trademark lines; docs spine + architecture + cli.md + specs + ROADMAP/PRODUCT; CHANGELOG; loopeng text in ADRs/learnings/research/archive + git mv of files with old names in filenames.
+3. GATES (fresh evidence, one at a time): npm test, tsc --noEmit, biome check, scripts/privacy-audit, npm run build + node dist/cli/index.js --help, zero-occurrence grep (AC#1).
+4. HITL SEQUENCE (flagged, NOT agent-executed): (a) human renames GitHub repo -> agent git remote set-url; (b) human claims npm weavelog (2FA; flightlead 0.0.0 placeholder disposition recorded); (c) human renames ~/Projects/flightlead -> weavelog; (d) THEN agent machine-state: update live .env tokens, mv ~/.local/state/flightlead -> weavelog, rewrite plist label com.weavelog.check (pinned argv to post-rename path), bootout old, bootstrap new, doctor green.
+5. Close TASK-39 as absorbed; check ACs one at a time with fresh evidence.
+<!-- SECTION:PLAN:END -->
+
 ## Implementation Notes
 
 <!-- SECTION:NOTES:BEGIN -->
@@ -48,4 +60,6 @@ The name `Weavelog` comes straight from the project's own non-negotiables. North
 ```
 
 A version of this should be added to README.
+
+2026-09-06 SPEC APPROVED (HITL gate, human in-thread): ACs ratified AS SPECIFIED plus one human-approved amendment: SWEEP BOTH OLD NAMES (loopeng AND flightlead) and ABSORB TASK-39 (its loopeng->flightlead docs rename is superseded; one sweep covers both). Conflict evidence (recorded in TASK-57 closure): npm weavelog 404/free, GitHub clear, weavelog.net near-match = 0-star personal HTML site (no conflict), wandb/weave + opencode-weave = adjacency awareness only. Name-origin paragraph from the ratified rationale goes into README.
 <!-- SECTION:NOTES:END -->
