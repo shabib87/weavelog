@@ -96,10 +96,13 @@ async function fetchCatalog(): Promise<Map<string, any>> {
 		// /models is public; key optional
 	}
 	try {
-		const res = await fetch("https://openrouter.ai/api/v1/models", {
-			headers: key ? { Authorization: `Bearer ${key}` } : {},
-			signal: AbortSignal.timeout(60_000),
-		});
+		const res = await fetch(
+			process.env.OPENROUTER_MODELS_URL ?? "https://openrouter.ai/api/v1/models",
+			{
+				headers: key ? { Authorization: `Bearer ${key}` } : {},
+				signal: AbortSignal.timeout(60_000),
+			},
+		);
 		if (!res.ok) throw new Error(`HTTP ${res.status}`);
 		const d = (await res.json()) as { data: any[] };
 		return new Map(d.data.map((m) => [m.id, m]));

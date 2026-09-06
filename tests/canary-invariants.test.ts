@@ -1,7 +1,7 @@
-import { describe, test } from "node:test";
 import assert from "node:assert/strict";
 import { lstatSync, readdirSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
+import { describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
@@ -12,7 +12,11 @@ const VERDICT = "VERDICT:";
 /** Grep a directory tree (one level of subdirs is enough here) for files
  *  containing a severity alternation. Returns repo-relative paths. */
 function findTaxonomyCopies(): string[] {
-	const dirs = [join(ROOT, "payload", "config"), join(ROOT, "payload", "skills"), join(ROOT, "src")];
+	const dirs = [
+		join(ROOT, "payload", "config"),
+		join(ROOT, "payload", "skills"),
+		join(ROOT, "src"),
+	];
 	const files: string[] = [];
 	for (const dir of dirs) {
 		const entries = readdirSync(dir, { withFileTypes: true });

@@ -1,5 +1,5 @@
-import { describe, test } from "node:test";
 import assert from "node:assert/strict";
+import { describe, test } from "node:test";
 import { createHooks, VerifyGateError } from "../src/hooks/verify-gate.ts";
 
 function make() {
@@ -27,15 +27,9 @@ describe("verify-gate (happy paths)", () => {
 			"/repo/backlog/tasks/task-1 - x.md",
 		]) {
 			for (let i = 0; i < 15; i++) {
-				await h.before(
-					{ tool: "other", sessionID: "s1", callID: `x${i}` },
-					{ args: {} },
-				);
+				await h.before({ tool: "other", sessionID: "s1", callID: `x${i}` }, { args: {} });
 			}
-			await h.before(
-				{ tool: "write", sessionID: "s1", callID: "w" },
-				{ args: { filePath: path } },
-			);
+			await h.before({ tool: "write", sessionID: "s1", callID: "w" }, { args: { filePath: path } });
 		}
 	});
 
@@ -44,10 +38,7 @@ describe("verify-gate (happy paths)", () => {
 		try {
 			const h = make();
 			for (let i = 0; i < 15; i++)
-				await h.before(
-					{ tool: "other", sessionID: "s1", callID: `x${i}` },
-					{ args: {} },
-				);
+				await h.before({ tool: "other", sessionID: "s1", callID: `x${i}` }, { args: {} });
 			await h.before(
 				{ tool: "edit", sessionID: "s1", callID: "w" },
 				{ args: { filePath: "/repo/src/app.ts" } },
@@ -62,10 +53,7 @@ describe("verify-gate (unhappy paths)", () => {
 	test("code write with no bash in the last 10 tool calls throws VerifyGateError", async () => {
 		const h = make();
 		for (let i = 0; i < 11; i++)
-			await h.before(
-				{ tool: "read", sessionID: "s1", callID: `r${i}` },
-				{ args: {} },
-			);
+			await h.before({ tool: "read", sessionID: "s1", callID: `r${i}` }, { args: {} });
 		let threw: unknown = null;
 		try {
 			await h.before(
@@ -82,20 +70,14 @@ describe("verify-gate (unhappy paths)", () => {
 	test("the 10th call is still allowed; the 11th blocks (boundary)", async () => {
 		const h = make();
 		for (let i = 0; i < 10; i++)
-			await h.before(
-				{ tool: "read", sessionID: "s1", callID: `r${i}` },
-				{ args: {} },
-			);
+			await h.before({ tool: "read", sessionID: "s1", callID: `r${i}` }, { args: {} });
 		await h.before(
 			{ tool: "edit", sessionID: "s1", callID: "w" },
 			{ args: { filePath: "/repo/src/a.ts" } },
 		);
 		let threw = false;
 		try {
-			await h.before(
-				{ tool: "read", sessionID: "s1", callID: "r10" },
-				{ args: {} },
-			);
+			await h.before({ tool: "read", sessionID: "s1", callID: "r10" }, { args: {} });
 			await h.before(
 				{ tool: "edit", sessionID: "s1", callID: "w2" },
 				{ args: { filePath: "/repo/src/b.ts" } },
@@ -109,19 +91,13 @@ describe("verify-gate (unhappy paths)", () => {
 	test("bash resets the window", async () => {
 		const h = make();
 		for (let i = 0; i < 9; i++)
-			await h.before(
-				{ tool: "read", sessionID: "s1", callID: `r${i}` },
-				{ args: {} },
-			);
+			await h.before({ tool: "read", sessionID: "s1", callID: `r${i}` }, { args: {} });
 		await h.after(
 			{ tool: "bash", sessionID: "s1", callID: "b", args: {} },
 			{ title: "", output: "34/34 pass", metadata: {} },
 		);
 		for (let i = 0; i < 9; i++)
-			await h.before(
-				{ tool: "read", sessionID: "s1", callID: `r2-${i}` },
-				{ args: {} },
-			);
+			await h.before({ tool: "read", sessionID: "s1", callID: `r2-${i}` }, { args: {} });
 		await h.before(
 			{ tool: "edit", sessionID: "s1", callID: "w" },
 			{ args: { filePath: "/repo/src/app.ts" } },
@@ -131,14 +107,8 @@ describe("verify-gate (unhappy paths)", () => {
 	test("missing filePath arg fails open (never blocks on malformed input)", async () => {
 		const h = make();
 		for (let i = 0; i < 15; i++)
-			await h.before(
-				{ tool: "read", sessionID: "s1", callID: `r${i}` },
-				{ args: {} },
-			);
-		await h.before(
-			{ tool: "edit", sessionID: "s1", callID: "w" },
-			{ args: {} },
-		);
+			await h.before({ tool: "read", sessionID: "s1", callID: `r${i}` }, { args: {} });
+		await h.before({ tool: "edit", sessionID: "s1", callID: "w" }, { args: {} });
 	});
 
 	test("ENFORCE_DISABLED master switch also disables the gate", async () => {
@@ -146,10 +116,7 @@ describe("verify-gate (unhappy paths)", () => {
 		try {
 			const h = make();
 			for (let i = 0; i < 15; i++)
-				await h.before(
-					{ tool: "read", sessionID: "s1", callID: `r${i}` },
-					{ args: {} },
-				);
+				await h.before({ tool: "read", sessionID: "s1", callID: `r${i}` }, { args: {} });
 			await h.before(
 				{ tool: "edit", sessionID: "s1", callID: "w" },
 				{ args: { filePath: "/repo/src/app.ts" } },
@@ -162,10 +129,7 @@ describe("verify-gate (unhappy paths)", () => {
 	test("sessions have independent windows: one session's bash does not reset another's gate", async () => {
 		const h = make();
 		for (let i = 0; i < 11; i++)
-			await h.before(
-				{ tool: "read", sessionID: "s1", callID: `r${i}` },
-				{ args: {} },
-			);
+			await h.before({ tool: "read", sessionID: "s1", callID: `r${i}` }, { args: {} });
 		// a different session runs bash — must NOT open s1's gate
 		await h.after(
 			{ tool: "bash", sessionID: "s2", callID: "b", args: {} },

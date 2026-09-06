@@ -1,8 +1,8 @@
-import { describe, test } from "node:test";
 import assert from "node:assert/strict";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { describe, test } from "node:test";
 import {
 	acMutationCheck,
 	claimGate,
@@ -52,7 +52,9 @@ describe("claimGate label vocabulary (AC #11)", () => {
 
 	test("all reserved labels are accepted (machinery may set them)", () => {
 		const r = claimGate(
-			task({ labels: ["spec-approved", "dispatched", "stuck", "merged", "housekeeping", "wayfinder:map"] }) as never,
+			task({
+				labels: ["spec-approved", "dispatched", "stuck", "merged", "housekeeping", "wayfinder:map"],
+			}) as never,
 		);
 		assert.equal(r.ok, true);
 		assert.equal(r.errors.length, 0);
@@ -190,9 +192,18 @@ describe("resolveDependencyStatuses (AC #13: Done deps read from tasks/completed
 		mkdirSync(join(root, "backlog", "tasks"), { recursive: true });
 		mkdirSync(join(root, "backlog", "completed"), { recursive: true });
 		mkdirSync(join(root, "backlog", "archive"), { recursive: true });
-		writeFileSync(join(root, "backlog", "tasks", "task-2 - todo-thing.md"), "---\nid: TASK-2\nstatus: To Do\n---\n");
-		writeFileSync(join(root, "backlog", "completed", "task-3 - done-thing.md"), "---\nid: TASK-3\nstatus: Done\n---\n");
-		writeFileSync(join(root, "backlog", "archive", "task-4 - archived.md"), "---\nid: TASK-4\nstatus: Done\n---\n");
+		writeFileSync(
+			join(root, "backlog", "tasks", "task-2 - todo-thing.md"),
+			"---\nid: TASK-2\nstatus: To Do\n---\n",
+		);
+		writeFileSync(
+			join(root, "backlog", "completed", "task-3 - done-thing.md"),
+			"---\nid: TASK-3\nstatus: Done\n---\n",
+		);
+		writeFileSync(
+			join(root, "backlog", "archive", "task-4 - archived.md"),
+			"---\nid: TASK-4\nstatus: Done\n---\n",
+		);
 		return root;
 	}
 
@@ -361,7 +372,10 @@ describe("claimGate", () => {
 	test("placeholder detection is exact for the two known placeholder shapes", () => {
 		assert.equal(isPlaceholderDescription("No description provided"), true);
 		assert.equal(isPlaceholderDescription("  No description provided  "), true);
-		assert.equal(isPlaceholderDescription("(created by --create mode — fill in during execution)"), true);
+		assert.equal(
+			isPlaceholderDescription("(created by --create mode — fill in during execution)"),
+			true,
+		);
 		assert.equal(isPlaceholderDescription("real spec text"), false);
 	});
 });
@@ -378,7 +392,9 @@ describe("parseTaskCreateArgs", () => {
 	});
 
 	test("multiple --ac flags each count", () => {
-		const r = parseTaskCreateArgs(`backlog task create Thing -d "desc" --ac 'WHEN a THEN b' --ac "IF c THEN d"`);
+		const r = parseTaskCreateArgs(
+			`backlog task create Thing -d "desc" --ac 'WHEN a THEN b' --ac "IF c THEN d"`,
+		);
 		assert.equal(r.acCount, 2);
 		assert.equal(r.hasDescription, true);
 	});
@@ -399,7 +415,9 @@ describe("parseTaskCreateArgs", () => {
 	});
 
 	test("--no-dod-defaults detected", () => {
-		const r = parseTaskCreateArgs(`backlog task create Thing -d d --ac "WHEN x THEN y" --no-dod-defaults`);
+		const r = parseTaskCreateArgs(
+			`backlog task create Thing -d d --ac "WHEN x THEN y" --no-dod-defaults`,
+		);
 		assert.equal(r.hasNoDodDefaults, true);
 	});
 
@@ -458,7 +476,9 @@ describe("parseTaskCreateArgs", () => {
 	});
 
 	test("captures deps from --dep/--depends-on (comma-separated and repeatable)", () => {
-		const r = parseTaskCreateArgs(`backlog task create Thing --dep TASK-1,TASK-2 --depends-on TASK-3`);
+		const r = parseTaskCreateArgs(
+			`backlog task create Thing --dep TASK-1,TASK-2 --depends-on TASK-3`,
+		);
 		assert.deepEqual(r.deps, ["TASK-1", "TASK-2", "TASK-3"]);
 		const eq = parseTaskCreateArgs(`backlog task create Thing --dep=TASK-1,TASK-2`);
 		assert.deepEqual(eq.deps, ["TASK-1", "TASK-2"]);
@@ -492,20 +512,29 @@ describe("createGateCheck (AC #11 #13 #14 #17)", () => {
 	});
 
 	test("unknown label -> refuse naming the label (AC #11)", () => {
-		const r = createGateCheck({ ...base(), labels: ["spec-approved", "bogus"] }, { isBacklogProject: true });
+		const r = createGateCheck(
+			{ ...base(), labels: ["spec-approved", "bogus"] },
+			{ isBacklogProject: true },
+		);
 		assert.equal(r.ok, false);
 		assert.match(r.errors.join("\n"), /bogus/);
 		assert.match(r.errors.join("\n"), /vocabulary/i);
 	});
 
 	test("harness label outside harness-dev context -> refuse (AC #17)", () => {
-		const r = createGateCheck({ ...base(), labels: ["spec-approved", "harness"] }, { isBacklogProject: true });
+		const r = createGateCheck(
+			{ ...base(), labels: ["spec-approved", "harness"] },
+			{ isBacklogProject: true },
+		);
 		assert.equal(r.ok, false);
 		assert.match(r.errors.join("\n"), /harness-dev/i);
 	});
 
 	test("dogfood label outside harness-dev context -> refuse (AC #17)", () => {
-		const r = createGateCheck({ ...base(), labels: ["spec-approved", "dogfood"] }, { isBacklogProject: true });
+		const r = createGateCheck(
+			{ ...base(), labels: ["spec-approved", "dogfood"] },
+			{ isBacklogProject: true },
+		);
 		assert.equal(r.ok, false);
 		assert.match(r.errors.join("\n"), /dogfood/);
 	});
@@ -519,7 +548,10 @@ describe("createGateCheck (AC #11 #13 #14 #17)", () => {
 	});
 
 	test("self-dep -> refuse naming selfId (AC #13)", () => {
-		const r = createGateCheck({ ...base(), deps: ["TASK-1"] }, { isBacklogProject: true, selfId: "TASK-1" });
+		const r = createGateCheck(
+			{ ...base(), deps: ["TASK-1"] },
+			{ isBacklogProject: true, selfId: "TASK-1" },
+		);
 		assert.equal(r.ok, false);
 		assert.match(r.errors.join("\n"), /self/i);
 	});
@@ -666,8 +698,15 @@ desc
 
 describe("preCommitCheck (injectable git runner)", () => {
 	// A fake git runner over an in-memory index/HEAD store.
-	function fakeRunner(files: { staged: string[]; index: Record<string, string>; head: Record<string, string> }) {
-		return (args: string[], _opts?: { cwd?: string }): { status: number | null; stdout: string; stderr: string } => {
+	function fakeRunner(files: {
+		staged: string[];
+		index: Record<string, string>;
+		head: Record<string, string>;
+	}) {
+		return (
+			args: string[],
+			_opts?: { cwd?: string },
+		): { status: number | null; stdout: string; stderr: string } => {
 			const [cmd, sub] = args;
 			if (cmd === "diff") {
 				return { status: 0, stdout: files.staged.join("\n"), stderr: "" };
@@ -761,7 +800,10 @@ labels:
 	});
 
 	test("no staged task files -> not blocked", () => {
-		const r = preCommitCheck(fakeRunner({ staged: ["bin/src/task-flow.ts"], index: {}, head: {} }), "/repo");
+		const r = preCommitCheck(
+			fakeRunner({ staged: ["bin/src/task-flow.ts"], index: {}, head: {} }),
+			"/repo",
+		);
 		assert.equal(r.exitCode, 0);
 	});
 
@@ -825,7 +867,10 @@ labels:
 	});
 
 	test("staged task with harness label in a harness-dev context -> not blocked (AC #17)", () => {
-		const HARNESS_FILE = SPEC_FILE.replace("  - spec-approved\n", "  - spec-approved\n  - harness\n");
+		const HARNESS_FILE = SPEC_FILE.replace(
+			"  - spec-approved\n",
+			"  - spec-approved\n  - harness\n",
+		);
 		const r = preCommitCheck(
 			fakeRunner({
 				staged: ["backlog/tasks/task-9 - x.md"],

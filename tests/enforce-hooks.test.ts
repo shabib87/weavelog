@@ -1,10 +1,23 @@
-import { afterEach, describe, test } from "node:test";
 import assert from "node:assert/strict";
-import { existsSync, mkdirSync, readFileSync, realpathSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import {
+	existsSync,
+	mkdirSync,
+	readFileSync,
+	realpathSync,
+	rmSync,
+	symlinkSync,
+	writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { afterEach, describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
-import { configSyncArgv, createHooks, FrontmatterViolationError, inlineCreateIssueCheck } from "../src/hooks/enforce.ts";
+import {
+	configSyncArgv,
+	createHooks,
+	FrontmatterViolationError,
+	inlineCreateIssueCheck,
+} from "../src/hooks/enforce.ts";
 
 type FakeResult = { exitCode: number; stdout?: string };
 type Handler = (cmd: string) => FakeResult | Promise<FakeResult> | Error;
@@ -35,7 +48,9 @@ afterEach(() => {
 });
 
 let n = 0;
-function makeHome(parts: Array<"frontmatter-check" | "reviewer-loop" | "headroom" | "config-sync"> = []): string {
+function makeHome(
+	parts: Array<"frontmatter-check" | "reviewer-loop" | "headroom" | "config-sync"> = [],
+): string {
 	const home = join(tmpdir(), `enforce-hooks-test-${Date.now()}-${n++}`);
 	mkdirSync(home, { recursive: true });
 	const paths: Record<(typeof parts)[number], string> = {
@@ -105,7 +120,9 @@ describe("Hook 1 — frontmatter enforcement on research docs", () => {
 	test("violations (exit 1) append frontmatter_warning with details and a --fix hint", async () => {
 		const home = makeHome(["frontmatter-check"]);
 		const { $ } = fakeShell((cmd) =>
-			cmd.includes("frontmatter-check") ? { exitCode: 1, stdout: VIOLATIONS_JSON } : { exitCode: 0 },
+			cmd.includes("frontmatter-check")
+				? { exitCode: 1, stdout: VIOLATIONS_JSON }
+				: { exitCode: 0 },
 		);
 		const hooks = createHooks(depsFor(home, $));
 		const output: { metadata?: Record<string, unknown> } = {};
@@ -166,8 +183,14 @@ describe("Hook 1 — frontmatter enforcement on research docs", () => {
 		const home = makeHome(["frontmatter-check"]);
 		const { $ } = fakeShell(() => ({ exitCode: 0 }));
 		const hooks = createHooks(depsFor(home, $));
-		await hooks["tool.execute.after"]({ tool: "edit", sessionID: "s1", callID: "c1", args: {} }, {});
-		await hooks["tool.execute.after"]({ tool: "read", sessionID: "s1", callID: "c1", args: {} }, {});
+		await hooks["tool.execute.after"](
+			{ tool: "edit", sessionID: "s1", callID: "c1", args: {} },
+			{},
+		);
+		await hooks["tool.execute.after"](
+			{ tool: "read", sessionID: "s1", callID: "c1", args: {} },
+			{},
+		);
 	});
 });
 
@@ -478,7 +501,10 @@ describe("Hook 5 — review SOP reminder on plan docs", () => {
 		const hooks = createHooks(depsFor(home, $));
 		const output: { metadata?: Record<string, unknown> } = {};
 		const filePath = join(home, ".agents/docs/plans/2026-08-16-plan.md");
-		await hooks["tool.execute.after"]({ tool: "edit", sessionID: "s1", callID: "c1", args: { filePath } }, output);
+		await hooks["tool.execute.after"](
+			{ tool: "edit", sessionID: "s1", callID: "c1", args: { filePath } },
+			output,
+		);
 		const reminder = String(output.metadata?.review_reminder ?? "");
 		assert.ok(reminder.includes("reviewer-loop.ts"));
 		assert.ok(reminder.includes(filePath));
@@ -499,7 +525,10 @@ describe("Hook 5 — review SOP reminder on plan docs", () => {
 		const hooks = createHooks(depsFor(home, $, { exists: withoutScript("reviewer-loop.ts") }));
 		const output: { metadata?: Record<string, unknown> } = {};
 		const filePath = join(home, ".agents/docs/plans/2026-08-16-plan.md");
-		await hooks["tool.execute.after"]({ tool: "edit", sessionID: "s1", callID: "c1", args: { filePath } }, output);
+		await hooks["tool.execute.after"](
+			{ tool: "edit", sessionID: "s1", callID: "c1", args: { filePath } },
+			output,
+		);
 		assert.equal(output.metadata, undefined);
 	});
 });
@@ -1012,7 +1041,10 @@ describe("Hook 9 — session-start auto-materialize (config-sync)", () => {
 		const hooks = createHooks(depsFor(home, $, { runConfigSync }));
 		await hooks.event(createdEvent("s1"));
 		const output: { metadata?: Record<string, unknown> } = {};
-		await hooks["tool.execute.after"]({ tool: "bash", sessionID: "s1", callID: "c1", args: {} }, output);
+		await hooks["tool.execute.after"](
+			{ tool: "bash", sessionID: "s1", callID: "c1", args: {} },
+			output,
+		);
 		assert.equal(output.metadata?.config_sync_warning, undefined);
 	});
 
@@ -1035,13 +1067,19 @@ describe("Hook 9 — session-start auto-materialize (config-sync)", () => {
 		const hooks = createHooks(depsFor(home, $, { runConfigSync }));
 		await hooks.event(createdEvent("s1"));
 		const output: { metadata?: Record<string, unknown> } = {};
-		await hooks["tool.execute.after"]({ tool: "bash", sessionID: "s1", callID: "c1", args: {} }, output);
+		await hooks["tool.execute.after"](
+			{ tool: "bash", sessionID: "s1", callID: "c1", args: {} },
+			output,
+		);
 		const warning = String(output.metadata?.config_sync_warning ?? "");
 		assert.ok(warning.includes("AGENTS.md"));
 		assert.ok(warning.includes("--adopt"));
 		// once per session: a second tool call gets nothing
 		const output2: { metadata?: Record<string, unknown> } = {};
-		await hooks["tool.execute.after"]({ tool: "bash", sessionID: "s1", callID: "c2", args: {} }, output2);
+		await hooks["tool.execute.after"](
+			{ tool: "bash", sessionID: "s1", callID: "c2", args: {} },
+			output2,
+		);
 		assert.equal(output2.metadata?.config_sync_warning, undefined);
 	});
 
@@ -1083,11 +1121,17 @@ describe("Hook 9 — session-start auto-materialize (config-sync)", () => {
 		const hooks = createHooks(depsFor(home, $, { runConfigSync }));
 		await hooks.event(createdEvent("s1"));
 		const output: { metadata?: Record<string, unknown> } = {};
-		await hooks["tool.execute.after"]({ tool: "bash", sessionID: "s2", callID: "c1", args: {} }, output);
+		await hooks["tool.execute.after"](
+			{ tool: "bash", sessionID: "s2", callID: "c1", args: {} },
+			output,
+		);
 		assert.equal(output.metadata?.config_sync_warning, undefined);
 		// s1's warning is still pending
 		const output1: { metadata?: Record<string, unknown> } = {};
-		await hooks["tool.execute.after"]({ tool: "bash", sessionID: "s1", callID: "c1", args: {} }, output1);
+		await hooks["tool.execute.after"](
+			{ tool: "bash", sessionID: "s1", callID: "c1", args: {} },
+			output1,
+		);
 		assert.ok(output1.metadata?.config_sync_warning !== undefined);
 	});
 
@@ -1122,7 +1166,10 @@ describe("Hook 9 — session-start auto-materialize (config-sync)", () => {
 		// if unbounded, s1 would still be marked and skip; we assert it ran again
 		// indirectly: no throw + warning still surfaces for s1
 		const output: { metadata?: Record<string, unknown> } = {};
-		await hooks["tool.execute.after"]({ tool: "bash", sessionID: "s1", callID: "c1", args: {} }, output);
+		await hooks["tool.execute.after"](
+			{ tool: "bash", sessionID: "s1", callID: "c1", args: {} },
+			output,
+		);
 		assert.ok(output.metadata?.config_sync_warning !== undefined);
 	});
 
@@ -1143,7 +1190,10 @@ describe("Hook 9 — session-start auto-materialize (config-sync)", () => {
 		// the warning Map must evict the oldest, so s1's warning is gone
 		for (let i = 1; i <= 150; i++) await hooks.event(createdEvent(`s${i}`));
 		const output: { metadata?: Record<string, unknown> } = {};
-		await hooks["tool.execute.after"]({ tool: "bash", sessionID: "s1", callID: "c1", args: {} }, output);
+		await hooks["tool.execute.after"](
+			{ tool: "bash", sessionID: "s1", callID: "c1", args: {} },
+			output,
+		);
 		assert.equal(output.metadata?.config_sync_warning, undefined);
 	});
 
@@ -1156,7 +1206,10 @@ describe("Hook 9 — session-start auto-materialize (config-sync)", () => {
 		const hooks = createHooks(depsFor(home, $, { runConfigSync }));
 		await hooks.event(createdEvent("s1")); // must not reject
 		const output: { metadata?: Record<string, unknown> } = {};
-		await hooks["tool.execute.after"]({ tool: "bash", sessionID: "s1", callID: "c1", args: {} }, output);
+		await hooks["tool.execute.after"](
+			{ tool: "bash", sessionID: "s1", callID: "c1", args: {} },
+			output,
+		);
 		assert.equal(output.metadata?.config_sync_warning, undefined);
 	});
 
@@ -1179,7 +1232,10 @@ describe("Hook 9 — session-start auto-materialize (config-sync)", () => {
 		const hooks = createHooks(depsFor(home, $, { runConfigSync }));
 		await hooks.event(createdEvent("s1"));
 		const output: { metadata?: Record<string, unknown> } = {};
-		await hooks["tool.execute.after"]({ tool: "bash", sessionID: "s1", callID: "c1", args: {} }, output);
+		await hooks["tool.execute.after"](
+			{ tool: "bash", sessionID: "s1", callID: "c1", args: {} },
+			output,
+		);
 		assert.equal(output.metadata?.config_sync_warning, undefined);
 	});
 
@@ -1205,7 +1261,10 @@ describe("Hook 9 — session-start auto-materialize (config-sync)", () => {
 		const hooks = createHooks(depsFor(home, $, { runConfigSync }));
 		await hooks.event(createdEvent("s1"));
 		const output: { metadata?: Record<string, unknown> } = {};
-		await hooks["tool.execute.after"]({ tool: "bash", sessionID: "s1", callID: "c1", args: {} }, output);
+		await hooks["tool.execute.after"](
+			{ tool: "bash", sessionID: "s1", callID: "c1", args: {} },
+			output,
+		);
 		const warning = String(output.metadata?.config_sync_warning ?? "");
 		assert.ok(warning.includes("config-sync"));
 	});
@@ -1337,7 +1396,8 @@ describe("Hook 10 — backlog task create quality nudge (any branch)", () => {
 		await assert.rejects(
 			hooks["tool.execute.before"](beforeBashLocal, {
 				args: {
-					command: 'backlog task create "New task" -d "spec" --ac "WHEN x THEN y" --no-dod-defaults',
+					command:
+						'backlog task create "New task" -d "spec" --ac "WHEN x THEN y" --no-dod-defaults',
 				},
 			}),
 			/no-dod-defaults/,
@@ -1445,7 +1505,8 @@ describe("Hook 10 — backlog task create quality nudge (any branch)", () => {
 		);
 		await hooks["tool.execute.before"](beforeBashLocal, {
 			args: {
-				command: 'backlog task create "New task" -d "spec" --ac "WHEN x THEN y" -l bogus --dep TASK-1',
+				command:
+					'backlog task create "New task" -d "spec" --ac "WHEN x THEN y" -l bogus --dep TASK-1',
 			},
 		});
 		assert.equal(calls.length, 0);

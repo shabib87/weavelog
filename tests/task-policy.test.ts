@@ -1,8 +1,8 @@
-import { describe, test } from "node:test";
 import assert from "node:assert/strict";
-import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { describe, test } from "node:test";
 import {
 	decideGeneralLabel,
 	decideMilestone,
@@ -44,7 +44,16 @@ describe("label vocabulary (AC #11, #17)", () => {
 	});
 
 	test("unknown labels (incl. pre-migration v1/v2/immediate/bugfix) are rejected", () => {
-		for (const label of ["v1", "v2", "immediate", "bugfix", "cleanup", "maintenance", "infra", "bogus"]) {
+		for (const label of [
+			"v1",
+			"v2",
+			"immediate",
+			"bugfix",
+			"cleanup",
+			"maintenance",
+			"infra",
+			"bogus",
+		]) {
 			assert.equal(isKnownLabel(label), false);
 		}
 	});
@@ -61,25 +70,49 @@ describe("harness-dev context detection (AC #17)", () => {
 	});
 
 	test("git remote URL basename match -> harness-dev", () => {
-		assert.equal(isHarnessDevContext({ remoteUrls: ["git@github.com:acme/agents-harness.git"] }), true);
+		assert.equal(
+			isHarnessDevContext({ remoteUrls: ["git@github.com:acme/agents-harness.git"] }),
+			true,
+		);
 		assert.equal(isHarnessDevContext({ remoteUrls: ["https://github.com/acme/flightlead"] }), true);
-		assert.equal(isHarnessDevContext({ remoteUrls: ["ssh://git@github.com/team/flightlead/"] }), true);
+		assert.equal(
+			isHarnessDevContext({ remoteUrls: ["ssh://git@github.com/team/flightlead/"] }),
+			true,
+		);
 	});
 
 	test("flightlead dev-repo naming variants match (dev suffix)", () => {
-		assert.equal(isHarnessDevContext({ remoteUrls: ["git@github.com:acme/flightlead-dev.git"] }), true);
-		assert.equal(isHarnessDevContext({ remoteUrls: ["https://github.com/acme/flightlead.dev"] }), true);
+		assert.equal(
+			isHarnessDevContext({ remoteUrls: ["git@github.com:acme/flightlead-dev.git"] }),
+			true,
+		);
+		assert.equal(
+			isHarnessDevContext({ remoteUrls: ["https://github.com/acme/flightlead.dev"] }),
+			true,
+		);
 	});
 
 	test("non-canonical remotes are not harness-dev", () => {
-		assert.equal(isHarnessDevContext({ remoteUrls: ["git@github.com:acme/random-project.git"] }), false);
+		assert.equal(
+			isHarnessDevContext({ remoteUrls: ["git@github.com:acme/random-project.git"] }),
+			false,
+		);
 		assert.equal(isHarnessDevContext({ remoteUrls: ["https://github.com/acme/my-app"] }), false);
 	});
 
 	test("config param wins over remote URLs (injectable for tests)", () => {
-		assert.equal(isHarnessDevContext({ remoteUrls: ["git@github.com:acme/random.git"], config: { harnessDev: true } }), true);
 		assert.equal(
-			isHarnessDevContext({ remoteUrls: ["git@github.com:acme/agents-harness.git"], config: { harnessDev: false } }),
+			isHarnessDevContext({
+				remoteUrls: ["git@github.com:acme/random.git"],
+				config: { harnessDev: true },
+			}),
+			true,
+		);
+		assert.equal(
+			isHarnessDevContext({
+				remoteUrls: ["git@github.com:acme/agents-harness.git"],
+				config: { harnessDev: false },
+			}),
 			false,
 		);
 	});
@@ -113,7 +146,11 @@ describe("harness-dev context detection (AC #17)", () => {
 		// Remote says random-project; root dir is named agents-harness.
 		const runner = (args: string[], _opts?: { cwd?: string }) => {
 			if (args[0] === "remote") {
-				return { status: 0, stdout: "origin\tgit@github.com:acme/random-project.git (fetch)\n", stderr: "" };
+				return {
+					status: 0,
+					stdout: "origin\tgit@github.com:acme/random-project.git (fetch)\n",
+					stderr: "",
+				};
 			}
 			if (args[0] === "rev-parse") {
 				return { status: 0, stdout: "/repos/agents-harness\n", stderr: "" };
@@ -220,18 +257,28 @@ describe("general-label decision table (AC #15)", () => {
 	});
 
 	test("dogfood when the deliverable is real work verified through the harness", () => {
-		assert.equal(decideGeneralLabel({ modifiedPaths: [], deliverableVerifiedThroughHarness: true }), "dogfood");
+		assert.equal(
+			decideGeneralLabel({ modifiedPaths: [], deliverableVerifiedThroughHarness: true }),
+			"dogfood",
+		);
 	});
 
 	test("deferred when an explicit revive trigger is recorded", () => {
-		assert.equal(decideGeneralLabel({ modifiedPaths: [], reviveTrigger: "revisit after 0.2 ships" }), "deferred");
+		assert.equal(
+			decideGeneralLabel({ modifiedPaths: [], reviveTrigger: "revisit after 0.2 ships" }),
+			"deferred",
+		);
 	});
 
 	test("no match -> no label", () => {
 		assert.equal(decideGeneralLabel({ modifiedPaths: [] }), null);
 		assert.equal(decideGeneralLabel({ modifiedPaths: ["docs/research/note.md"] }), null);
 		assert.equal(
-			decideGeneralLabel({ modifiedPaths: [], deliverableVerifiedThroughHarness: false, reviveTrigger: "" }),
+			decideGeneralLabel({
+				modifiedPaths: [],
+				deliverableVerifiedThroughHarness: false,
+				reviveTrigger: "",
+			}),
 			null,
 		);
 	});
@@ -254,7 +301,11 @@ describe("milestone decision table (AC #18)", () => {
 	});
 
 	test("wayfinder map task without version scope maps to the name-derived map milestone", () => {
-		const r = decideMilestone({ labels: [], wayfinderMap: "flightlead-v0.1", currentMilestone: null });
+		const r = decideMilestone({
+			labels: [],
+			wayfinderMap: "flightlead-v0.1",
+			currentMilestone: null,
+		});
 		assert.equal(r.milestone, wayfinderMilestoneName("flightlead-v0.1"));
 		assert.match(r.reason, /wayfinder/i);
 	});
@@ -292,7 +343,10 @@ describe("scaffold vocabulary (AC #17)", () => {
 		assert.deepEqual(v.general, ["deferred"]);
 		assert.ok(!v.general.includes("harness"));
 		assert.ok(!v.general.includes("dogfood"));
-		assert.equal([...RESERVED_LABELS].every((l) => v.reserved.includes(l)), true);
+		assert.equal(
+			[...RESERVED_LABELS].every((l) => v.reserved.includes(l)),
+			true,
+		);
 		for (const label of [...v.reserved, ...v.general]) {
 			assert.equal(isKnownLabel(label), true);
 		}
