@@ -142,7 +142,7 @@ function flagValue(name: string): string | null {
 }
 
 const HOME = homedir();
-const repoRoot = fileURLToPath(new URL("../..", import.meta.url));
+const repoRoot = fileURLToPath(new URL("..", import.meta.url));
 const manifestPath = flagValue("--manifest") ?? join(HOME, ".agents", "stack-versions.json");
 const statePath =
 	flagValue("--state") ??

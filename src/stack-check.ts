@@ -42,6 +42,8 @@ Env overrides (proxy doctor):
   STACK_CHECK_OPENCODE_CONFIG       opencode config path (default ~/.config/opencode/opencode.jsonc)
   STACK_CHECK_HEADROOM_EXT         headroom extension dir (default $STACK_CHECK_PI_DIR/extensions/headroom)
   STACK_CHECK_HEADROOM_SETTINGS     headroom thresholds path (default $STACK_CHECK_PI_DIR/headroom/settings.json)
+  STACK_CHECK_NPM_REGISTRY_URL      backlog.md latest-version endpoint (default https://registry.npmjs.org/backlog.md/latest)
+  STACK_CHECK_OPENROUTER_MODELS_URL OpenRouter models catalog endpoint (default https://openrouter.ai/api/v1/models)
 
 Env overrides (config drift + pointer checks):
   STACK_CHECK_CONFIG_DIR           tracked config root (default <repo>/config)
@@ -53,7 +55,7 @@ const HOME = homedir();
 const manifestPath = join(HOME, ".agents", "stack-versions.json");
 const reportsDir = join(HOME, ".agents", "state", "stack-check");
 const authPath = join(HOME, ".local", "share", "opencode", "auth.json");
-const repoRoot = fileURLToPath(new URL("../..", import.meta.url));
+const repoRoot = fileURLToPath(new URL("..", import.meta.url));
 
 interface Manifest {
 	headroom: string;
@@ -863,7 +865,11 @@ async function main(reportPath: string, notify: boolean) {
 		let latestBacklog = "(unknown)";
 		try {
 			latestBacklog = (
-				(await fetchJson("https://registry.npmjs.org/backlog.md/latest", {})) as { version: string }
+				(await fetchJson(
+					process.env.STACK_CHECK_NPM_REGISTRY_URL ??
+						"https://registry.npmjs.org/backlog.md/latest",
+					{},
+				)) as { version: string }
 			).version;
 		} catch {
 			// network failure is not drift — record and move on
@@ -896,9 +902,12 @@ async function main(reportPath: string, notify: boolean) {
 	drift.push(...dd.drift);
 
 	// 5. model expiry sweep
-	const models = (await fetchJson("https://openrouter.ai/api/v1/models", {
-		Authorization: `Bearer ${key}`,
-	})) as { data: { id: string; expiration_date?: string }[] };
+	const models = (await fetchJson(
+		process.env.STACK_CHECK_OPENROUTER_MODELS_URL ?? "https://openrouter.ai/api/v1/models",
+		{
+			Authorization: `Bearer ${key}`,
+		},
+	)) as { data: { id: string; expiration_date?: string }[] };
 	const byId = new Map(models.data.map((m) => [m.id, m.expiration_date]));
 	checks.models = {};
 	for (const id of manifest.models) {

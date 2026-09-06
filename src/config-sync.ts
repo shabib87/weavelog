@@ -116,7 +116,7 @@ const KNOWN_FLAGS = new Set([
 ]);
 
 const HOME = homedir();
-const repoRoot = fileURLToPath(new URL("../..", import.meta.url));
+const repoRoot = fileURLToPath(new URL("..", import.meta.url));
 
 function expandHome(p: string): string {
 	if (p === "~") return HOME;
