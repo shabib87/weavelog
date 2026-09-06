@@ -4,10 +4,11 @@ title: 'Pre-publish: repo cleanup — stale loopeng-era docs disposition pass'
 status: To Do
 assignee: []
 created_date: '2026-09-06 07:08'
-updated_date: '2026-09-06 07:15'
+updated_date: '2026-09-06 07:27'
 labels:
   - harness
-dependencies: []
+dependencies:
+  - TASK-58
 priority: high
 ordinal: 44000
 ---

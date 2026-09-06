@@ -4,8 +4,10 @@ title: 'Post-flip: re-activate enforcement hooks from the flightlead package'
 status: To Do
 assignee: []
 created_date: '2026-09-06 06:26'
+updated_date: '2026-09-06 07:27'
 labels: []
-dependencies: []
+dependencies:
+  - TASK-58
 ordinal: 43000
 ---
 
