@@ -373,7 +373,7 @@ export function createHooks(deps: EnforceDeps): EnforceHooks {
 	const enforceCreateQuality = async (command: string): Promise<void> => {
 		if (createQualityIssues === null) {
 			try {
-				const mod = (await import(new URL("../../task-validate.ts", import.meta.url).href)) as {
+				const mod = (await import(new URL("../task-validate.ts", import.meta.url).href)) as {
 					parseTaskCreateArgs: (input: string | string[]) => {
 						hasDescription: boolean;
 						acCount: number;
