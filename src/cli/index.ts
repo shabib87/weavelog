@@ -786,9 +786,14 @@ async function runCheck(stackOnly: boolean): Promise<never> {
 	if (!stackOnly) {
 		const guard = checkNodePathGuard();
 		const proxy = await checkProxyHealth();
+		const driftLiveRoot = configHomeValue();
+		const driftTokens = {
+			FLIGHTLEAD_HOME: liveRootValue(ensureDotenv(liveRootValue())),
+			FLIGHTLEAD_CONFIG_HOME: driftLiveRoot,
+		};
 		const drift = checkConfigDrift({
-			trackedRoot: PAYLOAD_DIR,
-			liveRoot: configHomeValue(),
+			trackedRoot: renderPayloadToTemp(driftTokens),
+			liveRoot: driftLiveRoot,
 			harnessManifestPath: join(PAYLOAD_DIR, "config", "harnesses", "opencode.json"),
 		});
 		results.push({
