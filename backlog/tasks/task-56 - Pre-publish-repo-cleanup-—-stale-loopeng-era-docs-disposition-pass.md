@@ -4,7 +4,7 @@ title: 'Pre-publish: repo cleanup — stale loopeng-era docs disposition pass'
 status: To Do
 assignee: []
 created_date: '2026-09-06 07:08'
-updated_date: '2026-09-06 18:19'
+updated_date: '2026-09-06 20:36'
 labels:
   - harness
 milestone: m-7
@@ -25,7 +25,7 @@ Outcome: ~/Projects/flightlead docs/ and root carry zero stale loopeng-era artif
 - [ ] #1 WHEN the disposition pass runs THEN every file in the inventory (docs/INDEX, NEXT_SESSION, PROGRESS, adr x2, archive x7, learnings x15, pi-workspace x1, research x15, specs x3, superpowers x5, tbd x6, root CLAUDE.md, root AGENTS.md) SHALL have exactly one human-ratified disposition (keep / archive to docs/archive/ / delete) recorded in a committed disposition map BEFORE any deletion
 - [ ] #2 IF any deletion or move would create a dangling reference THEN the referencing file SHALL be updated in the same commit (grep for the moved/deleted paths returns zero hits post-cleanup, excluding git history)
 - [ ] #3 WHEN the cleanup completes THEN ./scripts/privacy-audit SHALL exit 0 and the docs spine (README, NORTH_STAR, PRODUCT, ROADMAP) SHALL carry no references to deleted paths
-- [ ] #4 WHEN a tag or publish is attempted THEN this ticket SHALL be closed alongside TASK-53 and TASK-54 before the .github/publish-gate marker flips
+- [ ] #4 WHEN a tag or publish is attempted THEN this ticket SHALL be closed alongside TASK-53, TASK-54, TASK-62, TASK-63, TASK-64, TASK-66 and TASK-67 before the .github/publish-gate marker flips
 <!-- AC:END -->
 
 ## Definition of Done

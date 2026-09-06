@@ -7,7 +7,7 @@ status: In Progress
 assignee:
   - '@conductor'
 created_date: '2026-09-05 06:01'
-updated_date: '2026-09-06 18:00'
+updated_date: '2026-09-06 20:36'
 labels:
   - 'wayfinder:map'
   - spec-approved
@@ -232,6 +232,8 @@ TASK-34 DISSOLUTION RECORDED per Step 4: repo move + remote done (origin github.
 2026-09-06 STEP 4 PRECONDITION (1) CLOSED: npm name flightlead CLAIMED via minimal 0.0.0 placeholder publish (human-approved mechanism; human performed the 2FA publish from /tmp/fl-claim staging). Tarball = 4 files (LICENSE Apache-2.0, NOTICE, one-paragraph README, package.json) — no code, no backlog/, no personal strings (inspected pre-publish). Registry: npm view flightlead -> 0.0.0 latest. The real 0.1.0 replaces it after: 0.4+0.5 close (TASK-53/54) -> .github/publish-gate marker flip -> stranger test on clean arm64 -> tag v0.1.0 -> npm publish (release-please over conventional commits).
 
 2026-09-06 NAME DECISION + DAG REWIRE (human): user unsatisfied with the name; rename-everything ratified as highest-priority post-port task. Created TASK-57 (name research spike, shortlist + availability evidence, human picks) and TASK-58 (rename across repo/npm/GitHub/machine state, harness label, depends-on 57). DAG wired: 58 blocks 53, 55, 56 (name-bearing work) to avoid rework; 54 stays independent (privacy sweep is name-agnostic); publish flow sits behind 53+54+56+marker. Rename hassle assessed as LOW-MODERATE (scripted string sweep, plist redo per 3.1 playbook, npm re-claim, GitHub rename with redirects) — cheap now, expensive post-publish.
+
+2026-09-06 STRANGER-TEST HANDOFF (cross-thread reconciliation, 2x3-reviewer consensus): stranger test is owned by TASK-67 (blockers: TASK-66 doctor/check clean-machine fix, TASK-63 CI hardening, TASK-64 node@22 standard). Interpretations recorded (no AC surgery): (a) AC#6 "fully green doctor" reads exit 0 with enumerated warn/skip lines (doctor help already documents warnings-ok); (b) flightlead-*.tgz in AC#6/AC#12 reads weavelog-*.tgz post-TASK-58. CANONICAL publish-gate closure set {TASK-53,54,56,62,63,64,66,67}; mechanical enumeration of the set is owned by the publish-gate CI job, not this ticket prose. TASK-63 prepack wiring deviates from Step 1.11b prepublishOnly naming — recorded in TASK-63.
 <!-- SECTION:NOTES:END -->
 
 <!-- SECTION:PLAN:END -->

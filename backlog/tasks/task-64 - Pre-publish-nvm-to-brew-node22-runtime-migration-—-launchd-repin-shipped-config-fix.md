@@ -6,6 +6,7 @@ title: >-
 status: To Do
 assignee: []
 created_date: '2026-09-06 20:06'
+updated_date: '2026-09-06 20:36'
 labels:
   - harness
 milestone: m-7
@@ -28,7 +29,7 @@ Collapse the machine silent three-runtime node split onto keg-only brew node@22,
 - [ ] #3 WHEN the node@22 install is verified THEN the node@22 bin path SHALL report a version starting with v22. (version check, not existence — stale-alias false-green)
 - [ ] #4 WHEN ~/.nvm is removed THEN doctor SHALL remain green AND command -v nvm SHALL fail, with the pre-removal tarball backup verified
 - [ ] #5 WHEN cspell --version runs THEN it SHALL exit 0 with brew floating node retained and documented as its dependency
-- [ ] #6 WHEN a tag or publish is attempted THEN this ticket SHALL be closed alongside TASK-53, TASK-54, TASK-56, ticket B and ticket C before the .github/publish-gate marker flips
+- [ ] #6 WHEN a tag or publish is attempted THEN this ticket SHALL be closed alongside TASK-53, TASK-54, TASK-56, TASK-62, TASK-63, TASK-66 and TASK-67 before the .github/publish-gate marker flips
 <!-- AC:END -->
 
 ## Definition of Done
@@ -38,3 +39,9 @@ Collapse the machine silent three-runtime node split onto keg-only brew node@22,
 - [ ] #3 Branch is rebased on main and green
 - [ ] #4 All acceptance criteria checked with fresh evidence (one at a time, never batched)
 <!-- DOD:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+2026-09-06 cross-thread reconciliation: closure-set AC now explicit IDs. ORDERING: TASK-66 (doctor/check clean-machine fix) lands BEFORE this ticket closes — the doctor node-path-guard evidence in AC#2 must be re-run after TASK-66 merges; TASK-67 stranger battery provisions brew node@22 and must observe this ticket stale-alias trap (version-check, not existence).
+<!-- SECTION:NOTES:END -->

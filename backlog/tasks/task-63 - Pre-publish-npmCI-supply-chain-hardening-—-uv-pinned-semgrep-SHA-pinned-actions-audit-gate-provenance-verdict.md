@@ -6,6 +6,7 @@ title: >-
 status: To Do
 assignee: []
 created_date: '2026-09-06 20:06'
+updated_date: '2026-09-06 20:36'
 labels:
   - harness
 milestone: m-7
@@ -28,7 +29,8 @@ Harden weavelog own build and publish supply chain in .github/workflows/ci.yml a
 - [ ] #3 WHEN package.json is inspected THEN a packageManager field SHALL pin the exact npm that produced the committed lockfile, CI SHALL run npm ci under it via corepack, and the current one-line lockfile bin drift SHALL be reconciled in the same change
 - [ ] #4 WHEN CI runs on main and pull requests and on a weekly schedule THEN a standing audit gate SHALL fail on untriaged high and critical production-dependency advisories, with every exception recorded in a committed triage entry with rationale and expiry
 - [ ] #5 WHEN this ticket closes THEN a numbered ADR SHALL record the npm provenance adopt-or-skip verdict for the v0.1.0 path with rationale citing verified registry state
-- [ ] #6 WHEN a tag or publish is attempted THEN this ticket SHALL be closed alongside TASK-53, TASK-54, TASK-56, ticket C and ticket D before the .github/publish-gate marker flips
+- [ ] #6 WHEN a tag or publish is attempted THEN this ticket SHALL be closed alongside TASK-53, TASK-54, TASK-56, TASK-62, TASK-64, TASK-66 and TASK-67 before the .github/publish-gate marker flips
+- [ ] #7 WHEN npm pack runs THEN the tarball SHALL contain a fresh build (prepack wired to run build+test, replacing the prepublishOnly-only arrangement per the 2026-09-06 cross-thread reconciliation; TASK-45 Step 1.11b named prepublishOnly — the deviation is recorded in its pointer note) with tar -tzf verification covering dist/, payload/ and zero backlog/
 <!-- AC:END -->
 
 ## Definition of Done
@@ -38,3 +40,9 @@ Harden weavelog own build and publish supply chain in .github/workflows/ci.yml a
 - [ ] #3 Branch is rebased on main and green
 - [ ] #4 All acceptance criteria checked with fresh evidence (one at a time, never batched)
 <!-- DOD:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+2026-09-06 cross-thread reconciliation: closure-set AC now explicit IDs; prepack AC added (pack freshness gap found by the stranger-test 3-reviewer passes). Coordinate hunks with TASK-67 CI battery job (same workflow files; 67 rebases on this rewrite).
+<!-- SECTION:NOTES:END -->

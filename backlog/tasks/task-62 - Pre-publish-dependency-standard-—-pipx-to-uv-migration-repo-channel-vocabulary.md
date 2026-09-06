@@ -6,6 +6,7 @@ title: >-
 status: To Do
 assignee: []
 created_date: '2026-09-06 20:06'
+updated_date: '2026-09-06 20:36'
 labels:
   - harness
 milestone: m-7
@@ -29,7 +30,7 @@ Enforce the ratified machine standard (brew for native, npm for JS, uv for Pytho
 - [ ] #4 WHEN both packages are on uv THEN pipx SHALL be fully removed (brew uninstall pipx, ~/.local/pipx deleted, command -v pipx empty) AND the enforce.ts venv guards SHALL be repointed to the uv-tools path with tests, keeping raw rm -rf of live venvs blocked
 - [ ] #5 WHEN the repo side lands THEN the channel union SHALL gain uv and drop pipx, weavelog.json SHALL read channel uv for headroom and markitdown with stale keys corrected, and zero pipx references SHALL remain under src/ and weavelog.json
 - [ ] #6 WHEN the ticket completes THEN npm test, tsc, biome, weavelog doctor and weavelog check SHALL exit 0, committed files SHALL contain zero absolute /Users/ paths, and no rtk, semgrep or node manifest entries SHALL be added (deferred ticket A scope)
-- [ ] #7 WHEN a tag or publish is attempted THEN this ticket SHALL be closed alongside TASK-53, TASK-54, TASK-56, ticket B and ticket D before the .github/publish-gate marker flips
+- [ ] #7 WHEN a tag or publish is attempted THEN this ticket SHALL be closed alongside TASK-53, TASK-54, TASK-56, TASK-63, TASK-64, TASK-66 and TASK-67 before the .github/publish-gate marker flips
 <!-- AC:END -->
 
 ## Definition of Done
@@ -39,3 +40,9 @@ Enforce the ratified machine standard (brew for native, npm for JS, uv for Pytho
 - [ ] #3 Branch is rebased on main and green
 - [ ] #4 All acceptance criteria checked with fresh evidence (one at a time, never batched)
 <!-- DOD:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+2026-09-06 cross-thread reconciliation: closure-set AC updated to explicit IDs (canonical set {53,54,56,62,63,64,66,67} recorded in the TASK-45 pointer note; mechanical enumeration owned by the publish-gate CI). ORDERING: TASK-66 (doctor/check clean-machine fix) lands BEFORE this ticket closes — re-run doctor-exit-0 evidence after TASK-66 merges.
+<!-- SECTION:NOTES:END -->
