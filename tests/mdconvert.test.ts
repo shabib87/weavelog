@@ -238,7 +238,7 @@ describe("mdconvert (binary conversion + cache)", () => {
 		});
 		assert.equal(r.status, 0);
 		assert.equal(r.stdout, "# hi\n");
-		const cacheDir = join(fakeHome, ".agents", "state", "mdconvert", "converted");
+		const cacheDir = join(fakeHome, ".local", "state", "flightlead", "mdconvert", "converted");
 		assert.equal(existsSync(cacheDir), true);
 		assert.equal(readdirSync(cacheDir).length, 1);
 	});
