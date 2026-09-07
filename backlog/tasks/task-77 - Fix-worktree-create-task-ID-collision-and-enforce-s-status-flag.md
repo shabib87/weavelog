@@ -5,7 +5,7 @@ status: In Progress
 assignee:
   - '@conductor'
 created_date: '2026-09-07 22:45'
-updated_date: '2026-09-07 22:50'
+updated_date: '2026-09-07 23:02'
 labels:
   - spec-approved
 dependencies: []
@@ -37,4 +37,6 @@ Two harness gate bugs found during TASK-75. Bug 1: src/tools/worktree-create.ts 
 
 <!-- SECTION:NOTES:BEGIN -->
 AC#1 verified: two new --create mode tests (real git branch collision + worktree-dir collision in temp repos) pass; live dry-run against the real repo with the fixed binary skipped TASK-76 (unmerged branch) and TASK-77 (this task) and inferred TASK-78. AC#2 verified: three new Hook 7 tests (-s blocked on main; --label + -s combined blocked on main; -s allowed on task branch) pass. AC#3: full suite 639 pass / 0 fail / 1 pre-existing skip (dist build absent); biome + tsc clean.
+
+L3 review (diff-reviewer-qwen) APPROVE-WITH-FIXES; dispositions applied: glued -s"..." form now caught (reviewer verified backlog 1.50.1 accepts glued short flags), 50-candidate scan exhaustion covered by test, stale comment merged, documented over-block for quoted " -s " in command text (fail-closed, main-only).
 <!-- SECTION:NOTES:END -->
