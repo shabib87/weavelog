@@ -5,7 +5,7 @@ status: In Progress
 assignee:
   - '@conductor'
 created_date: '2026-09-07 22:45'
-updated_date: '2026-09-07 23:02'
+updated_date: '2026-09-07 23:04'
 labels:
   - spec-approved
 dependencies: []
@@ -40,3 +40,9 @@ AC#1 verified: two new --create mode tests (real git branch collision + worktree
 
 L3 review (diff-reviewer-qwen) APPROVE-WITH-FIXES; dispositions applied: glued -s"..." form now caught (reviewer verified backlog 1.50.1 accepts glued short flags), 50-candidate scan exhaustion covered by test, stale comment merged, documented over-block for quoted " -s " in command text (fail-closed, main-only).
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Fixed two harness gate bugs found during TASK-75: (1) worktree-create inferNextTaskId now skips IDs whose task branch or .worktrees path is already taken (bounded scan of 50 candidates, fail-loud) — verified live: dry-run on the real repo skips TASK-76 and TASK-77, infers TASK-78; (2) enforce Hook 7 catches status changes via -s in spaced AND glued form (-s"Done"), which the backlog CLI accepts. Four collision/gate tests + three hook regression tests added; documented over-block for quoted " -s " in command text. Verified: biome + tsc clean, full suite 641 pass / 0 fail. Reviewed by diff-reviewer-qwen (L3): APPROVE-WITH-FIXES, dispositions applied. Merged to main at b3976e5.
+<!-- SECTION:FINAL_SUMMARY:END -->
