@@ -80,6 +80,32 @@ ADR-001 and ADR-002 are pre-convention records (migrated 2026-09-07) and are
 **exempt** from this contract; they are frozen for provenance. ADR-004 is
 the reference implementation.
 
+## Amending an approved ADR
+
+Rules (a)–(c) apply to **approved** ADRs. In-review ADRs revise in place
+(the format contract's "superseded by <this ADR>" verdict covers in-review
+revision). The **Decision table's Choice column is the arbiter** between
+paths (b) and (c): if a Choice changes or a `chosen` verdict flips, it is
+(c); if only Context/Consequences/cadence details change, it is (b).
+
+| Change | Rule |
+|---|---|
+| (a) Clarification / typo / formatting | Edit in place; add a dated one-line revision note (e.g. "*(Revised 2026-09-07: ...)*") |
+| (b) Details evolve, decision itself unchanged | Append a `## Addendum YYYY-MM-DD` section — placed **after Alignment, before References**. Addenda are **append-only**: earlier sections are never silently rewritten. Status stays approved |
+| (c) The decision itself changes or reverses | **New ADR number** is created. The old ADR gets: frontmatter `status: superseded`, a `## Status` line "superseded by ADR-NNNN", and a flipped index row. The new ADR's Alternatives table carries the reciprocal `superseded by <old>` entry. The old file is never deleted |
+
+Status lives in **three places** — frontmatter, the `## Status` section, and
+the index table in this README. A status change must move **all three**
+together; the index is the findable surface and silently lying there is the
+failure mode.
+
+Named limitation: the architecture schema has **no `supersedes` field** (the
+research schema does), so supersede links are prose + `related_to` + the
+index — the validator does not catch a missing link. Also note only the
+frontmatter half is machine-enforced; these rules are **review-enforced**
+(maker/checker), and the review must check them against this section
+verbatim.
+
 ## Writing an ADR
 
 1. Copy the format contract above into `docs/architecture/adr/NNNN-<slug>.md`.
