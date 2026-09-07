@@ -91,21 +91,21 @@ Each captures what went wrong, root cause, and blog candidate.
 
 | File | Topic | When | LOC |
 |---|---|---|---|
-| `learnings/2026-07-04-weavelog-foundation-harness-to-product-strategy.md` | Foundation synthesis + PMF decisions | On convergence decisions | 338 |
-| `learnings/2026-07-05-codex-profile-naming-and-registry.md` | Codex renaming + model registry creation | On model config | 66 |
-| `learnings/2026-07-05-config-consistency-fix.md` | Config audit — invalid TOML, phantom models, naming contradictions | On config audits | 144 |
-| `learnings/2026-07-05-model-selection-audit.md` | Live OpenRouter API validation + red team | On model confidence | 70 |
-| `learnings/2026-07-05-model-zdr-and-free-tier-removal.md` | OpenRouter ZDR policy impact, free-tier removal | On provider changes | 166 |
-| `learnings/2026-07-05-session-logger-derailment.md` | TDD violation post-mortem, derailment audit | On process discipline | 45 |
-| `learnings/2026-07-05-session-logger-dogfood-gate.md` | Session-logger runtime verification gate | On telemetry dogfooding | 98 |
-| `learnings/2026-07-05-session-quality-telemetry-axis.md` | Session-quality telemetry axis design | On telemetry design | 135 |
-| `learnings/2026-07-07-pi-footer-redesign-and-theme.md` | Pi footer redesign + weavelog-dark theme | On author workspace | 93 |
-| `learnings/2026-07-08-scope-refinement-and-yak-shaving-research.md` | 1.99a scope refinement session | On scope decisions | 197 |
-| `learnings/2026-07-22-moe-orchestration-audit.md` | MoE fanout audit — repo state, pi-subagents gaps, roster decision | On audit findings | 95 |
-| `learnings/2026-07-22-pi-web-access-install.md` | pi-web-access install decision, source review, Exa egress scope | On web-search tooling | 60 |
-| `learnings/2026-07-22-pi-subagents-intercom-fix.md` | pi-intercom install fixes reviewer intercom tool; model override gotcha; typebox/compile retraction | On subagent setup | 74 |
-| `learnings/2026-07-22-chain-1-gate-realism-telemetry.md` | Chain 0/1 telemetry, supply-chain checklist, process learnings | On MoE chain execution | 77 |
-| `learnings/2026-07-22-addy-osmani-loop-engineering-alignment.md` | Osmani series alignment (secondhand synthesis; see research amendment) | On Osmani alignment | 162 |
+| `archive/learnings/2026-07-04-weavelog-foundation-harness-to-product-strategy.md` | Foundation synthesis + PMF decisions | On convergence decisions | 338 |
+| `archive/learnings/2026-07-05-codex-profile-naming-and-registry.md` | Codex renaming + model registry creation | On model config | 66 |
+| `archive/learnings/2026-07-05-config-consistency-fix.md` | Config audit — invalid TOML, phantom models, naming contradictions | On config audits | 144 |
+| `archive/learnings/2026-07-05-model-selection-audit.md` | Live OpenRouter API validation + red team | On model confidence | 70 |
+| `archive/learnings/2026-07-05-model-zdr-and-free-tier-removal.md` | OpenRouter ZDR policy impact, free-tier removal | On provider changes | 166 |
+| `archive/learnings/2026-07-05-session-logger-derailment.md` | TDD violation post-mortem, derailment audit | On process discipline | 45 |
+| `archive/learnings/2026-07-05-session-logger-dogfood-gate.md` | Session-logger runtime verification gate | On telemetry dogfooding | 98 |
+| `archive/learnings/2026-07-05-session-quality-telemetry-axis.md` | Session-quality telemetry axis design | On telemetry design | 135 |
+| `archive/learnings/2026-07-07-pi-footer-redesign-and-theme.md` | Pi footer redesign + weavelog-dark theme | On author workspace | 93 |
+| `archive/learnings/2026-07-08-scope-refinement-and-yak-shaving-research.md` | 1.99a scope refinement session | On scope decisions | 197 |
+| `archive/learnings/2026-07-22-moe-orchestration-audit.md` | MoE fanout audit — repo state, pi-subagents gaps, roster decision | On audit findings | 95 |
+| `archive/learnings/2026-07-22-pi-web-access-install.md` | pi-web-access install decision, source review, Exa egress scope | On web-search tooling | 60 |
+| `archive/learnings/2026-07-22-pi-subagents-intercom-fix.md` | pi-intercom install fixes reviewer intercom tool; model override gotcha; typebox/compile retraction | On subagent setup | 74 |
+| `archive/learnings/2026-07-22-chain-1-gate-realism-telemetry.md` | Chain 0/1 telemetry, supply-chain checklist, process learnings | On MoE chain execution | 77 |
+| `archive/learnings/2026-07-22-addy-osmani-loop-engineering-alignment.md` | Osmani series alignment (secondhand synthesis; see research amendment) | On Osmani alignment | 162 |
 
 ---
 
@@ -114,7 +114,7 @@ Each captures what went wrong, root cause, and blog candidate.
 | File | Topic | When | LOC |
 |---|---|---|---|
 | `specs/2026-06-28-weavelog-design.md` | Full architecture design — ETCSLV, isolation, budgets, rollback | On implementation | 675 |
-| `superpowers/specs/2026-07-07-weavelog-footer-theme-design.md` | Author footer/theme design (not product) | On author workspace | 151 |
+| `archive/superpowers/specs/2026-07-07-weavelog-footer-theme-design.md` | Author footer/theme design (not product) | On author workspace | 151 |
 
 ---
 
@@ -124,12 +124,12 @@ Each file = one unresolved question blocking progress.
 
 | File | Topic | Severity | When | LOC |
 |---|---|---|---|---|
-| `tbd/ci-cd-strategy.md` | CI/CD pipeline design | Medium | On automation | 61 |
-| `tbd/cost-ceiling.md` | Per-workload cost limits | Low | On budget design | 49 |
-| `tbd/open-blindspots-index.md` | Master list of all known blind spots | Medium | On design reviews | 96 |
-| `tbd/rollback-mechanism.md` | Git-based step rollback | Medium | On loop design | 53 |
-| `tbd/settings-isolation.md` | Sub-agent settings isolation from user config | High | On sub-agent impl | 46 |
-| `tbd/configuration-failure-seam.md` | Agent-failure ownership: weavelog vs Pi runtime vs user | Medium | Before Phase 4 check scope | 39 |
+| `archive/tbd/ci-cd-strategy.md` | CI/CD pipeline design | Medium | On automation | 61 |
+| `archive/tbd/cost-ceiling.md` | Per-workload cost limits | Low | On budget design | 49 |
+| `archive/tbd/open-blindspots-index.md` | Master list of all known blind spots | Medium | On design reviews | 96 |
+| `archive/tbd/rollback-mechanism.md` | Git-based step rollback | Medium | On loop design | 53 |
+| `archive/tbd/settings-isolation.md` | Sub-agent settings isolation from user config | High | On sub-agent impl | 46 |
+| `archive/tbd/configuration-failure-seam.md` | Agent-failure ownership: weavelog vs Pi runtime vs user | Medium | Before Phase 4 check scope | 39 |
 
 ---
 
@@ -137,9 +137,9 @@ Each file = one unresolved question blocking progress.
 
 | File | Topic | When | LOC |
 |---|---|---|---|
-| `superpowers/plans/2026-07-04-weavelog-implementation.md` | Full implementation plan (pre-revision, needs chunking) | On implementation | 2848 |
-| `superpowers/plans/2026-07-07-weavelog-footer-theme.md` | Footer/theme plan (author workspace) | On author workspace | 489 |
-| `superpowers/plans/2026-07-07-pi-workspace-footer-theme.md` | Pi workspace footer/theme plan (author workspace) | On author workspace | 403 |
+| `archive/superpowers/plans/2026-07-04-weavelog-implementation.md` | Full implementation plan (pre-revision, needs chunking) | On implementation | 2848 |
+| `archive/superpowers/plans/2026-07-07-weavelog-footer-theme.md` | Footer/theme plan (author workspace) | On author workspace | 489 |
+| `archive/superpowers/plans/2026-07-07-pi-workspace-footer-theme.md` | Pi workspace footer/theme plan (author workspace) | On author workspace | 403 |
 
 ---
 
@@ -147,7 +147,7 @@ Each file = one unresolved question blocking progress.
 
 | File | Topic | When | LOC |
 |---|---|---|---|
-| `pi-workspace/2026-07-07-author-setup.md` | Author's private Pi setup documentation | On author env questions | 34 |
+| `archive/pi-workspace/2026-07-07-author-setup.md` | Author's private Pi setup documentation | On author env questions | 34 |
 
 ---
 

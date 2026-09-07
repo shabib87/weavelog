@@ -8,7 +8,7 @@ related_to:
   - ../README.md
   - ./0004-model-selection-benchmark-policy.md
   - ../loop-factory.md
-  - ../AGENTS.md
+  - ../../AGENTS.md
 sources:
   - "TASK-15"
 ---

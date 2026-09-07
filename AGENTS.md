@@ -40,10 +40,8 @@ weavelog/
 │   ├── NEXT_SESSION.md        # Narrative handoff
 │   ├── specs/                 # Detailed design specs
 │   ├── research/              # Research logs (dated, lab notebooks)
-│   ├── learnings/             # Session learning logs (dated, for blog)
-│   ├── superpowers/plans/     # Implementation plans (superpowers convention)
-│   ├── tbd/                   # Open questions
-│   └── archive/               # Superseded — do not use
+│   ├── AGENTS.md              # Documentation rules (nested, open agents standard)
+│   └── archive/               # Frozen provenance: plans, learnings, superpowers, tbd
 └── .github/workflows/         # CI (Linux, node:test + biome + tsc)
 ```
 
@@ -62,7 +60,7 @@ weavelog/
 | `docs/research/` | Research logs (dated, lab notebooks) | Active |
 | `docs/AGENTS.md` | Documentation rules (how docs are written; ADR format contract) | Active, authoritative |
 | `docs/archive/learnings/` | Session learning logs (July-era, frozen) | Frozen, provenance only |
-| `docs/superpowers/plans/` | Implementation plans (superpowers convention) | Frozen, historical |
+| `docs/archive/superpowers/` | Implementation plans (superpowers convention) | Frozen, historical |
 | `docs/archive/tbd/` | Open blindspot docs (frozen 2026-09-07) | Do not implement against; re-raise live questions as backlog tasks |
 | `docs/archive/` | Superseded research | **Do not use.** Provenance only. |
 
@@ -88,7 +86,9 @@ node --import tsx --test tests/cli/index.test.ts
 - MUST NOT edit `docs/NORTH_STAR.md` or `docs/research/RESEARCH.md` without explicit
   human approval.
 - MUST NOT implement against anything in `docs/archive/` — it is superseded.
-- MUST NOT implement against anything in `docs/tbd/` — it is unresolved.
+- MUST NOT implement against anything in `docs/archive/` (including the frozen
+  `tbd/` blindspot docs) — historical provenance only; re-raise live questions
+  as backlog tasks.
 - MUST NOT commit to git without human review of the diff.
 - MUST NOT run package managers (`npm install`, `pip install`, `brew install`)
   without explicit human approval.
@@ -116,5 +116,5 @@ node --import tsx --test tests/cli/index.test.ts
 - **Session notes:** research goes to `docs/research/` (one dated corpus,
   research schema); end the WHY phase with an explicit decision outcome per
   ADR-003 (small ADR or `Decision: none — research only`). Blog-feed intent
-  survives as a `**Lessons:**` block. `docs/learnings/` is frozen
-  (`docs/archive/learnings/`).
+  survives as a `**Lessons:**` block. `docs/learnings/` (now `docs/archive/learnings/`) is frozen
+  (`docs/archive/learnings/`). Doc rules live in `docs/AGENTS.md`.

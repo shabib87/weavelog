@@ -29,7 +29,7 @@ repeat, one queue feeds it, and two human gates hold the boundaries.
 |---|---|---|---|
 | WHY (research → understanding) | `docs/research/` (why) | divergent | INSIDE |
 | WHAT (spec) | `docs/spec/` (what) | divergent, continuous dialogue | INSIDE |
-| HOW (plan → build → verify) | `docs/plans/` (how) → code → evidence | convergent | at the two gates only |
+| HOW (plan → build → verify) | backlog tasks (how) → code → evidence | convergent | at the two gates only |
 
 WHY is the research half of WHAT (intake → research → dialogue → prototype → spec),
 sharing its divergent, human-inside control character — **not a separate loop**. Phases
@@ -67,5 +67,5 @@ diagram-design skill (architecture type).
 
 - Consensus source: `git commit 6366cc0^` (restored by TASK-22)
 - Vocabulary: [docs/research/2026-08-15-inner-harness-vocabulary.md](../research/2026-08-15-inner-harness-vocabulary.md)
-- Light-factory plan: [docs/plans/2026-08-16-light-factory-plan.md](../plans/2026-08-16-light-factory-plan.md)
+- Light-factory plan: [docs/archive/plans/2026-08-16-light-factory-plan.md](../archive/plans/2026-08-16-light-factory-plan.md)
 - Addy Osmani loop engineering: [docs/research/2026-08-15-addy-loop-engineering-series.md](../research/2026-08-15-addy-loop-engineering-series.md)

@@ -40,16 +40,21 @@ them without explicit human instruction.
 ## Hard rules
 
 - **No semver** in doc frontmatter. Git, status lifecycle, and supersede
-  links are the versioning (see `AGENTS.md` "Versioning").
+ links are the versioning — git history plus the status lifecycle.
 - **No absolute home paths, no secrets, no personal identifiers** — the
   privacy sweep rejects them.
 - **Frontmatter schemas:** `architecture/**` uses the architecture schema;
-  `research/` and `specs/` use the research schema. Validate:
-  `node --import tsx src/tools/frontmatter-check.ts --schema architecture docs/`
+  `research/` and `specs/` use the research schema. The checker scans
+  non-recursively — pass each directory explicitly:
+  `node --import tsx src/tools/frontmatter-check.ts --schema architecture docs/architecture docs/architecture/adr`
+  then `node --import tsx src/tools/frontmatter-check.ts docs/research docs/specs`
 - Known accepted noise: `NORTH_STAR.md`, `PRODUCT.md`, `ROADMAP.md`,
-  `INDEX.md`, `NEXT_SESSION.md`, this file, and `archive/**` are
+  `INDEX.md`, `NEXT_SESSION.md`, `cli.md`, this file, and `archive/**` are
   intentionally frontmatter-free or frozen — their validator violations are
-  accepted. Do not "fix" them by adding frontmatter.
+  accepted. So are pre-convention files the validator flags in `research/`
+  and `specs/` (e.g. the v0.1.0 draft brief, the design spec); normalizing
+  them is deferred debt, not an error to fix casually. Do not "fix" any of
+  these by adding frontmatter without the human's say-so.
 - New plans do **not** go in `docs/` — task planning lives in backlog tasks
   (acceptance criteria + definition of done). `archive/plans/` and
   `archive/superpowers/` are historical only.

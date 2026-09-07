@@ -96,7 +96,7 @@ available only as explicit opt-in.
 > their roles consolidated into GLM 5.2 (daily driver) and DS V4 Flash
 > (budget/docs). License correction: DeepSeek V4 Pro is MIT (not Apache 2.0 as
 > originally recorded); verified via HuggingFace 2026-07-05.
-> See `docs/learnings/2026-07-05-model-zdr-and-free-tier-removal.md`.
+> See `docs/archive/learnings/2026-07-05-model-zdr-and-free-tier-removal.md`.
 
 | Tier | Model | License | Cost (input/output per 1M) |
 |---|---|---|---|
@@ -302,7 +302,7 @@ package management.
 > endpoints, so the free tier is unusable and removed. Utility tasks now route
 > to `deepseek/deepseek-v4-flash` ($0.09/$0.18 per M). The authoritative
 > registry is `~/.pi/agent/models.md`. See
-> `docs/learnings/2026-07-05-model-zdr-and-free-tier-removal.md`.
+> `docs/archive/learnings/2026-07-05-model-zdr-and-free-tier-removal.md`.
 
 ---
 

@@ -12,7 +12,6 @@ related_to:
   - ./adr/README.md
   - ../AGENTS.md
   - ../research/README.md
-  - ../plans/2026-08-16-light-factory-plan.md
 sources:
   - "TASK-15"
 ---
