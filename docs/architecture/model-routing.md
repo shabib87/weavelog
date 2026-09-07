@@ -78,7 +78,7 @@ The tiers refresh on a quarterly cadence and before any model decision; throwawa
    capability tracked per model (vision-heavy work routes minimax-m3 cheap or kimi-k3
    hard, deepseek-v4-flash-vision-exp as the cheap routine fallback). Update the agent
    files, `opencode.jsonc`, and the manifest `models` list together.
-4. **Check expiry.** `expiration_date` per model; `src/stack-check.ts` already sweeps
+4. **Check expiry.** `expiration_date` per model; `src/tools/stack-check.ts` already sweeps
    the manifest list and flags models missing from OpenRouter or expiring within 30 days.
 
 Deprecation history worth keeping in mind: `deepseek/deepseek-v3.1-terminus` expired
@@ -107,7 +107,7 @@ Reasons persist so nobody re-adopts these without addressing the stated blocker.
   manifest default.
 - `payload/config/agents/*.md` — per-seat `model` overrides (scout, plan-gate-*,
   diff-reviewer-*, qa, researcher, implementer, vision-*, security).
-- `src/stack-check.ts` — model expiry sweep against OpenRouter (missing model or
+- `src/tools/stack-check.ts` — model expiry sweep against OpenRouter (missing model or
   expiring <30 days = drift).
 - Doctor/check wiring — `auth.openrouter` (key file present and parses),
   `versions.pinned` (manifest pins for all tools), `manifest.drift` (managed files match

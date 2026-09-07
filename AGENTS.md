@@ -106,6 +106,9 @@ node --import tsx --test tests/cli/index.test.ts
   `refactor:`, `test:`, `perf:`, `ci:`, `build:` prefixes. Enforced by
   commit-msg hook (pending install) and `weavelog check` (pending build).
 - **Agent Skills:** `agentskills.io` — `.pi/skills/<name>/SKILL.md`
+- **Tool scripts:** repo-internal tool-script paths resolve only via
+  `src/tools/tool-paths.ts`; prefer imports over spawning. Hooks follow the
+  project standard; per-harness install adapters own live wiring (opencode → pi → claude → codex).
 - **AGENTS.md:** `agents.md` — this file, <200 LOC
 - **Agents:** Pi-native `.pi/agents/<name>.md` with YAML frontmatter
 - **Workflows:** JSON configs with `schemaVersion` field
