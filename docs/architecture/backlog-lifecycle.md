@@ -99,6 +99,13 @@ plan review); the claim gate does not check them mechanically.
   `docs/architecture/` doc is wrong, write the ADR first; the TRD edit
   rides under it (ADR-005 TRD rule). Never edit the TRD to match what the
   code now does.
+- **Plan reviews audit premises, not just consistency** — reviewers receive
+  the AC list and the tree, never the maker's narrative summary; the maker's
+  framing is a claim to verify, not ground truth. Every vocabulary term the
+  docs define (PRD, TRD, ADR, TASK) must resolve to a physical location a
+  reader can find. (Added 2026-09-07: three review rounds passed while the
+  branch's own directory layout contradicted its vocabulary — the framing
+  was handed to reviewers as fact.)
 - **Frozen corpora are out of task scope** — ACs SHALL NOT write to
   `docs/archive/` (incl. the former tbd/plans/learnings/superpowers dirs).
   A task whose AC targets an archived path is amended to target the live
