@@ -107,7 +107,7 @@ facts:
   the opencode config.
 
 New-model onboarding gate: after adding a model to the manifest, run
-`src/cache-probe.ts --model <id>` (4 requests, shared ≥4K prefix, varied tails — probes
+`src/tools/cache-probe.ts --model <id>` (4 requests, shared ≥4K prefix, varied tails — probes
 must vary the tail because identical repeats are served from headroom's own compression
 cache and never reach upstream). Exit 1 means the model does not cache through the
 proxy — document it as a provider limitation or escalate.
@@ -125,7 +125,7 @@ the savings column reads `$0.00`. Two litellm behaviors drive the fix:
 
 The fix has three coordinated parts:
 
-1. `src/sync-model-pricing.ts` fetches live per-token prices from OpenRouter
+1. `src/tools/sync-model-pricing.ts` fetches live per-token prices from OpenRouter
    `/api/v1/models` and injects them into litellm's backup JSON under
    `openrouter/<model-id>` keys (with a `headroom_synced` marker). Unit note: OpenRouter
    returns per-token prices (e.g. `0.000000462` = $0.462/M) — never divide by 1e6. The
@@ -133,7 +133,7 @@ The fix has three coordinated parts:
 2. The LaunchAgent plist sets `LITELLM_LOCAL_MODEL_COST_MAP=true` and
    `HEADROOM_MODEL_ALIAS_MAP` so headroom resolves client model names to the priced
    `openrouter/` keys.
-3. `src/stack-check.ts` runs `sync-model-pricing.ts --check` on every sweep; drift is
+3. `src/tools/stack-check.ts` runs `sync-model-pricing.ts --check` on every sweep; drift is
    exit 1.
 
 Modes: `--check` (read-only drift report) and `--apply` (idempotent inject; restart the
