@@ -114,3 +114,14 @@ Applied to the plan:
 - [ ] #4 Worktree clean; branch rebased on main
 - [ ] #5 Human reviews diff before merge (HITL)
 <!-- DOD:END -->
+
+2026-09-07 execution note (phases 1-4 done): plan review DeepSeek + Qwen
+APPROVE-WITH-CHANGES, all dispositions applied (package.json files[] P0,
+validator noise list instead of new code, exhaustive grep-driven sweep,
+research-note repair dropped, byte-identity frozen-snapshot rule, Phase-4
+list corrected). DISCLOSURE: the global path sweep also touched DONE task
+files (24/33/35/36/51/58/61/71/75) — mechanical path-literal repair only,
+no AC/summary/narrative changes; ledger rule interpreted as protecting
+historical narrative, not dangling references. Residual old-path strings in
+Done files (15/16/32/58/61) are inside historical commit quotes or
+superseded-inventory descriptions and are left as provenance.

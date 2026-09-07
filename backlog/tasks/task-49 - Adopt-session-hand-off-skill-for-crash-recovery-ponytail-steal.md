@@ -45,6 +45,6 @@ Evaluate the 7 productivity skills in mattpocock/skills skills/productivity (gri
 author: conductor
 created: 2026-09-07 16:38
 ---
-Revive trigger: conductor grilling session 2026-09-07 — user expanded scope from handoff-only to the full mattpocock/skills productivity suite (option A) and approved the amended shape after three plan-gate reviews (deepseek NO-GO reshaped; qwen GO-WITH-CHANGES; kimi tie-break chose B on the PM-agent question: no agent, distill as skill or prose). Label change deferred -> harness per the decision-table first match (modifies skills, payload/AGENTS.md, docs/architecture). DoD added directly to this task so sibling task A (DoD backfill on pre-TASK-51 tasks) excludes it. Original 3 ACs preserved in spirit: old #2 and #3 folded into new AC #4; old #1 superseded by new AC #1.
+Revive trigger: conductor grilling session 2026-09-07 — user expanded scope from handoff-only to the full mattpocock/skills productivity suite (option A) and approved the amended shape after three plan-gate reviews (deepseek NO-GO reshaped; qwen GO-WITH-CHANGES; kimi tie-break chose B on the PM-agent question: no agent, distill as skill or prose). Label change deferred -> harness per the decision-table first match (modifies skills, payload/AGENTS.md, docs/trd). DoD added directly to this task so sibling task A (DoD backfill on pre-TASK-51 tasks) excludes it. Original 3 ACs preserved in spirit: old #2 and #3 folded into new AC #4; old #1 superseded by new AC #1.
 ---
 <!-- COMMENTS:END -->

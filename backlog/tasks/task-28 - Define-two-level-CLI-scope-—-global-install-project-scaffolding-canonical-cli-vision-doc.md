@@ -21,7 +21,7 @@ Owner vision 2026-08-30: ~/.agents becomes an OSS-able npm-installable CLI with 
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 WHEN docs/architecture/cli-vision.md is read THEN it defines: the two levels, the materialize-not-point evidence, the packaging boundary exclusion list (secrets/, backlog/, docs/research/, state/, reports/, logs/, .worktrees/, node_modules/), the template/overlay requirement for personal identity (model roster, secrets refs), and the harness manifest contract (config/harnesses/<id>.json)
+- [ ] #1 WHEN docs/trd/cli-vision.md is read THEN it defines: the two levels, the materialize-not-point evidence, the packaging boundary exclusion list (secrets/, backlog/, docs/research/, state/, reports/, logs/, .worktrees/, node_modules/), the template/overlay requirement for personal identity (model roster, secrets refs), and the harness manifest contract (config/harnesses/<id>.json)
 - [ ] #2 WHEN the runbook and global AGENTS.md mention the CLI vision THEN they point at the cli-vision doc (no duplicated content)
 - [ ] #3 WHEN backlog milestones m-4 (harness-agnostic) and m-5 (open-source-release) are read THEN their descriptions reference the cli-vision doc
 <!-- AC:END -->
