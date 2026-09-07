@@ -1,11 +1,11 @@
 ---
 id: TASK-71
 title: Move standalone tool scripts to src/tools/ (repo layout split)
-status: In Progress
+status: Done
 assignee:
   - '@conductor'
 created_date: '2026-09-07 06:53'
-updated_date: '2026-09-07 15:21'
+updated_date: '2026-09-07 15:32'
 labels:
   - harness
   - spec-approved
