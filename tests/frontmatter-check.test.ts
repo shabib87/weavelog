@@ -396,7 +396,7 @@ sources:
   - https://example.com/arch-a
 ---
 `;
-  const ArchValidBRecip = `---
+  const ArchValidSecondWithRecip = `---
 date: 2026-08-20
 topic: Loop factory detail
 status: in-review
@@ -408,7 +408,7 @@ sources:
   - https://example.com/arch-b
 ---
 `;
-  const ArchValidBNoRecip = `---
+  const ArchValidSecondWithoutRecip = `---
 date: 2026-08-20
 topic: Loop factory detail
 status: in-review
@@ -437,7 +437,7 @@ sources:
   test("valid arch doc with reciprocal related_to exits 0 and no warnings", () => {
     const dir = makeDocs({
       "2026-08-20-a.md": ArchValidA,
-      "2026-08-20-b.md": ArchValidBRecip,
+      "2026-08-20-b.md": ArchValidSecondWithRecip,
     });
     const r = run(["--schema", "architecture", dir]);
     assert.equal(r.status, 0);
@@ -454,7 +454,7 @@ sources:
   test("valid arch doc with non-reciprocal related_to exits 0 BUT warnings non-empty", () => {
     const dir = makeDocs({
       "2026-08-20-a.md": ArchValidA,
-      "2026-08-20-b.md": ArchValidBNoRecip,
+      "2026-08-20-b.md": ArchValidSecondWithoutRecip,
     });
     const r = run(["--schema", "architecture", dir]);
     assert.equal(r.status, 0);
@@ -485,7 +485,7 @@ sources:
   test("status not in architecture enum exits 1", () => {
     const dir = makeDocs({
       "2026-08-20-a.md": ArchValidA.replace("status: draft", "status: open"),
-      "2026-08-20-b.md": ArchValidBRecip,
+      "2026-08-20-b.md": ArchValidSecondWithRecip,
     });
     const r = run(["--schema", "architecture", dir]);
     assert.equal(r.status, 1);
@@ -498,7 +498,7 @@ sources:
       .join("\n");
     const dir = makeDocs({
       "2026-08-20-a.md": doc,
-      "2026-08-20-b.md": ArchValidBRecip,
+      "2026-08-20-b.md": ArchValidSecondWithRecip,
     });
     const r = run(["--schema", "architecture", dir]);
     assert.equal(r.status, 1);
@@ -511,7 +511,7 @@ sources:
       .join("\n");
     const dir = makeDocs({
       "2026-08-20-a.md": doc,
-      "2026-08-20-b.md": ArchValidBRecip,
+      "2026-08-20-b.md": ArchValidSecondWithRecip,
     });
     const r = run(["--schema", "architecture", dir]);
     assert.equal(r.status, 1);
@@ -524,7 +524,7 @@ sources:
         "type: architecture",
         "type: recipe",
       ),
-      "2026-08-20-b.md": ArchValidBRecip,
+      "2026-08-20-b.md": ArchValidSecondWithRecip,
     });
     const r = run(["--schema", "architecture", dir]);
     assert.equal(r.status, 1);
@@ -532,7 +532,7 @@ sources:
   });
 
   test("empty related_to [] is valid (no dangling, no reciprocity check)", () => {
-    const dir = makeDocs({ "2026-08-20-solo.md": ArchValidBNoRecip });
+    const dir = makeDocs({ "2026-08-20-solo.md": ArchValidSecondWithoutRecip });
     const r = run(["--schema", "architecture", dir]);
     assert.equal(r.status, 0);
     const report = JSON.parse(r.stdout);
@@ -543,7 +543,7 @@ sources:
   test("date not matching filename prefix exits 1", () => {
     const dir = makeDocs({
       "2026-08-11-mismatch.md": ArchValidA,
-      "2026-08-20-b.md": ArchValidBRecip,
+      "2026-08-20-b.md": ArchValidSecondWithRecip,
     });
     const r = run(["--schema", "architecture", dir]);
     assert.equal(r.status, 1);

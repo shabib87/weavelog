@@ -383,7 +383,7 @@ describe("Hook 3 — dangerous command gate", () => {
     await blocked("chmod -R 600 ~/.headroom", /chmod 600 strips execute bit/);
     await blocked("chmod 600 $HOME/.headroom", /chmod 600 strips execute bit/);
     await blocked(
-      "chmod 600 ${HOME}/.local/pipx/venvs",
+      `chmod 600 \${HOME}/.local/pipx/venvs`,
       /chmod 600 strips execute bit/,
     );
   });
@@ -1095,12 +1095,12 @@ describe("Hook 9 — session-start auto-materialize (config-sync)", () => {
     } | null,
     calls: number[],
   ) => {
-    return async (): Promise<{
+    return (): Promise<{
       status: number | null;
       stdout: string;
     } | null> => {
       calls.push(1);
-      return statusFor();
+      return Promise.resolve(statusFor());
     };
   };
 
@@ -1108,9 +1108,9 @@ describe("Hook 9 — session-start auto-materialize (config-sync)", () => {
     const home = makeHome(["config-sync"]);
     const { $ } = fakeShell(() => ({ exitCode: 0 }));
     const calls: number[] = [];
-    const runConfigSync = async () => {
+    const runConfigSync = () => {
       calls.push(1);
-      return { status: 0, stdout: "{}" };
+      return Promise.resolve({ status: 0, stdout: "{}" });
     };
     const hooks = createHooks(depsFor(home, $, { runConfigSync }));
     await hooks.event(createdEvent("s1"));
@@ -1304,7 +1304,7 @@ describe("Hook 9 — session-start auto-materialize (config-sync)", () => {
   test("runConfigSync rejecting fails open (no block, no stash)", async () => {
     const home = makeHome(["config-sync"]);
     const { $ } = fakeShell(() => ({ exitCode: 0 }));
-    const runConfigSync = async () => {
+    const runConfigSync = () => {
       throw new Error("spawn failed");
     };
     const hooks = createHooks(depsFor(home, $, { runConfigSync }));

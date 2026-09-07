@@ -815,7 +815,8 @@ export function createGateCheck(
       .filter((d) => d !== lowerSelf);
     let cycle = false;
     while (stack.length > 0 && !cycle) {
-      const cur = stack.pop()!;
+      const cur = stack.pop();
+      if (cur === undefined) break;
       if (cur === lowerSelf) {
         cycle = true;
         break;

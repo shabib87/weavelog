@@ -92,7 +92,7 @@ async function probe(): Promise<number> {
   }> = [];
 
   for (let i = 0; i < numRequests; i++) {
-    const tail = UNIQUE_TAILS[i % UNIQUE_TAILS.length]!;
+    const tail = UNIQUE_TAILS[i % UNIQUE_TAILS.length];
     const body = {
       model,
       messages: [

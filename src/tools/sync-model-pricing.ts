@@ -17,6 +17,31 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
+interface CatalogModel {
+  id: string;
+  pricing?: {
+    prompt?: number;
+    completion?: number;
+    input_cache_read?: number;
+  };
+  context_length?: number;
+}
+
+interface DbEntry {
+  headroom_synced?: boolean;
+  input_cost_per_token?: number;
+  output_cost_per_token?: number;
+  cache_read_input_token_cost?: number;
+  input_cost_per_token_cache_hit?: number;
+  litellm_provider?: string;
+  max_input_tokens?: number;
+  mode?: string;
+  supports_function_calling?: boolean;
+  source?: string;
+  synced_at?: string;
+  [key: string]: unknown;
+}
+
 const HELP = `Usage: bun sync-model-pricing.ts --check | --apply [options]
 
 Options:
@@ -87,7 +112,7 @@ function discoverLitellmDb(): string {
 }
 const dbPath = opt("--litellm-db") || discoverLitellmDb();
 
-async function fetchCatalog(): Promise<Map<string, any>> {
+async function fetchCatalog(): Promise<Map<string, CatalogModel>> {
   const keyPath = join(HOME, ".local", "share", "opencode", "auth.json");
   let key: string | undefined;
   try {
@@ -109,7 +134,7 @@ async function fetchCatalog(): Promise<Map<string, any>> {
       },
     );
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const d = (await res.json()) as { data: any[] };
+    const d = (await res.json()) as { data: CatalogModel[] };
     return new Map(d.data.map((m) => [m.id, m]));
   } catch (e) {
     console.error(
@@ -126,7 +151,7 @@ const STALE_RELATIVE_THRESHOLD = 0.2;
 // HEADROOM_MODEL_ALIAS_MAP env var (set in the LaunchAgent plist).
 const dbKey = (id: string) => `openrouter/${id}`;
 const catalog = await fetchCatalog();
-const db = JSON.parse(readFileSync(dbPath, "utf8")) as Record<string, any>;
+const db = JSON.parse(readFileSync(dbPath, "utf8")) as Record<string, DbEntry>;
 const problems: string[] = [];
 let changed = 0;
 
@@ -165,12 +190,12 @@ for (const id of models) {
       problems.push(`not priced in litellm DB: ${id} (key ${key})`);
       continue;
     }
-    if (existing.headroom_synced && existing.input_cost_per_token > 0) {
-      const drift =
-        Math.abs(existing.input_cost_per_token - inPerToken) / inPerToken;
+    const inCost = existing.input_cost_per_token;
+    if (existing.headroom_synced && inCost != null && inCost > 0) {
+      const drift = Math.abs(inCost - inPerToken) / inPerToken;
       if (drift > STALE_RELATIVE_THRESHOLD) {
         problems.push(
-          `stale price for ${id}: db=${existing.input_cost_per_token.toExponential(3)} live=${inPerToken.toExponential(3)}`,
+          `stale price for ${id}: db=${inCost.toExponential(3)} live=${inPerToken.toExponential(3)}`,
         );
       }
     }

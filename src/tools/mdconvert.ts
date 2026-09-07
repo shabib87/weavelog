@@ -144,10 +144,7 @@ function applyCap(
   };
 }
 
-export async function mdconvert(
-  file: string,
-  opts: MdconvertOptions = {},
-): Promise<number> {
+export function mdconvert(file: string, opts: MdconvertOptions = {}): number {
   const home = process.env.HOME ?? homedir();
   const binaryPath =
     opts.binaryPath ??
@@ -265,10 +262,13 @@ if (
     );
     process.exit(2);
   }
-  mdconvert(args[0])
-    .then((code) => process.exit(code))
-    .catch((err) => {
-      console.error("mdconvert error:", err?.message ?? err);
-      process.exit(2);
-    });
+  try {
+    process.exit(mdconvert(args[0]));
+  } catch (err) {
+    console.error(
+      "mdconvert error:",
+      err instanceof Error ? err.message : String(err),
+    );
+    process.exit(2);
+  }
 }

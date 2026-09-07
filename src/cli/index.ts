@@ -1,4 +1,5 @@
 import { spawnSync } from "node:child_process";
+import type { Stats } from "node:fs";
 import {
   accessSync,
   appendFileSync,
@@ -637,7 +638,7 @@ function scanInitConflicts(
   const conflicts: string[] = [];
   for (const p of planned) {
     if (!existsSync(p.dest)) continue;
-    let stat;
+    let stat: Stats;
     try {
       stat = lstatSync(p.dest);
     } catch {

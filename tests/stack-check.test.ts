@@ -302,7 +302,7 @@ describe("checkDiagramDesign (drift detection)", () => {
   test("drift when pinned commit is empty in manifest", () => {
     const dir = join(tmpdir(), `stack-check-dd-empty-${Date.now()}`);
     initGitRepo(dir);
-    const { check, drift } = checkDiagramDesign("", dir);
+    const { drift } = checkDiagramDesign("", dir);
     assert.ok(drift.includes("diagram-design pinned commit empty in manifest"));
     rmSync(dir, { recursive: true, force: true });
   });
@@ -447,26 +447,26 @@ interface StubFetchOpts {
 }
 
 function makeStubFetch(opts: StubFetchOpts): ProxyFetch {
-  return async (url: string) => {
+  return (url: string) => {
     if (url.endsWith("/health")) {
       if (opts.healthThrow)
-        throw new Error("network failure: connection refused");
-      return {
+        return Promise.reject(new Error("network failure: connection refused"));
+      return Promise.resolve({
         ok: (opts.healthStatus ?? 200) < 400,
         status: opts.healthStatus ?? 200,
         json: async () => (opts.health === undefined ? {} : opts.health),
-      };
+      });
     }
     if (url.endsWith("/stats")) {
       if (opts.statsThrow)
-        throw new Error("network failure: connection refused");
-      return {
+        return Promise.reject(new Error("network failure: connection refused"));
+      return Promise.resolve({
         ok: (opts.statsStatus ?? 200) < 400,
         status: opts.statsStatus ?? 200,
         json: async () => (opts.stats === undefined ? {} : opts.stats),
-      };
+      });
     }
-    return { ok: false, status: 404, json: async () => ({}) };
+    return Promise.resolve({ ok: false, status: 404, json: async () => ({}) });
   };
 }
 

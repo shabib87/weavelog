@@ -124,9 +124,15 @@ if (
     return res.json();
   }
 
+  interface Usage {
+    prompt_tokens?: number;
+    completion_tokens?: number;
+    total_tokens?: number;
+  }
+
   async function review(
     model: string,
-  ): Promise<{ model: string; content: string; usage: any }> {
+  ): Promise<{ model: string; content: string; usage: Usage }> {
     // Always-think models (kimi, glm, qwen3.x) can empty max_tokens on reasoning;
     // instruct minimal reasoning up front and retry once with double budget on empty content.
     const sysBase = `${rubric}\nKeep internal reasoning minimal; write the final answer in plain prose.`;
@@ -187,8 +193,8 @@ if (
     }
     const { inM, outM } = price(model);
     const costUsd =
-      (r.value.usage?.prompt_tokens * inM +
-        r.value.usage?.completion_tokens * outM) /
+      ((r.value.usage?.prompt_tokens ?? 0) * inM +
+        (r.value.usage?.completion_tokens ?? 0) * outM) /
       1e6;
     totalUsd += costUsd;
     console.log(

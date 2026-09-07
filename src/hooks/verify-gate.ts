@@ -79,10 +79,10 @@ export function createHooks() {
       windows.delete(windows.keys().next().value as string);
   };
 
-  async function before(input: HookInput, output: HookOutput): Promise<void> {
+  function before(input: HookInput, output: HookOutput): Promise<void> {
     try {
-      if (disabled()) return;
-      if (input.tool === "bash") return; // bash itself never counts or blocks here
+      if (disabled()) return Promise.resolve();
+      if (input.tool === "bash") return Promise.resolve(); // bash itself never counts or blocks here
       const sid = input.sessionID ?? "unknown";
       if (WRITE_TOOLS.has(input.tool)) {
         const filePath = (output?.args?.filePath ??
@@ -93,29 +93,38 @@ export function createHooks() {
           isGatedPath(filePath) &&
           callsSince(sid) > GRACE_CALLS
         ) {
-          throw new VerifyGateError(
-            `verification gate: ${callsSince(sid)} tool calls without a bash run — ` +
-              `run tests/build before writing ${filePath} (VERIFY_GATE_DISABLED=true to bypass)`,
+          return Promise.reject(
+            new VerifyGateError(
+              `verification gate: ${callsSince(sid)} tool calls without a bash run — ` +
+                `run tests/build before writing ${filePath} (VERIFY_GATE_DISABLED=true to bypass)`,
+            ),
           );
         }
       }
       bump(sid);
+      return Promise.resolve();
     } catch (e) {
-      if (e instanceof VerifyGateError) throw e;
-      // fail open on any internal error
+      if (e instanceof VerifyGateError) return Promise.reject(e);
+      return Promise.resolve(); // fail open on any internal error
     }
   }
 
-  async function after(
+  function after(
     input: HookInput & { args: Record<string, unknown> },
     _output: AfterOutput,
   ): Promise<void> {
-    if (input.tool === "bash") {
-      const sid = input.sessionID ?? "unknown";
-      windows.delete(sid); // refresh LRU position, same as bump
-      windows.set(sid, 0);
-      if (windows.size > 100)
-        windows.delete(windows.keys().next().value as string);
+    try {
+      if (input.tool === "bash") {
+        const sid = input.sessionID ?? "unknown";
+        windows.delete(sid); // refresh LRU position, same as bump
+        windows.set(sid, 0);
+        if (windows.size > 100)
+          windows.delete(windows.keys().next().value as string);
+      }
+      return Promise.resolve();
+    } catch (e) {
+      if (e instanceof VerifyGateError) return Promise.reject(e);
+      return Promise.resolve(); // fail open on any internal error
     }
   }
 
@@ -123,12 +132,12 @@ export function createHooks() {
 }
 
 /** opencode plugin entrypoint. */
-export const VerifyGatePlugin = async () => {
+export const VerifyGatePlugin = () => {
   const h = createHooks();
-  return {
+  return Promise.resolve({
     "tool.execute.before": h.before,
     "tool.execute.after": h.after,
-  };
+  });
 };
 
 export default VerifyGatePlugin;

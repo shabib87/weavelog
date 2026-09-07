@@ -326,7 +326,7 @@ export function checkMarkitdown(
 async function fetchJson(
   url: string,
   headers: Record<string, string>,
-): Promise<any> {
+): Promise<unknown> {
   const res = await fetch(url, {
     headers,
     signal: AbortSignal.timeout(60_000),
