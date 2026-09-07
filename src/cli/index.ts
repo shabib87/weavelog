@@ -18,6 +18,7 @@ import {
 import { homedir, tmpdir } from "node:os";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { checkDifitPointer, pinHygieneForDir } from "../tools/pin-hygiene.js";
 import { checkConfigDrift, checkMarkitdown } from "../tools/stack-check.js";
 import { toolScript } from "../tools/tool-paths.js";
 import type { WeavelogManifest } from "../tools/weavelog-manifest.js";
@@ -62,9 +63,10 @@ updates.
 Env seams: same binary seams as 'weavelog check --stack-only'.`,
   check: `Usage: weavelog check [--stack-only] [--pre-commit]
 
-Verify the machine against weavelog.json. --pre-commit runs the backlog
-task validation gate (for git hooks installed by 'weavelog' worktree
-tooling) and exits 0/1. --stack-only runs ONLY the fast
+Verify the machine against weavelog.json. --pre-commit runs the pin-hygiene
+gate (exact pins + lockfile, weavelog-managed repos only) followed by the
+backlog task validation gate (for git hooks installed by 'weavelog'
+worktree tooling) and exits 0/1. --stack-only runs ONLY the fast
 stack-version subset (one check per weavelog.json tool check id, plus the
 node-path guard) suitable for a launchd plist. Without the flag, adds the
 proxy :8788 health check and the config-drift check (composes src/stack-check
@@ -378,6 +380,19 @@ function stackVersionChecks(
       ? `diagram-design present at ${ddDir} (pinned ${ddSpec.version})`
       : `diagram-design missing at ${ddDir} (pinned ${ddSpec.version})`,
   });
+  const difitSpec = manifest.tools.difit;
+  if (difitSpec) {
+    const docPath =
+      process.env.WEAVELOG_DIFIT_DOC ??
+      join(REPO_ROOT, "docs", "architecture", "worktree-discipline.md");
+    const doc = existsSync(docPath) ? readFileSync(docPath, "utf8") : null;
+    const pointer = checkDifitPointer(difitSpec.version, doc);
+    results.push({
+      id: difitSpec.check,
+      ok: pointer.ok,
+      detail: pointer.detail,
+    });
+  }
   return results;
 }
 
@@ -869,6 +884,23 @@ function runUpdate(): never {
 // --- check ------------------------------------------------------------------
 
 function runPreCommit(): never {
+  const pin = pinHygieneForDir(process.cwd(), true);
+  if (pin.status === "fail") {
+    console.error(`[fail] deps.pin-hygiene — ${pin.detail}`);
+    finish({
+      command: "check",
+      args: ["--pre-commit"],
+      filesTouched: [],
+      decisions: [],
+      errors: [pin.detail],
+      exitCode: 1,
+    });
+  }
+  if (pin.status === "skip") {
+    console.log(`[skip] deps.pin-hygiene — ${pin.detail}`);
+  } else {
+    printCheckLine("pass", "deps.pin-hygiene", pin.detail);
+  }
   const { path: tvPath, tsx } = toolScript("task-validate");
   const prefix = tsx ? ["--import", String(import.meta.resolve("tsx"))] : [];
   const r = spawnSync(process.execPath, [...prefix, tvPath, "--pre-commit"], {
@@ -891,6 +923,12 @@ function runPreCommit(): never {
 async function runCheck(stackOnly: boolean): Promise<never> {
   const manifest = readManifest();
   const results = stackVersionChecks(manifest);
+  const pin = pinHygieneForDir(REPO_ROOT, false);
+  results.push({
+    id: "deps.pin-hygiene",
+    ok: pin.status !== "fail",
+    detail: pin.detail,
+  });
   if (!stackOnly) {
     const guard = checkNodePathGuard();
     const proxy = await checkProxyHealth();

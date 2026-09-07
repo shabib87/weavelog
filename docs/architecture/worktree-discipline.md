@@ -43,7 +43,7 @@ No work on main. No work without a backlog task.
   task's acceptance criteria (AC gutting) — spec changes post-approval require removing the
   label and re-running the gate.
 - **difit auto-open (merge-gate presentation).** The conductor ALWAYS opens the
-  diff viewer in the browser for the human (`npx difit --background` for the server,
+  diff viewer in the browser for the human (`npx difit@5.0.12 --background` for the server,
   then `open http://localhost:<port>`) — the human never copies a URL. **Invocation
   direction:** `difit <branch> main` (branch FIRST, main second) so the human sees
   branch changes as ADDITIONS; the reverse order renders the changelog backwards
@@ -114,7 +114,7 @@ enforce.ts create gate and the claim gate enforce the mandatory set.
   canonical repos (agents-harness, weavelog) they are validation failures; the future
   weavelog scaffold ships scaffolds the reserved set plus `deferred` only. Decision
   table (first match): `harness` when the task modifies bin/plugins/config/AGENTS.md/
-  docs/architecture/stack-versions.json; `dogfood` when the deliverable is real work run
+  weavelog.json; `dogfood` when the deliverable is real work run
   through the harness as the verification subject; `deferred` when an explicit revive
   trigger is recorded; no match → no label. Matching is case-insensitive.
 - **Milestones** (v5): agents never create milestones (human-owned; wayfinder skill owns

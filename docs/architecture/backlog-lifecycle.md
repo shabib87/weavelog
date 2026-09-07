@@ -55,7 +55,7 @@ reserved tier (machinery-only) `spec-approved` `dispatched` `stuck` `merged` `ho
 labels refuse the claim. `harness`/`dogfood` are harness-dev-only (agents-harness and
 weavelog repos); in any other repo they are validation failures. Decision table for
 general labels, first match: `harness` (task modifies bin/plugins/config/AGENTS.md/
-docs/architecture/stack-versions.json), `dogfood` (deliverable is real work run through
+weavelog.json), `dogfood` (deliverable is real work run through
 the harness as the verification subject), `deferred` (explicit revive trigger), otherwise
 no label.
 
@@ -90,7 +90,7 @@ model + conductor + qa (see `~/.config/opencode/AGENTS.md` "Task tracking").
 
 - **Install**: `arch -arm64 /opt/homebrew/bin/bun add -g backlog.md@1.50.1` (bun-global,
   pinned; binary at `~/.bun/bin/backlog`). Never ad-hoc upgrade — bump via manifest.
-- **Manifest**: `stack-versions.json` key `backlogMd`; weekly drift via stack-check.ts (6.2).
+- **Manifest**: `weavelog.json` key `backlog`; drift via `weavelog check` / `weavelog update`.
 - **MCP**: DISABLED 2026-08-29 — see
   `docs/research/2026-08-29-backlog-mcp-enforcement-bypass.md`. The MCP pilot was
   never measured; 20 tool schemas tax the frozen prefix every request and the MCP

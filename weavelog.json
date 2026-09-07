@@ -30,6 +30,11 @@
       "version": "ac490fd",
       "repo": "cathrynlavery/diagram-design",
       "check": "diagram-design.present"
+    },
+    "difit": {
+      "channel": "npm",
+      "version": "5.0.12",
+      "check": "difit.pointer"
     }
   },
   "models": [
@@ -49,5 +54,5 @@
     "proxy": "com.headroom.proxy",
     "stackCheck": "com.agents.stack-check"
   },
-  "updatedAt": "2026-09-06T05:57:19Z"
+  "updatedAt": "2026-09-07T00:00:00Z"
 }
