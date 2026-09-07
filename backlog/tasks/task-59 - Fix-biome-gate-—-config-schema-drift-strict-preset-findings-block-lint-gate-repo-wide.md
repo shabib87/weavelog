@@ -3,11 +3,11 @@ id: TASK-59
 title: >-
   Fix biome gate — config schema drift + strict-preset findings block lint gate
   repo-wide
-status: In Progress
+status: Done
 assignee:
   - conductor
 created_date: '2026-09-06 08:59'
-updated_date: '2026-09-07 17:35'
+updated_date: '2026-09-07 17:48'
 labels:
   - spec-approved
 milestone: m-7
@@ -36,17 +36,23 @@ Outcome: npm run lint exits 0 with biome 2.5.5 on the weavelog repo so AC-style 
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 WHEN biome migrate/config updates land THEN npm run lint SHALL exit 0 on the repo root
-- [ ] #2 IF a lint finding is suppressed by config THEN the rule change SHALL carry a recorded rationale in the task notes (no silent weakening of correctness rules)
-- [ ] #3 WHEN the full gate battery re-runs THEN npm test, tsc --noEmit, biome, and scripts/privacy-audit SHALL all exit 0
+- [x] #1 WHEN biome migrate/config updates land THEN npm run lint SHALL exit 0 on the repo root
+- [x] #2 IF a lint finding is suppressed by config THEN the rule change SHALL carry a recorded rationale in the task notes (no silent weakening of correctness rules)
+- [x] #3 WHEN the full gate battery re-runs THEN npm test, tsc --noEmit, biome, and scripts/privacy-audit SHALL all exit 0
+- [x] #4 WHEN package.json is rewritten THEN all direct deps SHALL be exact-pinned with zero version changes (pins only) AND npm ci SHALL install cleanly from the committed lockfile
+- [x] #5 WHEN the merge gate invokes difit THEN it SHALL target an exact version (npx difit@X) AND stack-check SHALL verify that version against the manifest
+- [x] #6 IF a tool remains check-not-pin (backlog.md, markitdown) THEN the rationale SHALL be recorded in task notes
+- [x] #7 IF referenced manifest paths do not exist THEN AGENTS.md and stack-check references SHALL be reconciled to the real manifest location (weavelog.json); the legacy home manifest stays absent by ratified TASK-45 post-flip decision
+- [x] #8 WHEN weavelog check runs on a weavelog-managed repo that has a caret-pinned direct dep or a missing lockfile THEN it SHALL exit non-zero naming the offending dep(s) (wired into the pre-commit path)
+- [x] #9 IF new guardrail checks land THEN they SHALL have unit tests in tests/ AND the full gate battery SHALL stay green
 <!-- AC:END -->
 
 ## Definition of Done
 <!-- DOD:BEGIN -->
-- [ ] #1 Tests and lint pass with fresh output in the worktree
-- [ ] #2 Worktree is clean (no uncommitted changes)
-- [ ] #3 Branch is rebased on main and green
-- [ ] #4 All acceptance criteria checked with fresh evidence (one at a time, never batched)
+- [x] #1 Tests and lint pass with fresh output in the worktree
+- [x] #2 Worktree is clean (no uncommitted changes)
+- [x] #3 Branch is rebased on main and green
+- [x] #4 All acceptance criteria checked with fresh evidence (one at a time, never batched)
 <!-- DOD:END -->
 
 ## Implementation Plan
@@ -67,4 +73,12 @@ Implementation: package.json all 5 direct deps exact-pinned (biome 2.5.5, @types
 Post-fix + post-rebase evidence (commit 96bf672, rebased onto main 38de20f): npm test 625 tests/624 pass/0 fail/1 pre-existing skip; tsc --noEmit 0; npm run lint (biome) 0 across 47 files; scripts/privacy-audit 0. Diff-reviewer (kimi, independent) verdict APPROVE-WITH-FIXES — all 4 code fixes applied with regression tests: (1) checkDifitPointer anchored match, no false-pass on version prefix collision (difit@5.0.12 vs 5.0.123); (2) isExactVersion fails closed on non-string specs instead of throwing; (3) optionalDependencies now scanned; (4) useLiteralKeys fix manifest.tools.difit. Rebase verified: TASK-49 files no longer in diff, worktree clean. Note for post-merge: payload/AGENTS.md changed => run weavelog sync + restart session (self-modifying config merge, per worktree discipline). Aside: the rtk lint wrapper misreports biome as failing (parses lint output as ESLint JSON) — false alarm unrelated to this task's gates.
 
 Merge-gate follow-up (human decision at difit review): difit upgraded from registry-pinned npx to exact-pinned devDependency (5.0.12, lockfile-verified: zero existing versions changed, zero keys removed — 42 original packages intact, +339 packages all in difit's subtree; lockfile reindent tabs->spaces inherited from 14e72d5's package.json format flip, never regenerated until now). Global install removed per explicit human approval (npm uninstall -g difit, 328 packages); merge-gate invocation npx difit@5.0.12 now resolves locally from node_modules inside the repo, via npx cache outside. Doc updated (worktree-discipline difit bullet notes the devDependency). Commit ae85b69.
+
+Recording-gap correction: the spec expansion approved in conversation (ACs 4-9) was implemented and diff-reviewed but was never written into the task's acceptanceCriteria until after merge — caught at finalization when --check-ac 4 refused. ACs 4-9 added verbatim from the approved spec text, then checked against the same fresh evidence (post-merge main battery: npm test 625/625 pass, tsc 0, biome 0 across 47 files, privacy-audit 0, npm ci 0).
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Fixed the biome lint gate (already repaired on main by 14e72d5; verified exit 0, no rules weakened) and landed dependency/tool versioning integrity: all 6 direct deps exact-pinned (incl. difit 5.0.12 as new devDependency — global install removed), pin-hygiene guardrail in weavelog check + pre-commit (fails on ^/~/* pins and missing lockfile in weavelog-managed repos), difit.pointer manifest check, stale stack-versions.json references reconciled to weavelog.json. Independent diff review (Kimi): APPROVE-WITH-FIXES, all 4 fixes applied with regression tests. Verified on post-merge main: npm test 625 pass/0 fail, tsc --noEmit 0, biome check 0 (47 files), scripts/privacy-audit 0, npm ci 0.
+<!-- SECTION:FINAL_SUMMARY:END -->
