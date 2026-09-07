@@ -91,8 +91,11 @@ bun ~/.agents/bin/src/frontmatter-check.ts ~/.agents/docs/research ~/.agents/doc
 
 ## ADR template
 
-See [architecture/adr/README.md](./architecture/adr/README.md) — Nygard format. ADRs are
-added incrementally on trigger; do NOT create retrospective ADRs.
+See [architecture/adr/README.md](./architecture/adr/README.md) — Nygard
+sections plus the **format contract** (per-section format rules,
+table-vs-list decision rule, explicit chosen/rejected verdicts, readability
+limits; ADR-004 is the reference implementation). ADRs are added
+incrementally on trigger; do NOT create retrospective ADRs.
 
 ## File naming
 

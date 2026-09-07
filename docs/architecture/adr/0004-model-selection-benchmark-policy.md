@@ -39,14 +39,21 @@ Anthropic/OpenAI frontier models.
 
 ## Decision
 
-Model selection uses a **seat-weighted composite**: different seats have
-primary instruments matched to what the seat actually does. A seat
-assignment is defensible only when the seat's primary instrument plus at
-least one corroborating instrument support it at the stated cost. (Revised
-2026-09-07 after independent DeepSeek V4 Pro review: a single primary
-instrument conflates "the product is an agent loop" with "every seat needs
-agent-loop benchmarks" — reviewers, plan-gate, and security seats reason
-*about* code rather than operate inside a terminal.)
+| Decision | Choice | Why |
+|---|---|---|
+| Benchmark basis | **Seat-weighted composite** — TB 2.1, SWE-bench Pro, HLE-with-tools, each primary for a seat class (table below) | One instrument cannot judge both loop throughput and reasoning-about-code |
+| HLE role | **Primary** for plan-gate/security/researcher; closed-book HLE **rejected**; Artificial Analysis = governing protocol source | Biggest open-weight-vs-frontier gap lives there — the escalation boundary |
+| Reviewer escalation | **L0–L4 ladder** (table below), risk-signal triggers, relational family rule | Replaces ad-hoc reviewer picks; cheapest-first with diversity guarantee |
+| Routing surface | **OpenRouter** primary until 0.2.0+ (pi host) | ROADMAP host ladder; aggregation is not vendor lock-in |
+| Drift cadence | **Weekly** pricing sweep + **monthly** deep refresh (table below) | Quarterly too slow for model-progression pace; human brief blocks structural changes |
+| Phase-2 host scope | **opencode only** (0.1.0); pi config deferred to 0.2.0 | ROADMAP v0.1.0 scope |
+
+A seat assignment is defensible only when the seat's primary instrument plus
+at least one corroborating instrument support it at the stated cost.
+(Revised 2026-09-07 after independent DeepSeek V4 Pro review: a single
+primary instrument conflates "the product is an agent loop" with "every seat
+needs agent-loop benchmarks" — reviewers, plan-gate, and security seats
+reason *about* code rather than operate inside a terminal.)
 
 ### Primary per seat class
 
@@ -78,12 +85,11 @@ list prices. A cheap model that stalls loops is expensive.
 
 ### Rejected as primary evidence
 
-- **HumanEval, LiveCodeBench** — function-level generation; saturated and
-  not agentic.
-- **HLE closed-book (no tools)** — answers a different question than
-  tool-assisted runs; not comparable to harness operation.
-- **Any vendor-reported score used alone** — permitted only with an explicit
-  `unverified` tag and a corroborating independent instrument.
+| Option | Verdict | Reason |
+|---|---|---|
+| HumanEval, LiveCodeBench | rejected | function-level generation; saturated and not agentic |
+| HLE closed-book (no tools) | rejected | answers a different question than tool-assisted runs; not comparable to harness operation |
+| Any vendor-reported score used alone | rejected | permitted only with an explicit `unverified` tag and a corroborating independent instrument |
 
 ### HLE as the beyond-open-weights signal
 
@@ -122,96 +128,99 @@ preserved as fresh-context diversity. The manifest and doctor report the
 degraded tiering honestly. Seats are opinionated defaults; the human
 directs and can override per PRODUCT ("init asks and flags override").
 
-- **L0 — glm-5.3-flash** (default reviewer, ~$0.075/$0.25 while promo lasts).
-- **L1 — deepseek-v4-pro-0813** triggers: any failing test; diff touches
-  auth, crypto, secrets, data-persistence, or permission paths; cyclomatic
-  complexity increases in a changed function; or new cross-module coupling.
-  (Line-count triggers were removed after sweep review: risk-signal triggers
-  are the gate; line count was gameable and adds no signal.) Cheapest pro; fine for same-family
-  rechecks of the deepseek implementer.
-- **L2 — glm-5.3** triggers: security-scoped or architecture-scoped diff,
-  or L0/L1 disagreement.
-- **L3 — qwen3.8-2.4t-a95b** triggers: two consecutive rework cycles failed,
-  or the change touches the harness/orchestration itself.
-- **L4 — kimi-k3** triggers: L3 disagreement, or image/screenshot input is
-  required for the review.
+| Level | Seat | Escalation triggers | Notes |
+|---|---|---|---|
+| L0 | **glm-5.3-flash** | always runs first | default reviewer; ~$0.075/$0.25 while promo lasts |
+| L1 | **deepseek-v4-pro-0813** | failing test; diff touches auth/crypto/secrets/data-persistence/permission paths; complexity delta in a changed function; new cross-module coupling | cheapest pro; fine for same-family rechecks of the deepseek implementer. Line-count triggers **rejected** (gameable, no signal) |
+| L2 | **glm-5.3** | security-scoped or architecture-scoped diff; L0/L1 disagreement | same vendor as L0 — cannot give final approval on GLM-family diffs |
+| L3 | **qwen3.8-2.4t-a95b** | two consecutive rework cycles failed; change touches the harness/orchestration itself | third family; deep context |
+| L4 | **kimi-k3** | L3 disagreement; image/screenshot input required | frontier reasoning + multimodal, most expensive — last resort |
 
 **Family rule (relational, applies to every rung):** "family" = vendor
 (Z.AI, DeepSeek, Alibaba, Moonshot). Final approval comes from the lowest
-ladder rung whose vendor differs from the maker's vendor. Note that
-L0 (glm-5.3-flash) and L2 (glm-5.3) are the SAME vendor, so a GLM-family
-diff approved only at L0/L2 violates this rule and must climb to L1 or L3.
-This replaces the earlier hard-coded "implementer is deepseek" wording
-(GLM-5.3 and Qwen3.8-2.4T second-pass reviews, 2026-09-07: the hard-coded
-rule made the cheapest-first ladder illusory and let GLM flagship reviewers
-bless their own family's flash output).
+ladder rung whose vendor differs from the maker's vendor. L0 (glm-5.3-flash)
+and L2 (glm-5.3) are the SAME vendor, so a GLM-family diff approved only at
+L0/L2 violates this rule and must climb to L1 or L3. This replaces the
+earlier hard-coded "implementer is deepseek" wording (GLM-5.3 and
+Qwen3.8-2.4T second-pass reviews, 2026-09-07: the hard-coded rule made the
+cheapest-first ladder illusory and let GLM flagship reviewers bless their
+own family's flash output).
 
-**Trigger determinism (phased per ROADMAP v0.1.0):** at 0.1.0, `weavelog
-check` ships tests/lint/typecheck/semgrep/secrets/frontmatter/manifest gates
-only. The L1 triggers implementable there are: failing tests (existing
-gate), protected-path touches (glob match on auth/crypto/secrets/
-data-persistence/permission paths — plain path matching, no AST), and
-retry-failure counts from the run ledger. Cyclomatic-complexity and
-cross-module-coupling deltas require AST analysis beyond the 0.1.0 gate set
-and are deferred to a post-0.1.0 check-gate extension; until then the
-risk-signal set is the three implementable triggers, never self-report or
-LLM judgment. The detector must operate on the merged diff against base —
+### Trigger determinism (phased per ROADMAP v0.1.0)
+
+At 0.1.0, `weavelog check` ships tests/lint/typecheck/semgrep/secrets/
+frontmatter/manifest gates only. The L1 triggers implementable there:
+
+| Trigger | Mechanism at 0.1.0 |
+|---|---|
+| Failing tests | existing check gate |
+| Protected-path touch (auth/crypto/secrets/data-persistence/permission) | glob match — plain path matching, no AST |
+| Retry-failure count | run ledger |
+| Complexity / coupling deltas | **deferred** — requires AST analysis beyond the 0.1.0 gate set; post-0.1.0 check-gate extension |
+
+The risk-signal set is the three implementable triggers, never self-report
+or LLM judgment. The detector must operate on the merged diff against base —
 this is a Phase-2 acceptance test (TASK-75).
 
 Plan review uses the same ladder with architecture-scoped diffs starting at
 L2. Escalation events are logged (level, trigger, reason code) so the ladder
 itself can be tuned against TASK-47 telemetry later.
 
+### Drift cadence (revised 2026-09-07, human decision: quarterly too slow)
+
+| Cadence event | Rule |
+|---|---|
+| Weekly — pricing/deal sweep | diff live OpenRouter `/api/v1/models` against pinned snapshot; fails on ≥10% price delta on any roster model, new slug in a monitored family (z-ai, deepseek, qwen, moonshotai), or removed/renamed roster slug |
+| Weekly — bounded auto-select | sweep MAY auto-apply only pre-approved reversible selections: cheaper provider route for the same slug (deal capture); tier-bounded swaps already covered by the ladder. Ledger-logged with reason codes |
+| Human decision brief (blocking) | structural changes — new model, seat remapping, roster entry/exit, HLE/TB evidence revision — mark the roster stale until the human acknowledges. Machine never selects across tiers or admits a model unilaterally |
+| Monthly — deep refresh | full benchmark re-evaluation (replaces the former quarterly protocol in model-routing.md); produces the decision brief for the next roster revision |
+
+**Milestone phasing (ROADMAP alignment):** at v0.1.0 the sweep runs
+on-demand (`stack-check` / `doctor`; `config-sync` materializes via
+`weavelog sync`, a 0.1.0 deliverable). Scheduling via LaunchAgent is
+EXPLICITLY OUT of v0.1.0 per ROADMAP; the weekly/monthly cadence is the
+policy target, not a 0.1.0 deliverable.
+
 ## Consequences
 
-- Benchmark version discipline: notes must cite Terminal-Bench 2.1 and
-  SWE-bench Pro explicitly; bare "SWE-bench" or "Terminal-Bench" is
-  ambiguous and rejected in review.
-- Pricing figures age; any figure older than 30 days is stale and must be
-  re-pulled before reuse (OpenRouter `/api/v1/models` snapshot is the
-  routing-target source of truth).
-- HLE closed-book and knowledge exams without tools are demoted;
-  HLE-with-tools is a PRIMARY instrument for plan-gate/security/researcher
-  seats under the Artificial Analysis protocol pin. (An earlier draft said
-  "demoted to tiebreakers" — corrected after second-pass review.)
-- **Provider pin:** OpenRouter is the primary routing target at least until
-  weavelog 0.2.0+ (pi host support); pricing snapshots and drift gates run
-  against OpenRouter's API, with first-party vendor cards as verification
-  cross-checks only.
-- **Phase-2 host scope (0.1.0):** config adoption touches the opencode host
-  ONLY (`payload/config/opencode.jsonc` + `payload/config/agents/*`). Pi
-  host config changes (models.md, settings.json) are deferred to 0.2.0.
-- **Living-document split:** ADR-004 records the policy and cadence; the
-  weekly script updates the pinned snapshot and generated decision briefs —
-  it never edits this ADR. Material policy changes amend the ADR via dated
-  addenda, keeping the audit trail append-only (NORTH_STAR: evidence over
-  claims).
-- **Cadence (revised 2026-09-07, human decision: quarterly is too slow for
-  current model-progression pace):**
-  - **Weekly — pricing/deal sweep (deterministic):** diff live OpenRouter
-    `/api/v1/models` against the pinned snapshot; fails on ≥10% price delta
-    on any roster model, new slug in a monitored family (z-ai, deepseek,
-    qwen, moonshotai), or removed/renamed roster slug.
-  - **Weekly — bounded auto-select:** the sweep MAY auto-apply only
-    pre-approved, reversible selections: cheaper provider route for the same
-    model slug (deal capture) and tier-bounded swaps already covered by the
-    ladder (e.g., a flash model dropping below another flash seat's price
-    with equal or better tool-bench evidence). Auto-applied changes append
-    to the ledger with reason codes.
-  - **Human decision brief (blocking):** structural changes — new model
-    adoption, seat remapping, roster entry/exit, HLE/TB evidence revision —
-    mark the roster stale until the human acknowledges. The machine never
-    selects across tiers or admits a new model unilaterally.
-  - **Monthly — deep refresh:** full benchmark re-evaluation (replaces the
-    former quarterly protocol in model-routing.md), producing the decision
-    brief that feeds the next roster revision.
-- **Milestone phasing (ROADMAP alignment):** at v0.1.0 the sweep runs
-  on-demand (`stack-check` / `doctor` invocation; `config-sync` materializes
-  via `weavelog sync`, a 0.1.0 deliverable). Scheduling via LaunchAgent is
-  EXPLICITLY OUT of v0.1.0 per ROADMAP and lands in a later milestone; the
-  weekly/monthly cadence is the policy target, not a 0.1.0 deliverable.
-- The escalation ladder replaces ad-hoc reviewer model picks; per-agent
-  model fields may name only L0–L4 seats.
+**Easier:**
+
+- Seat choices become auditable — every assignment traces to a primary
+  instrument, a corroborator, and a cost.
+- Reviewer selection is deterministic; per-agent model fields may name only
+  L0–L4 seats.
+- Model-price changes surface automatically instead of via accidental
+  bill shock.
+- Frontier comparison is systematic: every decision brief measures
+  quality-per-dollar against Opus 5 / GPT-5.6-class anchors, not vibes.
+
+**Harder:**
+
+- Benchmark version discipline: bare "SWE-bench" or "Terminal-Bench" is
+  ambiguous and rejected; notes must cite TB 2.1 and SWE-bench Pro
+  explicitly.
+- Pricing figures expire: anything older than 30 days is stale and must be
+  re-pulled (OpenRouter snapshot is the source of truth; vendor cards are
+  verification cross-checks only).
+- HLE protocol pinning: closed-book knowledge exams are demoted;
+  HLE-with-tools requires naming the evaluation protocol on every citation.
+- The subscription-mode degradation (v0.3+) means two ladder variants must
+  be documented and doctor-reported honestly.
+- Structural roster changes now block on a human brief — cost of the HITL
+  guarantee (intended, per NORTH_STAR).
+- Living-document split: this ADR records policy only; the weekly script
+  updates snapshots/briefs, never the ADR. Material changes amend via dated
+  addenda (append-only audit trail, NORTH_STAR: evidence over claims).
+
+## Alternatives considered (provenance)
+
+| Option | Verdict | Why rejected |
+|---|---|---|
+| Single primary instrument (Terminal-Bench only) | rejected | conflates the product's agent loop with every seat's evaluation need; replaced by the seat-weighted composite after DeepSeek V4 Pro review (2026-09-07) |
+| BenchLM agentic composite as primary | rejected | weights (30/25/25 browsing/computer-use heavy) do not match a coding-harness product; kept as watch-list |
+| Pure price-per-benchmark-point ranking | rejected | ignores tool-call reliability and family diversity, which drive retry cost; folded into corroborator 2 and the ladder's family rule |
+| Keeping SWE-bench Verified as primary | rejected | contamination concerns and upstream deprecation recommendation; Pro replaces it |
+| Seat-weighted composite (this ADR) | chosen | matches each seat's actual work; validated by four-family review |
 
 ## Alignment (NORTH_STAR / PRODUCT / ROADMAP traceability)
 
@@ -225,17 +234,3 @@ itself can be tuned against TASK-47 telemetry later.
 | Phase-2 = opencode only (0.1.0) | ROADMAP v0.1.0 scope; pi config deferred to v0.2 deliverables |
 | Weekly/monthly drift cadence | NORTH_STAR: zero silent failure, evidence over claims; scheduling itself lands post-0.1.0 per ROADMAP explicit-out |
 | Escalation triggers via deterministic gates | NORTH_STAR: TDD + deterministic tool validation; ROADMAP v0.1.0 check-gate set |
-
-## Alternatives considered (provenance)
-
-- **Single primary instrument (Terminal-Bench only)** — conflates the
-  product's agent loop with every seat's evaluation need. Rejected for the
-  seat-weighted composite after DeepSeek V4 Pro review (2026-09-07).
-- **BenchLM agentic composite as primary** — useful tracker, but its weights
-  (30/25/25 browsing/computer-use heavy) do not match a coding-harness
-  product. Rejected as primary; kept as a watch-list.
-- **Pure price-per-benchmark-point ranking** — ignores tool-call reliability
-  and family diversity, which drive retry cost. Rejected; folded into
-  corroborator 2 and the ladder's family rule.
-- **Keeping SWE-bench Verified as primary** — contamination concerns and
-  upstream deprecation recommendation. Rejected; Pro replaces it.
