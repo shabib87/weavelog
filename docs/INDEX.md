@@ -7,7 +7,6 @@
 ## How to use this index
 
 1. **Starting a session:** Read PROGRESS.md (status, phase, watch items) →
-   NEXT_SESSION.md (narrative handoff) → this index (find relevant docs)
 2. **Researching a topic:** Find the category below, scan purposes, read
    relevant files
 3. **Making a decision:** Check ADRs (past decisions), TBDs (open questions),
@@ -41,7 +40,6 @@
 | File | Type | Purpose | When | LOC |
 |---|---|---|---|---|
 | `PROGRESS.md` | Tracker | Phase status, timeline, watch items, done list | **Every session first** | 599 |
-| `NEXT_SESSION.md` | Handoff | Narrative state for next agent | **Every session second** | 78 |
 
 ---
 

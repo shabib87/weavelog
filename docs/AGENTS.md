@@ -12,9 +12,8 @@ them without explicit human instruction.
 | `research/` | The ONE dated corpus (research schema). Session notes, evidence, amendments |
 | `architecture/` | Durable architecture docs (architecture schema, undated filenames) |
 | `architecture/adr/` | Decision records — Nygard sections + format contract in that README. Read it before writing an ADR |
-| `specs/` | Ratified briefs only (e.g. the v0.1.0 draft brief — the release scope of record) |
+| `specs/` | Ratified PRD/TRD-class docs: requirements and design that backlog tasks implement (e.g. the v0.1.0 draft brief — the release scope of record — and the weavelog design spec). A brief moves to `archive/` when the milestone it scopes ships; a design spec stays while it describes the current system |
 | `archive/` | Frozen provenance. **Never edit, never implement against, never add** (except whole-directory moves per the root AGENTS.md) |
-| `NEXT_SESSION.md` | Session handoff — update before closing a session |
 
 ## When you finish research (end of WHY phase)
 
@@ -49,7 +48,7 @@ them without explicit human instruction.
   `node --import tsx src/tools/frontmatter-check.ts --schema architecture docs/architecture docs/architecture/adr`
   then `node --import tsx src/tools/frontmatter-check.ts docs/research docs/specs`
 - Known accepted noise: `NORTH_STAR.md`, `PRODUCT.md`, `ROADMAP.md`,
-  `INDEX.md`, `NEXT_SESSION.md`, `cli.md`, this file, and `archive/**` are
+  `INDEX.md`, `cli.md`, this file, and `archive/**` are
   intentionally frontmatter-free or frozen — their validator violations are
   accepted. So are pre-convention files the validator flags in `research/`
   and `specs/` (e.g. the v0.1.0 draft brief, the design spec); normalizing

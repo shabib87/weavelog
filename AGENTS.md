@@ -37,7 +37,6 @@ weavelog/
 │   ├── research/RESEARCH.md            # Provenance
 │   ├── architecture/adr/      # Architecture decision records (Nygard, indexed)
 │   ├── PROGRESS.md            # Phase tracker (where we are)
-│   ├── NEXT_SESSION.md        # Narrative handoff
 │   ├── specs/                 # Detailed design specs
 │   ├── research/              # Research logs (dated, lab notebooks)
 │   ├── AGENTS.md              # Documentation rules (nested, open agents standard)
@@ -55,7 +54,6 @@ weavelog/
 | `docs/architecture/adr/` | Architecture decision records (Nygard format, ADR index) | Active, authoritative |
 | `docs/PROGRESS.md` | Phase tracker (where we are) | Active, authoritative |
 | `docs/ROADMAP.md` | Product roadmap (version milestones) | Active, authoritative |
-| `docs/NEXT_SESSION.md` | Narrative handoff | Active |
 | `docs/specs/2026-06-28-weavelog-design.md` | Detailed design | Active |
 | `docs/research/` | Research logs (dated, lab notebooks) | Active |
 | `docs/AGENTS.md` | Documentation rules (how docs are written; ADR format contract) | Active, authoritative |
