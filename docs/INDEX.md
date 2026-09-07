@@ -2,7 +2,9 @@
 
 > **Purpose:** Navigation map for agents and humans. Read this to decide
 > what to read and what to skip. Updated as part of Phase 1.85c.
-> **Last updated:** 2026-07-22
+> **Last updated:** 2026-09-07 (ADR rows reconciled; research/plans/learnings
+> corpus entries beyond 2026-07-22 are tracked by `docs/research/README.md` —
+> this index does not duplicate the corpus)
 
 ## How to use this index
 
@@ -48,8 +50,11 @@
 | File | Type | Purpose | When | LOC | Last updated |
 |---|---|---|---|---|---|
 | `research/RESEARCH.md` | Provenance | WHY behind every design decision, source-by-source | On unfamiliar territory | 241 | 2026-07-22 |
-| `architecture/adr/0001-weavelog-architecture-decisions.md` | ADR | Architecture decisions (monolithic — needs splitting) | On design changes | 303 | 2026-07-08 |
-| `architecture/adr/0002-bash-homebrew-tooling.md` | ADR | Bash/Homebrew decision (RESOLVED: TypeScript only) | On distribution/language | 49 | 2026-07-22 |
+| `architecture/adr/0001-weavelog-architecture-decisions.md` | ADR | Historical umbrella record — traceability table routes each bundled decision to its current home. Do not implement from §2 | On design changes | 341 | 2026-09-07 |
+| `architecture/adr/0002-bash-homebrew-tooling.md` | ADR | Bash/Homebrew decision (approved: TypeScript only; reformatted to contract) | On distribution/language | 62 | 2026-09-07 |
+| `architecture/adr/0003-three-phase-loop-model.md` | ADR | Three-phase loop model + decision-recording gate (WHY ends in ADR or explicit no-decision) | Every WHY phase | 100 | 2026-09-07 |
+| `architecture/adr/0004-model-selection-benchmark-policy.md` | ADR | Seat-weighted benchmark policy; L0–L4 reviewer escalation; weekly/monthly drift cadence | Model decisions | 241 | 2026-09-07 |
+| `AGENTS.md` | Rules | Documentation rules (nested AGENTS.md): schemas, versioning, artifact flow PRD→TRD→ADR→TASK | When writing docs | 120 | 2026-09-07 |
 
 ---
 

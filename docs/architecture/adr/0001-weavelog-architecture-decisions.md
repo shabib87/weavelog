@@ -12,11 +12,36 @@ sources:
 
 # Architecture Decision Record: weavelog
 
-**Status:** Accepted
+**Status:** Historical umbrella record (2026-09-07). Individual decisions are
+either **current** (traced to their authoritative home in the traceability
+table) or **superseded**. Do not implement from §2 directly — follow the
+authoritative home. Record remains for provenance; it is **exempt** from the
+format contract and will not be split (a split would duplicate anchor docs
+and constitute retrospective ADR creation).
+
 **Date:** July 4, 2026
 **Supersedes:** `docs/archive/stateless-multi-model-agent-swarm-adr.md`
 **Appendix:** `docs/specs/2026-06-28-weavelog-design.md` (detailed design)
 **Authoritative sources:** `docs/NORTH_STAR.md` (non-negotiables), `docs/research/RESEARCH.md` (provenance)
+
+## Traceability (2026-09-07 — where each bundled decision lives now)
+
+| § | Bundled decision | Status now | Authoritative home |
+|---|---|---|---|
+| 2.1 | Harness host: Pi | **superseded** | ROADMAP host ladder — opencode 0.1, pi 0.2 (NORTH_STAR: hosts are composed) |
+| 2.2 | TypeScript only | current | ADR-002 |
+| 2.3 | macOS/arm64 only (v1) | current | NORTH_STAR non-negotiable |
+| 2.4 | OpenRouter + open-weight default; 6-model roster | **roster superseded** | ADR-004 (7-model roster, seat-weighted policy); NORTH_STAR open-weights primary |
+| 2.5 | Headroom compression proxy | current | docs/architecture/headroom-proxy.md |
+| 2.6 | Git-native isolation, no containers | current | docs/architecture/worktree-discipline.md |
+| 2.7 | Deterministic verifier + human gate | current | NORTH_STAR ("the human directs AND verifies") |
+| 2.8 | Loop state in Pi session tree | historical (host-specific) | state/ledger design is a ROADMAP v0.1.0 deliverable; re-decided per host |
+| 2.9 | Rollback via git branch checkpoints | current | docs/architecture/worktree-discipline.md |
+| 2.10 | Budget default, pause on exhaustion | current direction | ADR-004 drift-gate governance |
+| 2.11 | Agent Skills + AGENTS.md standards | current | NORTH_STAR open standards; docs/AGENTS.md |
+| 2.12 | V1 human-gated, sequential, no worktrees | **partially superseded** | ROADMAP v0.1.0; worktree practice per worktree-discipline.md (TASK-23) |
+| 2.13 | MIT license; issues welcome, no PRs | current | root LICENSE; CONTRIBUTING.md |
+| 2.14 | Three-layer customization; plugin packages (v1.1) | current | docs/research/2026-07-08-plugin-architecture-and-scope-refinement.md; PRODUCT.md |
 
 ---
 
