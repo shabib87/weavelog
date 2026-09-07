@@ -3,11 +3,11 @@ id: TASK-78
 title: >-
   Deterministic L1 risk-signal detector in weavelog check — protected-path glob
   + run-ledger retry counts on merged diff vs base
-status: In Progress
+status: Done
 assignee:
   - '@conductor'
 created_date: '2026-09-07 23:04'
-updated_date: '2026-09-07 23:22'
+updated_date: '2026-09-07 23:48'
 labels:
   - spec-approved
 dependencies:
@@ -36,3 +36,15 @@ Implements the machine-computed L1 escalation triggers that ADR-004 names a Phas
 - [ ] #3 Branch is rebased on main and green
 - [ ] #4 All acceptance criteria checked with fresh evidence (one at a time, never batched)
 <!-- DOD:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Merged to main at 3ef6238 after L3 re-review APPROVE (self-loop fix, deletion+untracked coverage, fail-closed env); closed via sanctioned task-flow machinery.
+<!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Delivered the deterministic L1 risk-signal detector ADR-004 named a Phase-2 acceptance test: weavelog check computes the three 0.1.0 triggers (failing tests, protected-path touches with file:line evidence, run-ledger retry streaks >=2) on the merged diff against base, escalates reviewer L0->L1 with deterministic reason codes, logs escalation records for TASK-47 tuning, and fails closed on undeterminable base / absent ledger / malformed env. 673 tests pass; L3 re-review APPROVE after initial REJECT; merged at 3ef6238.
+<!-- SECTION:FINAL_SUMMARY:END -->
