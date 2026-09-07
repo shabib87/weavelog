@@ -345,7 +345,7 @@ cache reads today; the DeepInfra V4-Pro write-premium (1.25×/2×) is the only
 card that prices cache WRITES explicitly. Re-verify before any route swap;
 these figures age like all pricing figures (30-day staleness rule, ADR-004).
 
-## Open items (unchanged from TASK-61 scope)
+## Open items (updated 2026-09-07 by TASK-75)
 
 - AC #1 gaps: TTFT, TPS, tool-call accuracy for all seven. (Per-provider
   cache discounts CLOSED 2026-09-07: static card facts captured above,

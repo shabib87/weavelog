@@ -2,7 +2,7 @@
 /**
  * sync-model-pricing — feed live OpenRouter prices into litellm's pricing DB
  * so the headroom proxy can compute dollar savings for models litellm doesn't
- * know yet (glm-5.3-flash, qwen3.8, minimax-m3, kimi-k3 as of Aug 2026).
+ * know yet (roster models as of the 2026-09-07 ADR-004 adoption).
  *
  * WHY: headroom prices via litellm.cost_per_token(); litellm's bundled DB lags
  * behind new OpenRouter models, leaving $0.00 savings. This script is the

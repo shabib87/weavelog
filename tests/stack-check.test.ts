@@ -441,17 +441,35 @@ describe("checkRosterDrift (roster drift gate, pure)", () => {
     assert.equal(res.drift.length, 0);
   });
 
-  test("missing or malformed live pricing is skipped, never a crash", () => {
+  test("missing or malformed live pricing emits drift, never a crash", () => {
     const bad = [
-      { id: "z-ai/glm-5.3-flash" },
-      { id: "z-ai/glm-5.3", pricing: { prompt: "abc", completion: "" } },
+      { id: "z-ai/glm-5.3-flash" }, // pricing absent entirely
+      {
+        id: "z-ai/glm-5.3",
+        pricing: { prompt: "abc", completion: null as unknown as string },
+      },
       {
         id: "qwen/qwen3.8-flash",
         pricing: { prompt: "0.00000015", completion: "0.00000047" },
       },
     ];
     const res = checkRosterDrift(snap, bad);
-    assert.equal(res.drift.length, 0);
+    assert.ok(
+      res.drift.some(
+        (d) =>
+          d.includes("live pricing missing") &&
+          d.includes("z-ai/glm-5.3-flash"),
+      ),
+      `expected missing-pricing drift, got: ${JSON.stringify(res.drift)}`,
+    );
+    assert.ok(
+      res.drift.some(
+        (d) =>
+          d.includes("unavailable/malformed") && d.includes("z-ai/glm-5.3"),
+      ),
+      `expected malformed-pricing drift, got: ${JSON.stringify(res.drift)}`,
+    );
+    // decisions remain reserved for the three structural conditions
     assert.equal(res.decisions.length, 0);
   });
 });

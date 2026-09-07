@@ -367,8 +367,11 @@ export interface RosterDriftResult {
   decisions: string[];
 }
 
-function priceDelta(pinned: string, live: string | undefined): number | null {
-  if (live === undefined || live.trim() === "") return null;
+function priceDelta(
+  pinned: string,
+  live: string | undefined | null,
+): number | null {
+  if (live == null || live.trim() === "") return null;
   const p = Number(pinned);
   const l = Number(live);
   if (!Number.isFinite(p) || !Number.isFinite(l) || p <= 0) return null;
@@ -399,9 +402,24 @@ export function checkRosterDrift(
   for (const [id, pinned] of Object.entries(snapshot.roster)) {
     const live = byId.get(id);
     if (!live) continue; // already reported above
+    const hasPinnedPrice =
+      Number(pinned.prompt) > 0 && Number(pinned.completion) > 0;
     const inDelta = priceDelta(pinned.prompt, live.pricing?.prompt);
     const outDelta = priceDelta(pinned.completion, live.pricing?.completion);
-    if (inDelta === null && outDelta === null) continue;
+    if (inDelta === null && outDelta === null) {
+      // free->paid flips and vanishing prices must not pass silently
+      if (
+        hasPinnedPrice &&
+        (live.pricing?.prompt != null || live.pricing?.completion != null)
+      ) {
+        drift.push(
+          `roster: pricing unavailable/malformed for ${id} — treat as drift`,
+        );
+      } else if (hasPinnedPrice) {
+        drift.push(`roster: live pricing missing for ${id} — treat as drift`);
+      }
+      continue;
+    }
     priceDeltas[id] = { input: inDelta, output: outDelta };
     const breached =
       (inDelta !== null && inDelta >= ROSTER_PRICE_DELTA_THRESHOLD) ||

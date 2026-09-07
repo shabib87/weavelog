@@ -4,11 +4,12 @@ title: >-
   Adopt ADR-004 model roster — opencode host only (0.1.0): payload
   opencode.jsonc + agents, escalation ladder wiring, monthly cadence, static
   cache-discount pull
-status: To Do
+status: In Progress
 assignee: []
 created_date: '2026-09-07 20:30'
-updated_date: '2026-09-07 22:05'
-labels: []
+updated_date: '2026-09-07 22:33'
+labels:
+  - spec-approved
 milestone: m-7
 dependencies:
   - TASK-61

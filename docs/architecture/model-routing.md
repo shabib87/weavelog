@@ -108,7 +108,9 @@ Reason codes: `cheaper-route` (same slug, cheaper provider route) and
 `flash-bounded-swap` (flash→flash swap with equal-or-better tool-bench evidence).
 Anything structural — new model adoption, seat remapping, roster entry/exit, evidence
 revision — is FORBIDDEN in the ledger and goes to the decision brief instead. The human
-sets `humanAck` on review; entries without it are provisional.
+sets `humanAck` on review; entries without it are provisional. This ledger is
+protocol-ahead-of-code at 0.1.0: the format is fixed here, no auto-select/ledger-writing
+code exists yet — the sweep is manual/on-demand and any ledger entries are written by hand.
 
 ### Monthly — deep refresh (replaces the former quarterly protocol)
 

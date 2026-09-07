@@ -11,7 +11,8 @@
         "setCacheKey": true
       },
       "models": {
-        // qwen3.8 is 1M only on some OpenRouter providers; pin to the 1M ones
+        // qwen3.8-2.4t-a95b is 1M only on some OpenRouter providers; pin to the
+        // 1M ones
         "qwen/qwen3.8-2.4t-a95b": {
           "options": {
             "provider": {
