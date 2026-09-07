@@ -43,7 +43,7 @@ const filePath = fileIdx >= 0 ? args[fileIdx + 1] : undefined;
 const jsonOutput = args.includes("--json");
 
 if (!filePath) {
-  console.error("Error: --file <path> is required\n\n" + HELP);
+  console.error(`Error: --file <path> is required\n\n${HELP}`);
   process.exit(2);
 }
 
@@ -162,7 +162,7 @@ function determineVerdict(
 
   if (!requestStable) {
     verdict = "OPENCODE_DYNAMIC_PREFIX";
-    evidence = `request prefix changed at ${requestDiff!.detail}`;
+    evidence = `request prefix changed at ${requestDiff?.detail}`;
   } else if (comp1.length === 0 && comp2.length === 0) {
     if (contentRewrite && !cacheHits) {
       verdict = "TOKEN_MODE_HISTORY_REWRITE";
@@ -175,7 +175,7 @@ function determineVerdict(
     }
   } else if (!compressedStable) {
     verdict = "TOKEN_MODE_HISTORY_REWRITE";
-    evidence = `request prefix stable but compressed prefix differs at ${compressedDiff!.detail}`;
+    evidence = `request prefix stable but compressed prefix differs at ${compressedDiff?.detail}`;
   } else {
     verdict = "STABLE";
     evidence = `both request and compressed prefixes stable`;
@@ -196,7 +196,7 @@ const entries = parseJsonl(raw);
 
 if (entries.length < 2) {
   console.error(
-    "Error: need at least 2 entries to diff (got " + entries.length + ")",
+    `Error: need at least 2 entries to diff (got ${entries.length})`,
   );
   process.exit(2);
 }

@@ -20,7 +20,7 @@ function run(args: string[]) {
 
 function writeJsonl(filename: string, entries: Record<string, unknown>[]) {
   const path = join(TMP, filename);
-  writeFileSync(path, entries.map((e) => JSON.stringify(e)).join("\n") + "\n");
+  writeFileSync(path, `${entries.map((e) => JSON.stringify(e)).join("\n")}\n`);
   return path;
 }
 

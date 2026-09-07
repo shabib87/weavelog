@@ -67,7 +67,7 @@ function fakeConverterScript(
   if (opts.logFile) lines.push(`printf "invoked\\n" >> "${opts.logFile}"`);
   lines.push(`printf '%s' '${opts.stdout ?? "# Fake converted\n"}'`);
   if (opts.exit !== undefined) lines.push(`exit ${opts.exit}`);
-  writeFileSync(p, lines.join("\n") + "\n");
+  writeFileSync(p, `${lines.join("\n")}\n`);
   chmodSync(p, 0o755);
   return p;
 }
@@ -446,8 +446,7 @@ describe("mdconvert (output cap)", () => {
   test("text passthrough over the cap is truncated with a notice (token-flood guard)", async () => {
     const dir = tmpDir("md-cap-text");
     const file = join(dir, "big.log");
-    const log =
-      Array.from({ length: 2100 }, (_, i) => `log ${i}`).join("\n") + "\n";
+    const log = `${Array.from({ length: 2100 }, (_, i) => `log ${i}`).join("\n")}\n`;
     writeFileSync(file, log);
     const cap = capture();
     const code = await mdconvert(file, {

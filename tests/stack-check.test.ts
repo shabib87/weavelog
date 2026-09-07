@@ -10,7 +10,7 @@ import {
   rmSync,
   writeFileSync,
 } from "node:fs";
-import { homedir, tmpdir } from "node:os";
+import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { after, before, describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
@@ -75,7 +75,7 @@ srv.listen(0,"127.0.0.1",()=>{console.log("PORT:"+srv.address().port)})`,
       () => reject(new Error("stub server did not report port")),
       10_000,
     );
-    stubProc!.stdout!.on("data", (chunk: Buffer) => {
+    stubProc?.stdout?.on("data", (chunk: Buffer) => {
       const match = /PORT:(\d+)/.exec(chunk.toString());
       if (match) {
         clearTimeout(timeout);

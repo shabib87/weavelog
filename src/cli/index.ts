@@ -235,14 +235,17 @@ function renderTemplate(
   tokens: Record<string, string>,
   sourcePath: string,
 ): string {
-  return content.replace(/\{\{\s*([A-Za-z0-9_]+)\s*\}\}/g, (m, key: string) => {
-    if (!(key in tokens)) {
-      throw new Error(
-        `${sourcePath}: template token {{${key}}} is not resolvable from .env`,
-      );
-    }
-    return tokens[key];
-  });
+  return content.replace(
+    /\{\{\s*([A-Za-z0-9_]+)\s*\}\}/g,
+    (_m, key: string) => {
+      if (!(key in tokens)) {
+        throw new Error(
+          `${sourcePath}: template token {{${key}}} is not resolvable from .env`,
+        );
+      }
+      return tokens[key];
+    },
+  );
 }
 
 function walkFiles(dir: string): string[] {

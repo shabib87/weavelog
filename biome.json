@@ -37,12 +37,10 @@
         "useNamingConvention": {
           "level": "warn",
           "options": {
-            "strictCase": false,
             "conventions": [
-              { "selector": { "kind": "typeLike" }, "formats": ["PascalCase"] },
               { "selector": { "kind": "enumMember" }, "formats": ["CONSTANT_CASE"] },
-              { "selector": { "kind": "variable" }, "formats": ["camelCase", "CONSTANT_CASE"] },
-              { "selector": { "kind": "classMember" }, "formats": ["camelCase", "CONSTANT_CASE"] }
+              { "selector": { "kind": "objectLiteralMember" }, "match": ".*" },
+              { "selector": { "kind": "typeMember" }, "match": ".*" }
             ]
           }
         }

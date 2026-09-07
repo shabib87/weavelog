@@ -41,12 +41,12 @@ const jsonOutput = args.includes("--json");
 const numRequests = Number(opt("--requests") || 4);
 
 if (!model) {
-  console.error("Error: --model <id> is required\n\n" + HELP);
+  console.error(`Error: --model <id> is required\n\n${HELP}`);
   process.exit(2);
 }
 
 if (model.trim() === "") {
-  console.error("Error: --model value must not be empty\n\n" + HELP);
+  console.error(`Error: --model value must not be empty\n\n${HELP}`);
   process.exit(2);
 }
 

@@ -22,7 +22,7 @@ import {
   statSync,
 } from "node:fs";
 import { homedir } from "node:os";
-import { dirname, join, resolve } from "node:path";
+import { dirname, join } from "node:path";
 import { repoRoot, toolScript } from "./tool-paths.js";
 
 const HELP = `Usage: bun agents-install.ts [options]

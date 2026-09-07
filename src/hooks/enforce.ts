@@ -52,7 +52,6 @@ import {
 } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
 import { toolScript, toolScriptHref } from "../tools/tool-paths.js";
 
 /** Structural subset of the plugin-context BunShell — keeps the plugin unit-testable. */
@@ -135,7 +134,7 @@ export class FrontmatterViolationError extends Error {}
  * Hook 9 argv — pure so the forward-only contract (no --force, no --adopt:
  * a refusal means a human decides) is testable without spawning a process.
  */
-export function configSyncArgv(home: string): string[] {
+export function configSyncArgv(_home: string): string[] {
   const { path, tsx } = toolScript("config-sync");
   if (!tsx) return ["node", path];
   return ["node", "--import", "tsx", path];

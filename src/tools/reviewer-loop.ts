@@ -83,7 +83,7 @@ if (
   }
 
   const planFile = opt("--plan");
-  if (!planFile) fail("--plan <file> is required\n\n" + HELP);
+  if (!planFile) fail(`--plan <file> is required\n\n${HELP}`);
   const plan = readFileSync(planFile, "utf8");
   let models: string[];
   try {

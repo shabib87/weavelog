@@ -277,44 +277,44 @@ describe("task-migrate CLI", () => {
   test("--execute TASK-12 edit drops v2 but carries NO -m (human milestone wins)", () => {
     run(["--execute"]);
     const line = loadCallLines().find((c) => c.includes("TASK-12"));
-    assert.ok(line!.includes("task edit TASK-12 --label harness"));
-    assert.ok(!line!.includes("-m"));
+    assert.ok(line?.includes("task edit TASK-12 --label harness"));
+    assert.ok(!line?.includes("-m"));
   });
 
   test("--execute TASK-1 edit carries --label harness -m m-6 (replace semantics)", () => {
     run(["--execute"]);
     const calls = loadCallLines();
     const t1 = calls.find((c) => c.includes("TASK-1"));
-    assert.ok(t1!.includes("task edit TASK-1 --label harness -m m-6"));
+    assert.ok(t1?.includes("task edit TASK-1 --label harness -m m-6"));
   });
 
   test("--execute TASK-2 edit --label harness,spec-approved", () => {
     run(["--execute"]);
     const line = loadCallLines().find((c) => c.includes("TASK-2"));
-    assert.ok(line!.includes("task edit TASK-2 --label harness,spec-approved"));
+    assert.ok(line?.includes("task edit TASK-2 --label harness,spec-approved"));
   });
 
   test("--execute TASK-3 edit carries --priority High", () => {
     run(["--execute"]);
     const line = loadCallLines().find((c) => c.includes("TASK-3"));
-    assert.ok(line!.includes("TASK-3"));
-    assert.ok(line!.includes("--priority High"));
+    assert.ok(line?.includes("TASK-3"));
+    assert.ok(line?.includes("--priority High"));
     // Empty remapped label set must use --clear-labels (backlog's --label ""
     // exits 0 but does NOT clear the labels).
-    assert.ok(line!.includes("--clear-labels"));
-    assert.ok(!line!.includes("--label "));
+    assert.ok(line?.includes("--clear-labels"));
+    assert.ok(!line?.includes("--label "));
   });
 
   test("--execute TASK-4 edit carries --type bug", () => {
     run(["--execute"]);
     const line = loadCallLines().find((c) => c.includes("TASK-4"));
-    assert.ok(line!.includes("--type bug"));
+    assert.ok(line?.includes("--type bug"));
   });
 
   test("--execute TASK-5 edit carries --type chore", () => {
     run(["--execute"]);
     const line = loadCallLines().find((c) => c.includes("TASK-5"));
-    assert.ok(line!.includes("--type chore"));
+    assert.ok(line?.includes("--type chore"));
   });
 
   test("--execute leaves noop + Done tasks untouched (no TASK-7/9/10/11 calls)", () => {

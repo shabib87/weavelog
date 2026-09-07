@@ -49,7 +49,7 @@ before(async () => {
       () => reject(new Error("stub server did not report port")),
       10_000,
     );
-    stubProc!.stdout!.on("data", (chunk: Buffer) => {
+    stubProc?.stdout?.on("data", (chunk: Buffer) => {
       const match = /PORT:(\d+)/.exec(chunk.toString());
       if (match) {
         clearTimeout(timeout);

@@ -407,7 +407,7 @@ describe("worktree-create --create mode", () => {
     const calls = readFileSync(callsLog, "utf8");
     const createCall = calls.split("\n").find((c) => c.includes("create"));
     assert.notEqual(createCall, undefined);
-    assert.ok(createCall!.includes("Fix the thing"));
+    assert.ok(createCall?.includes("Fix the thing"));
 
     assert.ok(r.stdout.includes("TASK-18"));
     assert.ok(r.stdout.includes("branch=task/TASK-18"));
