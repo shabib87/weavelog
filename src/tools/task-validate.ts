@@ -208,7 +208,7 @@ export function detectHarnessDevFromCwd(
  *
  * Order matters (mechanical-first, gate-ratified in SPEC v4.1):
  *   1. harness  — the task modifies bin/ or plugins/ or config/ or AGENTS.md
- *                 or docs/architecture/ or the stack manifest (stack-versions.json
+ *                 or docs/trd/, docs/adr/, docs/prd/ or the stack manifest (stack-versions.json
  *                 legacy / weavelog.json current) (file-path rule
  *                 against the task's modified-file paths, case-insensitive)
  *   2. dogfood  — the deliverable is real work run through the harness as the
@@ -229,7 +229,9 @@ export const HARNESS_PATH_RULES: readonly string[] = [
   "bin/",
   "plugins/",
   "config/",
-  "docs/architecture/",
+  "docs/trd/",
+  "docs/adr/",
+  "docs/prd/",
   "AGENTS.md",
   "stack-versions.json",
   "weavelog.json",

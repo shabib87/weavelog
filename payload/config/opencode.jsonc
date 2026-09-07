@@ -44,7 +44,7 @@
   // glm-5.3-flash; bulk worker deepseek-v4-flash-0731; vision/UI qwen3.8-flash.
   // Access removed: minimax-m3, deepseek-v4-flash-vision-exp (retired earlier:
   // glm-5.2, qwen3.8-max). Escalation ladder L0-L4 in config/agents/*.
-  // See docs/architecture/adr/0004-model-selection-benchmark-policy.md
+  // See docs/adr/0004-model-selection-benchmark-policy.md
   "model": "openrouter/z-ai/glm-5.3-flash",
   "small_model": "openrouter/deepseek/deepseek-v4-flash-0731",
   // superpowers plugin REMOVED 2026-08-16 (light-factory plan): 4 keeper skills

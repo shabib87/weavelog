@@ -9,7 +9,9 @@
   "files": [
     "dist/",
     "payload/",
-    "docs/architecture/",
+    "docs/trd/",
+    "docs/adr/",
+    "docs/prd/",
     "docs/cli.md",
     "README.md",
     "LICENSE",

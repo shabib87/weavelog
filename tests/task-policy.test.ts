@@ -285,7 +285,9 @@ describe("general-label decision table (AC #15)", () => {
       "plugins/enforce.ts",
       "config/opencode.jsonc",
       "AGENTS.md",
-      "docs/architecture/worktree-discipline.md",
+      "docs/trd/worktree-discipline.md",
+      "docs/adr/0004-model-selection-benchmark-policy.md",
+      "docs/prd/2026-09-05-v010-draft-brief.md",
       "stack-versions.json",
     ]) {
       assert.equal(decideGeneralLabel({ modifiedPaths: [p] }), "harness");

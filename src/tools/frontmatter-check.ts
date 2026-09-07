@@ -36,7 +36,7 @@ const REQUIRED_KEYS = [
   "supersedes",
 ] as const;
 
-// Architecture schema (docs/architecture/*.md)
+// Architecture schema (docs/trd/*.md, docs/adr/*.md, docs/prd/*.md)
 const ARCH_STATUSES = [
   "draft",
   "in-review",
@@ -68,7 +68,8 @@ Modes:
 
 Options:
   --schema <val>  Select frontmatter schema: research (default) | architecture
-                  architecture schema applies to docs/architecture/*.md and
+                  architecture schema applies to docs/trd/*.md, docs/adr/*.md,
+ *                  docs/prd/*.md and
                   validates: date, topic, status, type, author, related_to,
                   sources. related_to entries must resolve to existing files
                   (dangling -> ERROR) and the target's related_to must list this

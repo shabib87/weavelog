@@ -46,14 +46,14 @@ resolved from cwd via \`git rev-parse --show-toplevel\`; running from a
 subdirectory or an unrelated repo creates worktrees + installs the hook THERE.`;
 
 const HOOK_CONTENT = `#!/bin/sh
-# Block commits on main. Rules: docs/architecture/worktree-discipline.md.
+# Block commits on main. Rules: docs/trd/worktree-discipline.md.
 if [ "$ENFORCE_DISABLED" = "true" ]; then
   exit 0
 fi
 branch="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
 if [ "$branch" = "main" ] || [ "$branch" = "master" ]; then
   echo "Blocked: no commits on $branch. Work in .worktrees/<task-id> (branch task/<task-id>)." >&2
-  echo "Rules: docs/architecture/worktree-discipline.md (approved task-branch merges only)." >&2
+  echo "Rules: docs/trd/worktree-discipline.md (approved task-branch merges only)." >&2
   exit 1
 fi
 # TASK-51: block AC-gutting on spec-approved tasks (backlog/tasks/task-*.md).

@@ -30,7 +30,7 @@ Severity mapping (tag every finding):
 
 You may run read-only commands (git diff, git log, greps, read-only test commands) but NEVER edit files. Your output is a verdict for a human gate, not a fix.
 
-Test guardrail audit (see docs/architecture/test-guardrails.md — the single source, check all):
+Test guardrail audit (see docs/trd/test-guardrails.md — the single source, check all):
 - Implementation without a failing test first, or tests written with/after the code — blocker
 - Tautology/mirror assertions, assertion-free tests, hallucinated assertion APIs — blocker
 - Deleted/modified failing tests without human sign-off (check git diff on test paths) — blocker

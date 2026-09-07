@@ -23,7 +23,7 @@ Actively sharpen the domain model during design dialogue: challenge terms, stres
 ## Where things live (harness mapping)
 
 - **Glossary** → a `## Glossary` section in the effort's spec doc (`docs/spec/`) or the wayfinder map's Notes — glossary ONLY, no implementation detail.
-- **ADRs** → `docs/architecture/adr/` — Nygard template + index in `docs/architecture/adr/README.md`. ADRs are written incrementally on trigger (hard-to-reverse decisions), never retrospectively. Research notes under `docs/research/` are dated, source-attributed notes — a different artifact.
+- **ADRs** → `docs/adr/` — Nygard template + index in `docs/adr/README.md`. ADRs are written incrementally on trigger (hard-to-reverse decisions), never retrospectively. Research notes under `docs/research/` are dated, source-attributed notes — a different artifact.
 
 ## Offer an ADR only when all three hold
 
