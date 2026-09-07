@@ -63,7 +63,7 @@ weavelog/
 | `docs/AGENTS.md` | Documentation rules (how docs are written; ADR format contract) | Active, authoritative |
 | `docs/archive/learnings/` | Session learning logs (July-era, frozen) | Frozen, provenance only |
 | `docs/superpowers/plans/` | Implementation plans (superpowers convention) | Frozen, historical |
-| `docs/tbd/` | Open questions | Do not implement against |
+| `docs/archive/tbd/` | Open blindspot docs (frozen 2026-09-07) | Do not implement against; re-raise live questions as backlog tasks |
 | `docs/archive/` | Superseded research | **Do not use.** Provenance only. |
 
 ## Build & test commands
