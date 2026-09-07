@@ -52,9 +52,50 @@ extension, not promised); TASK-75 config adoption.
 - [ ] #5 IF legacy ADRs are exempt THEN the ADR index SHALL say so explicitly (001/0002 marked pre-convention, not reformatted)
 <!-- AC:END -->
 
+## Plan (2026-09-07, human-directed full reorg)
+
+Human directive: docs/ fully organized — docs/prd/, docs/trd/, docs/adr/;
+guardrails + conventions; backlog DAG/description/AC/DoD updates; docs/prd
+cross-references every backlog milestone. Supersedes the earlier specs/
+decision. PLAN REVIEW GATE before implementation; diff review after.
+
+Phase 1 — moves (git mv, no content edits):
+- specs/2026-09-05-v010-draft-brief.md + github-repo-metadata.md -> docs/prd/
+- specs/2026-06-28-weavelog-design.md -> docs/trd/ (founding TRD)
+- architecture/*.md (8 TRD docs) -> docs/trd/; README.md -> docs/trd/README.md (TRD index)
+- architecture/adr/ -> docs/adr/; architecture/diagrams/ -> docs/trd/diagrams/
+- empty specs/ + architecture/ removed
+
+Phase 2 — conventions + ADR-005 amendment (in-review: amend in place, dated):
+- ADR-005 gains the physical directory map (prd/trd/adr homes)
+- docs/AGENTS.md: what-lives-where, artifact-flow links, validation commands
+  (--schema architecture docs/trd docs/adr docs/prd), hard rules
+- docs/adr/README.md paths + related_to in all 5 ADRs
+- docs/trd/README.md nav map; docs/prd/README.md NEW: PRD index with
+  milestone cross-reference table (m-0..m-7 <-> brief anchors <-> status)
+  + reciprocal pointers in backlog/milestones/*.md
+- INDEX.md, backlog-lifecycle.md, 5 TRD docs cross-refs, 3 research notes
+  (path repair only)
+
+Phase 3 — code path literals (TDD: test first):
+- tests/task-policy.test.ts:288 -> docs/trd/worktree-discipline.md (fails first)
+- src/tools/task-validate.ts:232 protected paths; src/hooks/enforce.ts:742,777
+  messages; src/tools/worktree-create.ts:49,56 hook text
+- payload: AGENTS.md, config/prompts/reviewer.md, config/opencode.jsonc,
+  skills/as-domain-modeling/SKILL.md
+- AC#1 "zero code changes" amended with dated note (human-directed scope growth)
+
+Phase 4 — backlog DAG:
+- affected open tasks (28, 35, 45, 49, 56, 59, 74): dated AC path amendments
+- TASK-76 AC provenance + DoD updates; Done tasks untouched (ledger)
+
+Phase 5 — gates:
+- frontmatter-check (all dirs), task-validate --pre-commit, biome, tsc, tests
+- diff review: DeepSeek + Qwen + GLM; blockers fixed before merge gate
+
 ## Definition of Done
 <!-- DOD:BEGIN -->
-- [ ] #1 Docs-only diff; zero code changes
+- [ ] #1 Docs-only diff; zero code changes [AMENDED 2026-09-07, human-directed: path-literal touch-ups in src/ (test-first), payload/ configs, and backlog/ task files now in scope per the Phase 1-5 plan below]
 - [ ] #2 frontmatter-check --schema architecture passes fresh in the worktree
 - [ ] #3 Sanitization scan passes (no absolute home paths, no secrets)
 - [ ] #4 Worktree clean; branch rebased on main
