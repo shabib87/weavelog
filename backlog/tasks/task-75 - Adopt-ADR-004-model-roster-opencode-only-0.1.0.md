@@ -4,10 +4,10 @@ title: >-
   Adopt ADR-004 model roster — opencode host only (0.1.0): payload
   opencode.jsonc + agents, escalation ladder wiring, monthly cadence, static
   cache-discount pull
-status: In Progress
+status: Done
 assignee: []
 created_date: '2026-09-07 20:30'
-updated_date: '2026-09-07 22:33'
+updated_date: '2026-09-07 22:34'
 labels:
   - spec-approved
 milestone: m-7
@@ -85,3 +85,9 @@ AC#5 verified: research note gains 'Provider-card cache rates (static pull, Phas
 
 DoD evidence: biome check clean (47 files), tsc --noEmit clean, full suite 634 pass / 1 pre-existing skip (dist build absent in worktree); sanitization scan over diff + new files: zero hits for /Users/, personal identifiers, secret patterns (2 pre-existing test fixtures untouched by diff); worktree created from current main 90756ec, main has not moved (verified via git log main ^task/TASK-75 = empty).
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Adopted ADR-004 model roster for the opencode host (0.1.0): 7-model set in weavelog.json/opencode.jsonc/agents (access removed for minimax-m3 + deepseek-v4-flash-vision-exp; vision-qwen added; diff-reviewer-glm-5.3 L2 seat added); L0-L4 trigger semantics + relational family rule wired into reviewer/plan-gate prompts with all 9 gate agents annotated by rung; roster drift gate (checkRosterDrift) wired into stack-check against a pinned OpenRouter snapshot (src/tools/openrouter-snapshot.json) failing on >=10% price delta / new monitored-family slug / removed-renamed slug with a blocking decision brief; model-routing.md moved to MONTHLY deep refresh + bounded auto-select ledger format; provider-card cache-rate matrix (Baseten/DeepInfra/NovitaAI/SiliconFlow, sourced, retrieved 2026-09-07) appended to the research note. Verified: biome + tsc clean, 634/634 tests (10 new gate tests), live gate run vs real OpenRouter catalog = 0 drift, sanitization scan clean. Reviewed by diff-reviewer-qwen (L3, APPROVE-WITH-FIXES); dispositions applied (null-safe pricing guard, missing/malformed pricing drift, conductor-manual trigger note, ledger protocol-ahead-of-code, stale mentions). Merged to main at 8d67085 after human diff review via difit.
+<!-- SECTION:FINAL_SUMMARY:END -->
