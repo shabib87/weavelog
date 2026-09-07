@@ -29,7 +29,7 @@ function run(
   args: string[],
   opts: { env?: Record<string, string>; cwd?: string } = {},
 ): RunResult {
-  return spawnSync(process.execPath, ["--import", "tsx", CLI, ...args], {
+  return spawnSync(process.execPath, ["--import", TSX_LOADER, CLI, ...args], {
     encoding: "utf8",
     timeout: 120_000,
     env: { ...process.env, ...opts.env },
@@ -464,6 +464,112 @@ describe("cli check", () => {
     const r = run(["check", "--stack-only"], { env });
     assert.notEqual(r.status, 0);
     assert.ok(r.stdout.includes("headroom"), "drift output names the tool");
+  });
+});
+
+describe("cli check --pre-commit (pin-hygiene gate)", () => {
+  test("fails naming the offending dep in a weavelog-managed repo with a caret pin", () => {
+    const dir = makeDir("precommit-managed-bad");
+    write(join(dir, "weavelog.json"), JSON.stringify({ tools: {} }));
+    write(
+      join(dir, "package.json"),
+      JSON.stringify({ devDependencies: { tsx: "^4.23.1" } }),
+    );
+    const r = run(["check", "--pre-commit"], {
+      cwd: dir,
+      env: { WEAVELOG_STATE_DIR: join(dir, "state") },
+    });
+    assert.equal(r.status, 1);
+    assert.ok(r.stderr.includes("deps.pin-hygiene"), "names the check id");
+    assert.ok(r.stderr.includes("tsx@^4.23.1"), "names the offending dep");
+  });
+
+  test("fails on a missing lockfile in a managed repo with exact pins", () => {
+    const dir = makeDir("precommit-managed-nolock");
+    write(join(dir, "weavelog.json"), JSON.stringify({ tools: {} }));
+    write(
+      join(dir, "package.json"),
+      JSON.stringify({ dependencies: { yaml: "2.9.0" } }),
+    );
+    const r = run(["check", "--pre-commit"], {
+      cwd: dir,
+      env: { WEAVELOG_STATE_DIR: join(dir, "state") },
+    });
+    assert.equal(r.status, 1);
+    assert.ok(r.stderr.includes("package-lock.json missing"));
+  });
+
+  test("skips the pin gate in a foreign repo (no weavelog.json) and lets task-validate decide", () => {
+    const dir = makeDir("precommit-foreign");
+    write(
+      join(dir, "package.json"),
+      JSON.stringify({ dependencies: { left_pad: "^1.0.0" } }),
+    );
+    const r = run(["check", "--pre-commit"], {
+      cwd: dir,
+      env: { WEAVELOG_STATE_DIR: join(dir, "state") },
+    });
+    assert.ok(r.stdout.includes("[skip] deps.pin-hygiene"), "skip is visible");
+    assert.equal(r.status, 0);
+  });
+
+  test("proceeds past the pin gate in a managed repo with exact pins and a lockfile", () => {
+    const dir = makeDir("precommit-managed-ok");
+    write(join(dir, "weavelog.json"), JSON.stringify({ tools: {} }));
+    write(
+      join(dir, "package.json"),
+      JSON.stringify({ dependencies: { yaml: "2.9.0" } }),
+    );
+    write(join(dir, "package-lock.json"), "{}");
+    const r = run(["check", "--pre-commit"], {
+      cwd: dir,
+      env: { WEAVELOG_STATE_DIR: join(dir, "state") },
+    });
+    assert.ok(r.stdout.includes("deps.pin-hygiene"), "gate line is visible");
+    assert.equal(r.status, 0);
+  });
+});
+
+describe("cli difit.pointer", () => {
+  test("check --stack-only exits 1 naming difit.pointer when the doc loses the pin", () => {
+    const dir = makeDir("difit-doc");
+    const skills = join(dir, "skills");
+    mkdirSync(join(skills, "diagram-design"), { recursive: true });
+    const badDoc = join(dir, "worktree-discipline.md");
+    write(badDoc, "the conductor opens `npx difit --background`");
+    const env = {
+      HOME: dir,
+      WEAVELOG_LIVE_ROOT: join(dir, "live"),
+      WEAVELOG_STATE_DIR: join(dir, "state"),
+      WEAVELOG_CHECK_PLIST: join(dir, "no-plist.plist"),
+      WEAVELOG_SKILLS_DIR: skills,
+      WEAVELOG_DIFIT_DOC: badDoc,
+      ...versionEnv(dir),
+    };
+    const r = run(["check", "--stack-only"], { env });
+    assert.equal(r.status, 1);
+    assert.ok(r.stdout.includes("difit.pointer"), "names the check id");
+  });
+
+  test("check --stack-only passes difit.pointer when the doc pins the manifest version", () => {
+    const dir = makeDir("difit-doc-ok");
+    const skills = join(dir, "skills");
+    mkdirSync(join(skills, "diagram-design"), { recursive: true });
+    const doc = join(dir, "worktree-discipline.md");
+    const pinned = manifest.tools.difit.version;
+    write(doc, `run \`npx difit@${pinned} --background\``);
+    const env = {
+      HOME: dir,
+      WEAVELOG_LIVE_ROOT: join(dir, "live"),
+      WEAVELOG_STATE_DIR: join(dir, "state"),
+      WEAVELOG_CHECK_PLIST: join(dir, "no-plist.plist"),
+      WEAVELOG_SKILLS_DIR: skills,
+      WEAVELOG_DIFIT_DOC: doc,
+      ...versionEnv(dir),
+    };
+    const r = run(["check", "--stack-only"], { env });
+    assert.equal(r.status, 0);
+    assert.ok(r.stdout.includes("difit.pointer"));
   });
 });
 

@@ -69,7 +69,7 @@ Do not edit Backlog task, draft, document, decision, or milestone markdown files
   tier is hand-settable (`harness` `dogfood` `deferred`). Unknown labels refuse claim and
   block create/pre-commit. `harness`/`dogfood` apply only in the harness-dev repos
   (agents-harness, weavelog). Decision table, first match: `harness` when the task
-  modifies bin/plugins/config/AGENTS.md/docs/architecture/stack-versions.json; `dogfood`
+  modifies bin/plugins/config/AGENTS.md/weavelog.json; `dogfood`
   when the deliverable is real work run through the harness as the verification subject;
   `deferred` when an explicit revive trigger is recorded; no match → no label.
 - **Milestones:** agents never create milestones (human-owned; wayfinder skill owns map

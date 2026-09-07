@@ -71,4 +71,4 @@ could not be converted and move on — never attempt to read the raw bytes.
 
 - Wrapper contract: `bun ~/.agents/bin/src/mdconvert.ts --help`
 - Converter: Microsoft markitdown (installed at `~/.local/bin/markitdown`, tracked in
-  `~/.agents/stack-versions.json` as the `markitdown` key)
+  `weavelog.json` as the `markitdown` key)
