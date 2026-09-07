@@ -421,6 +421,30 @@ describe("worktree-create --create mode", () => {
     assert.ok(r.stdout.includes("TASK-18"));
   });
 
+  test("--create skips an ID whose task branch already exists (TASK-77)", () => {
+    // Regression: an unmerged task branch (TASK-76 in the wild) made the
+    // inferred ID collide and crash `git worktree add`.
+    setList([{ id: "TASK-17" }]);
+    spawnSync("git", ["branch", "task/TASK-18"], { cwd: repoDir });
+    setCreate("TASK-19");
+    const r = run(["--create", "Fix the collision"]);
+    assert.equal(r.status, 0);
+    assert.ok(r.stdout.includes("TASK-19"), r.stdout);
+    assert.equal(r.stdout.includes("TASK-18"), false);
+    assert.equal(existsSync(join(repoDir, ".worktrees", "TASK-19")), true);
+    assert.equal(existsSync(join(repoDir, ".worktrees", "TASK-18")), false);
+  });
+
+  test("--create skips an ID whose worktree dir already exists (TASK-77)", () => {
+    setList([{ id: "TASK-17" }]);
+    mkdirSync(join(repoDir, ".worktrees", "TASK-18"), { recursive: true });
+    setCreate("TASK-19");
+    const r = run(["--create", "Fix the collision"]);
+    assert.equal(r.status, 0);
+    assert.ok(r.stdout.includes("TASK-19"), r.stdout);
+    assert.equal(existsSync(join(repoDir, ".worktrees", "TASK-19")), true);
+  });
+
   test("--create with empty task list starts at TASK-1", () => {
     setList([]);
     setCreate("TASK-1");

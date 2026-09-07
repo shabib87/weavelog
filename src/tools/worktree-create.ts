@@ -219,7 +219,27 @@ function processTaskId(
   );
 }
 
-function inferNextTaskId(): string {
+/**
+ * TASK-77: inferNextTaskId used to return max backlog ID + 1 blind to git
+ * state. An unmerged task (e.g. TASK-76 living only on its branch) made the
+ * inferred ID collide with an existing branch/worktree and crashed
+ * `--create` at `git worktree add` — blocking ALL new task creation through
+ * the sanctioned path. Now each candidate ID is skipped while its task
+ * branch or .worktrees/ path is already taken (bounded scan, fail loud).
+ */
+function taskBranchOrWorktreeInUse(n: number, repoRoot: string): boolean {
+  const id = `TASK-${n}`;
+  const branchExists =
+    spawnSync(
+      "git",
+      ["show-ref", "--verify", "--quiet", `refs/heads/task/${id}`],
+      { cwd: repoRoot },
+    ).status === 0;
+  if (branchExists) return true;
+  return existsSync(join(repoRoot, ".worktrees", id));
+}
+
+function inferNextTaskId(repoRoot: string): string {
   const r = backlog(["task", "list", "--json"]);
   if (!r.ok) fail2(`backlog task list failed: ${r.err || r.out}`);
   let tasks: { id: string }[];
@@ -233,7 +253,12 @@ function inferNextTaskId(): string {
     const m = t.id.match(/(\d+)$/);
     if (m) maxNum = Math.max(maxNum, Number(m[1]));
   }
-  return `TASK-${maxNum + 1}`;
+  for (let n = maxNum + 1; n <= maxNum + 50; n++) {
+    if (!taskBranchOrWorktreeInUse(n, repoRoot)) return `TASK-${n}`;
+  }
+  fail2(
+    `no free task ID above TASK-${maxNum} (checked 50 candidates against branches and worktrees)`,
+  );
 }
 
 function createTaskFromWorktree(
@@ -279,7 +304,7 @@ function main(): void {
       .filter((a) => a !== "--dry-run");
     const title = titleArgs.join(" ");
     if (!title) fail2("--create requires a <title> argument");
-    const inferredId = inferNextTaskId();
+    const inferredId = inferNextTaskId(repoRoot);
     const hookStatus = handleHook(repoRoot, dryRun);
     const wtPath = join(repoRoot, ".worktrees", inferredId);
     const branch = `task/${inferredId}`;

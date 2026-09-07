@@ -1424,6 +1424,50 @@ describe("Hook 7 — backlog task lifecycle gate on main", () => {
     );
   });
 
+  test("backlog task edit -s on main is blocked (TASK-77 regression)", async () => {
+    const home = makeHome();
+    const { $ } = fakeShell(() => ({ exitCode: 0 }));
+    const hooks = createHooks(
+      depsFor(home, $, { gitBranch: gitBranchMock("main") }),
+    );
+    await assert.rejects(
+      hooks["tool.execute.before"](beforeBashLocal, {
+        args: {
+          command: 'backlog task edit 75 -s "In Progress" -a @conductor',
+        },
+      }),
+      /no backlog task creation/,
+    );
+  });
+
+  test("backlog task edit with --labels plus -s on main is blocked (TASK-77 regression)", async () => {
+    const home = makeHome();
+    const { $ } = fakeShell(() => ({ exitCode: 0 }));
+    const hooks = createHooks(
+      depsFor(home, $, { gitBranch: gitBranchMock("main") }),
+    );
+    await assert.rejects(
+      hooks["tool.execute.before"](beforeBashLocal, {
+        args: {
+          command:
+            'backlog task edit 75 --label spec-approved -s "In Progress"',
+        },
+      }),
+      /no backlog task creation/,
+    );
+  });
+
+  test("backlog task edit -s on a task branch is allowed", async () => {
+    const home = makeHome();
+    const { $ } = fakeShell(() => ({ exitCode: 0 }));
+    const hooks = createHooks(
+      depsFor(home, $, { gitBranch: gitBranchMock("task/TASK-13") }),
+    );
+    await hooks["tool.execute.before"](beforeBashLocal, {
+      args: { command: 'backlog task edit 75 -s "In Progress"' },
+    });
+  });
+
   test("backlog task create on a task branch is allowed when it carries description + ACs", async () => {
     const home = makeHome();
     const { $ } = fakeShell(() => ({ exitCode: 0 }));

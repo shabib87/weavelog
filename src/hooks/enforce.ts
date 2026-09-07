@@ -220,7 +220,11 @@ const LEARN_MODEL = "deepseek/deepseek-v4-flash-0731";
 // Matches `backlog task create` and `backlog task edit <id> --status` (status changes).
 // Blocks task lifecycle mutations on main — the conductor must be in a worktree.
 const BACKLOG_CREATE_RE = /\bbacklog\s+task\s+create\b/;
-const BACKLOG_STATUS_RE = /\bbacklog\s+task\s+edit\s+\S+.*--status\b/;
+// TASK-77: also match the short -s flag — `\s` before -s so `task-specific`
+// style substrings never match; previously only --status was caught and
+// `-s "In Progress"` slipped past the main-branch gate.
+const BACKLOG_STATUS_RE =
+  /\bbacklog\s+task\s+edit\s+\S+.*(--status\b|\s-s(\s|$))/;
 // git -c k=v commit, git --git-dir=... commit). Still best-effort by design:
 // quoted wrappers like `bash -c "git commit"` are a documented bypass.
 const COMMIT_RE = /(?:^|[;&|]+)\s*git\s+(?:--?[\w-]+(?:[ =]\S+)?\s+)*commit\b/;
