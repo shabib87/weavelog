@@ -48,7 +48,10 @@ export interface RiskSignalResult {
   reasonCode: string;
 }
 
-/** Plain path matching (no AST): any path segment containing the keyword. */
+/** Plain path matching (no AST): any path segment containing the keyword.
+ * Tradeoff (documented, fail-safe direction): substring matching also hits
+ * words like "AUTHORS" or "authority" — rare, and over-reporting a
+ * protected-path signal only escalates a review, never suppresses one. */
 export function matchesProtectedPath(path: string): ProtectedPathClass | null {
   const segments = path.toLowerCase().split("/");
   for (const cls of PROTECTED_PATH_CLASSES) {
@@ -60,25 +63,34 @@ export function matchesProtectedPath(path: string): ProtectedPathClass | null {
 /** First new-file line number from a unified diff's @@ headers. */
 export function firstChangedLine(diffText: string): number | null {
   const m = diffText.match(/^@@ -\d+(?:,\d+)? \+(\d+)/m);
-  return m ? Number(m[1]) : null;
+  if (!m) return null;
+  const n = Number(m[1]);
+  return n > 0 ? n : null; // +0,0 = pure deletion: no new-file line exists
 }
 
 /**
  * Trailing failed runs of `command` in the run ledger (JSONL of
- * {command, exitCode, ...}): retry-failure signal input. Walks backwards
- * from the newest entry and counts consecutive failures up to the last
- * success of the same command.
+ * {command, exitCode, errors, ...}): retry-failure signal input. Walks
+ * backwards from the newest entry and counts consecutive failures up to
+ * the last success of the same command. Interleaved failures of OTHER
+ * commands do not break the streak (a retry is a repeat of the SAME work).
+ *
+ * TASK-78 review fix (self-sustaining loop): entries whose failures are
+ * ONLY the risk-signals gate itself (selfInflictedPrefix) are neutral —
+ * they neither count nor break the streak. Without this, a gate failure
+ * feeds its own input next run and escalation never clears.
  */
 export function countTrailingFailures(
   ledgerText: string,
   command: string,
+  selfInflictedPrefix?: string,
 ): number {
   let count = 0;
   const lines = ledgerText.split("\n");
   for (let i = lines.length - 1; i >= 0; i--) {
     const line = lines[i].trim();
     if (!line) continue;
-    let entry: { command?: string; exitCode?: number };
+    let entry: { command?: string; exitCode?: number; errors?: unknown };
     try {
       entry = JSON.parse(line) as typeof entry;
     } catch {
@@ -86,6 +98,15 @@ export function countTrailingFailures(
     }
     if (entry.command !== command) continue;
     if (entry.exitCode === 0) break;
+    if (selfInflictedPrefix != null) {
+      const errors = Array.isArray(entry.errors)
+        ? entry.errors.map(String)
+        : [];
+      const selfOnly =
+        errors.length > 0 &&
+        errors.every((e) => e.startsWith(selfInflictedPrefix));
+      if (selfOnly) continue; // neutral: the gate must not feed itself
+    }
     count += 1;
   }
   return count;
@@ -150,6 +171,7 @@ export function detectRiskSignals(
 export function readRetryFailures(
   ledgerPath: string,
   command: string,
+  selfInflictedPrefix?: string,
 ): number | null {
   let text: string;
   try {
@@ -157,5 +179,5 @@ export function readRetryFailures(
   } catch {
     return null;
   }
-  return countTrailingFailures(text, command);
+  return countTrailingFailures(text, command, selfInflictedPrefix);
 }

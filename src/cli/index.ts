@@ -1078,12 +1078,15 @@ function runRiskSignalsCheck(): {
     };
   }
 
-  // Changed files on the merged diff against base.
-  const nameOnly = spawnSync(
-    "git",
-    ["diff", "--name-only", "--diff-filter=ACMR", base],
-    { cwd: process.cwd(), encoding: "utf8", maxBuffer: 16 * 1024 * 1024 },
-  );
+  // Changed files on the merged diff against base — ALL change kinds
+  // including deletions (TASK-78 review: `git rm` of an auth guard is the
+  // highest-risk touch) — plus untracked files, which `git diff <base>`
+  // never lists and which would otherwise bypass the gate silently.
+  const nameOnly = spawnSync("git", ["diff", "--name-only", base], {
+    cwd: process.cwd(),
+    encoding: "utf8",
+    maxBuffer: 16 * 1024 * 1024,
+  });
   if (nameOnly.status !== 0) {
     return {
       id: "risk-signals",
@@ -1091,10 +1094,28 @@ function runRiskSignalsCheck(): {
       detail: `skip (fail closed): git diff against ${base} failed — ${nameOnly.stderr?.trim() || "unknown git error"}`,
     };
   }
-  const paths = (nameOnly.stdout || "")
-    .split("\n")
-    .map((p) => p.trim())
-    .filter((p) => p.length > 0);
+  const others = spawnSync(
+    "git",
+    ["ls-files", "--others", "--exclude-standard"],
+    { cwd: process.cwd(), encoding: "utf8", maxBuffer: 16 * 1024 * 1024 },
+  );
+  if (others.status !== 0) {
+    return {
+      id: "risk-signals",
+      ok: false,
+      detail: `skip (fail closed): git ls-files failed — ${others.stderr?.trim() || "unknown git error"}`,
+    };
+  }
+  const paths = [
+    ...new Set(
+      [
+        ...(nameOnly.stdout || "").split("\n"),
+        ...(others.stdout || "").split("\n"),
+      ]
+        .map((p) => p.trim())
+        .filter((p) => p.length > 0),
+    ),
+  ];
 
   const changedFiles: GitDiffFile[] = [];
   for (const path of paths) {
@@ -1113,15 +1134,30 @@ function runRiskSignalsCheck(): {
 
   // Failing-tests input: machine-supplied by the calling harness from the
   // test gate output (weavelog itself does not run the project's tests).
+  // A malformed value fails closed (TASK-78 review) — never a silent drop.
   const failingTestsEnv = process.env.WEAVELOG_RISK_FAILING_TESTS;
-  const failingTests =
-    failingTestsEnv != null && failingTestsEnv !== ""
-      ? Number(failingTestsEnv)
-      : null;
+  let failingTests: number | null = null;
+  if (failingTestsEnv != null && failingTestsEnv !== "") {
+    const parsed = Number(failingTestsEnv);
+    if (!Number.isFinite(parsed) || parsed < 0) {
+      return {
+        id: "risk-signals",
+        ok: false,
+        detail: `skip (fail closed): WEAVELOG_RISK_FAILING_TESTS must be a non-negative integer, got "${failingTestsEnv}"`,
+      };
+    }
+    failingTests = parsed;
+  }
 
-  // Retry-failure input: trailing failed `check` runs in the run ledger.
-  // Ledger absent -> fail closed (AC#3), naming the expected path.
-  const retryFailures = readRetryFailures(ledgerPath(), "check");
+  // Retry-failure input: trailing failed `check` runs in the run ledger,
+  // excluding entries whose only failure is this gate itself (TASK-78
+  // review: otherwise the gate feeds its own failures and escalation
+  // never clears). Ledger absent -> fail closed (AC#3).
+  const retryFailures = readRetryFailures(
+    ledgerPath(),
+    "check",
+    "risk-signals:",
+  );
   if (retryFailures === null) {
     return {
       id: "risk-signals",
@@ -1132,10 +1168,7 @@ function runRiskSignalsCheck(): {
 
   const result = detectRiskSignals({
     changedFiles,
-    failingTests:
-      failingTests != null && Number.isFinite(failingTests)
-        ? failingTests
-        : null,
+    failingTests,
     retryFailures,
   });
 

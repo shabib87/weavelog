@@ -105,6 +105,50 @@ describe("countTrailingFailures (run-ledger retry signal)", () => {
     assert.equal(countTrailingFailures(ledger, "update"), 0);
     assert.equal(countTrailingFailures("", "check"), 0);
   });
+
+  test("self-inflicted gate failures are neutral (TASK-77/78 loop fix)", () => {
+    // A failure caused ONLY by the risk-signals gate itself must neither
+    // count nor break the streak — otherwise the gate feeds its own input
+    // and escalation never clears.
+    const text = [
+      JSON.stringify({ command: "check", exitCode: 0 }),
+      JSON.stringify({
+        command: "check",
+        exitCode: 1,
+        errors: ["risk-signals: L1:protected-path — escalate ..."],
+      }),
+      JSON.stringify({
+        command: "check",
+        exitCode: 1,
+        errors: ["risk-signals: L1:retry-failures — escalate ..."],
+      }),
+    ].join("\n");
+    assert.equal(countTrailingFailures(text, "check", "risk-signals:"), 0);
+  });
+
+  test("mixed failures (gate + real) still count", () => {
+    const text = [
+      JSON.stringify({ command: "check", exitCode: 0 }),
+      JSON.stringify({
+        command: "check",
+        exitCode: 1,
+        errors: ["risk-signals: L1:...", "proxy.health: unhealthy"],
+      }),
+    ].join("\n");
+    assert.equal(countTrailingFailures(text, "check", "risk-signals:"), 1);
+  });
+
+  test("without the prefix argument, legacy behavior (all failures count)", () => {
+    const text = [
+      JSON.stringify({ command: "check", exitCode: 1, errors: ["anything"] }),
+      JSON.stringify({
+        command: "check",
+        exitCode: 1,
+        errors: ["risk-signals: x"],
+      }),
+    ].join("\n");
+    assert.equal(countTrailingFailures(text, "check"), 2);
+  });
 });
 
 describe("readRetryFailures (ledger file access)", () => {

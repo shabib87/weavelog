@@ -7,7 +7,7 @@ status: In Progress
 assignee:
   - '@conductor'
 created_date: '2026-09-07 23:04'
-updated_date: '2026-09-07 23:07'
+updated_date: '2026-09-07 23:22'
 labels:
   - spec-approved
 dependencies:
@@ -23,10 +23,10 @@ Implements the machine-computed L1 escalation triggers that ADR-004 names a Phas
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 WHEN weavelog check runs on a working tree THEN the detector SHALL compute risk signals on the merged diff against the merge base and report protected-path touches (auth/crypto/secrets/data-persistence/permission globs) with file:line evidence
-- [ ] #2 IF the run ledger records retry failures for the current task THEN the detector SHALL surface the count and feed the L0-to-L1 escalation decision with a reason code
-- [ ] #3 IF the detector cannot determine the merge base or the ledger is absent THEN it SHALL fail closed with an explicit skip reason, never a silent pass
-- [ ] #4 WHEN a risk signal fires THEN the run record SHALL log level, trigger, and reason code so the ladder can be tuned against TASK-47 telemetry
+- [x] #1 WHEN weavelog check runs on a working tree THEN the detector SHALL compute risk signals on the merged diff against the merge base and report protected-path touches (auth/crypto/secrets/data-persistence/permission globs) with file:line evidence
+- [x] #2 IF the run ledger records retry failures for the current task THEN the detector SHALL surface the count and feed the L0-to-L1 escalation decision with a reason code
+- [x] #3 IF the detector cannot determine the merge base or the ledger is absent THEN it SHALL fail closed with an explicit skip reason, never a silent pass
+- [x] #4 WHEN a risk signal fires THEN the run record SHALL log level, trigger, and reason code so the ladder can be tuned against TASK-47 telemetry
 <!-- AC:END -->
 
 ## Definition of Done

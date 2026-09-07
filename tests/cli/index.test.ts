@@ -745,11 +745,98 @@ describe("cli check risk-signals (TASK-78, ADR-004 L0->L1 detector)", () => {
       { command: "check", exitCode: 1 },
     ]);
     const r = run(["check"], { cwd: dir, env: stateEnv(dir) });
+    // protected-path + retry streak both fire on this fixture
     assert.ok(
-      r.stdout.includes("L1:retry-failures") ||
-        r.stdout.includes("L1:failing-tests+protected-path+retry-failures") ||
-        r.stdout.includes("protected-path+retry-failures"),
-      `expected retry-failure escalation: ${r.stdout}\n${r.stderr}`,
+      r.stdout.includes("L1:protected-path+retry-failures"),
+      `expected combined escalation: ${r.stdout}\n${r.stderr}`,
+    );
+  });
+
+  test("a deleted protected file still escalates (TASK-78 review regression)", () => {
+    const dir = makeDir("risk-deleted");
+    // The protected file EXISTS IN BASE; the task branch deletes it —
+    // the highest-risk touch must not be invisible.
+    mkdirSync(join(dir, "src", "auth"), { recursive: true });
+    git(["init", "-b", "main"], dir);
+    git(["config", "user.email", "t@t.com"], dir);
+    git(["config", "user.name", "T"], dir);
+    write(join(dir, "README.md"), "# base\n");
+    write(join(dir, "src", "auth", "login.ts"), "export const ok = 1;\n");
+    git(["add", "."], dir);
+    git(["commit", "-m", "base with auth guard"], dir);
+    git(["checkout", "-b", "task/T-1"], dir);
+    git(["rm", "src/auth/login.ts"], dir);
+    git(["commit", "-m", "delete auth guard"], dir);
+    seedLedger(dir, [{ command: "check", exitCode: 0 }]);
+    const r = run(["check"], { cwd: dir, env: stateEnv(dir) });
+    assert.ok(
+      r.stdout.includes("L1:protected-path") &&
+        r.stdout.includes("src/auth/login.ts"),
+      `expected escalation for deleted protected file: ${r.stdout}\n${r.stderr}`,
+    );
+  });
+
+  test("an untracked protected file still escalates (TASK-78 review regression)", () => {
+    const dir = makeDir("risk-untracked");
+    makeTaskRepo(dir);
+    // untracked file: never appears in `git diff <base>`
+    write(join(dir, "src", "secrets", "keys.json"), "{}\n");
+    seedLedger(dir, [{ command: "check", exitCode: 0 }]);
+    const r = run(["check"], { cwd: dir, env: stateEnv(dir) });
+    assert.ok(
+      r.stdout.includes("L1:protected-path") &&
+        r.stdout.includes("src/secrets/keys.json"),
+      `expected escalation for untracked protected file: ${r.stdout}\n${r.stderr}`,
+    );
+  });
+
+  test("a self-inflicted failure streak does not sustain escalation (TASK-78 review regression)", () => {
+    const dir = makeDir("risk-selfloop");
+    // clean diff vs base (no protected paths), but the ledger shows two
+    // consecutive check failures caused ONLY by the risk-signals gate —
+    // the gate must not feed itself: result stays L0.
+    mkdirSync(dir, { recursive: true });
+    git(["init", "-b", "main"], dir);
+    git(["config", "user.email", "t@t.com"], dir);
+    git(["config", "user.name", "T"], dir);
+    write(join(dir, "README.md"), "# base\n");
+    git(["add", "."], dir);
+    git(["commit", "-m", "base"], dir);
+    git(["checkout", "-b", "task/T-3"], dir);
+    write(join(dir, "src", "util", "math.ts"), "export const sum = 2;\n");
+    git(["add", "."], dir);
+    git(["commit", "-m", "touch util path"], dir);
+    seedLedger(dir, [
+      { command: "check", exitCode: 0 },
+      {
+        command: "check",
+        exitCode: 1,
+        errors: ["risk-signals: L1:protected-path — escalate ..."],
+      },
+      {
+        command: "check",
+        exitCode: 1,
+        errors: ["risk-signals: L1:protected-path — escalate ..."],
+      },
+    ]);
+    const r = run(["check"], { cwd: dir, env: stateEnv(dir) });
+    assert.ok(
+      r.stdout.includes("L0:no-risk-signals"),
+      `expected L0 despite self-inflicted streak: ${r.stdout}\n${r.stderr}`,
+    );
+  });
+
+  test("malformed WEAVELOG_RISK_FAILING_TESTS fails closed (TASK-78 review regression)", () => {
+    const dir = makeDir("risk-badenv");
+    makeTaskRepo(dir);
+    seedLedger(dir, [{ command: "check", exitCode: 0 }]);
+    const r = run(["check"], {
+      cwd: dir,
+      env: { ...stateEnv(dir), WEAVELOG_RISK_FAILING_TESTS: "three" },
+    });
+    assert.ok(
+      r.stdout.includes("fail closed") && r.stdout.includes('got "three"'),
+      `expected fail-closed env handling: ${r.stdout}\n${r.stderr}`,
     );
   });
 });
