@@ -101,7 +101,7 @@ model + conductor + qa (see `~/.config/opencode/AGENTS.md` "Task tracking").
   `checkActiveBranches false`. Commit the whole `backlog/` tree. Statuses extended via
   `backlog/config.yml`: `["To Do", "In Progress", "In Review", "Done"]` (config set
   refuses statuses; edit the file).
-- **Conductor ops**: `bun ~/.agents/bin/src/task-flow.ts` (claim/note/close,
+- **Conductor ops**: `bun src/task-flow.ts` (claim/note/close,
   set-then-verify) — queue mechanics stay out of LLM context.
 - **Pilot**: repo = ~/.agents (worktree light-factory), 1-week human gate: board + web
   UI actually used → keep; else rollback (P9 row) and keep `backlog/` as ledger.

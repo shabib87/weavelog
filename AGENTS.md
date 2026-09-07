@@ -1,6 +1,6 @@
 # AGENTS.md — weavelog
 
-weavelog is a minimal, open-source developer-experience setup that turns any
+**weavelog** is a minimal, open-source developer-experience setup that turns any
 project into a self-contained agentic workspace. A pre-defined agent team
 runs an end-to-end loop — spec, implement, verify, document — with the human
 in the loop only for verification.
@@ -10,10 +10,11 @@ in the loop only for verification.
 workflows that make up the weavelog agentic workspace.
 </CRITICAL_INSTRUCTION>
 
-
-Read [`docs/NORTH_STAR.md`](docs/NORTH_STAR.md) first. It is the anchor for
-every decision. If a task cannot trace back to a non-negotiable there, it is
-out of scope for v1 or requires amending the North Star first.
+<IMPORTANT_NOTE>
+Read [`docs/NORTH_STAR.md`](docs/NORTH_STAR.md) in case we need to anchor for
+a decision. If a task cannot trace back to a non-negotiable there, it is
+out of scope.
+</IMPORTANT_NOTE>
 
 ## Repo layout
 
