@@ -19,6 +19,12 @@ import { homedir, tmpdir } from "node:os";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { checkDifitPointer, pinHygieneForDir } from "../tools/pin-hygiene.js";
+import {
+  detectRiskSignals,
+  firstChangedLine,
+  matchesProtectedPath,
+  readRetryFailures,
+} from "../tools/risk-signals.js";
 import { checkConfigDrift, checkMarkitdown } from "../tools/stack-check.js";
 import { toolScript } from "../tools/tool-paths.js";
 import type { WeavelogManifest } from "../tools/weavelog-manifest.js";
@@ -305,8 +311,9 @@ function runBin(bin: string, args: string[]): string {
 
 function stackVersionChecks(
   manifest: WeavelogManifest,
-): { id: string; ok: boolean; detail: string }[] {
-  const results: { id: string; ok: boolean; detail: string }[] = [];
+): { id: string; ok: boolean; detail: string; skip?: boolean }[] {
+  const results: { id: string; ok: boolean; detail: string; skip?: boolean }[] =
+    [];
   const resolveOnPath = (name: string): string => {
     if (name.includes("/")) return name;
     for (const dir of (process.env.PATH ?? "").split(":")) {
@@ -932,6 +939,8 @@ async function runCheck(stackOnly: boolean): Promise<never> {
   if (!stackOnly) {
     const guard = checkNodePathGuard();
     const proxy = await checkProxyHealth();
+    const risk = runRiskSignalsCheck();
+    if (risk) results.push(risk);
     const driftLiveRoot = configHomeValue();
     const driftTokens = {
       WEAVELOG_HOME: liveRootValue(ensureDotenv(liveRootValue())),
@@ -982,8 +991,10 @@ async function runCheck(stackOnly: boolean): Promise<never> {
     }
   }
   const failures = results.filter((r) => !r.ok);
-  for (const r of results)
-    printCheckLine(r.ok ? "pass" : "fail", r.id, r.detail);
+  for (const r of results) {
+    const marker = r.ok ? (r.skip === true ? "skip" : "pass") : "fail";
+    printCheckLine(marker, r.id, r.detail);
+  }
   if (stackOnly) {
     console.log(
       `check --stack-only: ${results.length} checks, ${failures.length} failure(s)`,
@@ -1001,6 +1012,168 @@ async function runCheck(stackOnly: boolean): Promise<never> {
     errors: failures.map((f) => `${f.id}: ${f.detail}`),
     exitCode: failures.length > 0 ? 1 : 0,
   });
+}
+
+// --- risk-signals (TASK-78, ADR-004 L0->L1 escalation triggers) --------------
+
+interface GitDiffFile {
+  path: string;
+  firstLine: number | null;
+}
+
+/**
+ * Deterministic L1 risk-signal detector wired into `weavelog check`.
+ * Returns a check result, or null when there is no repo context at all
+ * (nothing to gate). Fail-closed policy (ADR-004/TASK-78 AC#3): an
+ * undeterminable merge base or an absent run ledger is a FAIL with an
+ * explicit skip reason — never a silent pass. On main/master there is no
+ * task-diff context, so the check reports an explicit [skip] (not a pass).
+ */
+function runRiskSignalsCheck(): {
+  id: string;
+  ok: boolean;
+  detail: string;
+  skip?: boolean;
+} | null {
+  const inRepo =
+    spawnSync("git", ["rev-parse", "--is-inside-work-tree"], {
+      cwd: process.cwd(),
+      encoding: "utf8",
+    }).stdout?.trim() === "true";
+  if (!inRepo) return null; // no repo context: nothing to detect against
+
+  const branch = (
+    spawnSync("git", ["rev-parse", "--abbrev-ref", "HEAD"], {
+      cwd: process.cwd(),
+      encoding: "utf8",
+    }).stdout || ""
+  ).trim();
+  if (branch === "main" || branch === "master") {
+    return {
+      id: "risk-signals",
+      ok: true,
+      skip: true,
+      detail: "skip — on main, no task diff context (fail-closed policy N/A)",
+    };
+  }
+
+  // Merge base: main, then origin/main, else fail closed.
+  let base: string | null = null;
+  for (const candidate of ["main", "origin/main"]) {
+    const r = spawnSync("git", ["merge-base", "HEAD", candidate], {
+      cwd: process.cwd(),
+      encoding: "utf8",
+    });
+    if (r.status === 0 && r.stdout.trim()) {
+      base = r.stdout.trim();
+      break;
+    }
+  }
+  if (base === null) {
+    return {
+      id: "risk-signals",
+      ok: false,
+      detail:
+        "skip (fail closed): cannot determine merge base (tried main, origin/main)",
+    };
+  }
+
+  // Changed files on the merged diff against base.
+  const nameOnly = spawnSync(
+    "git",
+    ["diff", "--name-only", "--diff-filter=ACMR", base],
+    { cwd: process.cwd(), encoding: "utf8", maxBuffer: 16 * 1024 * 1024 },
+  );
+  if (nameOnly.status !== 0) {
+    return {
+      id: "risk-signals",
+      ok: false,
+      detail: `skip (fail closed): git diff against ${base} failed — ${nameOnly.stderr?.trim() || "unknown git error"}`,
+    };
+  }
+  const paths = (nameOnly.stdout || "")
+    .split("\n")
+    .map((p) => p.trim())
+    .filter((p) => p.length > 0);
+
+  const changedFiles: GitDiffFile[] = [];
+  for (const path of paths) {
+    if (matchesProtectedPath(path) === null) continue;
+    // file:line evidence: first changed line in the new file (-U0 @@ headers)
+    const hunk = spawnSync("git", ["diff", "-U0", base, "--", path], {
+      cwd: process.cwd(),
+      encoding: "utf8",
+      maxBuffer: 16 * 1024 * 1024,
+    });
+    changedFiles.push({
+      path,
+      firstLine: hunk.status === 0 ? firstChangedLine(hunk.stdout || "") : null,
+    });
+  }
+
+  // Failing-tests input: machine-supplied by the calling harness from the
+  // test gate output (weavelog itself does not run the project's tests).
+  const failingTestsEnv = process.env.WEAVELOG_RISK_FAILING_TESTS;
+  const failingTests =
+    failingTestsEnv != null && failingTestsEnv !== ""
+      ? Number(failingTestsEnv)
+      : null;
+
+  // Retry-failure input: trailing failed `check` runs in the run ledger.
+  // Ledger absent -> fail closed (AC#3), naming the expected path.
+  const retryFailures = readRetryFailures(ledgerPath(), "check");
+  if (retryFailures === null) {
+    return {
+      id: "risk-signals",
+      ok: false,
+      detail: `skip (fail closed): run ledger absent at ${ledgerPath()} — run any weavelog command to create it`,
+    };
+  }
+
+  const result = detectRiskSignals({
+    changedFiles,
+    failingTests:
+      failingTests != null && Number.isFinite(failingTests)
+        ? failingTests
+        : null,
+    retryFailures,
+  });
+
+  if (result.escalate) {
+    // AC#4: log level, trigger, reason code for TASK-47 ladder tuning.
+    const record = {
+      ts: new Date().toISOString(),
+      level: result.level,
+      reasonCode: result.reasonCode,
+      triggers: [...new Set(result.signals.map((s) => s.code))],
+      evidence: result.signals.map((s) => s.evidence ?? s.detail).slice(0, 10),
+      base,
+      changedFilesExamined: paths.length,
+    };
+    try {
+      mkdirSync(stateDir(), { recursive: true });
+      appendFileSync(
+        join(stateDir(), "escalations.jsonl"),
+        `${JSON.stringify(record)}\n`,
+      );
+    } catch (err) {
+      return {
+        id: "risk-signals",
+        ok: false,
+        detail: `escalation log write failed: ${(err as Error).message}`,
+      };
+    }
+    return {
+      id: "risk-signals",
+      ok: false,
+      detail: `${result.reasonCode} — escalate reviewer L0->L1: ${result.signals.map((s) => `${s.code}${s.evidence ? ` (${s.evidence})` : ""}`).join("; ")}; logged to ${join(stateDir(), "escalations.jsonl")}`,
+    };
+  }
+  return {
+    id: "risk-signals",
+    ok: true,
+    detail: `${result.reasonCode} — no risk signals on the merged diff vs ${base.slice(0, 8)} (${paths.length} file(s)); reviewer stays L0`,
+  };
 }
 
 // --- doctor -----------------------------------------------------------------

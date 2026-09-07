@@ -604,6 +604,136 @@ describe("cli scaffold", () => {
   });
 });
 
+describe("cli check risk-signals (TASK-78, ADR-004 L0->L1 detector)", () => {
+  function git(args: string[], cwd: string): void {
+    const r = spawnSync("git", args, { cwd, encoding: "utf8" });
+    if (r.status !== 0)
+      throw new Error(`git ${args.join(" ")} failed: ${r.stderr}`);
+  }
+
+  /** Repo on branch task/x with one commit on main + a protected-path change. */
+  function makeTaskRepo(dir: string): void {
+    mkdirSync(dir, { recursive: true });
+    git(["init", "-b", "main"], dir);
+    git(["config", "user.email", "t@t.com"], dir);
+    git(["config", "user.name", "T"], dir);
+    write(join(dir, "README.md"), "# base\n");
+    git(["add", "."], dir);
+    git(["commit", "-m", "base"], dir);
+    git(["checkout", "-b", "task/T-1"], dir);
+    write(join(dir, "src", "auth", "login.ts"), "export const ok = 1;\n");
+    git(["add", "."], dir);
+    git(["commit", "-m", "touch auth path"], dir);
+  }
+
+  function stateEnv(dir: string): Record<string, string> {
+    return {
+      HOME: dir,
+      WEAVELOG_STATE_DIR: join(dir, "state"),
+      WEAVELOG_LIVE_ROOT: join(dir, "live"),
+    };
+  }
+
+  function seedLedger(dir: string, entries: object[]): void {
+    mkdirSync(join(dir, "state"), { recursive: true });
+    writeFileSync(
+      join(dir, "state", "ledger.jsonl"),
+      `${entries.map((e) => JSON.stringify(e)).join("\n")}\n`,
+    );
+  }
+
+  test("escalates L1 on a protected-path diff, with file:line evidence and a logged record", () => {
+    const dir = makeDir("risk-escalate");
+    makeTaskRepo(dir);
+    seedLedger(dir, [{ command: "check", exitCode: 0 }]);
+    const r = run(["check"], { cwd: dir, env: stateEnv(dir) });
+    assert.ok(
+      r.stdout.includes("L1:protected-path"),
+      `expected escalation in output: ${r.stdout}\n${r.stderr}`,
+    );
+    assert.ok(r.stdout.includes("src/auth/login.ts"), "names the evidence");
+    assert.ok(
+      r.stdout.includes("risk-signals"),
+      "check names the risk-signals id",
+    );
+    const escalationLog = readFileSync(
+      join(dir, "state", "escalations.jsonl"),
+      "utf8",
+    );
+    const record = JSON.parse(escalationLog.trim().split("\n").pop() ?? "{}");
+    assert.equal(record.level, "L1");
+    assert.equal(record.reasonCode, "L1:protected-path");
+    assert.deepEqual(record.triggers, ["protected-path"]);
+  });
+
+  test("stays L0 when the diff has no risk signals", () => {
+    const dir = makeDir("risk-clean");
+    mkdirSync(dir, { recursive: true });
+    git(["init", "-b", "main"], dir);
+    git(["config", "user.email", "t@t.com"], dir);
+    git(["config", "user.name", "T"], dir);
+    write(join(dir, "README.md"), "# base\n");
+    git(["add", "."], dir);
+    git(["commit", "-m", "base"], dir);
+    git(["checkout", "-b", "task/T-2"], dir);
+    write(join(dir, "src", "util", "math.ts"), "export const sum = 2;\n");
+    git(["add", "."], dir);
+    git(["commit", "-m", "touch util path"], dir);
+    seedLedger(dir, [{ command: "check", exitCode: 0 }]);
+    const r = run(["check"], { cwd: dir, env: stateEnv(dir) });
+    assert.ok(
+      r.stdout.includes("L0:no-risk-signals"),
+      `expected L0 in output: ${r.stdout}\n${r.stderr}`,
+    );
+    assert.equal(existsSync(join(dir, "state", "escalations.jsonl")), false);
+  });
+
+  test("fails closed when the run ledger is absent", () => {
+    const dir = makeDir("risk-noleader");
+    makeTaskRepo(dir);
+    mkdirSync(join(dir, "state"), { recursive: true }); // state dir, no ledger
+    const r = run(["check"], { cwd: dir, env: stateEnv(dir) });
+    assert.ok(
+      r.stdout.includes("fail closed") && r.stdout.includes("ledger absent"),
+      `expected fail-closed ledger skip: ${r.stdout}\n${r.stderr}`,
+    );
+  });
+
+  test("reports an explicit skip on main (no task diff context)", () => {
+    const dir = makeDir("risk-main");
+    mkdirSync(dir, { recursive: true });
+    git(["init", "-b", "main"], dir);
+    git(["config", "user.email", "t@t.com"], dir);
+    git(["config", "user.name", "T"], dir);
+    write(join(dir, "README.md"), "# base\n");
+    git(["add", "."], dir);
+    git(["commit", "-m", "base"], dir);
+    seedLedger(dir, [{ command: "check", exitCode: 0 }]);
+    const r = run(["check"], { cwd: dir, env: stateEnv(dir) });
+    assert.ok(
+      r.stdout.includes("[skip] risk-signals"),
+      `expected explicit skip on main: ${r.stdout}\n${r.stderr}`,
+    );
+  });
+
+  test("retry-failures from the ledger fire the signal at the threshold", () => {
+    const dir = makeDir("risk-retry");
+    makeTaskRepo(dir);
+    seedLedger(dir, [
+      { command: "check", exitCode: 0 },
+      { command: "check", exitCode: 1 },
+      { command: "check", exitCode: 1 },
+    ]);
+    const r = run(["check"], { cwd: dir, env: stateEnv(dir) });
+    assert.ok(
+      r.stdout.includes("L1:retry-failures") ||
+        r.stdout.includes("L1:failing-tests+protected-path+retry-failures") ||
+        r.stdout.includes("protected-path+retry-failures"),
+      `expected retry-failure escalation: ${r.stdout}\n${r.stderr}`,
+    );
+  });
+});
+
 describe("cli built artifact", () => {
   test("dist/cli/index.js runs under plain node --help", {
     skip: !existsSync(DIST),
