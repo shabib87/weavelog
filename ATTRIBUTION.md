@@ -40,18 +40,6 @@ bundled that forbids it.
 | pi | MIT | composed host (v0.2) |
 | semgrep | LGPL-2.1 | **INVOKED-NOT-BUNDLED** — invoked as a pinned external binary, never linked or distributed with weavelog |
 
-## Inspired by
-
-Ideas weavelog adopted, with credit:
-
-| Source | What was adopted |
-|---|---|
-| tiller-ai (`hmSchuller/tiller-ai`) | managed-files manifest pattern (`weavelog.json` records managed files; update re-materializes) |
-| keel (`keel-harness/keel`) | `doctor` as a stranger-facing preflight step (subcheck battery, one copy-paste fix per failure) |
-| outrigger (`dwijenpatel/outrigger`) | evidence discipline: harness-vs-null measurement, run ledgers — and the lesson that process hygiene alone is not a moat |
-
-The competitive scan behind these: `docs/research/2026-09-02-oss-agent-harnesses.md`.
-
 ## Reciprocity
 
 weavelog exists because of MIT-licensed upstream work, a public

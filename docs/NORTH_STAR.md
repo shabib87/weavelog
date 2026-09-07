@@ -1,12 +1,25 @@
 # North Star
 
-Build the inner harness: agent work you can audit. weavelog is a
+Build the inner harness: agent work you can audit. `weavelog` is a
 deterministic CLI that composes an opinionated, evidence-grade agentic
 developer-experience stack on open standards. A pre-defined agent team runs an
 end-to-end loop — spec, implement, verify, document — with the human directing
 and verifying.
 
-## Non-negotiables
+## Core Idea
+
+> By treating models as pluggable reasoning engines within a guarded execution
+framework, multi-role agents can run cost-effective inner loops under deterministic
+tool validation and human-in-the-loop verification.
+
+### Vocabulary:
+
+**Outer Harnesses**:** the agentic tooling host and it's pre-built harness, e.g. Claude Code, OpenCode, Pi Dev etc.
+
+**Inner Harness**: the agentic tooling stack that runs inside the outer harness, e.g. skills, subagents, rules, hooks etc.
+
+
+## Non-negotiable
 
 - Core engineering principles: YAGNI, SOLID, KISS, DRY. Every agent and every
   artifact obeys these, globally and per-project.
@@ -19,7 +32,7 @@ and verifying.
   check` enforces security on workspaces it produces, and security
   verification is woven into the loop.
 - **Host-composed, not host-built.** The host is a composition choice:
-  opencode first (v0.1), pi (0.2), Claude Code (0.3), Codex (0.4). weavelog
+  opencode first (v0.1), pi (0.2), Claude Code (0.3), ChatGPT-Codex (0.4). weavelog
   composes hosts. It never builds a new agent host.
 - **The human directs AND verifies.** The human runs the conductor role:
   one-question-at-a-time dialogue, plan gate before implementation, merge
@@ -35,26 +48,23 @@ and verifying.
 - Composition over invention. Skills, techniques, and tooling are ported,
   distilled, and composed with attribution (see `ATTRIBUTION.md`), not
   reinvented.
-- Local-first. No account, no subscription, no cloud dependency. State lives
-  on the user's machine.
-- Terminal-native. No GUI app. Built for engineers who live in the terminal.
-- arm64 macOS is the only v1 platform.
-- Open-weight models are primary. Frontier models are targeted last-resort
-  escalation, called specifically when open-weights fall short and handed
-  back when done. Maximize cost/quality. Hosts in subscription mode (Claude
-  Code at 0.3, Codex at 0.4) degrade the roster to single-provider tiering:
-  no cross-model OpenRouter reviewers inside those hosts.
+- Local-first state. State lives on the user's machine.
+- Terminal-native. Built for users who prefer terminal.
+- arm64 macOS is the only supported platform for now.
+- Maximize cost/quality through open-weight models. Hosts in subscription mode 
+  support comes later (Claude Code at 0.3, ChatGPT-Codex at 0.4), but those get 
+  provider model locked.
 - Zero silent failure. Every refusal is a log line and a non-zero exit. Every
   command leaves a ledger record.
 
 ## Out of scope
 
 - Building a new agent host. Hosts are composed, not built.
-- Fully unattended autonomous runs. v1 is human-gated at the plan and merge
+- Fully unattended autonomous runs. HITL is baked in: human-gated at the plan and merge
   gates.
-- Lock-in to one model vendor.
-- Taking external contributions (solo-dev OSS for v1; issues welcome, PRs not
-  accepted — see `CONTRIBUTING.md`).
+- Lock-in to one model vendor as primary.
+- Taking external contributions (temporarily). Only issues welcome, PRs not
+  accepted — see [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ## Success
 
@@ -65,8 +75,7 @@ merge gate — and every gate, run, and decision leaving an auditable record.
 ## How we avoid drift
 
 This file is the anchor. Every spec, plan, and implementation decision must
-trace back to a non-negotiable here. If a proposal cannot, it is out of scope
-for v1 or requires amending this file first. For product definition, moat,
-PMF, and the competitive landscape, see `docs/PRODUCT.md`. For milestone
-sequencing, see `docs/ROADMAP.md`. Provenance for *why* these choices were
-made lives in the dated research corpus (`docs/research/`).
+trace back to a non-negotiable here. For product definition, moat,
+PMF, and the competitive landscape, see [docs/PRODUCT.md](./PRODUCT.md). For 
+milestone sequencing, see [docs/ROADMAP.md](./ROADMAP.md). Provenance for *why* 
+these choices were made lives in the dated research corpus in [docs/research/](./research/).

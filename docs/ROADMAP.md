@@ -1,9 +1,7 @@
 # Roadmap
 
-> **Authority:** Delivery plan. Traces to `docs/NORTH_STAR.md` (what),
-> `docs/PRODUCT.md` (strategy, moat, PMF), and
-> `docs/specs/2026-09-05-v010-draft-brief.md` (ratified scope).
-> Source of truth for scope: the v0.1.0 draft brief.
+> **Authority:** Delivery plan. Traces to [`NORTH_STAR.md`](./NORTH_STAR.md) and
+> [`PRODUCT.md`](./PRODUCT.md) brief.
 
 The milestone ladder is host-driven. Each rung = one host passing the
 **stranger test**: `init` writes a loadable host config, skills land on the
@@ -19,12 +17,12 @@ Releases are tag-driven release-please over conventional commits;
 
 ## v0.1.0 — opencode stranger test
 
-**Goal:** a stranger on arm64 macOS installs weavelog from npm, runs the
+**Goal:** a stranger on arm64 macOS installs **weavelog** from npm, runs the
 stranger test against opencode, and gets an auditable stack.
 
 **Deliverables:**
 - `weavelog init` — installs opinionated deps (headroom[proxy], opencode,
-  markitdown, semgrep, backlog.md), materializes `~/.agents/*` +
+  markitdown, backlog.md), materializes `~/.agents/*` +
   `~/.config/opencode/*` via the two-step user-modification flow, never
   silently overwrites managed files. Models are opinionated defaults; init
   asks and flags override.
@@ -84,12 +82,11 @@ routing constraint.
 
 **Constraint (non-negotiable):** inside subscription-mode hosts there is no
 cross-model OpenRouter reviewer; model tiering degrades to single-provider.
-The cross-model reviewer roster remains an OpenRouter-host (opencode, pi)
-capability. See NORTH_STAR.
+The cross-model reviewer is replaced with cross agent fresh subagent reviewer (e.g. Sonnet writes, Opus reviews).
 
 **Deliverables:**
 - Claude Code host support: config, skills, hooks wiring, doctor checks.
-- Subscription-mode degradation in manifest + doctor (single-provider
+- Subscription-mode limitation in manifest + doctor (single-provider
   tiering, documented).
 
 **Explicitly out:** Codex host; multi-provider reviewer routing inside
@@ -107,7 +104,8 @@ degraded tiering honestly.
 **Deliverables:**
 - Codex host support: config, skills, doctor checks (subagent format
   verification as research lands).
-- Subscription-mode degradation rules as in 0.3.
+- Subscription-mode limitation in manifest + doctor (single-provider
+  tiering, documented).
 
 **Explicitly out:** unattended v1; new agent hosts; non-arm64/non-macOS.
 
@@ -120,14 +118,7 @@ degraded tiering honestly.
 **Definition of 1.0:** Codex shipped (the host ladder complete) **and** the
 evidence corpus public.
 
-**Deliverables:**
-- All four hosts passing the stranger test.
-- Public evidence corpus: gate receipts, run ledger aggregates, dated
-  research docs, harness-vs-null comparisons with published honest numbers.
-- Proof projects shipped and documented (weavelog itself + blog; see
-  PRODUCT.md PMF thesis).
-
-**Explicitly out (still):** unattended runs; governance/PR acceptance; docs
+**Explicitly out:** unattended runs; governance/PR acceptance; docs
 site; hosted product.
 
 ---
@@ -138,18 +129,10 @@ Traces to NORTH_STAR out-of-scope:
 
 - Building a new agent host (hosts are composed).
 - Fully unattended autonomous runs (human-gated at plan and merge).
-- Lock-in to one model vendor (open-weights primary, frontier escalation).
+- Lock-in to one model vendor (open-weights primary).
 - Taking external contributions (issues welcome, PRs not accepted).
 - Platforms other than arm64 macOS.
 - Hosted/SaaS surface.
-
-## Fog (tracked, not built)
-
-Per the brief: second-brain standardized dir in .agents; LaunchAgent /
-scheduled checks; subscription-mode model tiering refinements (0.3/0.4);
-reviewer roster degradation to single-provider (generalized); brew formula
-polish; real logo; docs site; governance/PR acceptance. These are tracked,
-not scheduled.
 
 ## How this avoids drift
 

@@ -10,21 +10,21 @@ No work on main. No work without a backlog task.
 ### Task lifecycle
 
 **New task** — the conductor needs a task that doesn't exist yet:
-1. `bun ~/.agents/bin/src/worktree-create.ts --create "<title>"` — infers the next task ID, creates the worktree on `task/<task-id>`, then creates the backlog task from **within the worktree** (`cwd=worktree`) so the task file lands on the task branch — not on main. Stubs are exempt from creation-time checks by design (the gate is at claim time)
+1. `bun src/worktree-create.ts --create "<title>"` — infers the next task ID, creates the worktree on `task/<task-id>`, then creates the backlog task from **within the worktree** (`cwd=worktree`) so the task file lands on the task branch — not on main. Stubs are exempt from creation-time checks by design (the gate is at claim time)
 2. Refine the task (description, ACs, deps) via `backlog task edit` from within the worktree
 3. **Present the spec to the user and wait for explicit approval** (HITL spec gate — see Review checkpoints). Record approval as the `spec-approved` label via `backlog task edit --label spec-approved`
 4. Merge the task branch to main so the task is visible to other threads (metadata merge — exempt from HITL merge gate, no implementation changes)
 5. Implementation happens in a new thread (or same thread if the task is small and the user agrees)
 
 **Existing task pickup** — the user asks the conductor to work on TASK-N:
-1. `bun ~/.agents/bin/src/worktree-create.ts TASK-N` — creates the worktree on `task/TASK-N` (skips if it already exists)
+1. `bun src/worktree-create.ts TASK-N` — creates the worktree on `task/TASK-N` (skips if it already exists)
 2. `backlog task edit TASK-N --status "In Progress" --assignee conductor` from within the worktree
 3. Implement, test, diff review
 4. Present diff review findings to the user → **wait for merge approval**
 5. After approval: merge to main, mark task Done, clean up worktree
 
 **--ready mode** — create worktrees for all deps-satisfied tasks at once:
-- `bun ~/.agents/bin/src/worktree-create.ts --ready` — batch-creates worktrees for every task whose dependencies are all Done
+- `bun src/worktree-create.ts --ready` — batch-creates worktrees for every task whose dependencies are all Done
 
 ### Rules
 

@@ -186,7 +186,7 @@ absolute paths in launchd plists are substituted at install time by `init`).
 | Global behavior rules | `~/.config/opencode/AGENTS.md` (materialized from `payload/AGENTS.md`) |
 | Role agents | `~/.config/opencode/agents/{scout,diff-reviewer-*,plan-gate-*,qa,researcher,implementer,vision-*,security}.md` (from `payload/config/agents/` + `payload/config/prompts/`) |
 | Skills hub | `~/.agents/skills/` (canonical copies from `payload/skills/`; pi/claude symlink chains, codex real copies) |
-| Scripts | `src/` in this repo; live host `~/.agents/bin/src/` |
+| Scripts | `src/` in this repo |
 | Manifest | `weavelog.json`; live host `~/.agents/stack-versions.json` |
 | headroom binary | `~/.local/bin/headroom` (pipx venv `~/.local/pipx/venvs/headroom-ai`, python3.13) |
 | headroom proxy log | `~/.headroom/proxy-launchd.log` (dir must be 700) |

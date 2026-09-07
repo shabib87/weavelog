@@ -1,7 +1,8 @@
-project_name: "agents-harness"
+project_name: "weavelog"
 default_status: "To Do"
 statuses: ["To Do", "In Progress", "In Review", "Done"]
 labels: []
+definition_of_done: ["Tests and lint pass with fresh output in the worktree", "Worktree is clean (no uncommitted changes)", "Branch is rebased on main and green", "All acceptance criteria checked with fresh evidence (one at a time, never batched)"]
 date_format: yyyy-mm-dd
 max_column_width: 20
 default_editor: "code"
@@ -14,9 +15,3 @@ bypass_git_hooks: false
 check_active_branches: false
 active_branch_days: 30
 task_prefix: "task"
-
-definition_of_done:
-  - "Tests and lint pass with fresh output in the worktree"
-  - "Worktree is clean (no uncommitted changes)"
-  - "Branch is rebased on main and green"
-  - "All acceptance criteria checked with fresh evidence (one at a time, never batched)"
