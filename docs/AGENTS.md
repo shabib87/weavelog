@@ -72,8 +72,9 @@ validator must fail loudly on an unknown schema version.
 `docs/learnings/` is frozen at `archive/learnings/` — no new learnings
 files. Session notes go to `research/` (one dated corpus); blog intent
 survives as a `**Lessons:**` block. Rationale and the superseded
-"learning log every session" mandate: see ADR-005's Context and the
-2026-07-22 alignment amendment.
+"learning log every session" mandate: see `docs/AGENTS.md` history (commit
+`1bc456a`) and `docs/research/2026-07-22-osmani-firsthand-alignment-amendment.md`
+for the propagated-claims correction that motivated the merge.
 
 ## Validation
 

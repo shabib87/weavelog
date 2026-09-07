@@ -161,7 +161,7 @@ Each file = one unresolved question blocking progress.
 |---|---|---|
 | Root-level entry points | 5 | 816 |
 | Trackers | 2 | 677 |
-| Provenance & decisions | 2 | 544 |
+| Provenance & decisions | 7 | 1,700 |
 | Research logs (dated) | 10 | 2,004 |
 | Research references (living) | 2 | 697 |
 | Learning logs | 14 | 1,743 |
