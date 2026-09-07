@@ -6,10 +6,10 @@ type: adr
 author: conductor
 related_to:
   - ./README.md
-  - ../../NORTH_STAR.md
-  - ../../PRODUCT.md
-  - ../../ROADMAP.md
-  - ../../research/2026-09-07-flagship-tier-pricing-quality-preliminary.md
+  - ../NORTH_STAR.md
+  - ../PRODUCT.md
+  - ../ROADMAP.md
+  - ../research/2026-09-07-flagship-tier-pricing-quality-preliminary.md
 sources:
   - "TASK-61"
 ---

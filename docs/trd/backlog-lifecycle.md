@@ -8,8 +8,8 @@ related_to:
   - ./README.md
   - ./loop-factory.md
   - ./tool-boundaries.md
-  - ./adr/0003-three-phase-loop-model.md
-  - ./adr/0005-artifact-flow.md
+  - ../adr/0003-three-phase-loop-model.md
+  - ../adr/0005-artifact-flow.md
 sources:
   - "TASK-15"
   - "TASK-13 (backlog.md wiring)"
@@ -96,7 +96,7 @@ plan review); the claim gate does not check them mechanically.
   `Decision: none — research only`. A spike marked Done with an unrecorded
   decision has a failed definition of done.
 - **Design docs change only via ADRs** — when implementation reveals a
-  `docs/architecture/` doc is wrong, write the ADR first; the TRD edit
+  `docs/trd/` doc is wrong, write the ADR first; the TRD edit
   rides under it (ADR-005 TRD rule). Never edit the TRD to match what the
   code now does.
 - **Plan reviews audit premises, not just consistency** — reviewers receive

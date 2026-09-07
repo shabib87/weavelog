@@ -5,10 +5,10 @@ status: draft
 type: adr
 author: conductor
 related_to:
-  - ../README.md
+  - ../trd/README.md
   - ./0004-model-selection-benchmark-policy.md
-  - ../loop-factory.md
-  - ../../AGENTS.md
+  - ../trd/loop-factory.md
+  - ../AGENTS.md
 sources:
   - "TASK-15"
 ---
@@ -109,14 +109,14 @@ verbatim.
 
 ## Writing an ADR
 
-1. Copy the format contract above into `docs/architecture/adr/NNNN-<slug>.md`.
+1. Copy the format contract above into `docs/adr/NNNN-<slug>.md`.
 2. Fill frontmatter per the architecture schema (date, topic, status, type: adr, author, related_to, sources).
 3. Add the entry to the index table above.
 4. Add reciprocal `related_to` links to linked docs.
 
 ## References
 
-- Authoring rules: [docs/AGENTS.md](../../AGENTS.md)
+- Authoring rules: [docs/AGENTS.md](../AGENTS.md)
 - Format contract: this document (see above); validated structurally by
   `frontmatter-check.ts --schema architecture` (frontmatter half only — the
   structure half is review-enforced)

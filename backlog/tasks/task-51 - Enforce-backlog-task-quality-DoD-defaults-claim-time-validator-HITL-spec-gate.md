@@ -31,7 +31,7 @@ Design decisions (gate-ratified):
 - task edit AC-mutating flags (--clear-ac, --remove-ac, --acceptance-criteria) blocked post spec-approved via pre-commit hook
 - AGENTS.md carries harness deltas only (EARS convention, forbidden-at-creation plan, HITL pointer); backlog instructions task-creation remains the base guide
 
-Refs: docs/research/2026-08-23-backlog-md-capability-audit.md, docs/research/2026-08-29-backlog-mcp-enforcement-bypass.md, docs/architecture/worktree-discipline.md, docs/plans/2026-08-16-enforce-hooks-recovery.md
+Refs: docs/research/2026-08-23-backlog-md-capability-audit.md, docs/research/2026-08-29-backlog-mcp-enforcement-bypass.md, docs/trd/worktree-discipline.md, docs/plans/2026-08-16-enforce-hooks-recovery.md
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria

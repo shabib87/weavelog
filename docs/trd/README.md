@@ -9,7 +9,7 @@ related_to:
   - ./tool-boundaries.md
   - ./backlog-lifecycle.md
   - ./test-guardrails.md
-  - ./adr/README.md
+  - ../adr/README.md
   - ../AGENTS.md
   - ../research/README.md
 sources:
@@ -40,13 +40,13 @@ See [loop-factory.md](./loop-factory.md) for the full model, diagram, and EARS a
 | [tool-boundaries.md](./tool-boundaries.md) | architecture | What each tool owns (backlog.md, enforce.ts, worktree-create.ts, reviewer-loop.ts, headroom, opencode) and its SRP |
 | [backlog-lifecycle.md](./backlog-lifecycle.md) | architecture | Conductor flow → backlog.md field mapping, three review checkpoints, deferrals |
 | [test-guardrails.md](./test-guardrails.md) | architecture | TDD ordering, EARS ACs, RED/GREEN split, reviewer checklist, verify-gate |
-| [adr/README.md](./adr/README.md) | adr | ADR index + Nygard template (ADR-001..N, added incrementally) |
+| [adr/README.md](../adr/README.md) | adr | ADR index + Nygard template (ADR-001..N, added incrementally) |
 | [diagrams/](./diagrams/) | architecture | Generated diagrams (HTML) |
 
 ## Related indexes
 
 - **Research** (why evidence): [docs/research/README.md](../research/README.md)
-- **Specs / ratified briefs** (what): [docs/specs/](../specs/)
+- **Ratified briefs** (what): [docs/prd/](../prd/) — PRD index with backlog-milestone cross-references
 - **Plans**: historical — `docs/archive/plans/`; task planning lives in backlog tasks
 - **Runbook** (operations): [AGENT-STACK-RUNBOOK.md](../../AGENT-STACK-RUNBOOK.md)
 

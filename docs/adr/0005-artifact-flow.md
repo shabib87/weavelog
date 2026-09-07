@@ -9,7 +9,7 @@ related_to:
   - ./0003-three-phase-loop-model.md
   - ./0004-model-selection-benchmark-policy.md
   - ./0001-weavelog-architecture-decisions.md
-  - ../../AGENTS.md
+  - ../AGENTS.md
 sources:
   - "TASK-76"
 ---
@@ -21,6 +21,10 @@ sources:
 in-review (2026-09-07) — human-directed governance decision; **partially
 supersedes** the doc-chain collapse recorded in
 `docs/research/2026-07-04-harness-setup-and-pmf-synthesis.md` §7.
+Amended 2026-09-07 (plan review, DeepSeek + Qwen APPROVE-WITH-CHANGES): the
+class homes are now **physical** — `docs/prd/`, `docs/trd/`, `docs/adr/` —
+and the founding TRD clause is rewritten below (it no longer "remains in
+specs/").
 
 ## Context
 
@@ -29,7 +33,7 @@ The 2026-07-04 doc-chain decision collapsed BRD/PRD/TRD into existing docs
 no milestone brief existed and ROADMAP was pending. Since then the situation
 changed on the ground:
 
-- A **ratified v0.1.0 draft brief** now lives in `docs/specs/` and is
+- A **ratified v0.1.0 draft brief** now lives in `docs/prd/` and is
   load-bearing — the ROADMAP drift rule requires it as the ratified scope
   anchor for every 0.1.0 decision.
 - The ADR corpus came alive (003, 004) and needs a defined relationship to
@@ -47,9 +51,9 @@ PRD/TRD classes without a record would violate this repo's own ADR-003 gate
 
 | Decision | Choice | Why |
 |---|---|---|
-| **PRD** (product requirements) | Ratified **milestone briefs** in `docs/specs/` (e.g. the v0.1.0 draft brief) — goal, in/out of scope, success criteria, milestone mapping | The release scope of record; created and ratified by the human at milestone kickoff; **archives when the milestone ships** |
-| **TRD** (technical design) | Durable design in `docs/architecture/` — loop-factory, headroom-proxy, model-routing, tool-boundaries, test-guardrails, worktree-discipline; the 2026-06-28 design spec remains the founding TRD in `specs/` until its content is fully absorbed | TRDs are living and **changed only via ADRs** — never edited around a decision |
-| **ADR** | One hard-to-reverse decision per record, per the format contract | Immutable once approved; superseded, never rewritten |
+| **PRD** (product requirements) | Ratified **milestone briefs** in `docs/prd/` (e.g. the v0.1.0 draft brief) — goal, in/out of scope, success criteria, milestone mapping | The release scope of record; created and ratified by the human at milestone kickoff; **archives when the milestone ships** |
+| **TRD** (technical design) | Durable design in `docs/trd/` — loop-factory, headroom-proxy, model-routing, tool-boundaries, test-guardrails, worktree-discipline; the 2026-06-28 design spec remains the founding TRD in `specs/` until its content is fully absorbed | TRDs are living and **changed only via ADRs** — never edited around a decision |
+| **ADR** | `docs/adr/` (top level, out of the TRD corpus) — one hard-to-reverse decision per record, per the format contract | Immutable once approved; superseded, never rewritten |
 | **TASK** | Backlog item whose **acceptance criteria must cite the TRD section or ADR constraint they implement** | Upward traceability: a task that traces to nothing is a YAGNI violation and is rejected at the plan gate |
 | **BRD** | **Stays collapsed** into `NORTH_STAR.md` + PRODUCT.md | Still no separate business-requirements artifact — YAGNI holds |
 
@@ -58,6 +62,10 @@ only through a human gate; a research note never changes the TRD directly —
 it ends at the ADR-003 decision gate.
 
 Full flow rules live in `docs/AGENTS.md` ("Artifact flow" section).
+
+The v0.1.0 brief is byte-identity-protected (TASK-45/56): its internal
+`docs/specs/` literals are a frozen snapshot of its ratification moment and
+are intentionally NOT repaired.
 
 ## Consequences
 

@@ -50,11 +50,11 @@
 | File | Type | Purpose | When | LOC | Last updated |
 |---|---|---|---|---|---|
 | `research/RESEARCH.md` | Provenance | WHY behind every design decision, source-by-source | On unfamiliar territory | 241 | 2026-07-22 |
-| `architecture/adr/0001-weavelog-architecture-decisions.md` | ADR | Historical umbrella record — traceability table routes each bundled decision to its current home. Do not implement from §2 | On design changes | 341 | 2026-09-07 |
-| `architecture/adr/0002-bash-homebrew-tooling.md` | ADR | Bash/Homebrew decision (approved: TypeScript only; reformatted to contract) | On distribution/language | 62 | 2026-09-07 |
-| `architecture/adr/0003-three-phase-loop-model.md` | ADR | Three-phase loop model + decision-recording gate (WHY ends in ADR or explicit no-decision) | Every WHY phase | 100 | 2026-09-07 |
-| `architecture/adr/0004-model-selection-benchmark-policy.md` | ADR | Seat-weighted benchmark policy; L0–L4 reviewer escalation; weekly/monthly drift cadence | Model decisions | 241 | 2026-09-07 |
-| `architecture/adr/0005-artifact-flow.md` | ADR | PRD/TRD/ADR/TASK doc classes; task-AC traceability rule (partially supersedes 07-04 doc-chain collapse) | Planning any task | 95 | 2026-09-07 |
+| `adr/0001-weavelog-architecture-decisions.md` | ADR | Historical umbrella record — traceability table routes each bundled decision to its current home. Do not implement from §2 | On design changes | 341 | 2026-09-07 |
+| `adr/0002-bash-homebrew-tooling.md` | ADR | Bash/Homebrew decision (approved: TypeScript only; reformatted to contract) | On distribution/language | 62 | 2026-09-07 |
+| `adr/0003-three-phase-loop-model.md` | ADR | Three-phase loop model + decision-recording gate (WHY ends in ADR or explicit no-decision) | Every WHY phase | 100 | 2026-09-07 |
+| `adr/0004-model-selection-benchmark-policy.md` | ADR | Seat-weighted benchmark policy; L0–L4 reviewer escalation; weekly/monthly drift cadence | Model decisions | 241 | 2026-09-07 |
+| `adr/0005-artifact-flow.md` | ADR | PRD/TRD/ADR/TASK doc classes; task-AC traceability rule (partially supersedes 07-04 doc-chain collapse) | Planning any task | 95 | 2026-09-07 |
 | `AGENTS.md` | Rules | Documentation rules (nested AGENTS.md): schemas, versioning, artifact flow PRD→TRD→ADR→TASK | When writing docs | 120 | 2026-09-07 |
 
 ---
@@ -113,11 +113,20 @@ Each captures what went wrong, root cause, and blog candidate.
 
 ---
 
-## Design specs
+## TRD + PRD (docs/trd, docs/prd)
 
 | File | Topic | When | LOC |
 |---|---|---|---|
-| `specs/2026-06-28-weavelog-design.md` | Full architecture design — ETCSLV, isolation, budgets, rollback | On implementation | 675 |
+| `trd/2026-06-28-weavelog-design.md` | Founding TRD — full architecture design (ETCSLV, isolation, budgets, rollback) | On implementation | 675 |
+| `trd/loop-factory.md` | Three-phase × two-role loop model (the operating system of the harness) | Every dispatch | 62 |
+| `trd/tool-boundaries.md` | What each tool owns; loop-POSITION placement | On tooling changes | 74 |
+| `trd/backlog-lifecycle.md` | Conductor flow → backlog fields; task provenance + decision gate (ADR-005) | Task lifecycle work | 143 |
+| `trd/model-routing.md` | Roster/roles, escalation ladder wiring (ADR-004 companion) | Model decisions | 191 |
+| `trd/worktree-discipline.md` | Worktree flow, HITL merge gate, crash contract | Every task | — |
+| `trd/test-guardrails.md` | TDD ordering, EARS ACs, verify-gate semantics | TDD work | — |
+| `trd/headroom-proxy.md` | Proxy stack utilization | Proxy work | — |
+| `trd/runbook-decomposition.md` | Runbook section map (post-decomposition index) | Runbook archaeology | — |
+| `prd/README.md` | PRD index — ratified milestone briefs cross-referenced with backlog milestones | Milestone planning | 46 |
 | `archive/superpowers/specs/2026-07-07-weavelog-footer-theme-design.md` | Author footer/theme design (not product) | On author workspace | 151 |
 
 ---
@@ -165,7 +174,7 @@ Each file = one unresolved question blocking progress.
 | Research logs (dated) | 10 | 2,004 |
 | Research references (living) | 2 | 697 |
 | Learning logs | 14 | 1,743 |
-| Design specs | 2 | 826 |
+| TRD + PRD | 14 | ~1,600 |
 | Open questions (TBD) | 7 | 395 |
 | Implementation plans | 3 | 3,740 |
 | Author workspace | 1 | 34 |

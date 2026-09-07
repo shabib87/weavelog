@@ -7,7 +7,7 @@ author: conductor
 related_to:
   - ./README.md
   - ./0004-model-selection-benchmark-policy.md
-  - ../loop-factory.md
+  - ../trd/loop-factory.md
 sources:
   - "TASK-15"
   - "TASK-76"

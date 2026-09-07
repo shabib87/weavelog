@@ -9,7 +9,7 @@ related_to:
   - ./tool-boundaries.md
   - ./backlog-lifecycle.md
   - ./test-guardrails.md
-  - ./adr/README.md
+  - ../adr/README.md
 sources:
   - "TASK-15"
   - "TASK-22 (consensus restoration)"

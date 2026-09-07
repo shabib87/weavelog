@@ -10,14 +10,14 @@ them without explicit human instruction.
 | Path | Purpose |
 |---|---|
 | `research/` | The ONE dated corpus (research schema). Session notes, evidence, amendments |
-| `architecture/` | Durable design docs (TRD class — architecture schema, undated filenames). Changed only via ADRs |
-| `architecture/adr/` | Decision records — Nygard sections + format contract in that README. Read it before writing an ADR |
-| `specs/` | Ratified PRD-class docs: milestone briefs and the founding design spec. A brief moves to `archive/` when the milestone it scopes ships; a design spec stays while it describes the current system |
+| `prd/` | Ratified milestone briefs (PRD class) — the release scope of record; cross-referenced with `backlog/milestones/` (see `prd/README.md`). A brief moves to `archive/` when the milestone it scopes ships |
+| `trd/` | Durable technical design (TRD class — architecture schema, undated filenames) incl. the 2026-06-28 founding spec and `diagrams/`. Changed only via ADRs |
+| `adr/` | Decision records — Nygard sections + format contract in that README. Read it before writing an ADR |
 | `archive/` | Frozen provenance. **Never edit, never implement against, never add** (except whole-directory moves per the root AGENTS.md) |
 
 ## Artifact flow: PRD → TRD → ADR → TASK
 
-Full rules in [architecture/adr/0005-artifact-flow.md](./architecture/adr/0005-artifact-flow.md).
+Full rules in [adr/0005-artifact-flow.md](./adr/0005-artifact-flow.md).
 Summary:
 
 - **PRD** — ratified milestone brief in `specs/` (human-owned at kickoff;
@@ -83,10 +83,10 @@ pass each directory explicitly:
 
 ```bash
 # architecture schema
-node --import tsx src/tools/frontmatter-check.ts --schema architecture docs/architecture docs/architecture/adr
+node --import tsx src/tools/frontmatter-check.ts --schema architecture docs/trd docs/adr docs/prd
 
 # research schema
-node --import tsx src/tools/frontmatter-check.ts docs/research docs/specs
+node --import tsx src/tools/frontmatter-check.ts docs/research
 ```
 
 Enforcement split: the **frontmatter half is machine-enforced**; the
@@ -99,8 +99,12 @@ does not deliver.
 - **No semver** in doc frontmatter (see Versioning above).
 - **No absolute home paths, no secrets, no personal identifiers** — the
   privacy sweep rejects them.
-- **Frontmatter schemas:** `architecture/**` uses the architecture schema;
-  `research/` and `specs/` use the research schema.
+- **Frontmatter schemas:** `trd/**` and `adr/**` use the architecture
+  schema; `research/` uses the research schema. Known pre-convention
+  exceptions (frontmatter-free, never "fix" without the human): the v0.1.0
+  draft brief and github-repo-metadata in `prd/` (the brief is
+  byte-identity-protected — its internal `docs/specs/` literals are a
+  frozen ratification snapshot), and the founding design spec in `trd/`.
 - Known accepted noise: `NORTH_STAR.md`, `PRODUCT.md`, `ROADMAP.md`,
   `INDEX.md`, `cli.md`, this file, `archive/**`, and pre-convention files
   the validator flags in `research/`/`specs/` (e.g. the v0.1.0 draft brief,
@@ -109,5 +113,5 @@ does not deliver.
 - New plans do **not** go in `docs/` — task planning lives in backlog tasks
   (acceptance criteria + definition of done). `archive/plans/` and
   `archive/superpowers/` are historical only.
-- New **ratified briefs** go in `specs/`; new session notes go in
-  `research/`; new durable design goes in `architecture/` via an ADR.
+- New **ratified briefs** go in `prd/`; new session notes go in
+  `research/`; new durable design goes in `trd/` via an ADR.

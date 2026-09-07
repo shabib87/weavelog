@@ -334,7 +334,7 @@ fills all roles — the chain collapses. Don't cargo-cult ceremony.
 
 ---
 
-> **Amended 2026-09-07:** partially superseded by `docs/architecture/adr/0005-artifact-flow.md` — PRD and TRD return as ratified milestone briefs (`docs/specs/`) and durable design docs (`docs/architecture/`); BRD remains collapsed into NORTH_STAR + PRODUCT. Recorded via the ADR-003 decision gate.
+> **Amended 2026-09-07:** partially superseded by `docs/adr/0005-artifact-flow.md` — PRD and TRD return as ratified milestone briefs (`docs/prd/`) and durable design docs (`docs/trd/`); BRD remains collapsed into NORTH_STAR + PRODUCT. Recorded via the ADR-003 decision gate.
 
 ## 8. Engineering philosophy synthesized
 

@@ -209,7 +209,7 @@ A Pi TypeScript extension distributed as an npm package (`weavelog/pi-weavelog`)
       "agent": "specifier",
       "model": "z-ai/glm-5.2",
       "temperature": 0.1,
-      "verify": { "type": "tests-pass", "command": "test -f docs/specs/feature-spec.md" },
+      "verify": { "type": "tests-pass", "command": "test -f docs/prd/feature-spec.md" },
       "gate": "human"
     },
     {
@@ -442,7 +442,7 @@ The human is a **lifecycle gate**, not a verifier. They review the verifier's ou
 
 | Step | "Done" means |
 |---|---|
-| Spec | Spec file exists at expected path (`test -f docs/specs/feature-spec.md`) |
+| Spec | Spec file exists at expected path (`test -f docs/prd/feature-spec.md`) |
 | Code | Test suite passes (`node --import tsx --test`) |
 | QA | Lint clean + tests pass (`biome check --no-errors && node --import tsx --test`) |
 | Docs | Doc files exist at expected paths |
