@@ -19,9 +19,10 @@
             }
           }
         },
-        // minimax-m3 is vision-capable but opencode defaults image input to
-        // false without an explicit modalities declaration (no models.dev entry).
-        "minimax/minimax-m3": {
+        // qwen3.8-flash is the vision/UI seat (TASK-75, ADR-004 roster) and is
+        // vision-capable; opencode defaults image input to false without an
+        // explicit modalities declaration (no models.dev entry).
+        "qwen/qwen3.8-flash": {
           "modalities": { "input": ["text", "image", "video"], "output": ["text"] }
         },
         // kimi-k3 same issue: no models.dev image-input entry, so declare it.
@@ -38,8 +39,11 @@
   },
   // Only OpenRouter is enabled; all other built-in providers are ignored.
   "enabled_providers": ["openrouter"],
-  // 6-model roster (TASK-25, 2026-08-30): conductor glm-5.3-flash; bulk flash-0731.
-  // glm-5.2 retired (value trap). See docs/research/2026-08-30-model-redistribution-cost-quality.md
+  // 7-model roster (TASK-75, ADR-004, 2026-09-07): conductor/default
+  // glm-5.3-flash; bulk worker deepseek-v4-flash-0731; vision/UI qwen3.8-flash.
+  // Access removed: minimax-m3, deepseek-v4-flash-vision-exp (retired earlier:
+  // glm-5.2, qwen3.8-max). Escalation ladder L0-L4 in config/agents/*.
+  // See docs/architecture/adr/0004-model-selection-benchmark-policy.md
   "model": "openrouter/z-ai/glm-5.3-flash",
   "small_model": "openrouter/deepseek/deepseek-v4-flash-0731",
   // superpowers plugin REMOVED 2026-08-16 (light-factory plan): 4 keeper skills

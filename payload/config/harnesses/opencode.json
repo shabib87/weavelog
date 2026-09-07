@@ -7,6 +7,7 @@
     "AGENTS.md": "AGENTS.md",
     "opencode.jsonc": "config/opencode.jsonc",
     "agents/diff-reviewer-deepseek.md": "config/agents/diff-reviewer-deepseek.md",
+    "agents/diff-reviewer-glm-5.3.md": "config/agents/diff-reviewer-glm-5.3.md",
     "agents/diff-reviewer-glm.md": "config/agents/diff-reviewer-glm.md",
     "agents/diff-reviewer-kimi.md": "config/agents/diff-reviewer-kimi.md",
     "agents/diff-reviewer-qwen.md": "config/agents/diff-reviewer-qwen.md",
@@ -19,9 +20,8 @@
     "agents/researcher.md": "config/agents/researcher.md",
     "agents/scout.md": "config/agents/scout.md",
     "agents/security.md": "config/agents/security.md",
-    "agents/vision-deepseek.md": "config/agents/vision-deepseek.md",
     "agents/vision-kimi.md": "config/agents/vision-kimi.md",
-    "agents/vision-minimax.md": "config/agents/vision-minimax.md",
+    "agents/vision-qwen.md": "config/agents/vision-qwen.md",
     "prompts/plan-reviewer.md": "config/prompts/plan-reviewer.md",
     "prompts/reviewer.md": "config/prompts/reviewer.md",
     "prompts/vision.md": "config/prompts/vision.md"

@@ -283,10 +283,73 @@ the quarterly protocol. Remaining reviews add the missing deterministic input:
 This extends TASK-61 Phase 2 (static adoption) and feeds Phase 3 (dynamic
 routing). New-model detection is the piece that did not exist in prior plans.
 
+## Provider-card cache rates (static pull, Phase-2 step one — TASK-75)
+
+Published card rates from the four providers' own model/pricing pages,
+retrieved 2026-09-07 by the researcher seat (glm-5.3-flash). STATIC
+provider-card facts only — not runtime telemetry, not OpenRouter-routed
+prices. USD per 1M tokens. "none published" = card hosts the model but
+publishes no separate cache rate (recorded as such, NOT zero).
+
+| Provider | Model | Cache read | Cache write | Input | Output | Source |
+|---|---|---|---|---|---|---|
+| Baseten | GLM-5.3 | $0.14 | none published | $1.40 | $4.40 | baseten.co/library/glm-53/ |
+| Baseten | DeepSeek V4 Pro 0813 | $0.132 | none published | $1.32 | $3.96 | baseten.co/library/deepseek-v4-pro-0813/ |
+| Baseten | DeepSeek V4 Flash 0731 | — | — | — | — | hosted (baseten.co/pricing/) but rates JS-rendered, not captured |
+| Baseten | Qwen3.8-2.4T-A95B / Flash | — | — | — | — | not hosted (only Qwen3.8-27B listed) |
+| Baseten | Kimi K3 | $0.30 | none published | $3.00 | $15.00 | baseten.co/pricing/ |
+| DeepInfra | GLM-5.3 | — | — | — | — | hosted (deepinfra.com/zai-org/GLM-5.3) but price block not rendered |
+| DeepInfra | DeepSeek V4 Pro 0813 | $0.10 | $1.625 (5-min) / $2.60 (1-h) | $1.30 | $2.60 | deepinfra.com/deepseek-ai/DeepSeek-V4-Pro-0813 |
+| DeepInfra | DeepSeek V4 Flash 0731 | $0.016 | none published | $0.08 | $0.18 | deepinfra.com/deepseek-ai/DeepSeek-V4-Flash-0731 (Priority 1.5×, Flex 0.8×) |
+| DeepInfra | Qwen3.8-2.4T-A95B | $0.20 | none published | $2.00 | $6.00 | deepinfra.com/Qwen/Qwen3.8-2.4T-A95B (fp4 quant, 262K ctx) |
+| DeepInfra | Qwen3.8-Flash | — | — | — | — | not hosted |
+| DeepInfra | Kimi K3 | $0.285 | none published | $2.85 | $14.25 | deepinfra.com/pricing |
+| NovitaAI | GLM-5.3 | $0.26 | none published | $1.40 | $4.40 | novita.ai/model-api/pricing |
+| NovitaAI | DeepSeek V4 Pro 0813 | $0.132 | none published | $1.32 | $3.96 | novita.ai/model-api/pricing |
+| NovitaAI | DeepSeek V4 Flash 0731 | $0.028 | none published | $0.44 | $1.32 | novita.ai/model-api/pricing |
+| NovitaAI | Qwen3.8-2.4T-A95B | $0.25 | none published | $2.00 | $6.00 | novita.ai model-api pricing ("Qwen3.8 Max" card = open-weight 2.4T-A95B) |
+| NovitaAI | Qwen3.8-Flash | $0.016 | none published | $0.15 | $0.47 | blogs.novita.ai qwen3-8-flash launch pricing (checked 2026-08-31) |
+| NovitaAI | Kimi K3 | $0.30 | none published | $3.00 | $15.00 | novita.ai/model-api/pricing |
+| SiliconFlow | GLM-5.3 | $0.26 | none published | $1.40 | $4.40 | siliconflow.com/models/glm-5-3 |
+| SiliconFlow | DeepSeek V4 Pro (checkpoint unconfirmed) | $0.135 | none published | $1.50162 | $3.135 | siliconflow.com/models/deepseek-v4-pro + /pricing |
+| SiliconFlow | DeepSeek V4 Flash 0731 | $0.028 | none published | $0.13 | $0.28 | siliconflow.com/pricing |
+| SiliconFlow | Qwen3.8-2.4T-A95B | $0.25* | none published | $2.00* | $6.00* | *modelindex.ai only (fp8, 1.05M ctx) — NOT verified on SiliconFlow primary |
+| SiliconFlow | Qwen3.8-Flash | — | — | — | — | not hosted |
+| SiliconFlow | Kimi K3 | $0.30 | none published | $3.00 | $15.00 | siliconflow.com/pricing |
+
+Caveats (retained verbatim from the retrieval pass):
+
+- **Cache write is published by exactly one card**: DeepInfra's
+  DeepSeek-V4-Pro-0813 page (1.25× input for 5-min retention, 2× for 1-h;
+  1,024-token blocks; remainder billed as standard input). Every other card
+  publishes cache-read only.
+- **Cross-check conflicts (live card taken as authoritative)**: DeepInfra
+  Flash-0731 model page ($0.08/$0.016) vs its own pricing-table row
+  ($0.06/$0.015); SiliconFlow V4-Pro live card ($1.50162/$0.135/$3.135) vs
+  its April launch blog ($1.60/$0.135/$3.135).
+- **Stale secondary data**: a 2026-08-24 secondary report had Baseten
+  Pro-0813 at $1.74/$0.145/$3.48; Baseten's current library page says
+  $1.32/$0.132/$3.96 — price changed ~Sep 2.
+- **Serving differences matter**: DeepInfra serves Qwen3.8-2.4T-A95B
+  fp4/262K vs SiliconFlow fp8/1.05M (per ModelIndex) — same sticker price,
+  different product.
+- **Not checked**: siliconflow.cn (Chinese site) separately; providers' JSON
+  pricing APIs (model-info pages used as cross-check); vendor direct-API
+  list prices.
+
+Reading for routing (first pass, static): first-party/first-party-adjacent
+cards (SiliconFlow, NovitaAI, DeepInfra) price cache reads at ~10-20% of
+input vs OpenRouter's roster cache reads (e.g. flash-0731: $0.028 SiliconFlow
+vs $0.028 OpenRouter catalog read) — no material first-party arbitrage on
+cache reads today; the DeepInfra V4-Pro write-premium (1.25×/2×) is the only
+card that prices cache WRITES explicitly. Re-verify before any route swap;
+these figures age like all pricing figures (30-day staleness rule, ADR-004).
+
 ## Open items (unchanged from TASK-61 scope)
 
-- AC #1 gaps: per-provider cache discounts (Baseten, DeepInfra, NovitaAI,
-  SiliconFlow), TTFT, TPS, tool-call accuracy for all seven.
+- AC #1 gaps: TTFT, TPS, tool-call accuracy for all seven. (Per-provider
+  cache discounts CLOSED 2026-09-07: static card facts captured above,
+  TASK-75.)
 - AC #2: escalation decision tree with concrete thresholds.
 - AC #3: role-to-tier mappings for Low-Budget vs High-Precision modes and the
   OpenRouter routing config spec.

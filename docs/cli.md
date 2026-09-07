@@ -211,8 +211,8 @@ absolute paths in launchd plists are substituted at install time by `init`).
 
 Opinionated defaults — `init` asks, flags override. Role → model table lives in
 `docs/architecture/model-routing.md`; the machine-readable default is the `models`
-list in `weavelog.json` (glm-5.3-flash, deepseek-v4-flash-0731, deepseek-v4-pro-0813,
-qwen3.8-2.4t-a95b, kimi-k3, minimax-m3). The opencode keys are `model`
+list in `weavelog.json` (glm-5.3-flash, glm-5.3, deepseek-v4-flash-0731,
+deepseek-v4-pro-0813, qwen3.8-flash, qwen3.8-2.4t-a95b, kimi-k3). The opencode keys are `model`
 (`openrouter/z-ai/glm-5.3-flash`, new-session workhorse) and `small_model`
 (`openrouter/deepseek/deepseek-v4-flash-0731`, cheap bulk); subagents inherit them
 unless their agent file sets its own `model`. Versions are manifest-pinned in

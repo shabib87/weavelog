@@ -24,9 +24,11 @@ import {
   checkPointerTargets,
   checkProxyHealth,
   checkProxyMode,
+  checkRosterDrift,
   checkThresholds,
   type ProxyFetch,
   parseJsonc,
+  type RosterSnapshot,
   runProxyChecks,
   stripJsoncComments,
 } from "../src/tools/stack-check.ts";
@@ -59,7 +61,7 @@ before(async () => {
     [
       "-e",
       `const http=require("node:http");
-const models={data:[{id:"test-model-a",expiration_date:"2032-01-01T00:00:00.000Z"},{id:"test-model-b",expiration_date:"2032-01-01T00:00:00.000Z"}]};
+const models={data:[{id:"test-model-a",expiration_date:"2032-01-01T00:00:00.000Z",pricing:{prompt:"0.000001",completion:"0.000002"}},{id:"test-model-b",expiration_date:"2032-01-01T00:00:00.000Z",pricing:{prompt:"0.000003",completion:"0.000001"}}]};
 const srv=http.createServer((req,res)=>{
   res.writeHead(200,{"content-type":"application/json"});
   if(req.url.startsWith("/api/v1/models")) res.end(JSON.stringify(models));
@@ -122,6 +124,24 @@ if [ "$1" = "--version" ]; then echo "headroom, version 0.1.0"; fi
 if [ "$1" = "update" ]; then echo "0.1.0"; fi
 `;
 
+// Roster snapshot fixtures matching the stub catalog prices above (TASK-75).
+function rosterSnapshot(
+  roster: Record<string, { prompt: string; completion: string }>,
+  familySlugs: Record<string, string[]> = { "test-family": [] },
+): RosterSnapshot {
+  return {
+    generatedAt: "2026-09-07",
+    source: "stub",
+    monitoredFamilies: Object.keys(familySlugs),
+    roster,
+    familySlugs,
+  };
+}
+const ROSTER_SNAPSHOT_CLEAN = rosterSnapshot({
+  "test-model-a": { prompt: "0.000001", completion: "0.000002" },
+  "test-model-b": { prompt: "0.000003", completion: "0.000001" },
+});
+
 // Fixture HOME shaped like the live harness home: manifest, OpenRouter key,
 // and fake binaries for the checks that shell out.
 function makeStackHome(): string {
@@ -158,6 +178,10 @@ function makeStackHome(): string {
     '#!/bin/sh\necho "pricing ok"\n',
   );
   chmodSync(join(home, ".local", "bin", "fake-pricing"), 0o755);
+  writeFileSync(
+    join(home, "roster-snapshot.json"),
+    `${JSON.stringify(ROSTER_SNAPSHOT_CLEAN, null, 2)}\n`,
+  );
   return home;
 }
 
@@ -168,6 +192,7 @@ function stackRun(args: string[], extraEnv: Record<string, string> = {}) {
     STACK_CHECK_OPENROUTER_MODELS_URL: ModelsUrl,
     STACK_CHECK_NPM_REGISTRY_URL: NpmUrl,
     STACK_CHECK_PRICING_BIN: join(home, ".local", "bin", "fake-pricing"),
+    STACK_CHECK_ROSTER_SNAPSHOT: join(home, "roster-snapshot.json"),
     HEADROOM_UPDATE_CHECK: "off",
     ...extraEnv,
   });
@@ -249,6 +274,185 @@ describe("stack-check (happy paths)", () => {
     assert.equal(report.checks.markitdown.current, "0.1.7");
     assert.equal(report.checks.markitdown.manifest, "0.1.7");
     rmSync(home, { recursive: true, force: true });
+  });
+
+  test("report includes the roster drift check; clean snapshot adds no drift", () => {
+    const { r, home } = stackRun([
+      "--no-notify",
+      "--json",
+      join(tmpdir(), `stack-check-roster-${Date.now()}.json`),
+    ]);
+    assert.ok([0, 1].includes(r.status as number));
+    const reportPath = r.stdout.split("report: ")[1]?.split("\n")[0];
+    assert.ok(reportPath);
+    const report = JSON.parse(readFileSync(reportPath as string, "utf8"));
+    assert.ok(Object.hasOwn(report.checks, "rosterDrift"));
+    assert.equal(report.checks.rosterDrift.rosterSize, 2);
+    assert.equal(report.checks.rosterDrift.newMonitoredSlugs.length, 0);
+    assert.ok(
+      !report.drift.some((d: string) => d.startsWith("roster:")),
+      `unexpected roster drift: ${JSON.stringify(report.drift)}`,
+    );
+    rmSync(home, { recursive: true, force: true });
+  });
+
+  test("roster price delta >=10% produces drift and a blocking decision brief", () => {
+    // live prompt for test-model-a is 0.000001; pinning 0.000002 = 100% delta
+    const deltaHome = join(
+      tmpdir(),
+      `stack-home-delta-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    );
+    mkdirSync(deltaHome, { recursive: true });
+    writeFileSync(
+      join(deltaHome, "roster-snapshot.json"),
+      JSON.stringify(
+        rosterSnapshot({
+          "test-model-a": { prompt: "0.000002", completion: "0.000002" },
+          "test-model-b": { prompt: "0.000003", completion: "0.000001" },
+        }),
+      ),
+    );
+    const { r, home } = stackRun(
+      [
+        "--no-notify",
+        "--json",
+        join(tmpdir(), `stack-check-roster-delta-${Date.now()}.json`),
+      ],
+      { STACK_CHECK_ROSTER_SNAPSHOT: join(deltaHome, "roster-snapshot.json") },
+    );
+    assert.equal(r.status, 1);
+    const reportPath = r.stdout.split("report: ")[1]?.split("\n")[0];
+    assert.ok(reportPath);
+    const report = JSON.parse(readFileSync(reportPath as string, "utf8"));
+    assert.ok(
+      report.drift.some((d: string) =>
+        d.includes("price delta >=10% on test-model-a"),
+      ),
+    );
+    const decisions = report.checks.rosterDrift.decisions as string[];
+    assert.ok(
+      decisions.some(
+        (d) => d.includes("blocking") && d.includes("test-model-a"),
+      ),
+    );
+    assert.ok(r.stderr.includes("ROSTER DECISION BRIEF"));
+    rmSync(home, { recursive: true, force: true });
+    rmSync(deltaHome, { recursive: true, force: true });
+  });
+});
+
+describe("checkRosterDrift (roster drift gate, pure)", () => {
+  const live = [
+    {
+      id: "z-ai/glm-5.3-flash",
+      pricing: { prompt: "0.000000075", completion: "0.00000025" },
+    },
+    {
+      id: "z-ai/glm-5.3",
+      pricing: { prompt: "0.0000014", completion: "0.0000044" },
+    },
+    {
+      id: "qwen/qwen3.8-flash",
+      pricing: { prompt: "0.00000015", completion: "0.00000047" },
+    },
+  ];
+  const snap = rosterSnapshot(
+    {
+      "z-ai/glm-5.3-flash": { prompt: "0.000000075", completion: "0.00000025" },
+      "z-ai/glm-5.3": { prompt: "0.0000014", completion: "0.0000044" },
+      "qwen/qwen3.8-flash": { prompt: "0.00000015", completion: "0.00000047" },
+    },
+    {
+      "z-ai": ["z-ai/glm-5.3-flash", "z-ai/glm-5.3"],
+      qwen: ["qwen/qwen3.8-flash"],
+    },
+  );
+
+  test("identical catalog -> no drift, no decisions", () => {
+    const res = checkRosterDrift(snap, live);
+    assert.equal(res.drift.length, 0);
+    assert.equal(res.decisions.length, 0);
+  });
+
+  test(">=10% price delta on a roster model -> drift + blocking decision", () => {
+    const bumped = structuredClone(live);
+    bumped[0].pricing.prompt = "0.00000009"; // +20%
+    const res = checkRosterDrift(snap, bumped);
+    assert.ok(
+      res.drift.some((d) =>
+        d.includes("price delta >=10% on z-ai/glm-5.3-flash"),
+      ),
+    );
+    assert.equal(res.decisions.length, 1);
+    assert.ok(res.decisions[0].includes("blocking"));
+  });
+
+  test("sub-threshold price delta -> no drift", () => {
+    const bumped = structuredClone(live);
+    bumped[0].pricing.prompt = "0.000000078"; // +4%
+    const res = checkRosterDrift(snap, bumped);
+    assert.equal(res.drift.length, 0);
+  });
+
+  test("exactly 10% delta breaches the gate (>=, not >)", () => {
+    const bumped = structuredClone(live);
+    bumped[0].pricing.prompt = "0.0000000825"; // +10% exactly
+    const res = checkRosterDrift(snap, bumped);
+    assert.ok(res.drift.some((d) => d.includes("price delta >=10%")));
+  });
+
+  test("removed/renamed roster slug -> drift + blocking decision", () => {
+    const res = checkRosterDrift(snap, live.slice(1));
+    assert.ok(
+      res.drift.some(
+        (d) =>
+          d.includes("removed/renamed") && d.includes("z-ai/glm-5.3-flash"),
+      ),
+    );
+    assert.ok(res.decisions.some((d) => d.includes("z-ai/glm-5.3-flash")));
+  });
+
+  test("new slug in a monitored family -> drift + blocking decision", () => {
+    const withNew = [
+      ...live,
+      {
+        id: "z-ai/glm-6-preview",
+        pricing: { prompt: "0.001", completion: "0.002" },
+      },
+    ];
+    const res = checkRosterDrift(snap, withNew);
+    assert.ok(
+      res.drift.some((d) =>
+        d.includes("new slug in monitored family: z-ai/glm-6-preview"),
+      ),
+    );
+    assert.equal(res.decisions.length, 1);
+  });
+
+  test("slug outside monitored families is ignored", () => {
+    const withNew = [
+      ...live,
+      {
+        id: "vendorx/model-9",
+        pricing: { prompt: "0.001", completion: "0.002" },
+      },
+    ];
+    const res = checkRosterDrift(snap, withNew);
+    assert.equal(res.drift.length, 0);
+  });
+
+  test("missing or malformed live pricing is skipped, never a crash", () => {
+    const bad = [
+      { id: "z-ai/glm-5.3-flash" },
+      { id: "z-ai/glm-5.3", pricing: { prompt: "abc", completion: "" } },
+      {
+        id: "qwen/qwen3.8-flash",
+        pricing: { prompt: "0.00000015", completion: "0.00000047" },
+      },
+    ];
+    const res = checkRosterDrift(snap, bad);
+    assert.equal(res.drift.length, 0);
+    assert.equal(res.decisions.length, 0);
   });
 });
 

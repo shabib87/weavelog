@@ -7,8 +7,11 @@
  * Checks: headroom release, backlog.md version, markitdown version,
  * opencode app version,
  * diagram-design skill commit, OpenRouter expiration dates for the
- * configured models, config drift (tracked config/ vs live per the harness
- * manifest), and pointer targets in the live global AGENTS.md.
+ * configured models, roster drift vs the pinned OpenRouter snapshot
+ * (>=10% price delta / new monitored-family slug / removed roster slug —
+ * each a blocking human decision, ADR-004), config drift (tracked config/
+ * vs live per the harness manifest), and pointer targets in the live
+ * global AGENTS.md.
  *
  * Exit codes: 0 = no drift, 1 = drift found (check report), 2 = error.
  */
@@ -45,6 +48,7 @@ Env overrides (proxy doctor):
   STACK_CHECK_HEADROOM_SETTINGS     headroom thresholds path (default $STACK_CHECK_PI_DIR/headroom/settings.json)
   STACK_CHECK_NPM_REGISTRY_URL      backlog.md latest-version endpoint (default https://registry.npmjs.org/backlog.md/latest)
   STACK_CHECK_OPENROUTER_MODELS_URL OpenRouter models catalog endpoint (default https://openrouter.ai/api/v1/models)
+  STACK_CHECK_ROSTER_SNAPSHOT      pinned roster snapshot path (default <repo>/src/tools/openrouter-snapshot.json)
 
 Env overrides (config drift + pointer checks):
   STACK_CHECK_CONFIG_DIR           tracked config root (default <repo>/config)
@@ -321,6 +325,128 @@ export function checkMarkitdown(
     return { check, drift: [`markitdown ${manifestVersion} -> ${current}`] };
   }
   return { check, drift: [] };
+}
+
+// ---------------------------------------------------------------------------
+// Roster drift gate (TASK-75, ADR-004 weekly sweep): diffs the live OpenRouter
+// catalog against the pinned snapshot (src/tools/openrouter-snapshot.json).
+// Fails on (a) >=10% price delta on any roster model, (b) a new slug in a
+// monitored family (z-ai, deepseek, qwen, moonshotai), (c) a removed/renamed
+// roster slug. Every failure is a BLOCKING human decision — the machine never
+// selects across tiers or admits a new model unilaterally. The snapshot is
+// updated only by an explicit re-pin (never by this check, never in ADR-004).
+// ---------------------------------------------------------------------------
+
+export const ROSTER_PRICE_DELTA_THRESHOLD = 0.1;
+
+/** Pinned per-model facts captured from OpenRouter /api/v1/models. */
+export interface RosterSnapshotEntry {
+  prompt: string;
+  completion: string;
+  cacheRead: string | null;
+  contextLength: number;
+}
+
+export interface RosterSnapshot {
+  generatedAt: string;
+  source: string;
+  monitoredFamilies: string[];
+  roster: Record<string, RosterSnapshotEntry>;
+  familySlugs: Record<string, string[]>;
+}
+
+export interface LiveCatalogModel {
+  id: string;
+  pricing?: { prompt?: string; completion?: string };
+}
+
+export interface RosterDriftResult {
+  check: Record<string, unknown>;
+  drift: string[];
+  /** Blocking human decisions implied by the drift (structural changes). */
+  decisions: string[];
+}
+
+function priceDelta(pinned: string, live: string | undefined): number | null {
+  if (live === undefined || live.trim() === "") return null;
+  const p = Number(pinned);
+  const l = Number(live);
+  if (!Number.isFinite(p) || !Number.isFinite(l) || p <= 0) return null;
+  return Math.abs(l - p) / p;
+}
+
+export function checkRosterDrift(
+  snapshot: RosterSnapshot,
+  liveModels: LiveCatalogModel[],
+): RosterDriftResult {
+  const drift: string[] = [];
+  const decisions: string[] = [];
+  const byId = new Map(liveModels.map((m) => [m.id, m]));
+
+  // (c) removed/renamed roster slug
+  const rosterIds = Object.keys(snapshot.roster);
+  for (const id of rosterIds) {
+    if (!byId.has(id)) {
+      drift.push(`roster: slug removed/renamed on OpenRouter: ${id}`);
+      decisions.push(
+        `roster decision (blocking): ${id} is gone from the OpenRouter catalog — pick a replacement or re-pin; the roster is stale until the human acknowledges`,
+      );
+    }
+  }
+
+  // (a) >=10% price delta on roster models (input or output)
+  const priceDeltas: Record<string, unknown> = {};
+  for (const [id, pinned] of Object.entries(snapshot.roster)) {
+    const live = byId.get(id);
+    if (!live) continue; // already reported above
+    const inDelta = priceDelta(pinned.prompt, live.pricing?.prompt);
+    const outDelta = priceDelta(pinned.completion, live.pricing?.completion);
+    if (inDelta === null && outDelta === null) continue;
+    priceDeltas[id] = { input: inDelta, output: outDelta };
+    const breached =
+      (inDelta !== null && inDelta >= ROSTER_PRICE_DELTA_THRESHOLD) ||
+      (outDelta !== null && outDelta >= ROSTER_PRICE_DELTA_THRESHOLD);
+    if (breached) {
+      const fmt = (v: number | null) =>
+        v === null ? "n/a" : `${(v * 100).toFixed(1)}%`;
+      drift.push(
+        `roster: price delta >=10% on ${id} (input ${fmt(inDelta)}, output ${fmt(outDelta)})`,
+      );
+      decisions.push(
+        `roster decision (blocking): ${id} price moved >=10% — re-verify tier fit or re-pin; roster is stale until the human acknowledges`,
+      );
+    }
+  }
+
+  // (b) new slug in a monitored family
+  const newSlugs: string[] = [];
+  for (const family of snapshot.monitoredFamilies) {
+    const prefix = `${family}/`;
+    const pinned = snapshot.familySlugs[family] ?? [];
+    for (const id of liveModels.map((m) => m.id)) {
+      if (!id.startsWith(prefix)) continue;
+      if (!pinned.includes(id)) newSlugs.push(id);
+    }
+  }
+  newSlugs.sort();
+  for (const slug of newSlugs) {
+    drift.push(`roster: new slug in monitored family: ${slug}`);
+  }
+  if (newSlugs.length > 0) {
+    decisions.push(
+      `roster decision (blocking): ${newSlugs.length} new slug(s) in monitored families (${newSlugs.slice(0, 5).join(", ")}${newSlugs.length > 5 ? ", …" : ""}) — evaluate or dismiss; roster is stale until the human acknowledges`,
+    );
+  }
+
+  const check: Record<string, unknown> = {
+    snapshotGeneratedAt: snapshot.generatedAt,
+    snapshotSource: snapshot.source,
+    rosterSize: rosterIds.length,
+    priceDeltas,
+    newMonitoredSlugs: newSlugs,
+    threshold: ROSTER_PRICE_DELTA_THRESHOLD,
+  };
+  return { check, drift, decisions };
 }
 
 async function fetchJson(
@@ -974,7 +1100,13 @@ async function main(reportPath: string, notify: boolean) {
     {
       Authorization: `Bearer ${key}`,
     },
-  )) as { data: { id: string; expiration_date?: string }[] };
+  )) as {
+    data: {
+      id: string;
+      expiration_date?: string;
+      pricing?: { prompt?: string; completion?: string };
+    }[];
+  };
   const byId = new Map(models.data.map((m) => [m.id, m.expiration_date]));
   checks.models = {};
   for (const id of manifest.models) {
@@ -987,6 +1119,47 @@ async function main(reportPath: string, notify: boolean) {
       new Date(expiry).getTime() - Date.now() < 30 * 86_400_000
     ) {
       drift.push(`model expiring soon: ${id} at ${expiry}`);
+    }
+  }
+
+  // 5b. roster drift gate (TASK-75, ADR-004 weekly sweep): live catalog vs
+  // pinned snapshot. Blocking human decisions surface in the report.
+  const snapshotPath =
+    process.env.STACK_CHECK_ROSTER_SNAPSHOT ??
+    join(repoRoot, "src", "tools", "openrouter-snapshot.json");
+  const snapshot: RosterSnapshot | null = (() => {
+    if (!existsSync(snapshotPath)) return null;
+    try {
+      return JSON.parse(readFileSync(snapshotPath, "utf8")) as RosterSnapshot;
+    } catch (err) {
+      drift.push(
+        `roster: snapshot unparseable at ${snapshotPath}: ${(err as Error).message}`,
+      );
+      return null;
+    }
+  })();
+  if (snapshot === null) {
+    checks.rosterDrift = { present: existsSync(snapshotPath), snapshotPath };
+    if (!existsSync(snapshotPath)) {
+      drift.push(
+        `roster: pinned snapshot missing at ${snapshotPath} — re-pin from OpenRouter /api/v1/models`,
+      );
+    }
+  } else {
+    const roster = checkRosterDrift(snapshot, models.data);
+    checks.rosterDrift = {
+      present: true,
+      parsed: true,
+      snapshotPath,
+      ...roster.check,
+    };
+    drift.push(...roster.drift);
+    if (roster.decisions.length > 0) {
+      (checks.rosterDrift as Record<string, unknown>).decisions =
+        roster.decisions;
+      console.error(
+        `ROSTER DECISION BRIEF (blocking — human acknowledgement required):\n  ${roster.decisions.join("\n  ")}`,
+      );
     }
   }
 
