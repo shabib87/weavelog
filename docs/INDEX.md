@@ -54,6 +54,7 @@
 | `architecture/adr/0002-bash-homebrew-tooling.md` | ADR | Bash/Homebrew decision (approved: TypeScript only; reformatted to contract) | On distribution/language | 62 | 2026-09-07 |
 | `architecture/adr/0003-three-phase-loop-model.md` | ADR | Three-phase loop model + decision-recording gate (WHY ends in ADR or explicit no-decision) | Every WHY phase | 100 | 2026-09-07 |
 | `architecture/adr/0004-model-selection-benchmark-policy.md` | ADR | Seat-weighted benchmark policy; L0–L4 reviewer escalation; weekly/monthly drift cadence | Model decisions | 241 | 2026-09-07 |
+| `architecture/adr/0005-artifact-flow.md` | ADR | PRD/TRD/ADR/TASK doc classes; task-AC traceability rule (partially supersedes 07-04 doc-chain collapse) | Planning any task | 95 | 2026-09-07 |
 | `AGENTS.md` | Rules | Documentation rules (nested AGENTS.md): schemas, versioning, artifact flow PRD→TRD→ADR→TASK | When writing docs | 120 | 2026-09-07 |
 
 ---

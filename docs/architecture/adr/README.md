@@ -27,7 +27,8 @@ future agents/humans.
 | ADR-002 | bash-homebrew-tooling — satisfies the planned scripts-not-CLI decision (legacy, migrated 2026-09-07) | approved | 2026-06-29 |
 | ADR-003 | three-phase loop model (WHY/WHAT/HOW × inner/outer roles) + decision-recording gate at end of WHY | in-review | 2026-09-07 |
 | ADR-004 | model-selection benchmark policy (seat-weighted composite; HLE protocol pin; L0–L4 reviewer escalation; weekly/monthly drift cadence) | in-review | 2026-09-07 |
-| ADR-005 | conductor-dispatch (subagents return findings, conductor writes state) | (planned) | trigger: next architecture decision |
+| ADR-005 | artifact flow — PRD/TRD/ADR/TASK doc classes, AC traceability rule (partially supersedes the 2026-07-04 doc-chain collapse) | in-review | 2026-09-07 |
+| ADR-006 | conductor-dispatch (subagents return findings, conductor writes state) | (planned) | trigger: next architecture decision |
 
 > Migration note (2026-09-07): legacy ADRs 0001/0002 were migrated from
 > `docs/adr/` (now removed) by human instruction; ADR-002 satisfies the

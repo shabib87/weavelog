@@ -10,10 +10,31 @@ them without explicit human instruction.
 | Path | Purpose |
 |---|---|
 | `research/` | The ONE dated corpus (research schema). Session notes, evidence, amendments |
-| `architecture/` | Durable architecture docs (architecture schema, undated filenames) |
+| `architecture/` | Durable design docs (TRD class — architecture schema, undated filenames). Changed only via ADRs |
 | `architecture/adr/` | Decision records — Nygard sections + format contract in that README. Read it before writing an ADR |
-| `specs/` | Ratified PRD/TRD-class docs: requirements and design that backlog tasks implement (e.g. the v0.1.0 draft brief — the release scope of record — and the weavelog design spec). A brief moves to `archive/` when the milestone it scopes ships; a design spec stays while it describes the current system |
+| `specs/` | Ratified PRD-class docs: milestone briefs and the founding design spec. A brief moves to `archive/` when the milestone it scopes ships; a design spec stays while it describes the current system |
 | `archive/` | Frozen provenance. **Never edit, never implement against, never add** (except whole-directory moves per the root AGENTS.md) |
+
+## Artifact flow: PRD → TRD → ADR → TASK
+
+Full rules in [architecture/adr/0005-artifact-flow.md](./architecture/adr/0005-artifact-flow.md).
+Summary:
+
+- **PRD** — ratified milestone brief in `specs/` (human-owned at kickoff;
+  archives when the milestone ships).
+- **TRD** — durable design in `architecture/`; **changed only via ADRs**.
+- **ADR** — one hard-to-reverse decision per record (format contract in
+  `architecture/adr/README.md`); immutable once approved, superseded never
+  rewritten.
+- **TASK** — backlog item whose **acceptance criteria must cite the TRD
+  section or ADR constraint they implement**; a task that traces to nothing
+  is a YAGNI violation and is rejected at the plan gate.
+- **BRD stays collapsed** into `NORTH_STAR.md` + PRODUCT.md (ADR-005,
+  partially superseding the 2026-07-04 doc-chain collapse).
+
+Authority: PRD > TRD > TASK on what; ADRs amend any level via a human gate;
+research notes end at the decision gate (ADR-003) and never change the TRD
+directly.
 
 ## When you finish research (end of WHY phase)
 
@@ -36,26 +57,56 @@ them without explicit human instruction.
   a new ADR and mark the old one `superseded` (decision changed). Details
   in the ADR README's "Amending an approved ADR".
 
+## Versioning (no semver on docs)
+
+Documents carry **no semver**. Versioning signals, in order of authority:
+(1) git history; (2) status lifecycle; (3) ADR numbers + reciprocal
+supersede links / research `**Amends:**` headers; (4) dated addenda.
+A manual `version:` frontmatter field is prohibited — it duplicates git and
+rots. `schemaVersion` belongs to the validator's schema definition
+(`src/tools/frontmatter-check.ts`), added the day a schema v2 exists; the
+validator must fail loudly on an unknown schema version.
+
+## Learnings (archived)
+
+`docs/learnings/` is frozen at `archive/learnings/` — no new learnings
+files. Session notes go to `research/` (one dated corpus); blog intent
+survives as a `**Lessons:**` block. Rationale and the superseded
+"learning log every session" mandate: see ADR-005's Context and the
+2026-07-22 alignment amendment.
+
+## Validation
+
+The checker (`src/tools/frontmatter-check.ts`) scans **non-recursively** —
+pass each directory explicitly:
+
+```bash
+# architecture schema
+node --import tsx src/tools/frontmatter-check.ts --schema architecture docs/architecture docs/architecture/adr
+
+# research schema
+node --import tsx src/tools/frontmatter-check.ts docs/research docs/specs
+```
+
+Enforcement split: the **frontmatter half is machine-enforced**; the
+**structure half** (ADR format contract, amendment tiers) is
+**review-enforced** (maker/checker). No doc may claim machine enforcement it
+does not deliver.
+
 ## Hard rules
 
-- **No semver** in doc frontmatter. Git, status lifecycle, and supersede
- links are the versioning — git history plus the status lifecycle.
+- **No semver** in doc frontmatter (see Versioning above).
 - **No absolute home paths, no secrets, no personal identifiers** — the
   privacy sweep rejects them.
 - **Frontmatter schemas:** `architecture/**` uses the architecture schema;
-  `research/` and `specs/` use the research schema. The checker scans
-  non-recursively — pass each directory explicitly:
-  `node --import tsx src/tools/frontmatter-check.ts --schema architecture docs/architecture docs/architecture/adr`
-  then `node --import tsx src/tools/frontmatter-check.ts docs/research docs/specs`
+  `research/` and `specs/` use the research schema.
 - Known accepted noise: `NORTH_STAR.md`, `PRODUCT.md`, `ROADMAP.md`,
-  `INDEX.md`, `cli.md`, this file, and `archive/**` are
-  intentionally frontmatter-free or frozen — their validator violations are
-  accepted. So are pre-convention files the validator flags in `research/`
-  and `specs/` (e.g. the v0.1.0 draft brief, the design spec); normalizing
-  them is deferred debt, not an error to fix casually. Do not "fix" any of
-  these by adding frontmatter without the human's say-so.
+  `INDEX.md`, `cli.md`, this file, `archive/**`, and pre-convention files
+  the validator flags in `research/`/`specs/` (e.g. the v0.1.0 draft brief,
+  the design spec) are intentionally frontmatter-free or frozen. Do not
+  "fix" them by adding frontmatter without the human's say-so.
 - New plans do **not** go in `docs/` — task planning lives in backlog tasks
   (acceptance criteria + definition of done). `archive/plans/` and
   `archive/superpowers/` are historical only.
-- `specs/` is for **ratified briefs** only; a brief becomes archival when
-  the milestone it scopes ships.
+- New **ratified briefs** go in `specs/`; new session notes go in
+  `research/`; new durable design goes in `architecture/` via an ADR.
