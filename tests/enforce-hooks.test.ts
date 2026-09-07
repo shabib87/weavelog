@@ -1457,6 +1457,27 @@ describe("Hook 7 — backlog task lifecycle gate on main", () => {
     );
   });
 
+  test("backlog task edit with glued -s value on main is blocked (TASK-77 regression)", async () => {
+    const home = makeHome();
+    const { $ } = fakeShell(() => ({ exitCode: 0 }));
+    const hooks = createHooks(
+      depsFor(home, $, { gitBranch: gitBranchMock("main") }),
+    );
+    // backlog.md 1.50.1 accepts glued short flags: `-s"In Progress"` is a
+    // real status change, so the gate must catch it too.
+    await assert.rejects(
+      hooks["tool.execute.before"](beforeBashLocal, {
+        args: { command: 'backlog task edit 75 -s"In Progress"' },
+      }),
+      /no backlog task creation/,
+    );
+  });
+
+  // Documented over-block (fail-closed, main-only): the gate matches the raw
+  // command string, so even a quoted " -s " inside a --description value
+  // counts as a status change. Agents have no business editing tasks from
+  // main anyway.
+
   test("backlog task edit -s on a task branch is allowed", async () => {
     const home = makeHome();
     const { $ } = fakeShell(() => ({ exitCode: 0 }));

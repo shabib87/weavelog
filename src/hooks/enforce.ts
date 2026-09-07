@@ -217,14 +217,15 @@ export function inlineCreateIssueCheck(command: string): string[] {
 
 const MAX_LEARNED_SESSIONS = 100;
 const LEARN_MODEL = "deepseek/deepseek-v4-flash-0731";
-// Matches `backlog task create` and `backlog task edit <id> --status` (status changes).
-// Blocks task lifecycle mutations on main — the conductor must be in a worktree.
+// Matches `backlog task create` and `backlog task edit <id>` with a status
+// change (--status, or the short -s in spaced or glued form like -s"Done").
+// Blocks task lifecycle mutations on main — the conductor must be in a
+// worktree. TASK-77: the -s forms previously slipped past this gate.
+// `\s-s` without a trailing guard catches glued values; it cannot match
+// inside --status/--status= (the char before the s is another dash) or
+// hyphenated words (no whitespace before the dash).
 const BACKLOG_CREATE_RE = /\bbacklog\s+task\s+create\b/;
-// TASK-77: also match the short -s flag — `\s` before -s so `task-specific`
-// style substrings never match; previously only --status was caught and
-// `-s "In Progress"` slipped past the main-branch gate.
-const BACKLOG_STATUS_RE =
-  /\bbacklog\s+task\s+edit\s+\S+.*(--status\b|\s-s(\s|$))/;
+const BACKLOG_STATUS_RE = /\bbacklog\s+task\s+edit\s+\S+.*(--status\b|\s-s)/;
 // git -c k=v commit, git --git-dir=... commit). Still best-effort by design:
 // quoted wrappers like `bash -c "git commit"` are a documented bypass.
 const COMMIT_RE = /(?:^|[;&|]+)\s*git\s+(?:--?[\w-]+(?:[ =]\S+)?\s+)*commit\b/;

@@ -445,6 +445,21 @@ describe("worktree-create --create mode", () => {
     assert.equal(existsSync(join(repoDir, ".worktrees", "TASK-19")), true);
   });
 
+  test("--create exits 2 with a clear error when 50 consecutive IDs are taken (TASK-77)", () => {
+    setList([{ id: "TASK-17" }]);
+    // Exhaust the bounded scan: branches TASK-18..TASK-67 (50 candidates).
+    // Exhaust the bounded scan: branches TASK-18..TASK-67 (50 candidates).
+    // `git branch` creates one branch per invocation — loop.
+    for (let i = 18; i <= 67; i++) {
+      spawnSync("git", ["branch", `task/TASK-${i}`], { cwd: repoDir });
+    }
+    setCreate("TASK-999");
+    const r = run(["--create", "No free IDs"]);
+    assert.equal(r.status, 2);
+    assert.ok(r.stderr.includes("no free task ID above TASK-17"), r.stderr);
+    assert.equal(existsSync(join(repoDir, ".worktrees", "TASK-999")), false);
+  });
+
   test("--create with empty task list starts at TASK-1", () => {
     setList([]);
     setCreate("TASK-1");
