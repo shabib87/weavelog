@@ -1,3 +1,15 @@
+---
+date: 2026-06-29
+topic: Bash tooling and Homebrew distribution (scripts-not-CLI; legacy, migrated from docs/adr/)
+status: approved
+type: adr
+author: conductor
+related_to:
+  - ./README.md
+sources:
+  - "TASK-15"
+---
+
 # Bash Tooling & Homebrew Distribution
 
 **Status:** ✅ RESOLVED (June 29, 2026) — **TypeScript only, entire project.**

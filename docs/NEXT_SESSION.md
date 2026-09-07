@@ -32,16 +32,38 @@
 
 ## Open items
 
-1. **Human gate (blocking):** diff review → commit (`docs: TASK-61 model-routing spike — ADR-004, pricing matrix, closure`) → merge to main → remove worktree.
-2. **TASK-75** (created): opencode-only roster adoption per ADR-004 — includes protected-path trigger wiring, pinned OpenRouter snapshot, manifest skills coverage.
-3. **Payload restructure question (open design):** per-host `config/opencode/`+`config/pi/` trees vs extending `config/harnesses/*.json` manifests over canonical `config/agents/`. Session recommendation: manifests + canonical sources (DRY; AGENTS.md already ratifies adapter pattern). Skills missing from live hosts = manifest + sync gap, not layout.
-4. **Legacy ADR reconciliation** (0001/0002 → ratified index): future docs task, deliberately not done here.
-5. **Deferred research:** TTFT/TPS/tool-call accuracy (telemetry), per-provider cache discounts (static card pull, TASK-75 AC #5).
+1. **ORPHAN CORPUS — provenance RESOLVED (2026-09-07, human):** the 55
+   untracked files (docs/AUTHORING.md, docs/research/README.md, 52 research
+   notes 2026-08-15 → 2026-09-06, docs/plans/, docs/specs/) were MOVED into
+   this worktree by the human — they were missing from the repo. Disposition:
+   commit as a separate `docs:` commit after human review (recommended —
+   AUTHORING.md is the ratified doc-convention source cited by the ADR index;
+   the corpus is the repo's research memory). Do NOT remove the worktree
+   before they are committed or relocated. DoD #2 (worktree clean) resolves
+   with that commit.
+2. **Human gate (blocking):** diff review of commit 42313f6 (rebased onto
+   main e0f686c) → merge to main → THEN worktree disposition per item 1.
+3. **TASK-75** (created): opencode-only roster adoption per ADR-004 — includes
+   protected-path trigger wiring, pinned OpenRouter snapshot, manifest skills
+   coverage.
+4. **Payload restructure question (open design):** per-host
+   `config/opencode/`+`config/pi/` trees vs extending `config/harnesses/*.json`
+   manifests over canonical `config/agents/`. Session recommendation:
+   manifests + canonical sources (DRY; AGENTS.md already ratifies adapter
+   pattern). Skills missing from live hosts = manifest + sync gap, not layout.
+   NOTE: `src/tools/config-sync.ts` IS the sync implementation
+   (manifest-driven, no code change per harness) — the gap is manifest
+   coverage (skills missing) and pi manifest, not a new script.
+5. **Legacy ADR reconciliation** (0001/0002 → ratified index): future docs
+   task, deliberately not done here.
+6. **Deferred research:** TTFT/TPS/tool-call accuracy (telemetry),
+   per-provider cache discounts (static card pull, TASK-75 AC #5).
 
 ## Verify commands
 
 ```bash
-git -C .worktrees/TASK-61 diff            # modified files (TASK-61, AGENTS.md, adr README)
-git -C .worktrees/TASK-61 status --short  # + 4 new files
+git -C .worktrees/TASK-61 log --oneline -2   # 42313f6 (spike) on e0f686c (main)
+git -C .worktrees/TASK-61 show --stat HEAD   # the 8-file spike diff
+git -C .worktrees/TASK-61 status --short     # 55 orphan files — see Open item 1
 node --import tsx src/tools/frontmatter-check.ts --schema architecture .worktrees/TASK-61/docs/architecture/adr
 ```

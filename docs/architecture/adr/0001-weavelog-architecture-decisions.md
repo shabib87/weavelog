@@ -1,3 +1,15 @@
+---
+date: 2026-07-04
+topic: weavelog architecture decisions (legacy, migrated from docs/adr/)
+status: approved
+type: adr
+author: conductor
+related_to:
+  - ./README.md
+sources:
+  - "TASK-15"
+---
+
 # Architecture Decision Record: weavelog
 
 **Status:** Accepted

@@ -23,14 +23,18 @@ future agents/humans.
 
 | ADR | Topic | Status | Added |
 |---|---|---|---|
-| ADR-001 | scripts-not-CLI (deterministic TS via bun, not shell CLI artifacts) | (planned) | trigger: next architecture decision |
-| ADR-002 | conductor-dispatch (subagents return findings, conductor writes state) | (planned) | trigger: next architecture decision |
+| ADR-001 | weavelog architecture decisions (legacy, migrated from `docs/adr/` 2026-09-07) | approved | 2026-07-04 |
+| ADR-002 | bash-homebrew-tooling — satisfies the planned scripts-not-CLI decision (legacy, migrated 2026-09-07) | approved | 2026-06-29 |
 | ADR-003 | three-phase model (WHY/WHAT/HOW phases × inner/outer loop roles) | (planned) | trigger: when recorded in an ADR — consensus already restored in loop-factory.md + TASK-15 |
 | ADR-004 | model-selection benchmark policy (seat-weighted composite; HLE protocol pin; L0–L4 reviewer escalation; weekly/monthly drift cadence) | in-review | 2026-09-07 |
+| ADR-005 | conductor-dispatch (subagents return findings, conductor writes state) | (planned) | trigger: next architecture decision |
 
 > Note: ADR-003's content already exists as the restored 3-reviewer consensus in
 > [loop-factory.md](../loop-factory.md) and TASK-15. The ADR is the formal record; write
 > it on the next trigger rather than retrospectively.
+> Migration note (2026-09-07): legacy ADRs 0001/0002 were migrated from
+> `docs/adr/` (now removed) by human instruction; ADR-002 satisfies the
+> originally planned scripts-not-CLI entry.
 
 ## Nygard template
 
