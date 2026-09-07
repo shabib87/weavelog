@@ -46,7 +46,7 @@ extension, not promised); TASK-75 config adoption.
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
 - [ ] #1 WHEN the format contract lands THEN docs/architecture/adr/README.md SHALL contain the section skeleton with per-section format rules and the table-vs-list decision rule [ADR-005 TRD rule; ADR-003 format-contract decision]
-- [ ] #2 WHEN the contract is adopted THEN docs/AUTHORING.md SHALL reference the ADR format contract
+- [ ] #2 WHEN the contract is adopted THEN docs/AGENTS.md SHALL reference the ADR format contract [retargeted 2026-09-07: AUTHORING.md was renamed docs/AGENTS.md earlier this branch]
 - [ ] #3 WHEN ADR-004 is reformatted THEN every decision SHALL be extractable from Decision + Alternatives tables alone (verdict markers on every option; no option without an explicit chosen/rejected) [ADR-005: ADR class format contract]
 - [ ] #4 WHEN the reference implementation is done THEN frontmatter-check --schema architecture SHALL pass on docs/architecture/adr with zero violations
 - [ ] #5 IF legacy ADRs are exempt THEN the ADR index SHALL say so explicitly (001/0002 marked pre-convention, not reformatted)
@@ -93,10 +93,23 @@ Phase 5 — gates:
 - frontmatter-check (all dirs), task-validate --pre-commit, biome, tsc, tests
 - diff review: DeepSeek + Qwen + GLM; blockers fixed before merge gate
 
+## Plan review disposition (2026-09-07, DeepSeek + Qwen: APPROVE-WITH-CHANGES)
+
+Applied to the plan:
+- P0: package.json files[] ships docs/architecture/ -> replace with docs/trd/ + docs/adr/ + docs/prd/ (Phase 3)
+- Validator/frozen-docs conflict: NO new exclusion flag (scope discipline). DoD#2 reworded: passes with only the 3 documented pre-convention exceptions (prd/ brief + metadata, trd/ founding spec)
+- Exhaustive grep-driven related_to + body sweep, depth-aware (replaces "5 TRD docs cross-refs"); ADR-001 (approved) gets tier-1 dated note
+- Added to sweep: root AGENTS.md:38-57, docs/cli.md:4,213,225,231, ATTRIBUTION.md:25, frontmatter-check.ts help text (39,71)
+- Dropped: "3 research notes path repair" (they cite docs/spec/ singular, a backlog convention, not this tree)
+- Brief byte-identity: internal docs/specs/ literals are FROZEN-SNAPSHOT, intentionally not repaired (recorded in ADR-005 amendment + prd/README)
+- AUTHORING.md does not exist (renamed to docs/AGENTS.md earlier this branch): AC#2 retargeted
+- Phase 4 corrected: 35/59 are Done (dropped, ledger rule); added 30; TASK-56 carve-out noted (path literals only here; it owns semantic AGENTS.md/cli.md work)
+- HARNESS_PATH_RULES: prefix set = docs/trd/, docs/adr/, docs/prd/ (test fixture extended same commit)
+
 ## Definition of Done
 <!-- DOD:BEGIN -->
 - [ ] #1 Docs-only diff; zero code changes [AMENDED 2026-09-07, human-directed: path-literal touch-ups in src/ (test-first), payload/ configs, and backlog/ task files now in scope per the Phase 1-5 plan below]
-- [ ] #2 frontmatter-check --schema architecture passes fresh in the worktree
+- [ ] #2 frontmatter-check --schema architecture passes fresh in the worktree on docs/trd docs/adr docs/prd, with only the 3 documented pre-convention exceptions (frontmatter-free ratified records)
 - [ ] #3 Sanitization scan passes (no absolute home paths, no secrets)
 - [ ] #4 Worktree clean; branch rebased on main
 - [ ] #5 Human reviews diff before merge (HITL)
