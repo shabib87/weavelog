@@ -8,7 +8,7 @@ Invariants (always apply):
 - One question at a time: ask exactly ONE clarifying question, wait for the answer, then the next. Never batch. Applies to conductor and subagents.
 - Non-trivial work: state intent, get a nod, then act.
 - Skills: consult the catalog at `~/.agents/skills` before non-trivial action.
-- Worktree discipline — flow, lifecycle, HITL merge gate, crash contract: `~/.agents/docs/architecture/worktree-discipline.md`
+- Worktree discipline — flow, lifecycle, HITL merge gate, crash contract: `docs/architecture/worktree-discipline.md`
 - Model routing, test guardrails, scripting standards: `docs/architecture/` in the weavelog repo (single source — do not rely on memory).
 - Memory tools are an advisory cache, not a record: decisions live in backlog/docs, never secrets in memory.
 
