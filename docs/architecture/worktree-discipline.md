@@ -43,7 +43,8 @@ No work on main. No work without a backlog task.
   task's acceptance criteria (AC gutting) — spec changes post-approval require removing the
   label and re-running the gate.
 - **difit auto-open (merge-gate presentation).** The conductor ALWAYS opens the
-  diff viewer in the browser for the human (`npx difit@5.0.12 --background` for the server,
+  diff viewer in the browser for the human (`npx difit@5.0.12 --background` for the server;
+  difit is an exact-pinned devDependency, so this resolves locally — no global install),
   then `open http://localhost:<port>`) — the human never copies a URL. **Invocation
   direction:** `difit <branch> main` (branch FIRST, main second) so the human sees
   branch changes as ADDITIONS; the reverse order renders the changelog backwards
