@@ -42,10 +42,16 @@ Validate and operationalize the 2026-09-06 sandboxing research with a working sp
 - [ ] #3 Branch is rebased on main and green
 - [ ] #4 All acceptance criteria checked with fresh evidence (one at a time, never batched)
 - [ ] #5 POC report and code pass a sanitization scan before merge (no absolute home paths, no secrets)
-- [ ] #6 docs/tbd/rollback-mechanism.md updated with a cross-reference to the destroy-on-finally pattern
+- [ ] #6 The POC research note in docs/research/ records the destroy-on-finally pattern and cross-references the frozen prior art at docs/archive/tbd/rollback-mechanism.md (amended 2026-09-07 per ADR-005: archive is read-only, notes live in research/)
 <!-- DOD:END -->
 
 ## Implementation Notes
+
+2026-09-07 (TASK-76): AC#6 amended — docs/tbd/ is frozen under docs/archive/
+(ADR-005: never implement against or write to the archive), so the
+cross-reference target moved into the POC research note. Spec re-gate not
+required: the AC's deliverable (record + cross-reference the pattern) is
+unchanged; only its location moved per the new governance.
 
 <!-- SECTION:NOTES:BEGIN -->
 2026-09-06 (human): deferred — not immediate work, priority medium. At pickup: run the 4-model plan-gate review loop (glm/qwen/deepseek/kimi) on this spec BEFORE claim, then re-present the HITL spec gate for explicit approval (spec-approved), then metadata-merge the task branch to main and dispatch.

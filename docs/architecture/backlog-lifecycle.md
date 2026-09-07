@@ -8,6 +8,8 @@ related_to:
   - ./README.md
   - ./loop-factory.md
   - ./tool-boundaries.md
+  - ./adr/0003-three-phase-loop-model.md
+  - ./adr/0005-artifact-flow.md
 sources:
   - "TASK-15"
   - "TASK-13 (backlog.md wiring)"
@@ -74,6 +76,33 @@ map tasks, none otherwise; missing target warns and assigns none.
    or reduce the task's ACs (spec changes re-run the gate).
 2. **Plan review** — the recorded `--plan`, BEFORE implementation starts.
 3. **Code review** — `diff-reviewer-*` verdict, BEFORE merge.
+
+## Task provenance and the decision gate (ADR-005, 2026-09-07)
+
+Tasks are auditable upward. These rules are **review-enforced** (spec review,
+plan review); the claim gate does not check them mechanically.
+
+- **AC traceability** — every acceptance criterion cites the TRD section or
+  ADR constraint it implements (by path or ADR number in the AC text). A
+  task whose ACs trace to nothing is a YAGNI violation: rejected at the
+  plan gate, not rescued by implementation. Applies to tasks created after
+  ADR-005 (2026-09-07); pre-existing tasks are retrofitted only when next
+  touched.
+- **Spec review gains a traceability check** — the HITL gate presents the
+  ACs WITH their provenance; untraceable ACs go back before
+  `spec-approved`.
+- **Spike/research tasks end at the decision gate (ADR-003)** — the final
+  summary records either the ADR number produced or
+  `Decision: none — research only`. A spike marked Done with an unrecorded
+  decision has a failed definition of done.
+- **Design docs change only via ADRs** — when implementation reveals a
+  `docs/architecture/` doc is wrong, write the ADR first; the TRD edit
+  rides under it (ADR-005 TRD rule). Never edit the TRD to match what the
+  code now does.
+- **Frozen corpora are out of task scope** — ACs SHALL NOT write to
+  `docs/archive/` (incl. the former tbd/plans/learnings/superpowers dirs).
+  A task whose AC targets an archived path is amended to target the live
+  home (usually `docs/research/`) before spec approval.
 
 ## Deferred capabilities (named + triggers)
 
