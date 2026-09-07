@@ -35,7 +35,7 @@ weavelog/
 │   ├── NORTH_STAR.md          # The anchor
 │   ├── PRODUCT.md             # Product strategy (what it is, moat, PMF)
 │   ├── research/RESEARCH.md            # Provenance
-│   ├── adr/                   # Architecture decision records (numbered)
+│   ├── architecture/adr/      # Architecture decision records (Nygard, indexed)
 │   ├── PROGRESS.md            # Phase tracker (where we are)
 │   ├── NEXT_SESSION.md        # Narrative handoff
 │   ├── specs/                 # Detailed design specs
@@ -55,7 +55,6 @@ weavelog/
 | `docs/PRODUCT.md` | Product strategy (what it is, moat, PMF) | Active, authoritative |
 | `docs/research/RESEARCH.md` | Why we build it this way | Active, authoritative |
 | `docs/architecture/adr/` | Architecture decision records (Nygard format, ADR index) | Active, authoritative |
-| `docs/adr/` | Legacy ADR location (0001–0002, pre-AUTHORING.md convention) | Frozen, provenance only — do not add |
 | `docs/PROGRESS.md` | Phase tracker (where we are) | Active, authoritative |
 | `docs/ROADMAP.md` | Product roadmap (version milestones) | Active, authoritative |
 | `docs/NEXT_SESSION.md` | Narrative handoff | Active |

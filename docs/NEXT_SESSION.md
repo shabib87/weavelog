@@ -7,7 +7,7 @@
 
 1. **`docs/architecture/adr/0004-model-selection-benchmark-policy.md`** (new) — the living policy: seat-weighted benchmark composite, HLE-with-tools protocol pin (Artificial Analysis = governing source), L0–L4 reviewer escalation ladder, weekly/monthly drift cadence, NORTH_STAR/PRODUCT/ROADMAP traceability table. Validated clean by `frontmatter-check.ts --schema architecture` (0 violations; 4 accepted reciprocity warnings — anchor docs are human-owned, research corpus is plain-markdown).
 2. **`docs/architecture/adr/README.md`** (modified) — ADR-004 index row + related_to reciprocity.
-3. **`docs/adr/README.md`** (new) — legacy-location marker: 0001/0002 frozen as provenance, do not add ADRs there.
+3. **Legacy ADR migration** (human-directed) — 0001/0002 moved into `docs/architecture/adr/` with schema frontmatter; `docs/adr/` removed entirely; index reconciled (005 = conductor-dispatch, planned).
 4. **`AGENTS.md`** (modified, 1 row) — doc-hierarchy table points at `docs/architecture/adr/` (active) and marks `docs/adr/` frozen.
 5. **`docs/research/2026-09-07-flagship-tier-pricing-quality-preliminary.md`** (new) — 7-candidate pricing matrix (OpenRouter-governed), HLE cross-check, role-to-tier distribution, three-family review record, AC #1 disposition.
 6. **TASK-61** — closed (Done), all 6 ACs checked with explicit dispositions.

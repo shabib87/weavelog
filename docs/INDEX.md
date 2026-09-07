@@ -50,8 +50,8 @@
 | File | Type | Purpose | When | LOC | Last updated |
 |---|---|---|---|---|---|
 | `research/RESEARCH.md` | Provenance | WHY behind every design decision, source-by-source | On unfamiliar territory | 241 | 2026-07-22 |
-| `adr/0001-weavelog-architecture-decisions.md` | ADR | Architecture decisions (monolithic — needs splitting) | On design changes | 303 | 2026-07-08 |
-| `adr/0002-bash-homebrew-tooling.md` | ADR | Bash/Homebrew decision (RESOLVED: TypeScript only) | On distribution/language | 49 | 2026-07-22 |
+| `architecture/adr/0001-weavelog-architecture-decisions.md` | ADR | Architecture decisions (monolithic — needs splitting) | On design changes | 303 | 2026-07-08 |
+| `architecture/adr/0002-bash-homebrew-tooling.md` | ADR | Bash/Homebrew decision (RESOLVED: TypeScript only) | On distribution/language | 49 | 2026-07-22 |
 
 ---
 

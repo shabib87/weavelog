@@ -8,8 +8,8 @@ sources:
   - https://github.com/MrLesk/Backlog.md/blob/main/ADVANCED-CONFIG.md
   - https://github.com/MrLesk/Backlog.md/issues/456 (hook expansion proposal, open)
   - https://www.npmjs.com/package/backlog.md (v1.50.1, updated 2026-08-10)
-  - file:///Users/shabibhossain/.agents/.worktrees/deterministic-harness/backlog/config.yml
-  - file:///Users/shabibhossain/.agents/.worktrees/deterministic-harness/backlog/tasks/ (4 task files read)
+  - file://~/.agents/.worktrees/deterministic-harness/backlog/config.yml
+  - file://~/.agents/.worktrees/deterministic-harness/backlog/tasks/ (4 task files read)
   - MCP backlog_get_backlog_instructions (overview, task-creation, task-execution, task-finalization)
 models_used_for_research:
   - z-ai/glm-5.2

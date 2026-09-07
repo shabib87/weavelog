@@ -9,7 +9,7 @@ sources:
   - "https://headroom-docs.vercel.app/docs/memory (canonical memory path = Python SDK wrapper)"
   - "https://headroom-docs.vercel.app/docs/opencode (no documented opencode memory-MCP path)"
   - "https://headroom-docs.vercel.app/docs/failure-learning (learn --agent opencode writes project AGENTS.md)"
-  - "/Users/shabibhossain/.local/pipx/venvs/headroom-ai/lib/python3.13/site-packages/headroom/ (source audit, v0.36.5)"
+  - "~/.local/pipx/venvs/headroom-ai/lib/python3.13/site-packages/headroom/ (source audit, v0.36.5)"
   - "https://github.com/anomalyco/opencode docs (no built-in memory feature; memory = ecosystem plugins)"
 models_used_for_research:
   - z-ai/glm-5.3-flash

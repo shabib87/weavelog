@@ -224,8 +224,8 @@ Flash tier (always-on, bulk):
 
 Pro tier (escalation ladder, cheapest first):
 1. deepseek-v4-pro-0813 — first escalation, same-family quality bump
-2. glm-5.3 — escalated reviewer (HLE leader of the four; cross-family vs the
-   deepseek implementer)
+2. glm-5.3 — escalated reviewer (best agentic-instrument evidence of the
+   four; cross-family vs the deepseek implementer)
 3. qwen3.8-2.4t-a95b — architecture-heavy plan review, second-family lens
 4. kimi-k3 — frontier reasoning + multimodal, only when the first three fail
    or image input is required

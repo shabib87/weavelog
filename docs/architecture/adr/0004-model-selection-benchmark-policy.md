@@ -154,7 +154,7 @@ data-persistence/permission paths — plain path matching, no AST), and
 retry-failure counts from the run ledger. Cyclomatic-complexity and
 cross-module-coupling deltas require AST analysis beyond the 0.1.0 gate set
 and are deferred to a post-0.1.0 check-gate extension; until then the
-risk-signal set is the four implementable triggers, never self-report or
+risk-signal set is the three implementable triggers, never self-report or
 LLM judgment. The detector must operate on the merged diff against base —
 this is a Phase-2 acceptance test (TASK-75).
 
