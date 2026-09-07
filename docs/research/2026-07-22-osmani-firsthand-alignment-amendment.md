@@ -1,6 +1,6 @@
 # 2026-07-22 — Osmani firsthand alignment amendment (two-model judgment)
 
-**Amends:** `docs/learnings/2026-07-22-addy-osmani-loop-engineering-alignment.md`
+**Amends:** `docs/archive/learnings/2026-07-22-addy-osmani-loop-engineering-alignment.md`
 (the subagent-extraction synthesis) and the claims it propagated into
 RESEARCH.md Source 1 and PROGRESS.md.
 

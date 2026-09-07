@@ -8,7 +8,7 @@ related_to:
   - ../README.md
   - ./0004-model-selection-benchmark-policy.md
   - ../loop-factory.md
-  - ../../AUTHORING.md
+  - ../AGENTS.md
 sources:
   - "TASK-15"
 ---
@@ -115,7 +115,7 @@ verbatim.
 
 ## References
 
-- Authoring rules: [AUTHORING.md](../../AUTHORING.md)
+- Authoring rules: [docs/AGENTS.md](../../AGENTS.md)
 - Format contract: this document (see above); validated structurally by
   `frontmatter-check.ts --schema architecture` (frontmatter half only — the
   structure half is review-enforced)

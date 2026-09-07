@@ -60,8 +60,9 @@ weavelog/
 | `docs/NEXT_SESSION.md` | Narrative handoff | Active |
 | `docs/specs/2026-06-28-weavelog-design.md` | Detailed design | Active |
 | `docs/research/` | Research logs (dated, lab notebooks) | Active |
-| `docs/learnings/` | Session learning logs (dated, for blog) | Active |
-| `docs/superpowers/plans/` | Implementation plans (superpowers convention) | Active |
+| `docs/AGENTS.md` | Documentation rules (how docs are written; ADR format contract) | Active, authoritative |
+| `docs/archive/learnings/` | Session learning logs (July-era, frozen) | Frozen, provenance only |
+| `docs/superpowers/plans/` | Implementation plans (superpowers convention) | Frozen, historical |
 | `docs/tbd/` | Open questions | Do not implement against |
 | `docs/archive/` | Superseded research | **Do not use.** Provenance only. |
 
@@ -112,6 +113,8 @@ node --import tsx --test tests/cli/index.test.ts
 - **AGENTS.md:** `agents.md` — this file, <200 LOC
 - **Agents:** Pi-native `.pi/agents/<name>.md` with YAML frontmatter
 - **Workflows:** JSON configs with `schemaVersion` field
-- **Session learnings:** every working session produces a dated learning
-  log at `docs/learnings/YYYY-MM-DD-<topic>.md` (findings, decisions,
-  corrections, blog candidates). Raw material for future blog posts.
+- **Session notes:** research goes to `docs/research/` (one dated corpus,
+  research schema); end the WHY phase with an explicit decision outcome per
+  ADR-003 (small ADR or `Decision: none — research only`). Blog-feed intent
+  survives as a `**Lessons:**` block. `docs/learnings/` is frozen
+  (`docs/archive/learnings/`).

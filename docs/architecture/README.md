@@ -10,7 +10,7 @@ related_to:
   - ./backlog-lifecycle.md
   - ./test-guardrails.md
   - ./adr/README.md
-  - ../AUTHORING.md
+  - ../AGENTS.md
   - ../research/README.md
   - ../plans/2026-08-16-light-factory-plan.md
 sources:
@@ -47,14 +47,14 @@ See [loop-factory.md](./loop-factory.md) for the full model, diagram, and EARS a
 ## Related indexes
 
 - **Research** (why evidence): [docs/research/README.md](../research/README.md)
-- **Plans** (how): [docs/plans/](../plans/)
-- **Specs** (what): [docs/spec/](../spec/)
+- **Specs / ratified briefs** (what): [docs/specs/](../specs/)
+- **Plans**: historical — `docs/archive/plans/`; task planning lives in backlog tasks
 - **Runbook** (operations): [AGENT-STACK-RUNBOOK.md](../../AGENT-STACK-RUNBOOK.md)
 
 ## Authoring rules
 
 Docs in this directory follow the architecture frontmatter schema (date, topic, status,
-type, author, related_to, sources). See [AUTHORING.md](../../AUTHORING.md) for the
+type, author, related_to, sources). See [docs/AGENTS.md](../AGENTS.md) for the
 full rules and the ADR template.
 
 ## Skills

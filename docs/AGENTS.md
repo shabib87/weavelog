@@ -17,7 +17,7 @@ sources:
 
 Rules for writing docs in `docs/`. Two doc families share these rules:
 
-- **Research / plans / spec** (`docs/research/`, `docs/plans/`, `docs/specs/`) — research schema
+- **Research** (`docs/research/`) — research schema. Ratified briefs (`docs/specs/`) also use the research schema for new files. Plans and learnings are frozen under `docs/archive/` (historical, closed)
 - **Architecture** (`docs/architecture/`) — architecture schema
 
 Enforcement split: the **frontmatter half is machine-enforced**
@@ -47,9 +47,8 @@ version, never silently accept.
 
 ## Learnings vs research (merged forward, 2026-09-07)
 
-`docs/learnings/` is **frozen** — the existing July-era files stay in place
-for provenance (same treatment as legacy ADRs), but **no new learnings
-files**. Session notes and reflections go to `docs/research/` as one dated
+`docs/learnings/` is **frozen and archived** — moved to `docs/archive/learnings/`
+(2026-09-07) for provenance; **no new learnings files**. Session notes and reflections go to `docs/research/` as one dated
 corpus under the research schema. The blog-feed intent survives as a
 `**Lessons:**` block or topic tag inside the research note, not as a second
 directory.
@@ -79,7 +78,7 @@ sources:                     # non-empty array
 ---
 ```
 
-### Research schema (`docs/research/`, `docs/plans/`, `docs/spec/`)
+### Research schema (`docs/research/`, `docs/specs/`)
 
 ```markdown
 ---
@@ -105,18 +104,18 @@ supersedes: none             # 'none' or a filename in the same directory
 | architecture | `docs/architecture/` |
 | adr | `docs/architecture/adr/` |
 | research | `docs/research/` |
-| plan | `docs/plans/` |
-| spec | `docs/specs/` |
+| plan | **frozen** — moved to `docs/archive/plans/`; task planning lives in backlog tasks |
+| spec | `docs/specs/` (ratified briefs; new plans live in backlog tasks) |
 
-Exception: this file (`docs/AUTHORING.md`) is a root-level meta-doc that carries the
-architecture schema for its own frontmatter but lives outside `docs/architecture/` by
-design (naming avoids `docs/AGENTS.md` overload). Parent-dir scan
-(`--schema architecture docs/`) is the validation path; it also flags
-frontmatter-free root docs (`NORTH_STAR.md`, `PRODUCT.md`, `ROADMAP.md`,
-`INDEX.md`, `NEXT_SESSION.md`, `cli.md`) — those are anchor/hierarchy docs,
-intentionally frontmatter-free (NORTH_STAR is human-owned), so their
-violations are **accepted known noise**. Only AUTHORING.md's own result is
-authoritative in that scan.
+This file is `docs/AGENTS.md` (renamed from `docs/AUTHORING.md`, 2026-09-07): the
+open AGENTS.md standard supports nested discovery, so agents working anywhere
+under `docs/` auto-load these rules. It carries the architecture schema for its
+own frontmatter. Parent-dir scan (`--schema architecture docs/`) is the
+validation path; it also flags frontmatter-free root docs (`NORTH_STAR.md`,
+`PRODUCT.md`, `ROADMAP.md`, `INDEX.md`, `NEXT_SESSION.md`, `cli.md`) — those are
+anchor/hierarchy docs, intentionally frontmatter-free (NORTH_STAR is
+human-owned), so their violations are **accepted known noise**. Only this
+file's own result is authoritative in that scan.
 
 ## related_to convention
 
@@ -134,11 +133,11 @@ carried from its origin repo):
 # architecture schema (include adr/ — pass both dirs explicitly)
 node --import tsx src/tools/frontmatter-check.ts --schema architecture docs/architecture docs/architecture/adr
 
-# AUTHORING.md meta-doc (root-level, architecture schema)
-node --import tsx src/tools/frontmatter-check.ts --schema architecture docs/AUTHORING.md
+# docs/AGENTS.md meta-doc (root-level, architecture schema)
+node --import tsx src/tools/frontmatter-check.ts --schema architecture docs/AGENTS.md
 
 # research schema (default)
-node --import tsx src/tools/frontmatter-check.ts docs/research docs/plans docs/specs
+node --import tsx src/tools/frontmatter-check.ts docs/research docs/specs
 ```
 
 ## ADR template
