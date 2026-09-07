@@ -699,6 +699,26 @@ describe("cli check risk-signals (TASK-78, ADR-004 L0->L1 detector)", () => {
     );
   });
 
+  test("fails closed when the merge base cannot be determined", () => {
+    const dir = makeDir("risk-nobase");
+    // Deliberately non-main branch with no main and no origin/main
+    // -> no determinable merge base -> fail closed.
+    mkdirSync(dir, { recursive: true });
+    git(["init", "-b", "develop"], dir);
+    git(["config", "user.email", "t@t.com"], dir);
+    git(["config", "user.name", "T"], dir);
+    write(join(dir, "README.md"), "# base\n");
+    git(["add", "."], dir);
+    git(["commit", "-m", "base"], dir);
+    seedLedger(dir, [{ command: "check", exitCode: 0 }]);
+    const r = run(["check"], { cwd: dir, env: stateEnv(dir) });
+    assert.ok(
+      r.stdout.includes("fail closed") &&
+        r.stdout.includes("cannot determine merge base"),
+      `expected fail-closed merge-base skip: ${r.stdout}\n${r.stderr}`,
+    );
+  });
+
   test("reports an explicit skip on main (no task diff context)", () => {
     const dir = makeDir("risk-main");
     mkdirSync(dir, { recursive: true });
