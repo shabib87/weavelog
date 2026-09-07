@@ -6,6 +6,7 @@ type: adr
 author: conductor
 related_to:
   - ../README.md
+  - ./0004-model-selection-benchmark-policy.md
   - ../loop-factory.md
   - ../../AUTHORING.md
 sources:
@@ -25,6 +26,7 @@ future agents/humans.
 | ADR-001 | scripts-not-CLI (deterministic TS via bun, not shell CLI artifacts) | (planned) | trigger: next architecture decision |
 | ADR-002 | conductor-dispatch (subagents return findings, conductor writes state) | (planned) | trigger: next architecture decision |
 | ADR-003 | three-phase model (WHY/WHAT/HOW phases × inner/outer loop roles) | (planned) | trigger: when recorded in an ADR — consensus already restored in loop-factory.md + TASK-15 |
+| ADR-004 | model-selection benchmark policy (seat-weighted composite; HLE protocol pin; L0–L4 reviewer escalation; weekly/monthly drift cadence) | in-review | 2026-09-07 |
 
 > Note: ADR-003's content already exists as the restored 3-reviewer consensus in
 > [loop-factory.md](../loop-factory.md) and TASK-15. The ADR is the formal record; write
