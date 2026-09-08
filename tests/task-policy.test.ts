@@ -508,7 +508,7 @@ describe("milestone id/filename mismatch (loop 5, ADR-005 linkage)", () => {
     mkdirSync(join(root, "docs", "prd"), { recursive: true });
     writeFileSync(
       join(root, "docs", "prd", "2026-09-07-m-7-brief.md"),
-      "---\ndate: 2026-09-07\ntopic: brief\nstatus: approved\ntype: prd\nauthor: conductor\nrelated_to: []\nsources: [\"TASK-76\"]\nmilestones:\n  - m-7\n---\n\n# brief\n",
+      '---\ndate: 2026-09-07\ntopic: brief\nstatus: approved\ntype: prd\nauthor: conductor\nrelated_to: []\nsources: ["TASK-76"]\nmilestones:\n  - m-7\n---\n\n# brief\n',
     );
     // anchor target EXISTS but the brief's milestones list m-7 while the
     // frontmatter id says m-6 — validateMilestoneAnchor must flag it.
