@@ -1,6 +1,6 @@
 ---
 name: verify-with-criteria
-description: Use in the verify and verdict stages before any claim of done, PASS, fixed, or complete — triggers on completion claims, "is this done", qa sign-off, reviewer verdicts on a diff or plan. Verifies the artifact against human-owned criteria verbatim: every acceptance criterion mapped to fresh evidence (command output + exit codes from this turn) or declared NEEDS-CRITERIA. Do NOT use for style opinions or open exploration. Terminates in one VERDICT line plus EVIDENCE and FINDINGS.
+description: 'Use in the verify and verdict stages before any claim of done, PASS, fixed, or complete — triggers on completion claims, "is this done", qa sign-off, reviewer verdicts on a diff or plan. Verifies the artifact against human-owned criteria verbatim: every acceptance criterion mapped to fresh evidence (command output + exit codes from this turn) or declared NEEDS-CRITERIA. Do NOT use for style opinions or open exploration. Terminates in one VERDICT line plus EVIDENCE and FINDINGS.'
 license: Apache-2.0 (from v0.1.0; MIT pre-v0.1.0)
 metadata:
   author: github:@shabib87
