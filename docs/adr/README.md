@@ -9,6 +9,10 @@ related_to:
   - ./0004-model-selection-benchmark-policy.md
   - ../trd/loop-factory.md
   - ../AGENTS.md
+  - ./0001-weavelog-architecture-decisions.md
+  - ./0002-bash-homebrew-tooling.md
+  - ./0003-three-phase-loop-model.md
+  - ./0005-artifact-flow.md
 sources:
   - "TASK-15"
 ---

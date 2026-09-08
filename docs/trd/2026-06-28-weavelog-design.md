@@ -11,7 +11,7 @@ sources:
 
 # weavelog: Agentic Loop Engineering Workspace
 
-**Status:** Draft (revised July 4, 2026)
+**Status:** Approved — founding TRD (drafted 2026-06-28, revised 2026-07-04; ratified via ADR-0005, 2026-09-07)
 **Date:** June 28, 2026 (original); revised July 4, 2026
 **Supersedes:** `docs/superpowers/specs/2026-06-28-harness-kit-design.md` (relocated and revised)
 **Authoritative sources:** `docs/NORTH_STAR.md` (what), `docs/research/RESEARCH.md` (why)

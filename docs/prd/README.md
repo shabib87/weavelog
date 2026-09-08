@@ -20,6 +20,11 @@ frontmatter `milestones:` ↔ milestone-file `PRD anchor:` line).
 | [2026-09-05-v010-draft-brief.md](./2026-09-05-v010-draft-brief.md) | m-7 pre-publish-v0.1.0 (+ m-6 method) | approved — release scope of record |
 | [2026-09-05-github-repo-metadata.md](./2026-09-05-github-repo-metadata.md) | m-7 (companion) | approved |
 
+Brief body format (minimal by design): Scope, Requirements, TRD linkage,
+Provenance. In/out-of-scope detail and success criteria live in the
+milestone's task set rather than duplicated here; backfilled briefs are
+intentionally minimal records.
+
 Backfilled briefs record ratifications that already happened in-thread; they
 are not retroactive decisions. Draft briefs need explicit human
 ratification before their milestone's tasks claim.

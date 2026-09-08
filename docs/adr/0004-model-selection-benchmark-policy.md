@@ -6,6 +6,7 @@ type: adr
 author: conductor
 related_to:
   - ./README.md
+  - ./0005-artifact-flow.md
   - ../NORTH_STAR.md
   - ../PRODUCT.md
   - ../ROADMAP.md

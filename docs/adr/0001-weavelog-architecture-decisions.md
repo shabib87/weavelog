@@ -6,6 +6,7 @@ type: adr
 author: conductor
 related_to:
   - ./README.md
+  - ./0005-artifact-flow.md
 sources:
   - "TASK-15"
 ---

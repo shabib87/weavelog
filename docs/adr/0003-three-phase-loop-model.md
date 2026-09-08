@@ -6,6 +6,7 @@ type: adr
 author: conductor
 related_to:
   - ./README.md
+  - ./0005-artifact-flow.md
   - ./0004-model-selection-benchmark-policy.md
   - ../trd/loop-factory.md
 sources:
