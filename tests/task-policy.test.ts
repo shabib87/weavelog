@@ -523,7 +523,7 @@ PRD anchor: none — test fixture
 `,
     );
     const req = createRequire(import.meta.url);
-    const loader = join(dirname(req.resolve("tsx")), "dist/loader.mjs");
+    const loader = req.resolve("tsx");
     const Bin = join(
       dirname(fileURLToPath(import.meta.url)),
       "..",
