@@ -125,3 +125,22 @@ no AC/summary/narrative changes; ledger rule interpreted as protecting
 historical narrative, not dangling references. Residual old-path strings in
 Done files (15/16/32/58/61) are inside historical commit quotes or
 superseded-inventory descriptions and are left as provenance.
+
+2026-09-07 directive 2 (human): requirements-engineering discipline.
+(a) ALL trd/ and prd/ files get frontmatter + format discipline; the 4
+stragglers (v0.1.0 brief, github-repo-metadata, founding design spec,
+worktree-discipline.md) are updated, zero exceptions remain.
+(b) Milestone <-> PRD mutual linkage is MANDATORY and machine-checked: a
+milestone without an explicit PRD anchor and a PRD without milestones
+cannot exist. Pre-PRD-era Done milestones get an EXPLICIT none-marker,
+not silent absence (mirrors ADR-003's 'Decision: none' pattern).
+(c) Flow codified: idea -> requirement -> PRD -> TRD -> milestone -> ADR ->
+TASK, with 0-drift machine gates ("the workflow is the engine").
+Byte-identity note: adding frontmatter to the v0.1.0 brief breaks its
+TASK-45/56 byte-identity ratification — treated as human re-ratification
+here; dated amendment note records it; TASK-56's constraint must be updated.
+Conductor positions sent to plan review for pushback: requirements live IN
+the PRD (a separate requirement class re-creates the rejected BRD ceremony);
+ADR is cross-cutting via the ADR-003 gate, not a pipeline stage after
+milestone; pre-PRD-era milestones get explicit none-markers, not retroactive
+briefs (falsified provenance).
