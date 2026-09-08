@@ -45,6 +45,7 @@ weavelog/
 │   ├── research/              # Research logs (dated, lab notebooks)
 │   ├── AGENTS.md              # Documentation rules (nested, open agents standard)
 │   └── archive/               # Frozen provenance: plans, learnings, superpowers, tbd
+├── backlog/                   # Tasks (backlog.md CLI) + human-owned milestones (PRD-anchored)
 └── .github/workflows/         # CI (Linux, node:test + biome + tsc)
 ```
 

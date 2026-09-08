@@ -30,7 +30,7 @@
 
 | File | Type | Purpose | When | LOC |
 |---|---|---|---|---|
-| `../AGENTS.md` | Constitution | Build commands, MUST NOTs, standards | Every session | 116 |
+| `../AGENTS.md` | Constitution | Build commands, MUST NOTs, standards | Every session | 123 |
 | `../README.md` (repo root) | Project overview | What weavelog is, quickstart | First read only | 94 |
 | `NORTH_STAR.md` | Constitution | Non-negotiables, scope, success criteria | Every session | 81 |
 | `PRODUCT.md` | Strategy | Product definition, moat, PMF | On product decisions | 97 |
@@ -110,6 +110,7 @@ Each captures what went wrong, root cause, and blog candidate.
 | `archive/learnings/2026-07-22-pi-subagents-intercom-fix.md` | pi-intercom install fixes reviewer intercom tool; model override gotcha; typebox/compile retraction | On subagent setup | 77 |
 | `archive/learnings/2026-07-22-chain-1-gate-realism-telemetry.md` | Chain 0/1 telemetry, supply-chain checklist, process learnings | On MoE chain execution | 58 |
 | `archive/learnings/2026-07-22-addy-osmani-loop-engineering-alignment.md` | Osmani series alignment (secondhand synthesis; see research amendment) | On Osmani alignment | 162 |
+| `archive/learnings/2026-09-07-task49-productivity-suite-grilling.md` | TASK-49 productivity-suite grilling (mattpocock/skills audit, session hand-off scope expansion) | On skill adoption | 88 |
 
 ---
 
@@ -153,6 +154,7 @@ Each file = one unresolved question blocking progress.
 | `archive/superpowers/plans/2026-07-04-weavelog-implementation.md` | Full implementation plan (pre-revision, needs chunking) | On implementation | 2848 |
 | `archive/superpowers/plans/2026-07-07-weavelog-footer-theme.md` | Footer/theme plan (author workspace) | On author workspace | 489 |
 | `archive/superpowers/plans/2026-07-07-pi-workspace-footer-theme.md` | Pi workspace footer/theme plan (author workspace) | On author workspace | 403 |
+| `archive/superpowers/plans/2026-07-22-moe-fast-track-to-phase-4.md` | MoE fast-track to Phase 4 (acceleration plan) | On phase planning | 113 |
 
 ---
 
@@ -168,14 +170,14 @@ Each file = one unresolved question blocking progress.
 
 | Category | Count | Total LOC |
 |---|---|---|
-| Root-level entry points | 5 | 533 |
+| Root-level entry points | 5 | 540 |
 | Trackers | 0 | 0 |
 | Provenance & decisions | 7 | 1,226 |
 | Research logs (dated) | 10 | 2,017 |
 | Research references (living) | 2 | 701 |
-| Learning logs | 15 | 1,831 |
+| Learning logs | 16 | 1,919 |
 | TRD + PRD | 11 | 1,915 |
 | Open questions (TBD) | 6 | 344 |
-| Implementation plans | 3 | 3,740 |
+| Implementation plans | 4 | 3,853 |
 | Author workspace | 1 | 93 |
-| **Total** | **60** | **12,400** |
+| **Total** | **62** | **12,608** |
