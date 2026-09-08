@@ -30,7 +30,7 @@
 
 | File | Type | Purpose | When | LOC |
 |---|---|---|---|---|
-| `../AGENTS.md` | Constitution | Build commands, MUST NOTs, standards | Every session | 123 |
+| `../AGENTS.md` | Constitution | Build commands, MUST NOTs, standards | Every session | 122 |
 | `../README.md` (repo root) | Project overview | What weavelog is, quickstart | First read only | 94 |
 | `NORTH_STAR.md` | Constitution | Non-negotiables, scope, success criteria | Every session | 81 |
 | `PRODUCT.md` | Strategy | Product definition, moat, PMF | On product decisions | 97 |
