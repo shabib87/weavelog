@@ -23,7 +23,7 @@ future agents/humans.
 
 | ADR | Topic | Status | Added |
 |---|---|---|---|
-| ADR-001 | weavelog architecture decisions (legacy, migrated from `docs/adr/` 2026-09-07) | approved | 2026-07-04 |
+| ADR-001 | weavelog architecture decisions (legacy, migrated from `docs/architecture/adr/` 2026-09-07) | approved | 2026-07-04 |
 | ADR-002 | bash-homebrew-tooling — satisfies the planned scripts-not-CLI decision (legacy, migrated 2026-09-07) | approved | 2026-06-29 |
 | ADR-003 | three-phase loop model (WHY/WHAT/HOW × inner/outer roles) + decision-recording gate at end of WHY | in-review | 2026-09-07 |
 | ADR-004 | model-selection benchmark policy (seat-weighted composite; HLE protocol pin; L0–L4 reviewer escalation; weekly/monthly drift cadence) | in-review | 2026-09-07 |
