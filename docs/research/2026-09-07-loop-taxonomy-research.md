@@ -331,7 +331,8 @@ abort+alert; a provisioned OpenRouter sub-key with a spending cap throttling run
 `docs/research/2026-09-03-budget-caps-checkpoint-resume.md` (status: complete): `KEEL_MAX_*`
 cap family with **named non-zero exit outcomes** (`budget`/`deadline`), effective-cost token
 discounting, gross backstop, wall-clock deadline, and an opencode budget-guard plugin
-(`tool.execute.before` throw + `client.session.abort()`). `src/tools/reviewer-loop.ts`
+(`tool.execute.before` throw + `client.session.abort()`) — keel (`keel-harness/keel`) is
+cited prior art; its names are not adopted (weavelog-native naming per ADR-007). `src/tools/reviewer-loop.ts`
 already implements `--budget-usd` (default 2.00) with a named BUDGET-CAP-EXCEEDED outcome.
 TASK-7 adds "PASS but over-budget = FAIL"; TASK-8 adds kick-back budget K=2 → auto-escalate
 and the `harness approve|kickback|replan|stuck` decision CLI.
