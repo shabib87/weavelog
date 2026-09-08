@@ -1,3 +1,17 @@
+---
+date: 2026-09-05
+topic: "GitHub repo metadata — setup checklist (companion record to the v0.1.0 brief)"
+status: approved
+type: prd
+author: conductor
+related_to:
+  - ./2026-09-05-v010-draft-brief.md
+sources:
+  - "TASK-45"
+milestones:
+  - m-7
+---
+
 # GitHub repo metadata — setup checklist
 
 Settings to apply when the repo goes public at the v0.1.0 flip. Traces to

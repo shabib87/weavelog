@@ -7,4 +7,4 @@ title: "harness-agnostic"
 
 Make it opencode/pi-agnostic, SDK driver pipeline, pi agent sharing
 
-PRD anchor: `docs/prd/README.md` milestone cross-reference (m-4).
+PRD anchor: docs/prd/2026-09-07-m-4-harness-agnostic-brief.md

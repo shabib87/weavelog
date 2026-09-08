@@ -21,7 +21,9 @@ Full rules in [adr/0005-artifact-flow.md](./adr/0005-artifact-flow.md).
 Summary:
 
 - **PRD** — ratified milestone brief in `prd/` (human-owned at kickoff;
-  archives when the milestone ships).
+  archives when the milestone ships). Flow: idea → PRD (requirements live
+  inside the PRD) → TRD → milestone ↔ PRD (bidirectional, machine-checked)
+  → TASK; ADRs fire cross-cutting at the decision gate, any stage.
 - **TRD** — durable design in `trd/`; **changed only via ADRs**.
 - **ADR** — one hard-to-reverse decision per record (format contract in
   `adr/README.md`); immutable once approved, superseded never
@@ -101,11 +103,10 @@ does not deliver.
   privacy sweep rejects them.
 - **Frontmatter schemas:** `trd/**` and `adr/**` use the architecture
   schema; `research/` uses the research schema. Known pre-convention
-  exceptions (frontmatter-free, never "fix" without the human) plus
-  `trd/worktree-discipline.md` (pre-existing debt, task pending): the v0.1.0
-  draft brief and github-repo-metadata in `prd/` (the brief is
-  byte-identity-protected — its internal `docs/specs/` literals are a
-  frozen ratification snapshot), and the founding design spec in `trd/`.
+  exceptions in `trd/`, `adr/`, and `prd/`: **none since 2026-09-07** —
+  every file carries conforming frontmatter (`type: prd` briefs also carry
+  machine-checked `milestones:`). Pre-convention debt remains only in
+  `research/` (documented, task pending).
 - Known accepted noise: `NORTH_STAR.md`, `PRODUCT.md`, `ROADMAP.md`,
   `INDEX.md`, `cli.md`, this file, `archive/**`, and pre-convention files
   the validator flags in `research/`, `prd/`, and `trd/` (e.g. the v0.1.0 draft brief,

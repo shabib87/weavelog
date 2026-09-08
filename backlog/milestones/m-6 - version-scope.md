@@ -7,4 +7,4 @@ title: "version-scope"
 
 Milestone: version-scope
 
-PRD anchor: `docs/prd/README.md` milestone cross-reference (m-6).
+PRD anchor: docs/prd/2026-09-07-m-6-version-scope-brief.md

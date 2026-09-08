@@ -1,3 +1,14 @@
+---
+date: 2026-06-28
+topic: "weavelog founding design — agentic loop engineering workspace"
+status: approved
+type: architecture
+author: conductor
+related_to: []
+sources:
+  - "TASK-45"
+---
+
 # weavelog: Agentic Loop Engineering Workspace
 
 **Status:** Draft (revised July 4, 2026)

@@ -26,6 +26,31 @@ class homes are now **physical** — `docs/prd/`, `docs/trd/`, `docs/adr/` —
 and the founding TRD clause is rewritten below (it no longer "remains in
 specs/").
 
+Amended 2026-09-07 (second directive, requirements-engineering discipline):
+- **The flow** (human-directed, reviewer-corrected): idea → PRD
+  (requirements are a section INSIDE the PRD — a separate requirements class
+  re-creates the BRD ceremony rejected in research §7) → TRD → milestone ↔
+  PRD (bidirectional, see below) → TASK. ADR is NOT a pipeline stage: it
+  fires cross-cutting whenever a hard-to-reverse choice appears (the
+  ADR-003 decision gate), at any stage.
+- **Every milestone links a PRD and every PRD links milestones** — a
+  milestone or PRD cannot exist without the other. Machine-checked:
+  `frontmatter-check` requires `type: prd` frontmatter to carry a
+  non-empty `milestones:` list resolving to real milestone files;
+  `task-validate --milestones` requires every milestone file to carry a
+  `PRD anchor:` line resolving to a brief that lists it back.
+- **Pre-brief-era milestones are backfilled, honestly**: briefs for m-0..m-4
+  carry `status: backfilled` and cite the research notes that recorded the
+  in-thread decisions — they are records of ratifications that happened,
+  not retroactive ratifications. Open milestones (m-5, m-6) got real draft
+  briefs pending human ratification.
+- **The v0.1.0 brief's byte-identity protection is re-ratified away** by the
+  human (2026-09-07): it now carries frontmatter and its internal paths are
+  repaired. TASK-56's byte-identity constraint is updated accordingly.
+- **0-drift scoping** (per the no-false-enforcement rule): LINKAGE is
+  machine-enforced (existence + bidirectional resolution); flow order and
+  content quality are review-enforced.
+
 ## Context
 
 The 2026-07-04 doc-chain decision collapsed BRD/PRD/TRD into existing docs
@@ -63,9 +88,6 @@ it ends at the ADR-003 decision gate.
 
 Full flow rules live in `docs/AGENTS.md` ("Artifact flow" section).
 
-The v0.1.0 brief is byte-identity-protected (TASK-45/56): its internal
-`docs/specs/` literals are a frozen snapshot of its ratification moment and
-are intentionally NOT repaired.
 
 ## Consequences
 

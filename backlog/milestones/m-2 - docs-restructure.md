@@ -7,4 +7,4 @@ title: "docs-restructure"
 
 Create architecture docs, split the runbook, fix stale references
 
-PRD anchor: `docs/prd/README.md` milestone cross-reference (m-2).
+PRD anchor: docs/prd/2026-09-07-m-2-docs-restructure-brief.md

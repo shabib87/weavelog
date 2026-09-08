@@ -13,6 +13,7 @@ import {
   isHarnessDevContext,
   isKnownLabel,
   isReservedLabel,
+  validateMilestoneAnchor,
   RESERVED_LABELS,
   scaffoldVocabulary,
   unknownLabels,
@@ -428,5 +429,69 @@ describe("version-scope migration constants (AC #16/#18)", () => {
   test("VERSION_MILESTONE_ID and the scope labels are the migration contract", () => {
     assert.equal(VERSION_MILESTONE_ID, "m-6");
     assert.deepEqual([...VERSION_SCOPE_LABELS].sort(), ["v1", "v2"]);
+  });
+});
+
+describe("milestone PRD anchor validation (TASK-76, ADR-005)", () => {
+  const mkRoot = () => mkdtempSync(join(tmpdir(), "milestone-anchor-"));
+
+  test("missing anchor line is a violation", () => {
+    const root = mkRoot();
+    assert.deepEqual(
+      validateMilestoneAnchor("m-7", "# m-7\n\nsome body\n", root),
+      ['milestone m-7 is missing its "PRD anchor:" line (docs/prd path or explicit "none" marker)'],
+    );
+  });
+
+  test("explicit none marker is valid", () => {
+    const root = mkRoot();
+    assert.deepEqual(
+      validateMilestoneAnchor("m-2", "# m-2\nPRD anchor: none — pre-PRD-era, decisions recorded in-thread\n", root),
+      [],
+    );
+  });
+
+  test("anchor resolving to a brief that lists the milestone is valid", () => {
+    const root = mkRoot();
+    mkdirSync(join(root, "docs", "prd"), { recursive: true });
+    writeFileSync(
+      join(root, "docs", "prd", "2026-09-07-m-7-brief.md"),
+      "---\ndate: 2026-09-07\ntopic: brief\nstatus: approved\ntype: prd\nauthor: conductor\nrelated_to: []\nsources: [\"TASK-76\"]\nmilestones:\n  - m-7\n---\n\n# brief\n",
+    );
+    assert.deepEqual(
+      validateMilestoneAnchor(
+        "m-7",
+        "# m-7\nPRD anchor: docs/prd/2026-09-07-m-7-brief.md\n",
+        root,
+      ),
+      [],
+    );
+  });
+
+  test("anchor to a brief that does NOT list this milestone is a violation (bidirectional)", () => {
+    const root = mkRoot();
+    mkdirSync(join(root, "docs", "prd"), { recursive: true });
+    writeFileSync(
+      join(root, "docs", "prd", "2026-09-07-m-7-brief.md"),
+      "---\ndate: 2026-09-07\ntopic: brief\nstatus: approved\ntype: prd\nauthor: conductor\nrelated_to: []\nsources: [\"TASK-76\"]\nmilestones:\n  - m-6\n---\n\n# brief\n",
+    );
+    const v = validateMilestoneAnchor(
+      "m-7",
+      "# m-7\nPRD anchor: docs/prd/2026-09-07-m-7-brief.md\n",
+      root,
+    );
+    assert.equal(v.length, 1);
+    assert.ok(v[0].includes("does not list m-7"));
+  });
+
+  test("dangling anchor path is a violation", () => {
+    const root = mkRoot();
+    const v = validateMilestoneAnchor(
+      "m-7",
+      "# m-7\nPRD anchor: docs/prd/2026-09-07-ghost.md\n",
+      root,
+    );
+    assert.equal(v.length, 1);
+    assert.ok(v[0].includes("does not resolve"));
   });
 });

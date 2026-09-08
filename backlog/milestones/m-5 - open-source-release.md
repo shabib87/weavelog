@@ -7,4 +7,4 @@ title: "open-source-release"
 
 Public GitHub, LICENSE, CI/CD, community docs
 
-PRD anchor: `docs/prd/README.md` milestone cross-reference (m-5).
+PRD anchor: docs/prd/2026-09-07-m-5-open-source-release-brief.md

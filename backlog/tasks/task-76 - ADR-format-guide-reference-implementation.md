@@ -115,6 +115,7 @@ Applied to the plan:
 - [ ] #5 Human reviews diff before merge (HITL)
 <!-- DOD:END -->
 
+2026-09-07 directive-2 execution: plan review round 2 (DeepSeek + Qwen, APPROVE-WITH-CHANGES) — requirements-inside-PRD, ADR cross-cutting, backfilled-briefs-labeled (m-0..m-4) + real drafts (m-5/m-6), bidirectional linkage machine-enforced (frontmatter-check type:prd milestones; task-validate --milestones), 5 byte-identity references amended. 7 minimal briefs written; 4 files gained frontmatter; anchors retargeted README -> briefs.
 2026-09-07 execution note (phases 1-4 done): plan review DeepSeek + Qwen
 APPROVE-WITH-CHANGES, all dispositions applied (package.json files[] P0,
 validator noise list instead of new code, exhaustive grep-driven sweep,

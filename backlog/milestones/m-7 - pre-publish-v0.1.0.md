@@ -7,4 +7,4 @@ title: "Pre-publish v0.1.0"
 
 Milestone: Pre-publish v0.1.0
 
-PRD anchor: `docs/prd/README.md` milestone cross-reference (m-7).
+PRD anchor: docs/prd/2026-09-05-v010-draft-brief.md

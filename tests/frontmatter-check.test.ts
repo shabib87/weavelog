@@ -2,9 +2,10 @@ import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
+import { createRequire } from "node:module";
 import { afterEach, describe, test } from "node:test";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const BIN = fileURLToPath(
   new URL("../src/tools/frontmatter-check.ts", import.meta.url),
@@ -554,5 +555,107 @@ sources:
     const dir = makeDocs({ "2026-08-16-valid.md": VALID_DOC });
     const r = run([dir]);
     assert.equal(r.status, 0);
+  });
+});
+
+describe("frontmatter-check (prd type + backfilled status, TASK-76)", () => {
+  function makeRepo(files: Record<string, string>): string {
+    const root = join(tmpdir(), `frontmatter-repo-test-${Date.now()}-${n++}`);
+    for (const [name, content] of Object.entries(files)) {
+      const p = join(root, name);
+      mkdirSync(join(p, ".."), { recursive: true });
+      writeFileSync(p, content);
+    }
+    created.push(root);
+    return root;
+  }
+
+  function runIn(cwd: string, args: string[]) {
+    // cwd differs from the repo, so "tsx" cannot resolve from it — load the
+    // loader by absolute path instead (createRequire walks up to the repo
+    // checkout that owns node_modules).
+    const req = createRequire(import.meta.url);
+    const loader = join(dirname(req.resolve("tsx")), "loader.mjs");
+    return spawnSync(
+      process.execPath,
+      ["--import", pathToFileURL(loader).href, BIN, ...args],
+      { encoding: "utf8", timeout: 60_000, cwd },
+    );
+  }
+
+  const brief = (id: string) => `---
+date: 2026-09-07
+topic: Minimal brief
+status: backfilled
+type: prd
+author: conductor
+related_to: []
+sources:
+  - "TASK-76"
+milestones:
+  - ${id}
+---
+
+# Brief
+`;
+
+  test("type prd accepted when every milestone id resolves", () => {
+    const root = makeRepo({
+      "backlog/milestones/m-7 - pre-publish-v0.1.0.md": "# m-7\n",
+      "docs/prd/2026-09-07-m-7-brief.md": brief("m-7"),
+    });
+    const r = runIn(root, ["--schema", "architecture", "docs/prd"]);
+    assert.equal(r.status, 0, r.stdout);
+  });
+
+  test("type prd without milestones is a violation", () => {
+    const root = makeRepo({
+      "backlog/milestones/m-7 - pre-publish-v0.1.0.md": "# m-7\n",
+      "docs/prd/2026-09-07-m-7-brief.md": brief("m-7").replace(
+        /milestones:\n  - m-7\n/,
+        "",
+      ),
+    });
+    const r = runIn(root, ["--schema", "architecture", "docs/prd"]);
+    assert.equal(r.status, 1);
+    assert.ok(r.stdout.includes("milestones"));
+  });
+
+  test("type prd with unresolvable milestone id is a violation", () => {
+    const root = makeRepo({
+      "docs/prd/2026-09-07-m-9-brief.md": brief("m-9"),
+    });
+    const r = runIn(root, ["--schema", "architecture", "docs/prd"]);
+    assert.equal(r.status, 1);
+    assert.ok(r.stdout.includes("m-9"));
+  });
+
+  test("status backfilled is in the enum", () => {
+    const root = makeRepo({
+      "backlog/milestones/m-2 - docs-restructure.md": "# m-2\n",
+      "docs/prd/2026-09-07-m-2-brief.md": brief("m-2"),
+    });
+    const r = runIn(root, ["--schema", "architecture", "docs/prd"]);
+    assert.equal(r.status, 0, r.stdout);
+  });
+
+  test("type architecture is unaffected by milestones rules", () => {
+    const root = makeRepo({
+      "docs/trd/2026-09-07-solo.md": `---
+date: 2026-09-07
+topic: Solo trd
+status: draft
+type: architecture
+author: conductor
+related_to: []
+sources:
+  - "TASK-76"
+---
+
+# Solo
+`,
+    });
+    const r = runIn(root, ["--schema", "architecture", "docs/trd"]);
+    assert.equal(r.status, 0, r.stdout);
   });
 });
