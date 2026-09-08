@@ -3,7 +3,7 @@ id: TASK-76
 title: >-
   docs/ governance — ADR format contract, ADR-001 umbrella resolution,
   artifact flow (ADR-005), task-process contract, archive reorganization
-status: In Progress
+status: Done
 assignee: []
 created_date: '2026-09-07 21:40'
 updated_date: '2026-09-07 21:40'
@@ -45,11 +45,11 @@ extension, not promised); TASK-75 config adoption.
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 WHEN the format contract lands THEN docs/adr/README.md SHALL contain the section skeleton with per-section format rules and the table-vs-list decision rule [ADR-005 TRD rule; ADR-003 format-contract decision]
-- [ ] #2 WHEN the contract is adopted THEN docs/AGENTS.md SHALL reference the ADR format contract [retargeted 2026-09-07: AUTHORING.md was renamed docs/AGENTS.md earlier this branch]
-- [ ] #3 WHEN ADR-004 is reformatted THEN every decision SHALL be extractable from Decision + Alternatives tables alone (verdict markers on every option; no option without an explicit chosen/rejected) [ADR-005: ADR class format contract]
-- [ ] #4 WHEN the reference implementation is done THEN frontmatter-check --schema architecture SHALL pass on docs/trd, docs/adr, docs/prd with zero violations beyond the documented pre-convention exceptions
-- [ ] #5 IF legacy ADRs are exempt THEN the ADR index SHALL say so explicitly (001/0002 marked pre-convention, not reformatted)
+- [x] #1 WHEN the format contract lands THEN docs/adr/README.md SHALL contain the section skeleton with per-section format rules and the table-vs-list decision rule [ADR-005 TRD rule; ADR-003 format-contract decision]
+- [x] #2 WHEN the contract is adopted THEN docs/AGENTS.md SHALL reference the ADR format contract [retargeted 2026-09-07: AUTHORING.md was renamed docs/AGENTS.md earlier this branch]
+- [x] #3 WHEN ADR-004 is reformatted THEN every decision SHALL be extractable from Decision + Alternatives tables alone (verdict markers on every option; no option without an explicit chosen/rejected) [ADR-005: ADR class format contract]
+- [x] #4 WHEN the reference implementation is done THEN frontmatter-check --schema architecture SHALL pass on docs/trd, docs/adr, docs/prd with zero violations beyond the documented pre-convention exceptions
+- [x] #5 IF legacy ADRs are exempt THEN the ADR index SHALL say so explicitly (001/0002 marked pre-convention, not reformatted)
 <!-- AC:END -->
 
 ## Plan (2026-09-07, human-directed full reorg)
@@ -108,11 +108,11 @@ Applied to the plan:
 
 ## Definition of Done
 <!-- DOD:BEGIN -->
-- [ ] #1 Docs-only diff; zero code changes [AMENDED 2026-09-07, human-directed: path-literal touch-ups in src/ (test-first), payload/ configs, and backlog/ task files now in scope per the Phase 1-5 plan below]
-- [ ] #2 frontmatter-check --schema architecture passes fresh in the worktree on docs/trd docs/adr docs/prd with ZERO exceptions (23/23 — every straggler frontmattered per directive 2)
-- [ ] #3 Sanitization scan passes (no absolute home paths, no secrets)
-- [ ] #4 Worktree clean; branch rebased on main
-- [ ] #5 Human reviews diff before merge (HITL)
+- [x] #1 Docs-only diff; zero code changes [AMENDED 2026-09-07, human-directed: path-literal touch-ups in src/ (test-first), payload/ configs, and backlog/ task files now in scope per the Phase 1-5 plan below]
+- [x] #2 frontmatter-check --schema architecture passes fresh in the worktree on docs/trd docs/adr docs/prd with ZERO exceptions (23/23 — every straggler frontmattered per directive 2)
+- [x] #3 Sanitization scan passes (no absolute home paths, no secrets)
+- [x] #4 Worktree clean; branch rebased on main
+- [x] #5 Human reviews diff before merge (HITL)
 <!-- DOD:END -->
 
 2026-09-07 directive-2 execution: plan review round 2 (DeepSeek + Qwen, APPROVE-WITH-CHANGES) — requirements-inside-PRD, ADR cross-cutting, backfilled-briefs-labeled (m-0..m-4) + real drafts (m-5/m-6), bidirectional linkage machine-enforced (frontmatter-check type:prd milestones; task-validate --milestones), 5 byte-identity references amended. 7 minimal briefs written; 4 files gained frontmatter; anchors retargeted README -> briefs.
@@ -145,3 +145,9 @@ the PRD (a separate requirement class re-creates the rejected BRD ceremony);
 ADR is cross-cutting via the ADR-003 gate, not a pipeline stage after
 milestone; pre-PRD-era milestones get explicit none-markers, not retroactive
 briefs (falsified provenance).
+
+2026-09-08 CLOSED: human merge gate passed (chat approval); merged to main
+(merge commit 1dbe6cd). Ratifications: ADR-003/004/005 approved; m-5/m-6
+briefs ratified. Reviewer-worker loop: 9 iterations, terminal on 3
+consecutive distinct-family CLEAN verdicts (GLM/DeepSeek/Qwen). Final gates:
+638/638 tests, biome clean, tsc clean, frontmatter 23/23, milestone anchors ok.
