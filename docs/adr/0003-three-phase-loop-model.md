@@ -7,6 +7,7 @@ author: conductor
 related_to:
   - ./README.md
   - ./0005-artifact-flow.md
+  - ./0007-tiered-loop-commands.md
   - ./0004-model-selection-benchmark-policy.md
   - ../trd/loop-factory.md
   - ../trd/backlog-lifecycle.md

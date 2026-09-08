@@ -46,8 +46,9 @@ rounds) established:
   persona+command duality works (Ralph) and collisions hurt (Puck ×3).
 
 The planned-but-never-ratified **ADR-006** (conductor-dispatch) is absorbed here: its
-subject — subagents return findings, the conductor writes state — is decided by this
-record.
+subject — subagents return findings, the conductor writes state — is an explicit Decision
+row below. No human ever ratified a standalone 0006 record; the index row is annotated
+accordingly.
 
 ## Decision
 
@@ -56,6 +57,7 @@ record.
 | Loop surface | Four user-invocable loop commands — **stitch** (turn-based small run), **weave** (goal-based full flow), **loom** (nested goal-based backlog queue), **pulse** (time-based, proactive-guarded) | Each maps to one primary hand-off; one loom-vocabulary metaphor; no shipped-harness collisions; rungs nest (loom = N weaves) |
 | Orchestrator persona | **weaver** — the persona that runs weave/loom; the current conductor, personified | On-brand per the TASK-58 rationale ("weave is the composition principle"); zero in-repo collision; TASK-57-style availability check gates at PRD |
 | HITL model | **Two gates preserved** — spec gate (claim-time, `spec-approved`) + merge gate; `pulse` never runs unattended past them | NORTH_STAR non-negotiable ("HITL is baked in"); `docs/trd/loop-factory.md:63` two-gates rule |
+| Dispatch model | **Subagents return findings; the weaver alone writes shared state** (backlog, docs, commits) | Absorbs the planned-but-never-ratified ADR-006; matches ADR-005 artifact flow and one-writer discipline (TASK-79 practice: scout/researchers read-only) |
 | Loop behavior location | **Skills + CLI triggers + hooks** — never always-on AGENTS.md; `payload/AGENTS.md` slims to the user-level contract + a routing line ("smallest loop that finishes the task") | Primitive-selection axes; thin-context evidence; project scaffold stays separate (TASK-28/29/30) |
 | Budgets + tier-fit checker | **One deterministic module** — extends TASK-6 + the budget-caps design + `risk-signals.ts`; inform (80%) → alert → soft-stop (100%) at iteration boundaries; never auto-migrate tiers unattended | Extends in-repo machinery rather than re-specifying; wrong-tier detection is greenfield; ADR-004 philosophy: deterministic signals on the merged diff, never LLM judgment |
 
