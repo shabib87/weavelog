@@ -11,7 +11,6 @@ related_to:
   - ./0001-weavelog-architecture-decisions.md
   - ../AGENTS.md
   - ../trd/backlog-lifecycle.md
-  - ../trd/backlog-lifecycle.md
 sources:
   - "TASK-76"
 ---

@@ -12,9 +12,6 @@ related_to:
   - ../adr/README.md
   - ../AGENTS.md
   - ../research/README.md
-  - docs/trd/headroom-proxy.md
-  - docs/trd/model-routing.md
-  - docs/trd/runbook-decomposition.md
   - headroom-proxy.md
   - model-routing.md
   - runbook-decomposition.md
