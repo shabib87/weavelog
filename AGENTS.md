@@ -29,11 +29,15 @@ weavelog/
 ├── biome.json                 # Linter/formatter config
 ├── src/                       # TypeScript source
 │   ├── cli/                   # weavelog CLI (weavelog check, weavelog init)
-│   └── hooks/                 # enforce + verify-gate hooks
+│   ├── hooks/                 # enforce + verify-gate hooks
+│   └── tools/                 # Repo-internal tool scripts (frontmatter-check, task-validate, worktree-create, etc.)
 ├── tests/                     # Test suite
 ├── docs/                      # Project documentation
 │   ├── NORTH_STAR.md          # The anchor
 │   ├── PRODUCT.md             # Product strategy (what it is, moat, PMF)
+│   ├── ROADMAP.md             # Product roadmap (version milestones)
+│   ├── INDEX.md               # Navigation map — read this first
+│   ├── cli.md                 # CLI reference (command behavior)
 │   ├── research/RESEARCH.md            # Provenance
 │   ├── adr/                   # Decision records (Nygard, indexed, format contract)
 │   ├── prd/                   # Ratified milestone briefs (PRD) — cross-referenced with backlog milestones
@@ -55,7 +59,8 @@ weavelog/
 | `docs/ROADMAP.md` | Product roadmap (version milestones) | Active, authoritative |
 | `docs/trd/2026-06-28-weavelog-design.md` | Detailed design | Active |
 | `docs/research/` | Research logs (dated, lab notebooks) | Active |
-| `docs/AGENTS.md` | Documentation rules (how docs are written; ADR format contract) | Active, authoritative |
+| `docs/AGENTS.md` | Documentation rules (how docs are written; ADR format contract, artifact flow) | Active, authoritative |
+| `docs/prd/` | Ratified milestone briefs (PRD) — cross-referenced with `backlog/milestones/` | Active, authoritative (authority via ADR-0005) |
 | `docs/archive/learnings/` | Session learning logs (July-era, frozen) | Frozen, provenance only |
 | `docs/archive/superpowers/` | Implementation plans (superpowers convention) | Frozen, historical |
 | `docs/archive/tbd/` | Open blindspot docs (frozen 2026-09-07) | Do not implement against; re-raise live questions as backlog tasks |
