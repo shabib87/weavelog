@@ -7,7 +7,7 @@ status: In Progress
 assignee:
   - conductor
 created_date: '2026-09-07 23:36'
-updated_date: '2026-09-08 04:58'
+updated_date: '2026-09-08 05:30'
 labels:
   - spec-approved
 dependencies: []
@@ -60,6 +60,10 @@ Plan-gate amendments (glm FIX-FIRST resolved): P0/P1 run in parallel (scout + R1
 
 <!-- SECTION:NOTES:BEGIN -->
 P0-P3 complete (two research passes, two review rounds) + post-TASK-76 rebase refactor. Deliverable: docs/research/2026-09-07-loop-taxonomy-research.md (frontmatter-check ok under the NEW validator; status: open; uncommitted pending human review). TASK-76 merged (1dbe6cd); branch rebased; doc refactored to new docs rules: paths docs/architecture -> docs/trd + docs/adr (line refs re-verified), reconciliation note RESOLVED, ADR-005 flow adopted in section 7 (ADR cross-cutting, not a pipeline stage; TASK ACs cite TRD/ADR constraints), ADR-003 decision gate applied (Decision: none — research only) + Lessons block, ADR-status bullet added (ADR-003/004/005 approved, ADR-006 planned). Loop surface (future CLI): stitch / weave / loom / pulse; weaver persona recommended (availability check gated at PRD). Budget tuple extends TASK-6 + 2026-09-03-budget-caps-checkpoint-resume.md; risk-signals.ts ON MAIN (no sequencing gate). Fresh-reviewer loop on the refactor: diff-reviewer-deepseek VERDICT APPROVE — 6 non-blocking findings all addressed (name direction reworded per ADR-003, :145-154 anchor, ADR de-pipelined in section 7, task notes synced; finding-1 stray artifact did NOT reproduce — git status clean); AC #8 wording drift (linear chain vs ADR-005 flow) recorded, AC frozen per spec gate.
+
+HANDOFF (2026-09-07, human directive: commit only — different thread continues, worktree stays): branch task/TASK-79 fully committed at c41ec2a (7 commits ahead of main: research doc + task record + ADR-007 in-review + index updates + de-branding). Worktree .worktrees/TASK-79 alive. PENDING HUMAN GATES: (1) ADR-007 approval — flip status in-review->approved in THREE places (frontmatter, ## Status section, docs/adr/README.md index row) on explicit human "approved"; (2) merge gate — difit http://localhost:4968 (task/TASK-79 vs main), on merge: merge branch to main, mark TASK-79 Done via task-flow close, THEN worktree cleanup only if human says so. Standing rules: KEEL_*/third-party names stay out of decision records (research citations only); ADR-006 row stays annotated as absorbed; task AC #8 wording drift recorded, ACs frozen. Next thread: rebase onto main before further edits if main moved.
+
+Correction: 6 commits ahead of main (not 7) — c6ddbee..c41ec2a, see git log.
 <!-- SECTION:NOTES:END -->
 
 ## Comments
