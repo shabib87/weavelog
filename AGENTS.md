@@ -36,7 +36,6 @@ weavelog/
 │   ├── PRODUCT.md             # Product strategy (what it is, moat, PMF)
 │   ├── research/RESEARCH.md            # Provenance
 │   ├── adr/                   # Decision records (Nygard, indexed, format contract)
-│   ├── PROGRESS.md            # Phase tracker (where we are)
 │   ├── prd/                   # Ratified milestone briefs (PRD) — cross-referenced with backlog milestones
 │   ├── trd/                   # Durable technical design (TRD) + diagrams — changed only via ADRs
 │   ├── research/              # Research logs (dated, lab notebooks)
@@ -53,7 +52,6 @@ weavelog/
 | `docs/PRODUCT.md` | Product strategy (what it is, moat, PMF) | Active, authoritative |
 | `docs/research/RESEARCH.md` | Why we build it this way | Active, authoritative |
 | `docs/adr/` | Architecture decision records (Nygard format, ADR index) | Active, authoritative |
-| `docs/PROGRESS.md` | Phase tracker (where we are) | Active, authoritative |
 | `docs/ROADMAP.md` | Product roadmap (version milestones) | Active, authoritative |
 | `docs/trd/2026-06-28-weavelog-design.md` | Detailed design | Active |
 | `docs/research/` | Research logs (dated, lab notebooks) | Active |

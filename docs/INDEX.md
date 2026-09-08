@@ -8,7 +8,8 @@
 
 ## How to use this index
 
-1. **Starting a session:** Read PROGRESS.md (status, phase, watch items) →
+1. **Starting a session:** Read this INDEX (it replaced the deleted
+   PROGRESS.md tracker) → ROADMAP.md for phase state →
 2. **Researching a topic:** Find the category below, scan purposes, read
    relevant files
 3. **Making a decision:** Check ADRs (past decisions), TBDs (open questions),
@@ -30,10 +31,10 @@
 | File | Type | Purpose | When | LOC |
 |---|---|---|---|---|
 | `AGENTS.md` | Constitution | Build commands, MUST NOTs, standards | Every session | 106 |
-| `README.md` | Project overview | What weavelog is, quickstart | First read only | 58 |
-| `NORTH_STAR.md` | Constitution | Non-negotiables, scope, success criteria | Every session | 51 |
-| `PRODUCT.md` | Strategy | Product definition, moat, PMF | On product decisions | 300 |
-| `ROADMAP.md` | Roadmap | Version milestones, release plan | On phase transitions | 301 |
+| `../README.md` (repo root) | Project overview | What weavelog is, quickstart | First read only | 94 |
+| `NORTH_STAR.md` | Constitution | Non-negotiables, scope, success criteria | Every session | 81 |
+| `PRODUCT.md` | Strategy | Product definition, moat, PMF | On product decisions | 97 |
+| `ROADMAP.md` | Roadmap | Version milestones, release plan | On phase transitions | 145 |
 
 ---
 
@@ -41,7 +42,6 @@
 
 | File | Type | Purpose | When | LOC |
 |---|---|---|---|---|
-| `PROGRESS.md` | Tracker | Phase status, timeline, watch items, done list | **Every session first** | 599 |
 
 ---
 
@@ -51,11 +51,11 @@
 |---|---|---|---|---|---|
 | `research/RESEARCH.md` | Provenance | WHY behind every design decision, source-by-source | On unfamiliar territory | 241 | 2026-07-22 |
 | `adr/0001-weavelog-architecture-decisions.md` | ADR | Historical umbrella record — traceability table routes each bundled decision to its current home. Do not implement from §2 | On design changes | 341 | 2026-09-07 |
-| `adr/0002-bash-homebrew-tooling.md` | ADR | Bash/Homebrew decision (approved: TypeScript only; reformatted to contract) | On distribution/language | 62 | 2026-09-07 |
+| `adr/0002-bash-homebrew-tooling.md` | ADR | Bash/Homebrew decision (approved: TypeScript only; reformatted to contract) | On distribution/language | 67 | 2026-09-07 |
 | `adr/0003-three-phase-loop-model.md` | ADR | Three-phase loop model + decision-recording gate (WHY ends in ADR or explicit no-decision) | Every WHY phase | 100 | 2026-09-07 |
 | `adr/0004-model-selection-benchmark-policy.md` | ADR | Seat-weighted benchmark policy; L0–L4 reviewer escalation; weekly/monthly drift cadence | Model decisions | 241 | 2026-09-07 |
-| `adr/0005-artifact-flow.md` | ADR | PRD/TRD/ADR/TASK doc classes; task-AC traceability rule (partially supersedes 07-04 doc-chain collapse) | Planning any task | 95 | 2026-09-07 |
-| `AGENTS.md` | Rules | Documentation rules (nested AGENTS.md): schemas, versioning, artifact flow PRD→TRD→ADR→TASK | When writing docs | 120 | 2026-09-07 |
+| `adr/0005-artifact-flow.md` | ADR | idea→PRD→TRD→milestone↔PRD→TASK doc classes; machine-checked bidirectional milestone linkage | Planning any task | 125 | 2026-09-07 |
+| `AGENTS.md` | Rules | Documentation rules (nested AGENTS.md): schemas, versioning, artifact flow, machine-checked linkage | When writing docs | 114 | 2026-09-07 |
 
 ---
 
@@ -169,8 +169,8 @@ Each file = one unresolved question blocking progress.
 | Category | Count | Total LOC |
 |---|---|---|
 | Root-level entry points | 5 | 816 |
-| Trackers | 2 | 677 |
-| Provenance & decisions | 7 | 1,700 |
+| Trackers | 1 | 145 |
+| Provenance & decisions | 7 | 1,787 |
 | Research logs (dated) | 10 | 2,004 |
 | Research references (living) | 2 | 697 |
 | Learning logs | 14 | 1,743 |

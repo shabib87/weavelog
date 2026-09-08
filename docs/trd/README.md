@@ -53,7 +53,7 @@ See [loop-factory.md](./loop-factory.md) for the full model, diagram, and EARS a
 - **Research** (why evidence): [docs/research/README.md](../research/README.md)
 - **Ratified briefs** (what): [docs/prd/](../prd/) — PRD index with backlog-milestone cross-references
 - **Plans**: historical — `docs/archive/plans/`; task planning lives in backlog tasks
-- **Runbook** (operations): [AGENT-STACK-RUNBOOK.md](../../AGENT-STACK-RUNBOOK.md)
+- **Runbook** (operations): `~/.agents/AGENT-STACK-RUNBOOK.md` (personal instance, outside the repo — see note above)
 
 ## Authoring rules
 
