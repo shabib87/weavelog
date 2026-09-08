@@ -52,7 +52,7 @@ PRD/TRD classes without a record would violate this repo's own ADR-003 gate
 | Decision | Choice | Why |
 |---|---|---|
 | **PRD** (product requirements) | Ratified **milestone briefs** in `docs/prd/` (e.g. the v0.1.0 draft brief) — goal, in/out of scope, success criteria, milestone mapping | The release scope of record; created and ratified by the human at milestone kickoff; **archives when the milestone ships** |
-| **TRD** (technical design) | Durable design in `docs/trd/` — loop-factory, headroom-proxy, model-routing, tool-boundaries, test-guardrails, worktree-discipline; the 2026-06-28 design spec remains the founding TRD in `specs/` until its content is fully absorbed | TRDs are living and **changed only via ADRs** — never edited around a decision |
+| **TRD** (technical design) | `docs/trd/` — the 2026-06-28 founding spec plus loop-factory, headroom-proxy, model-routing, tool-boundaries, test-guardrails, worktree-discipline, backlog-lifecycle, runbook-decomposition; diagrams in `docs/trd/diagrams/` | TRDs are living and **changed only via ADRs** — never edited around a decision |
 | **ADR** | `docs/adr/` (top level, out of the TRD corpus) — one hard-to-reverse decision per record, per the format contract | Immutable once approved; superseded, never rewritten |
 | **TASK** | Backlog item whose **acceptance criteria must cite the TRD section or ADR constraint they implement** | Upward traceability: a task that traces to nothing is a YAGNI violation and is rejected at the plan gate |
 | **BRD** | **Stays collapsed** into `NORTH_STAR.md` + PRODUCT.md | Still no separate business-requirements artifact — YAGNI holds |

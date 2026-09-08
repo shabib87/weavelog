@@ -279,7 +279,7 @@ describe("harness-dev context detection (AC #17)", () => {
 });
 
 describe("general-label decision table (AC #15)", () => {
-  test("first match: harness for harness-path modification (bin/plugins/config/AGENTS.md/docs-architecture/stack-versions)", () => {
+  test("first match: harness for harness-path modification (bin/plugins/config/AGENTS.md/docs-trd-adr-prd/stack-versions)", () => {
     for (const p of [
       "bin/src/task-validate.ts",
       "plugins/enforce.ts",

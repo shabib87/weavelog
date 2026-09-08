@@ -48,7 +48,7 @@ extension, not promised); TASK-75 config adoption.
 - [ ] #1 WHEN the format contract lands THEN docs/adr/README.md SHALL contain the section skeleton with per-section format rules and the table-vs-list decision rule [ADR-005 TRD rule; ADR-003 format-contract decision]
 - [ ] #2 WHEN the contract is adopted THEN docs/AGENTS.md SHALL reference the ADR format contract [retargeted 2026-09-07: AUTHORING.md was renamed docs/AGENTS.md earlier this branch]
 - [ ] #3 WHEN ADR-004 is reformatted THEN every decision SHALL be extractable from Decision + Alternatives tables alone (verdict markers on every option; no option without an explicit chosen/rejected) [ADR-005: ADR class format contract]
-- [ ] #4 WHEN the reference implementation is done THEN frontmatter-check --schema architecture SHALL pass on docs/trd/adr with zero violations
+- [ ] #4 WHEN the reference implementation is done THEN frontmatter-check --schema architecture SHALL pass on docs/trd, docs/adr, docs/prd with zero violations beyond the documented pre-convention exceptions
 - [ ] #5 IF legacy ADRs are exempt THEN the ADR index SHALL say so explicitly (001/0002 marked pre-convention, not reformatted)
 <!-- AC:END -->
 

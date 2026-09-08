@@ -40,6 +40,11 @@ See [loop-factory.md](./loop-factory.md) for the full model, diagram, and EARS a
 | [tool-boundaries.md](./tool-boundaries.md) | architecture | What each tool owns (backlog.md, enforce.ts, worktree-create.ts, reviewer-loop.ts, headroom, opencode) and its SRP |
 | [backlog-lifecycle.md](./backlog-lifecycle.md) | architecture | Conductor flow → backlog.md field mapping, three review checkpoints, deferrals |
 | [test-guardrails.md](./test-guardrails.md) | architecture | TDD ordering, EARS ACs, RED/GREEN split, reviewer checklist, verify-gate |
+| [model-routing.md](./model-routing.md) | architecture | Roster/roles, escalation ladder wiring (ADR-004 companion) |
+| [worktree-discipline.md](./worktree-discipline.md) | architecture | Worktree flow, HITL merge gate, crash contract |
+| [headroom-proxy.md](./headroom-proxy.md) | architecture | Proxy stack utilization |
+| [runbook-decomposition.md](./runbook-decomposition.md) | architecture | Runbook section map (post-decomposition index) |
+| [2026-06-28-weavelog-design.md](./2026-06-28-weavelog-design.md) | founding TRD | Full original architecture design (ETCSLV, isolation, budgets, rollback) |
 | [adr/README.md](../adr/README.md) | adr | ADR index + Nygard template (ADR-001..N, added incrementally) |
 | [diagrams/](./diagrams/) | architecture | Generated diagrams (HTML) |
 

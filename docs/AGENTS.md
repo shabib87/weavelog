@@ -20,11 +20,11 @@ them without explicit human instruction.
 Full rules in [adr/0005-artifact-flow.md](./adr/0005-artifact-flow.md).
 Summary:
 
-- **PRD** — ratified milestone brief in `specs/` (human-owned at kickoff;
+- **PRD** — ratified milestone brief in `prd/` (human-owned at kickoff;
   archives when the milestone ships).
-- **TRD** — durable design in `architecture/`; **changed only via ADRs**.
+- **TRD** — durable design in `trd/`; **changed only via ADRs**.
 - **ADR** — one hard-to-reverse decision per record (format contract in
-  `architecture/adr/README.md`); immutable once approved, superseded never
+  `adr/README.md`); immutable once approved, superseded never
   rewritten.
 - **TASK** — backlog item whose **acceptance criteria must cite the TRD
   section or ADR constraint they implement**; a task that traces to nothing
@@ -42,14 +42,14 @@ directly.
    `YYYY-MM-DD-` filename matching its `date`.
 2. Answer exactly one question: **did this produce a hard-to-reverse
    choice?**
-   - Yes → write a small ADR in `architecture/adr/` (next free number; see
+   - Yes → write a small ADR in `adr/` (next free number; see
      that README's format contract) before moving on. ADR-004 is the
      reference implementation.
    - No → end the note with `Decision: none — research only`.
 
 ## When you write or edit an ADR
 
-- Follow the format contract in `architecture/adr/README.md` — fixed
+- Follow the format contract in `adr/README.md` — fixed
   section order, tables per the contract, explicit `chosen`/`rejected`
   verdicts. ADR-004 is the reference implementation.
 - Amending an **approved** ADR: three tiers only — clarify in place with a
@@ -101,13 +101,14 @@ does not deliver.
   privacy sweep rejects them.
 - **Frontmatter schemas:** `trd/**` and `adr/**` use the architecture
   schema; `research/` uses the research schema. Known pre-convention
-  exceptions (frontmatter-free, never "fix" without the human): the v0.1.0
+  exceptions (frontmatter-free, never "fix" without the human) plus
+  `trd/worktree-discipline.md` (pre-existing debt, task pending): the v0.1.0
   draft brief and github-repo-metadata in `prd/` (the brief is
   byte-identity-protected — its internal `docs/specs/` literals are a
   frozen ratification snapshot), and the founding design spec in `trd/`.
 - Known accepted noise: `NORTH_STAR.md`, `PRODUCT.md`, `ROADMAP.md`,
   `INDEX.md`, `cli.md`, this file, `archive/**`, and pre-convention files
-  the validator flags in `research/`/`specs/` (e.g. the v0.1.0 draft brief,
+  the validator flags in `research/`, `prd/`, and `trd/` (e.g. the v0.1.0 draft brief,
   the design spec) are intentionally frontmatter-free or frozen. Do not
   "fix" them by adding frontmatter without the human's say-so.
 - New plans do **not** go in `docs/` — task planning lives in backlog tasks

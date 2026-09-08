@@ -31,7 +31,7 @@ future agents/humans.
 | ADR-006 | conductor-dispatch (subagents return findings, conductor writes state) | (planned) | trigger: next architecture decision |
 
 > Migration note (2026-09-07): legacy ADRs 0001/0002 were migrated from
-> `docs/adr/` (now removed) by human instruction; ADR-002 satisfies the
+> the pre-reorg ADR location (dissolved by the ADR-005 reorg); ADR-002 satisfies the
 > originally planned scripts-not-CLI entry.
 
 ## Format contract (readability for humans and agents)
