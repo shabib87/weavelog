@@ -3,18 +3,20 @@
 > **Purpose:** Navigation map for agents and humans. Read this to decide
 > what to read and what to skip. Updated as part of Phase 1.85c.
 > **Last updated:** 2026-09-07 (ADR rows reconciled; research/plans/learnings
-> corpus entries beyond 2026-07-22 are tracked by `docs/research/README.md` —
-> this index does not duplicate the corpus)
+> corpus entries: `docs/research/README.md` tracks the dated research corpus;
+> `archive/learnings/` and `archive/plans/` rows are indexed here)
 
 ## How to use this index
 
 1. **Starting a session:** Read this INDEX (it replaced the deleted
-   PROGRESS.md tracker) → ROADMAP.md for phase state →
+   PROGRESS.md tracker) and ROADMAP.md for phase state
 2. **Researching a topic:** Find the category below, scan purposes, read
    relevant files
-3. **Making a decision:** Check ADRs (past decisions), TBDs (open questions),
-   research logs (evidence)
-4. **Writing a doc:** Check templates defined in docs/conventions.md (pending)
+3. **Making a decision:** Check ADRs (past decisions) and research logs
+   (evidence). The TBD corpus is FROZEN (archive/tbd) — never a source of
+   live questions; re-raise them as backlog tasks instead.
+4. **Writing a doc:** Follow the conventions in `docs/AGENTS.md` (schemas,
+   versioning, artifact flow, machine-checked linkage)
 
 ## Legend
 
@@ -132,9 +134,11 @@ Each captures what went wrong, root cause, and blog candidate.
 
 ---
 
-## Open questions (TBD)
+## Open questions (TBD) — frozen corpus
 
-Each file = one unresolved question blocking progress.
+Frozen 2026-09-07 (moved to `docs/archive/tbd/`): **historical questions,
+background only — never implement against them.** Live questions are
+re-raised as backlog tasks. These files are read-only.
 
 | File | Topic | Severity | When | LOC |
 |---|---|---|---|---|
