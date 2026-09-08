@@ -11,6 +11,8 @@ related_to:
   - ../PRODUCT.md
   - ../ROADMAP.md
   - ../research/2026-09-07-flagship-tier-pricing-quality-preliminary.md
+  - ./0003-three-phase-loop-model.md
+  - 0003-three-phase-loop-model.md
 sources:
   - "TASK-61"
 ---

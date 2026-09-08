@@ -1174,7 +1174,9 @@ function main(): void {
       // `id:` frontmatter must equal the filename-derived id.
       try {
         const mfm = parseYaml(
-          readFileSync(join(msDir, f), "utf8").split(/^---\n/m)[1] ?? "",
+          readFileSync(join(msDir, f), "utf8")
+            .replace(/\r\n/g, "\n")
+            .split(/^---\n/m)[1] ?? "",
         ) as { id?: unknown };
         if (typeof mfm?.id === "string" && mfm.id !== id) {
           all.push(

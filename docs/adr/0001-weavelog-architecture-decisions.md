@@ -45,7 +45,7 @@ and constitute retrospective ADR creation).
 | 2.10 | Budget default, pause on exhaustion | current direction | ADR-004 drift-gate governance |
 | 2.11 | Agent Skills + AGENTS.md standards | current | NORTH_STAR open standards; docs/AGENTS.md |
 | 2.12 | V1 human-gated, sequential, no worktrees | **partially superseded** | ROADMAP v0.1.0; worktree practice per worktree-discipline.md (TASK-23) |
-| 2.13 | MIT license; issues welcome, no PRs | current | root LICENSE; CONTRIBUTING.md |
+| 2.13 | MIT license; issues welcome, no PRs | superseded 2026-09-07 (relicensed Apache-2.0; see root LICENSE, ATTRIBUTION.md, docs/research/2026-07-04-license-selection.md) | root LICENSE; CONTRIBUTING.md |
 | 2.14 | Three-layer customization; plugin packages (v1.1) | current | docs/research/2026-07-08-plugin-architecture-and-scope-refinement.md; PRODUCT.md |
 
 ---

@@ -14,7 +14,7 @@ dependencies:
   - TASK-61
 references:
   - 'docs/adr/README.md'
-  - 'docs/AUTHORING.md'
+  - 'docs/AGENTS.md'
 priority: medium
 type: task
 ordinal: 51000
@@ -33,7 +33,7 @@ Deliverables:
 1. Format contract added to `docs/adr/README.md` (section
    skeleton with per-section format rules; table-vs-list decision rule;
    decided/rejected verdict markers; readability limits) and a pointer from
-   `docs/AUTHORING.md`.
+   `docs/AGENTS.md`.
 2. ADR-004 reformatted as the reference implementation (dogfood: the guide
    is validated by applying it).
 3. Legacy ADR-001/0002 marked exempt (pre-convention records; not

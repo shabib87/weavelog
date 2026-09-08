@@ -10,6 +10,8 @@ related_to:
   - ./backlog-lifecycle.md
   - ./test-guardrails.md
   - ../adr/README.md
+  - ../adr/0003-three-phase-loop-model.md
+  - ../adr/0003-three-phase-loop-model.md
 sources:
   - "TASK-15"
   - "TASK-22 (consensus restoration)"

@@ -4,7 +4,8 @@ topic: "Worktree discipline — flow, lifecycle, HITL merge gate, crash contract
 status: approved
 type: architecture
 author: conductor
-related_to: []
+related_to:
+  - ./runbook-decomposition.md
 sources:
   - "TASK-23"
 ---

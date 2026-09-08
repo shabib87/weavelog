@@ -10,6 +10,8 @@ related_to:
   - ./tool-boundaries.md
   - ../adr/0003-three-phase-loop-model.md
   - ../adr/0005-artifact-flow.md
+  - ./runbook-decomposition.md
+  - runbook-decomposition.md
 sources:
   - "TASK-15"
   - "TASK-13 (backlog.md wiring)"
@@ -56,8 +58,7 @@ reserved tier (machinery-only) `spec-approved` `dispatched` `stuck` `merged` `ho
 `wayfinder:map`; general tier (hand-settable) `harness` `dogfood` `deferred`. Unknown
 labels refuse the claim. `harness`/`dogfood` are harness-dev-only (agents-harness and
 weavelog repos); in any other repo they are validation failures. Decision table for
-general labels, first match: `harness` (task modifies bin/plugins/config/AGENTS.md/
-weavelog.json), `dogfood` (deliverable is real work run through
+general labels, first match: `harness` (task modifies bin/ plugins/ config/ AGENTS.md docs/trd/ docs/adr/ docs/prd/ weavelog.json stack-versions.json — canonical list: HARNESS_PATH_RULES in src/tools/task-validate.ts), `dogfood` (deliverable is real work run through
 the harness as the verification subject), `deferred` (explicit revive trigger), otherwise
 no label.
 

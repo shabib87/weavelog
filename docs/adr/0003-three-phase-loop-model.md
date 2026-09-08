@@ -9,6 +9,8 @@ related_to:
   - ./0005-artifact-flow.md
   - ./0004-model-selection-benchmark-policy.md
   - ../trd/loop-factory.md
+  - ../trd/backlog-lifecycle.md
+  - ../trd/backlog-lifecycle.md
 sources:
   - "TASK-15"
   - "TASK-76"

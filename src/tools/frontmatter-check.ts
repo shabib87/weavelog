@@ -392,7 +392,9 @@ function validateArch(doc: DocEntry): {
           // must equal the filename-derived id (ADR-005 linkage, loop 5).
           try {
             const raw = readFileSync(join(msDir, matched), "utf8");
-            const mfm = parseYaml(raw.split(/^---\n/m)[1] ?? "") as {
+            const mfm = parseYaml(
+              raw.replace(/\r\n/g, "\n").split(/^---\n/m)[1] ?? "",
+            ) as {
               id?: unknown;
             };
             if (typeof mfm?.id === "string" && mfm.id !== entry) {

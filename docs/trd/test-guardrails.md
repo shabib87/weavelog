@@ -8,6 +8,10 @@ related_to:
   - ./README.md
   - ./loop-factory.md
   - ./tool-boundaries.md
+  - ./headroom-proxy.md
+  - ./runbook-decomposition.md
+  - headroom-proxy.md
+  - runbook-decomposition.md
 sources:
   - "TASK-15"
   - "TASK-21 (EARS activation)"
