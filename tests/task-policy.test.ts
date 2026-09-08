@@ -1,8 +1,11 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { describe, test } from "node:test";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import {
   decideGeneralLabel,
   decideMilestone,
@@ -504,20 +507,30 @@ describe("milestone PRD anchor validation (TASK-76, ADR-005)", () => {
 
 describe("milestone id/filename mismatch (loop 5, ADR-005 linkage)", () => {
   test("--milestones exits 1 when a milestone file's frontmatter id disagrees with its filename", () => {
-    const { spawnSync } = require("node:child_process");
-    const { fileURLToPath, pathToFileURL } = require("node:url");
-    const { createRequire } = require("node:module");
-    const Bin = fileURLToPath(
-      new URL("../src/tools/task-validate.ts", import.meta.url),
-    );
     const root = mkdtempSync(join(tmpdir(), "milestone-id-mismatch-"));
     mkdirSync(join(root, "backlog", "milestones"), { recursive: true });
     writeFileSync(
       join(root, "backlog", "milestones", "m-7 - pre-publish-v0.1.0.md"),
-      '---\nid: m-6\ntitle: "Pre-publish v0.1.0"\n---\n\n## Description\n\nMilestone: Pre-publish v0.1.0\nPRD anchor: none — test fixture\n',
+      `---
+id: m-6
+title: "Pre-publish v0.1.0"
+---
+
+## Description
+
+Milestone: Pre-publish v0.1.0
+PRD anchor: none — test fixture
+`,
     );
     const req = createRequire(import.meta.url);
-    const loader = join(dirname(req.resolve("tsx")), "loader.mjs");
+    const loader = join(dirname(req.resolve("tsx")), "dist/loader.mjs");
+    const Bin = join(
+      dirname(fileURLToPath(import.meta.url)),
+      "..",
+      "src",
+      "tools",
+      "task-validate.ts",
+    );
     const r = spawnSync(
       process.execPath,
       ["--import", pathToFileURL(loader).href, Bin, "--milestones"],
