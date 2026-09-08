@@ -1,7 +1,7 @@
 ---
 date: 2026-09-07
 topic: "Version scope"
-status: draft
+status: approved
 type: prd
 author: conductor
 related_to:
@@ -28,7 +28,7 @@ docs/prd/2026-09-05-v010-draft-brief.md; docs/trd/backlog-lifecycle.md.
 
 ## Provenance
 
-DRAFT — pending human ratification at the TASK-76 merge gate (2026-09-07). Scope from ROADMAP m-6. The method this brief defines is itself the machine-checked linkage introduced by ADR-0005.
+RATIFIED by the human at the TASK-76 merge gate (2026-09-08). Scope from ROADMAP m-6. The method this brief defines is itself the machine-checked linkage introduced by ADR-0005.
 
 PRD anchor rule: `backlog/milestones/m-6 - *.md` points back here
 (machine-checked bidirectionally; see ADR-0005).

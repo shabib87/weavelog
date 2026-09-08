@@ -1,7 +1,7 @@
 ---
 date: 2026-09-07
 topic: Three-phase loop model (WHY/WHAT/HOW) with a decision-recording gate
-status: in-review
+status: approved
 type: adr
 author: conductor
 related_to:

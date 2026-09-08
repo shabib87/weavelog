@@ -1,7 +1,7 @@
 ---
 date: 2026-09-07
 topic: Model-selection benchmark policy (open-weight roster vs frontier)
-status: in-review
+status: approved
 type: adr
 author: conductor
 related_to:

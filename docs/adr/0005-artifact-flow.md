@@ -1,7 +1,7 @@
 ---
 date: 2026-09-07
 topic: Artifact flow — PRD, TRD, ADR, TASK (doc classes and traceability)
-status: in-review
+status: approved
 type: adr
 author: conductor
 related_to:
@@ -19,7 +19,7 @@ sources:
 
 ## Status
 
-in-review (2026-09-07) — human-directed governance decision; **partially
+approved (ratified by the human at the TASK-76 merge gate, 2026-09-08) — human-directed governance decision; **partially
 supersedes** the doc-chain collapse recorded in
 `docs/research/2026-07-04-harness-setup-and-pmf-synthesis.md` §7.
 Amended 2026-09-07 (plan review, DeepSeek + Qwen APPROVE-WITH-CHANGES): the

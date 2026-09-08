@@ -1,7 +1,7 @@
 ---
 date: 2026-09-07
 topic: "Open-source release"
-status: draft
+status: approved
 type: prd
 author: conductor
 related_to: []
@@ -27,7 +27,7 @@ docs/trd/test-guardrails.md (CI gates); docs/research/2026-07-04-license-selecti
 
 ## Provenance
 
-DRAFT — pending human ratification at the TASK-76 merge gate (2026-09-07). Scope from ROADMAP m-5. Ratify or amend in review; this brief becomes the scope of record on approval.
+RATIFIED by the human at the TASK-76 merge gate (2026-09-08). Scope from ROADMAP m-5. Ratify or amend in review; this brief becomes the scope of record on approval.
 
 PRD anchor rule: `backlog/milestones/m-5 - *.md` points back here
 (machine-checked bidirectionally; see ADR-0005).

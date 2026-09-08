@@ -15,8 +15,8 @@ frontmatter `milestones:` ↔ milestone-file `PRD anchor:` line).
 | [2026-09-07-m-2-docs-restructure-brief.md](./2026-09-07-m-2-docs-restructure-brief.md) | m-2 docs-restructure | backfilled (partly superseded by the ADR-0005 reorg) |
 | [2026-09-07-m-3-package-and-ship-brief.md](./2026-09-07-m-3-package-and-ship-brief.md) | m-3 package-and-ship | backfilled |
 | [2026-09-07-m-4-harness-agnostic-brief.md](./2026-09-07-m-4-harness-agnostic-brief.md) | m-4 harness-agnostic | backfilled |
-| [2026-09-07-m-5-open-source-release-brief.md](./2026-09-07-m-5-open-source-release-brief.md) | m-5 open-source-release | draft — pending human ratification |
-| [2026-09-07-m-6-version-scope-brief.md](./2026-09-07-m-6-version-scope-brief.md) | m-6 version-scope | draft — pending human ratification |
+| [2026-09-07-m-5-open-source-release-brief.md](./2026-09-07-m-5-open-source-release-brief.md) | m-5 open-source-release | approved |
+| [2026-09-07-m-6-version-scope-brief.md](./2026-09-07-m-6-version-scope-brief.md) | m-6 version-scope | approved |
 | [2026-09-05-v010-draft-brief.md](./2026-09-05-v010-draft-brief.md) | m-7 pre-publish-v0.1.0 (+ m-6 method) | approved — release scope of record |
 | [2026-09-05-github-repo-metadata.md](./2026-09-05-github-repo-metadata.md) | m-7 (companion) | approved |
 
