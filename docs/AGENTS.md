@@ -15,7 +15,7 @@ them without explicit human instruction.
 | `adr/` | Decision records — Nygard sections + format contract in that README. Read it before writing an ADR |
 | `archive/` | Frozen provenance. **Never edit, never implement against, never add** (except whole-directory moves per the root AGENTS.md) |
 
-## Artifact flow: PRD → TRD → ADR → TASK
+## Artifact flow: idea → PRD → TRD → milestone ↔ PRD → TASK
 
 Full rules in [adr/0005-artifact-flow.md](./adr/0005-artifact-flow.md).
 Summary:
@@ -107,11 +107,6 @@ does not deliver.
   every file carries conforming frontmatter (`type: prd` briefs also carry
   machine-checked `milestones:`). Pre-convention debt remains only in
   `research/` (documented, task pending).
-- Known accepted noise: `NORTH_STAR.md`, `PRODUCT.md`, `ROADMAP.md`,
-  `INDEX.md`, `cli.md`, this file, `archive/**`, and pre-convention files
-  the validator flags in `research/`, `prd/`, and `trd/` (e.g. the v0.1.0 draft brief,
-  the design spec) are intentionally frontmatter-free or frozen. Do not
-  "fix" them by adding frontmatter without the human's say-so.
 - New plans do **not** go in `docs/` — task planning lives in backlog tasks
   (acceptance criteria + definition of done). `archive/plans/` and
   `archive/superpowers/` are historical only.

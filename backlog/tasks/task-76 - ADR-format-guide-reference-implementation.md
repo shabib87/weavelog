@@ -101,7 +101,7 @@ Applied to the plan:
 - Exhaustive grep-driven related_to + body sweep, depth-aware (replaces "5 TRD docs cross-refs"); ADR-001 (approved) gets tier-1 dated note
 - Added to sweep: root AGENTS.md:38-57, docs/cli.md:4,213,225,231, ATTRIBUTION.md:25, frontmatter-check.ts help text (39,71)
 - Dropped: "3 research notes path repair" (they cite docs/spec/ singular, a backlog convention, not this tree)
-- Brief byte-identity: internal docs/specs/ literals are FROZEN-SNAPSHOT, intentionally not repaired (recorded in ADR-005 amendment + prd/README)
+- Brief byte-identity: SUPERSEDED same day by directive 2 (human re-ratification) — brief carries frontmatter and its internal paths were repaired; see ADR-0005 amendment
 - AUTHORING.md does not exist (renamed to docs/AGENTS.md earlier this branch): AC#2 retargeted
 - Phase 4 corrected: 35/59 are Done (dropped, ledger rule); added 30; TASK-56 carve-out noted (path literals only here; it owns semantic AGENTS.md/cli.md work)
 - HARNESS_PATH_RULES: prefix set = docs/trd/, docs/adr/, docs/prd/ (test fixture extended same commit)

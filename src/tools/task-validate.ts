@@ -1142,6 +1142,7 @@ export function preCommitCheck(
 }
 
 const HELP = `Usage: bun task-validate.ts --pre-commit
+       bun task-validate.ts --milestones   (run from the repo root)
        bun task-validate.ts --help
 
 --pre-commit  git pre-commit mode: blocks when staged backlog/tasks/task-*.md

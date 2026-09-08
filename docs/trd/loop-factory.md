@@ -28,7 +28,7 @@ repeat, one queue feeds it, and two human gates hold the boundaries.
 | Phase | Output | Control character | Human |
 |---|---|---|---|
 | WHY (research → understanding) | `docs/research/` (why) | divergent | INSIDE |
-| WHAT (spec) | `docs/spec/` (what) | divergent, continuous dialogue | INSIDE |
+| WHAT (spec) | `docs/prd/` (what) | divergent, continuous dialogue | INSIDE |
 | HOW (plan → build → verify) | backlog tasks (how) → code → evidence | convergent | at the two gates only |
 
 WHY is the research half of WHAT (intake → research → dialogue → prototype → spec),

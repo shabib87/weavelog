@@ -24,6 +24,13 @@ Backfilled briefs record ratifications that already happened in-thread; they
 are not retroactive decisions. Draft briefs need explicit human
 ratification before their milestone's tasks claim.
 
+Byte-identity of the v0.1.0 brief was re-ratified away by the human
+(2026-09-07, TASK-76 directive 2): it now carries frontmatter and its
+internal paths are repaired (see ADR-0005 amendment; TASK-56 AC#6 updated
+in place). Linkage asymmetry by design: a brief may list several
+milestones (e.g. the v0.1.0 brief covers m-6 and m-7), while each
+milestone anchors exactly one brief.
+
 ## Flow (ADR-0005)
 
 idea → PRD (requirements inside) → TRD → milestone ↔ PRD → TASK;

@@ -27,7 +27,7 @@ docs/trd/loop-factory.md (host-agnostic roles); payload/ layout per payload/AGEN
 
 ## Provenance
 
-Backfilled 2026-09-07 (TASK-76): decided in docs/research/2026-08-15-inner-harness-layers.md and docs/research/2026-08-15-inner-harness-vocabulary.md; executed in-thread. This brief is the record.
+Backfilled 2026-09-07 (TASK-76): DECIDED AND SCOPED in docs/research/2026-08-15-inner-harness-layers.md and docs/research/2026-08-15-inner-harness-vocabulary.md (which mark several primitives DEFERRED). Implementation is largely OPEN (driver-pipeline tasks To Do as of 2026-09-07); config-as-payload shipped under m-3 (TASK-23). This brief records the decision, not completed delivery.
 
 PRD anchor rule: `backlog/milestones/m-4 - *.md` points back here
 (machine-checked bidirectionally; see ADR-0005).

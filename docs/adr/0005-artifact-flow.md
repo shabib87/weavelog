@@ -14,7 +14,7 @@ sources:
   - "TASK-76"
 ---
 
-# Artifact Flow: PRD → TRD → ADR → TASK
+# Artifact Flow: idea → PRD → TRD → milestone ↔ PRD → TASK (ADR cross-cutting)
 
 ## Status
 
