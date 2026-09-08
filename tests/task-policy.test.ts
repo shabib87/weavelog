@@ -13,12 +13,12 @@ import {
   isHarnessDevContext,
   isKnownLabel,
   isReservedLabel,
-  validateMilestoneAnchor,
   RESERVED_LABELS,
   scaffoldVocabulary,
   unknownLabels,
   VERSION_MILESTONE_ID,
   VERSION_SCOPE_LABELS,
+  validateMilestoneAnchor,
   wayfinderMilestoneName,
 } from "../src/tools/task-validate.ts";
 
@@ -439,14 +439,20 @@ describe("milestone PRD anchor validation (TASK-76, ADR-005)", () => {
     const root = mkRoot();
     assert.deepEqual(
       validateMilestoneAnchor("m-7", "# m-7\n\nsome body\n", root),
-      ['milestone m-7 is missing its "PRD anchor:" line (docs/prd path or explicit "none" marker)'],
+      [
+        'milestone m-7 is missing its "PRD anchor:" line (docs/prd path or explicit "none" marker)',
+      ],
     );
   });
 
   test("explicit none marker is valid", () => {
     const root = mkRoot();
     assert.deepEqual(
-      validateMilestoneAnchor("m-2", "# m-2\nPRD anchor: none — pre-PRD-era, decisions recorded in-thread\n", root),
+      validateMilestoneAnchor(
+        "m-2",
+        "# m-2\nPRD anchor: none — pre-PRD-era, decisions recorded in-thread\n",
+        root,
+      ),
       [],
     );
   });
@@ -456,7 +462,7 @@ describe("milestone PRD anchor validation (TASK-76, ADR-005)", () => {
     mkdirSync(join(root, "docs", "prd"), { recursive: true });
     writeFileSync(
       join(root, "docs", "prd", "2026-09-07-m-7-brief.md"),
-      "---\ndate: 2026-09-07\ntopic: brief\nstatus: approved\ntype: prd\nauthor: conductor\nrelated_to: []\nsources: [\"TASK-76\"]\nmilestones:\n  - m-7\n---\n\n# brief\n",
+      '---\ndate: 2026-09-07\ntopic: brief\nstatus: approved\ntype: prd\nauthor: conductor\nrelated_to: []\nsources: ["TASK-76"]\nmilestones:\n  - m-7\n---\n\n# brief\n',
     );
     assert.deepEqual(
       validateMilestoneAnchor(
@@ -473,7 +479,7 @@ describe("milestone PRD anchor validation (TASK-76, ADR-005)", () => {
     mkdirSync(join(root, "docs", "prd"), { recursive: true });
     writeFileSync(
       join(root, "docs", "prd", "2026-09-07-m-7-brief.md"),
-      "---\ndate: 2026-09-07\ntopic: brief\nstatus: approved\ntype: prd\nauthor: conductor\nrelated_to: []\nsources: [\"TASK-76\"]\nmilestones:\n  - m-6\n---\n\n# brief\n",
+      '---\ndate: 2026-09-07\ntopic: brief\nstatus: approved\ntype: prd\nauthor: conductor\nrelated_to: []\nsources: ["TASK-76"]\nmilestones:\n  - m-6\n---\n\n# brief\n',
     );
     const v = validateMilestoneAnchor(
       "m-7",

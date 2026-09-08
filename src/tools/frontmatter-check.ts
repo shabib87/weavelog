@@ -313,7 +313,6 @@ function parseTarget(absPath: string): DocEntry | null {
   }
 }
 
-
 function findMilestonesDir(startDir: string): string | null {
   let cur = resolve(startDir);
   const stop = parse(cur).root;

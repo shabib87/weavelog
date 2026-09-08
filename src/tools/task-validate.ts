@@ -1170,7 +1170,11 @@ function main(): void {
       if (!/^m-\d+ /.test(f) || !f.endsWith(".md")) continue;
       const id = f.split(" ")[0];
       all.push(
-        ...validateMilestoneAnchor(id, readFileSync(join(msDir, f), "utf8"), process.cwd()),
+        ...validateMilestoneAnchor(
+          id,
+          readFileSync(join(msDir, f), "utf8"),
+          process.cwd(),
+        ),
       );
     }
     if (all.length > 0) {

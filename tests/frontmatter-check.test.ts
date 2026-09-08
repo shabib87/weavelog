@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
-import { createRequire } from "node:module";
 import { afterEach, describe, test } from "node:test";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
@@ -612,7 +612,7 @@ milestones:
     const root = makeRepo({
       "backlog/milestones/m-7 - pre-publish-v0.1.0.md": "# m-7\n",
       "docs/prd/2026-09-07-m-7-brief.md": brief("m-7").replace(
-        /milestones:\n  - m-7\n/,
+        /milestones:\n {2}- m-7\n/,
         "",
       ),
     });
