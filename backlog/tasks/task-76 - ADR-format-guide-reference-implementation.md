@@ -109,7 +109,7 @@ Applied to the plan:
 ## Definition of Done
 <!-- DOD:BEGIN -->
 - [ ] #1 Docs-only diff; zero code changes [AMENDED 2026-09-07, human-directed: path-literal touch-ups in src/ (test-first), payload/ configs, and backlog/ task files now in scope per the Phase 1-5 plan below]
-- [ ] #2 frontmatter-check --schema architecture passes fresh in the worktree on docs/trd docs/adr docs/prd, with only the 3 documented pre-convention exceptions (frontmatter-free ratified records)
+- [ ] #2 frontmatter-check --schema architecture passes fresh in the worktree on docs/trd docs/adr docs/prd with ZERO exceptions (23/23 — every straggler frontmattered per directive 2)
 - [ ] #3 Sanitization scan passes (no absolute home paths, no secrets)
 - [ ] #4 Worktree clean; branch rebased on main
 - [ ] #5 Human reviews diff before merge (HITL)
