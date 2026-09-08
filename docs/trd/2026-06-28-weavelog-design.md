@@ -1,6 +1,17 @@
+---
+date: 2026-06-28
+topic: "weavelog founding design — agentic loop engineering workspace"
+status: approved
+type: architecture
+author: conductor
+related_to: []
+sources:
+  - "TASK-45"
+---
+
 # weavelog: Agentic Loop Engineering Workspace
 
-**Status:** Draft (revised July 4, 2026)
+**Status:** Approved — founding TRD (drafted 2026-06-28, revised 2026-07-04; ratified via ADR-0005, 2026-09-07)
 **Date:** June 28, 2026 (original); revised July 4, 2026
 **Supersedes:** `docs/superpowers/specs/2026-06-28-harness-kit-design.md` (relocated and revised)
 **Authoritative sources:** `docs/NORTH_STAR.md` (what), `docs/research/RESEARCH.md` (why)
@@ -209,7 +220,7 @@ A Pi TypeScript extension distributed as an npm package (`weavelog/pi-weavelog`)
       "agent": "specifier",
       "model": "z-ai/glm-5.2",
       "temperature": 0.1,
-      "verify": { "type": "tests-pass", "command": "test -f docs/specs/feature-spec.md" },
+      "verify": { "type": "tests-pass", "command": "test -f docs/prd/feature-spec.md" },
       "gate": "human"
     },
     {
@@ -442,7 +453,7 @@ The human is a **lifecycle gate**, not a verifier. They review the verifier's ou
 
 | Step | "Done" means |
 |---|---|
-| Spec | Spec file exists at expected path (`test -f docs/specs/feature-spec.md`) |
+| Spec | Spec file exists at expected path (`test -f docs/prd/feature-spec.md`) |
 | Code | Test suite passes (`node --import tsx --test`) |
 | QA | Lint clean + tests pass (`biome check --no-errors && node --import tsx --test`) |
 | Docs | Doc files exist at expected paths |

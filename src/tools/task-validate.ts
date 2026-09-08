@@ -61,6 +61,62 @@ export const GENERAL_LABELS: ReadonlySet<string> = new Set([
 ]);
 
 /** Normalize a label for vocabulary/priority matching (case-insensitive). */
+/**
+ * Milestone PRD anchor check (ADR-005, bidirectional linkage).
+ * Every backlog/milestones/m-*.md body must carry exactly one
+ * `PRD anchor:` line — either `none — <reason>` (explicit, for pre-PRD-era
+ * milestones) or a docs/prd/<file>.md path that resolves to a brief whose
+ * frontmatter `milestones` list includes this milestone id.
+ */
+export function validateMilestoneAnchor(
+  milestoneId: string,
+  body: string,
+  repoRoot: string,
+): string[] {
+  const v: string[] = [];
+  const lines = body.split("\n").filter((l) => l.startsWith("PRD anchor:"));
+  if (lines.length === 0) {
+    v.push(
+      `milestone ${milestoneId} is missing its "PRD anchor:" line (docs/prd path or explicit "none" marker)`,
+    );
+    return v;
+  }
+  if (lines.length > 1) {
+    v.push(
+      `milestone ${milestoneId} has ${lines.length} "PRD anchor:" lines; exactly one is required`,
+    );
+  }
+  const value = lines[0].slice("PRD anchor:".length).trim();
+  if (/^none\b/.test(value)) return v;
+  if (!/^docs\/prd\/.+\.md$/.test(value)) {
+    v.push(
+      `milestone ${milestoneId}: PRD anchor must be a docs/prd/<file>.md path or "none — <reason>", got: ${value}`,
+    );
+    return v;
+  }
+  const target = join(repoRoot, value);
+  if (!existsSync(target)) {
+    v.push(`milestone ${milestoneId}: PRD anchor does not resolve: ${value}`);
+    return v;
+  }
+  try {
+    const fm = parseYaml(
+      readFileSync(target, "utf8").split(/^---\n/m)[1] ?? "",
+    ) as { milestones?: unknown };
+    const ms = fm?.milestones;
+    if (!Array.isArray(ms) || !ms.includes(milestoneId)) {
+      v.push(
+        `milestone ${milestoneId}: PRD anchor target ${value} does not list ${milestoneId} in its frontmatter milestones (bidirectional linkage broken)`,
+      );
+    }
+  } catch {
+    v.push(
+      `milestone ${milestoneId}: PRD anchor target ${value} is unreadable or has invalid frontmatter`,
+    );
+  }
+  return v;
+}
+
 export function normalizeLabel(label: string): string {
   return String(label ?? "")
     .trim()
@@ -208,7 +264,7 @@ export function detectHarnessDevFromCwd(
  *
  * Order matters (mechanical-first, gate-ratified in SPEC v4.1):
  *   1. harness  — the task modifies bin/ or plugins/ or config/ or AGENTS.md
- *                 or docs/architecture/ or the stack manifest (stack-versions.json
+ *                 or docs/trd/, docs/adr/, docs/prd/ or the stack manifest (stack-versions.json
  *                 legacy / weavelog.json current) (file-path rule
  *                 against the task's modified-file paths, case-insensitive)
  *   2. dogfood  — the deliverable is real work run through the harness as the
@@ -229,7 +285,9 @@ export const HARNESS_PATH_RULES: readonly string[] = [
   "bin/",
   "plugins/",
   "config/",
-  "docs/architecture/",
+  "docs/trd/",
+  "docs/adr/",
+  "docs/prd/",
   "AGENTS.md",
   "stack-versions.json",
   "weavelog.json",
@@ -1084,6 +1142,7 @@ export function preCommitCheck(
 }
 
 const HELP = `Usage: bun task-validate.ts --pre-commit
+       bun task-validate.ts --milestones   (run from the repo root)
        bun task-validate.ts --help
 
 --pre-commit  git pre-commit mode: blocks when staged backlog/tasks/task-*.md
@@ -1099,6 +1158,49 @@ function main(): void {
   const args = process.argv.slice(2);
   if (args.includes("--help")) {
     console.log(HELP);
+    process.exit(0);
+  }
+  if (args.includes("--milestones")) {
+    const msDir = join(resolve("backlog"), "milestones");
+    if (!existsSync(msDir)) {
+      console.error(`no backlog/milestones directory at ${msDir}`);
+      process.exit(2);
+    }
+    const all: string[] = [];
+    for (const f of readdirSync(msDir)) {
+      if (!/^m-\d+ /.test(f) || !f.endsWith(".md")) continue;
+      const id = f.split(" ")[0];
+      // id/filename agreement (ADR-005 linkage, loop 5): the file's own
+      // `id:` frontmatter must equal the filename-derived id.
+      try {
+        const mfm = parseYaml(
+          readFileSync(join(msDir, f), "utf8")
+            .replace(/\r\n/g, "\n")
+            .split(/^---\n/m)[1] ?? "",
+        ) as { id?: unknown };
+        if (typeof mfm?.id === "string" && mfm.id !== id) {
+          all.push(
+            `milestone file ${f} declares id "${mfm.id}" but its filename says "${id}" — rename the file or fix the id`,
+          );
+          continue;
+        }
+      } catch {
+        all.push(`milestone file ${f} is unreadable`);
+        continue;
+      }
+      all.push(
+        ...validateMilestoneAnchor(
+          id,
+          readFileSync(join(msDir, f), "utf8"),
+          process.cwd(),
+        ),
+      );
+    }
+    if (all.length > 0) {
+      for (const violation of all) console.error(`violation: ${violation}`);
+      process.exit(1);
+    }
+    console.log("milestone PRD anchors: ok");
     process.exit(0);
   }
   if (args.includes("--pre-commit")) {

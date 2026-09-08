@@ -14,7 +14,7 @@ milestone: m-7
 dependencies:
   - TASK-61
 references:
-  - docs/architecture/adr/0004-model-selection-benchmark-policy.md
+  - docs/adr/0004-model-selection-benchmark-policy.md
   - docs/research/2026-09-07-flagship-tier-pricing-quality-preliminary.md
 priority: high
 type: task

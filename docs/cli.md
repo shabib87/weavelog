@@ -1,7 +1,7 @@
 # CLI Specification
 
 > **Authority:** Command-level behavior. Traces to the CLI surface table in
-> `docs/specs/2026-09-05-v010-draft-brief.md` and the runbook verification
+> `docs/prd/2026-09-05-v010-draft-brief.md` and the runbook verification
 > battery (see `docs/ROADMAP.md` v0.1.0). Command surface for v0.1.0:
 > opencode stranger test.
 
@@ -210,7 +210,7 @@ absolute paths in launchd plists are substituted at install time by `init`).
 ### Models
 
 Opinionated defaults — `init` asks, flags override. Role → model table lives in
-`docs/architecture/model-routing.md`; the machine-readable default is the `models`
+`docs/trd/model-routing.md`; the machine-readable default is the `models`
 list in `weavelog.json` (glm-5.3-flash, glm-5.3, deepseek-v4-flash-0731,
 deepseek-v4-pro-0813, qwen3.8-flash, qwen3.8-2.4t-a95b, kimi-k3). The opencode keys are `model`
 (`openrouter/z-ai/glm-5.3-flash`, new-session workhorse) and `small_model`
@@ -222,10 +222,10 @@ unless their agent file sets its own `model`. Versions are manifest-pinned in
 
 ## Provenance
 
-- CLI surface table: `docs/specs/2026-09-05-v010-draft-brief.md` ("CLI surface").
+- CLI surface table: `docs/prd/2026-09-05-v010-draft-brief.md` ("CLI surface").
 - Doctor subchecks: runbook verification battery decomposition (brief,
   "Runbook decomposition rule": "verification battery → doctor subchecks").
 - Zero-silent-failure + ledger: brief ("Ledger" and "Zero silent failure").
 - Reference surfaces (paths, ports/URLs, model defaults): runbook "Quick reference
   card", redistributed by the TASK-45 decomposition (see
-  `docs/architecture/runbook-decomposition.md`).
+  `docs/trd/runbook-decomposition.md`).

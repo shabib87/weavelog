@@ -1,8 +1,11 @@
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { describe, test } from "node:test";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import {
   decideGeneralLabel,
   decideMilestone,
@@ -18,6 +21,7 @@ import {
   unknownLabels,
   VERSION_MILESTONE_ID,
   VERSION_SCOPE_LABELS,
+  validateMilestoneAnchor,
   wayfinderMilestoneName,
 } from "../src/tools/task-validate.ts";
 
@@ -279,13 +283,15 @@ describe("harness-dev context detection (AC #17)", () => {
 });
 
 describe("general-label decision table (AC #15)", () => {
-  test("first match: harness for harness-path modification (bin/plugins/config/AGENTS.md/docs-architecture/stack-versions)", () => {
+  test("first match: harness for harness-path modification (bin/plugins/config/AGENTS.md/docs-trd-adr-prd/stack-versions)", () => {
     for (const p of [
       "bin/src/task-validate.ts",
       "plugins/enforce.ts",
       "config/opencode.jsonc",
       "AGENTS.md",
-      "docs/architecture/worktree-discipline.md",
+      "docs/trd/worktree-discipline.md",
+      "docs/adr/0004-model-selection-benchmark-policy.md",
+      "docs/prd/2026-09-05-v010-draft-brief.md",
       "stack-versions.json",
     ]) {
       assert.equal(decideGeneralLabel({ modifiedPaths: [p] }), "harness");
@@ -426,5 +432,114 @@ describe("version-scope migration constants (AC #16/#18)", () => {
   test("VERSION_MILESTONE_ID and the scope labels are the migration contract", () => {
     assert.equal(VERSION_MILESTONE_ID, "m-6");
     assert.deepEqual([...VERSION_SCOPE_LABELS].sort(), ["v1", "v2"]);
+  });
+});
+
+describe("milestone PRD anchor validation (TASK-76, ADR-005)", () => {
+  const mkRoot = () => mkdtempSync(join(tmpdir(), "milestone-anchor-"));
+
+  test("missing anchor line is a violation", () => {
+    const root = mkRoot();
+    assert.deepEqual(
+      validateMilestoneAnchor("m-7", "# m-7\n\nsome body\n", root),
+      [
+        'milestone m-7 is missing its "PRD anchor:" line (docs/prd path or explicit "none" marker)',
+      ],
+    );
+  });
+
+  test("explicit none marker is valid", () => {
+    const root = mkRoot();
+    assert.deepEqual(
+      validateMilestoneAnchor(
+        "m-2",
+        "# m-2\nPRD anchor: none — pre-PRD-era, decisions recorded in-thread\n",
+        root,
+      ),
+      [],
+    );
+  });
+
+  test("anchor resolving to a brief that lists the milestone is valid", () => {
+    const root = mkRoot();
+    mkdirSync(join(root, "docs", "prd"), { recursive: true });
+    writeFileSync(
+      join(root, "docs", "prd", "2026-09-07-m-7-brief.md"),
+      '---\ndate: 2026-09-07\ntopic: brief\nstatus: approved\ntype: prd\nauthor: conductor\nrelated_to: []\nsources: ["TASK-76"]\nmilestones:\n  - m-7\n---\n\n# brief\n',
+    );
+    assert.deepEqual(
+      validateMilestoneAnchor(
+        "m-7",
+        "# m-7\nPRD anchor: docs/prd/2026-09-07-m-7-brief.md\n",
+        root,
+      ),
+      [],
+    );
+  });
+
+  test("anchor to a brief that does NOT list this milestone is a violation (bidirectional)", () => {
+    const root = mkRoot();
+    mkdirSync(join(root, "docs", "prd"), { recursive: true });
+    writeFileSync(
+      join(root, "docs", "prd", "2026-09-07-m-7-brief.md"),
+      '---\ndate: 2026-09-07\ntopic: brief\nstatus: approved\ntype: prd\nauthor: conductor\nrelated_to: []\nsources: ["TASK-76"]\nmilestones:\n  - m-6\n---\n\n# brief\n',
+    );
+    const v = validateMilestoneAnchor(
+      "m-7",
+      "# m-7\nPRD anchor: docs/prd/2026-09-07-m-7-brief.md\n",
+      root,
+    );
+    assert.equal(v.length, 1);
+    assert.ok(v[0].includes("does not list m-7"));
+  });
+
+  test("dangling anchor path is a violation", () => {
+    const root = mkRoot();
+    const v = validateMilestoneAnchor(
+      "m-7",
+      "# m-7\nPRD anchor: docs/prd/2026-09-07-ghost.md\n",
+      root,
+    );
+    assert.equal(v.length, 1);
+    assert.ok(v[0].includes("does not resolve"));
+  });
+});
+
+describe("milestone id/filename agreement (ADR-005 linkage)", () => {
+  test("--milestones exits 1 when a milestone file's frontmatter id disagrees with its filename", () => {
+    const root = mkdtempSync(join(tmpdir(), "milestone-id-mismatch-"));
+    mkdirSync(join(root, "backlog", "milestones"), { recursive: true });
+    writeFileSync(
+      join(root, "backlog", "milestones", "m-7 - pre-publish-v0.1.0.md"),
+      `---
+id: m-6
+title: "Pre-publish v0.1.0"
+---
+
+## Description
+
+Milestone: Pre-publish v0.1.0
+PRD anchor: none — test fixture
+`,
+    );
+    const req = createRequire(import.meta.url);
+    const loader = req.resolve("tsx");
+    const Bin = join(
+      dirname(fileURLToPath(import.meta.url)),
+      "..",
+      "src",
+      "tools",
+      "task-validate.ts",
+    );
+    const r = spawnSync(
+      process.execPath,
+      ["--import", pathToFileURL(loader).href, Bin, "--milestones"],
+      { encoding: "utf8", timeout: 60_000, cwd: root },
+    );
+    assert.equal(r.status, 1, r.stdout + r.stderr);
+    assert.ok(
+      (r.stderr + r.stdout).includes('declares id "m-6"') &&
+        (r.stderr + r.stdout).includes('says "m-7"'),
+    );
   });
 });

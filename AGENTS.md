@@ -29,21 +29,23 @@ weavelog/
 ├── biome.json                 # Linter/formatter config
 ├── src/                       # TypeScript source
 │   ├── cli/                   # weavelog CLI (weavelog check, weavelog init)
-│   └── hooks/                 # enforce + verify-gate hooks
+│   ├── hooks/                 # enforce + verify-gate hooks
+│   └── tools/                 # Repo-internal tool scripts (frontmatter-check, task-validate, worktree-create, etc.)
 ├── tests/                     # Test suite
 ├── docs/                      # Project documentation
 │   ├── NORTH_STAR.md          # The anchor
 │   ├── PRODUCT.md             # Product strategy (what it is, moat, PMF)
+│   ├── ROADMAP.md             # Product roadmap (version milestones)
+│   ├── INDEX.md               # Navigation map — read this first
+│   ├── cli.md                 # CLI reference (command behavior)
 │   ├── research/RESEARCH.md            # Provenance
-│   ├── architecture/adr/      # Architecture decision records (Nygard, indexed)
-│   ├── PROGRESS.md            # Phase tracker (where we are)
-│   ├── NEXT_SESSION.md        # Narrative handoff
-│   ├── specs/                 # Detailed design specs
+│   ├── adr/                   # Decision records (Nygard, indexed, format contract)
+│   ├── prd/                   # Ratified milestone briefs (PRD) — cross-referenced with backlog milestones
+│   ├── trd/                   # Durable technical design (TRD) + diagrams — changed only via ADRs
 │   ├── research/              # Research logs (dated, lab notebooks)
-│   ├── learnings/             # Session learning logs (dated, for blog)
-│   ├── superpowers/plans/     # Implementation plans (superpowers convention)
-│   ├── tbd/                   # Open questions
-│   └── archive/               # Superseded — do not use
+│   ├── AGENTS.md              # Documentation rules (nested, open agents standard)
+│   └── archive/               # Frozen provenance: plans, learnings, superpowers, tbd
+├── backlog/                   # Tasks (backlog.md CLI) + human-owned milestones (PRD-anchored)
 └── .github/workflows/         # CI (Linux, node:test + biome + tsc)
 ```
 
@@ -54,15 +56,15 @@ weavelog/
 | `docs/NORTH_STAR.md` | What we build | Active, authoritative |
 | `docs/PRODUCT.md` | Product strategy (what it is, moat, PMF) | Active, authoritative |
 | `docs/research/RESEARCH.md` | Why we build it this way | Active, authoritative |
-| `docs/architecture/adr/` | Architecture decision records (Nygard format, ADR index) | Active, authoritative |
-| `docs/PROGRESS.md` | Phase tracker (where we are) | Active, authoritative |
+| `docs/adr/` | Architecture decision records (Nygard format, ADR index) | Active, authoritative |
 | `docs/ROADMAP.md` | Product roadmap (version milestones) | Active, authoritative |
-| `docs/NEXT_SESSION.md` | Narrative handoff | Active |
-| `docs/specs/2026-06-28-weavelog-design.md` | Detailed design | Active |
+| `docs/trd/2026-06-28-weavelog-design.md` | Detailed design | Active |
 | `docs/research/` | Research logs (dated, lab notebooks) | Active |
-| `docs/learnings/` | Session learning logs (dated, for blog) | Active |
-| `docs/superpowers/plans/` | Implementation plans (superpowers convention) | Active |
-| `docs/tbd/` | Open questions | Do not implement against |
+| `docs/AGENTS.md` | Documentation rules (how docs are written; ADR format contract, artifact flow) | Active, authoritative |
+| `docs/prd/` | Ratified milestone briefs (PRD) — cross-referenced with `backlog/milestones/` | Active, authoritative (authority via ADR-0005) |
+| `docs/archive/learnings/` | Session learning logs (July-era, frozen) | Frozen, provenance only |
+| `docs/archive/superpowers/` | Implementation plans (superpowers convention) | Frozen, historical |
+| `docs/archive/tbd/` | Open blindspot docs (frozen 2026-09-07) | Do not implement against; re-raise live questions as backlog tasks |
 | `docs/archive/` | Superseded research | **Do not use.** Provenance only. |
 
 ## Build & test commands
@@ -87,7 +89,9 @@ node --import tsx --test tests/cli/index.test.ts
 - MUST NOT edit `docs/NORTH_STAR.md` or `docs/research/RESEARCH.md` without explicit
   human approval.
 - MUST NOT implement against anything in `docs/archive/` — it is superseded.
-- MUST NOT implement against anything in `docs/tbd/` — it is unresolved.
+- MUST NOT implement against anything in `docs/archive/` (including the frozen
+  `tbd/` blindspot docs) — historical provenance only; re-raise live questions
+  as backlog tasks.
 - MUST NOT commit to git without human review of the diff.
 - MUST NOT run package managers (`npm install`, `pip install`, `brew install`)
   without explicit human approval.
@@ -112,6 +116,8 @@ node --import tsx --test tests/cli/index.test.ts
 - **AGENTS.md:** `agents.md` — this file, <200 LOC
 - **Agents:** Pi-native `.pi/agents/<name>.md` with YAML frontmatter
 - **Workflows:** JSON configs with `schemaVersion` field
-- **Session learnings:** every working session produces a dated learning
-  log at `docs/learnings/YYYY-MM-DD-<topic>.md` (findings, decisions,
-  corrections, blog candidates). Raw material for future blog posts.
+- **Session notes:** research goes to `docs/research/` (one dated corpus,
+  research schema); end the WHY phase with an explicit decision outcome per
+  ADR-003 (small ADR or `Decision: none — research only`). Blog-feed intent
+  survives as a `**Lessons:**` block. `docs/learnings/` (now `docs/archive/learnings/`) is frozen
+  (`docs/archive/learnings/`). Doc rules live in `docs/AGENTS.md`.

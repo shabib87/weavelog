@@ -21,14 +21,14 @@ Incident: conductor edited backlog files on main via CLI (invisible to enforce.t
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [x] #1 WHEN the Bypass bullet under Rules in docs/architecture/worktree-discipline.md is read THEN it states that ENFORCE_DISABLED=true and git commit --no-verify are permitted only to merge an approved task branch onto main, and must never be used for direct edits or commits on main outside an approved merge
+- [x] #1 WHEN the Bypass bullet under Rules in docs/trd/worktree-discipline.md is read THEN it states that ENFORCE_DISABLED=true and git commit --no-verify are permitted only to merge an approved task branch onto main, and must never be used for direct edits or commits on main outside an approved merge
 - [x] #2 WHEN AGENT-STACK-RUNBOOK.md bypass prose is read THEN it matches the same merge-only restriction or points to worktree-discipline.md as the single source
 - [x] #3 WHEN the hook source (bin/src/worktree-create.ts HOOK_CONTENT lines 48-60) and the live .git/hooks/pre-commit are inspected THEN the exact "# Block commits on main." marker is present AND no line contains the substring "Bypass" or "--no-verify"
 - [x] #4 WHEN a commit on main is attempted THEN the block message still contains "Blocked: no commits on" AND no longer names ENFORCE_DISABLED or --no-verify
 - [x] #5 WHEN "sh .git/hooks/pre-commit" runs on main with ENFORCE_DISABLED unset THEN it exits 1, and WHEN ENFORCE_DISABLED=true is set THEN it exits 0 (bypass still works for approved merges)
 - [x] #6 WHEN worktree-create.ts runs in a repo whose live hook lacks the new content THEN handleHook rewrites the stale hook (stale-hook rewrite rule + test in worktree-create.test.ts)
 - [x] #7 WHEN the backlog is read THEN a named-deferral task or backlog decision exists for the enforce.ts bash-CLI blind spot (backlog MCP enforcement-bypass note, lines 106-121)
-- [x] #8 WHEN the enforce.ts write-block or backlog gate blocks an action on main THEN the block message contains no bypass command or flag name (no ENFORCE_DISABLED, no --no-verify) and points at docs/architecture/worktree-discipline.md
+- [x] #8 WHEN the enforce.ts write-block or backlog gate blocks an action on main THEN the block message contains no bypass command or flag name (no ENFORCE_DISABLED, no --no-verify) and points at docs/trd/worktree-discipline.md
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -58,5 +58,5 @@ Follow-up candidates for TASK-37 design pass (round-3 review finds): plugins/ver
 ## Final Summary
 
 <!-- SECTION:FINAL_SUMMARY:BEGIN -->
-Closed both teaching paths for the main-commit bypass: pre-commit hook (HOOK_CONTENT) and enforce.ts write-block + backlog-gate messages now point at docs/architecture/worktree-discipline.md instead of printing ENFORCE_DISABLED/--no-verify; hook source kept the exact ours-marker; handleHook rewrites stale ours-hooks (FOREIGN untouched, dry-run safe). Docs: merge-only bypass rule in worktree-discipline.md + runbook alignment + stale-rewrite semantics documented. Tests: 356 pass / 0 fail, incl. 4 new pins (no-recipe, stale-rewrite, dry-run-no-rewrite, both gate messages recipe-free, FOREIGN byte-preserved). Verified live: hook blocks exit 1 / bypass exit 0 / message recipe-free. All 8 ACs evidence-checked. 4 fresh-context reviews (qwen APPROVE, deepseek/kimi/GLM APPROVE-WITH-FIXES) - majors and actionable minors resolved. TASK-37 records the enforce.ts bash-CLI blind spot (design pass required); flake + biome drift noted as follow-ups.
+Closed both teaching paths for the main-commit bypass: pre-commit hook (HOOK_CONTENT) and enforce.ts write-block + backlog-gate messages now point at docs/trd/worktree-discipline.md instead of printing ENFORCE_DISABLED/--no-verify; hook source kept the exact ours-marker; handleHook rewrites stale ours-hooks (FOREIGN untouched, dry-run safe). Docs: merge-only bypass rule in worktree-discipline.md + runbook alignment + stale-rewrite semantics documented. Tests: 356 pass / 0 fail, incl. 4 new pins (no-recipe, stale-rewrite, dry-run-no-rewrite, both gate messages recipe-free, FOREIGN byte-preserved). Verified live: hook blocks exit 1 / bypass exit 0 / message recipe-free. All 8 ACs evidence-checked. 4 fresh-context reviews (qwen APPROVE, deepseek/kimi/GLM APPROVE-WITH-FIXES) - majors and actionable minors resolved. TASK-37 records the enforce.ts bash-CLI blind spot (design pass required); flake + biome drift noted as follow-ups.
 <!-- SECTION:FINAL_SUMMARY:END -->

@@ -1,3 +1,15 @@
+---
+date: 2026-08-16
+topic: "Worktree discipline — flow, lifecycle, HITL merge gate, crash contract"
+status: approved
+type: architecture
+author: conductor
+related_to:
+  - ./runbook-decomposition.md
+sources:
+  - "TASK-23"
+---
+
 # Worktree discipline (v1 inner harness)
 
 Single source: this document. The root AGENTS.md points here (one thin file, one sync — TASK-23 restructure 2026-08-31).

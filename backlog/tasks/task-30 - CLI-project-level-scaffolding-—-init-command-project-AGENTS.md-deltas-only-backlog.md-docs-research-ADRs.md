@@ -17,12 +17,12 @@ ordinal: 22000
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
-PROJECT level of the cli-vision doc (TASK-28). Implement the CLI init command: scaffold project-level AGENTS.md (deltas only — global protocol is inherited, not duplicated), backlog.md (via backlog init), docs/research/ and docs/architecture/ ADR scaffolding.
+PROJECT level of the cli-vision doc (TASK-28). Implement the CLI init command: scaffold project-level AGENTS.md (deltas only — global protocol is inherited, not duplicated), backlog.md (via backlog init), docs/research/ and docs/trd/ ADR scaffolding.
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 WHEN the CLI init command runs in an empty project THEN it creates project AGENTS.md (deltas only), backlog.md (via backlog init), docs/research/ and docs/architecture/ (ADR) scaffolding, without duplicating global protocol content
+- [ ] #1 WHEN the CLI init command runs in an empty project THEN it creates project AGENTS.md (deltas only), backlog.md (via backlog init), docs/research/ and docs/trd/ (ADR) scaffolding, without duplicating global protocol content
 <!-- AC:END -->
 
 ## Implementation Notes

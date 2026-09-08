@@ -22,7 +22,7 @@ names; symlinked third-party skills keep their upstream names).
 
 Relicense note: harness-original skills were MIT in the author instance
 pre-v0.1.0; from v0.1.0 they ship under Apache-2.0 (ratified license
-decision, `docs/specs/2026-09-05-v010-draft-brief.md`). Ported skill
+decision, `docs/prd/2026-09-05-v010-draft-brief.md`). Ported skill
 frontmatter carries the updated `license:` field.
 
 ## Tool lineage

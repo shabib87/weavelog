@@ -739,7 +739,7 @@ export function createHooks(deps: EnforceDeps): EnforceHooks {
         if (!name) return; // git failure (non-zero exit, empty stdout): fail-open
         if (name === "main" || name === "master") {
           throw new Error(
-            "Blocked: no file writes on main. Work in .worktrees/<task-id> (branch task/<task-id>). Rules: docs/architecture/worktree-discipline.md.",
+            "Blocked: no file writes on main. Work in .worktrees/<task-id> (branch task/<task-id>). Rules: docs/trd/worktree-discipline.md.",
           );
         }
         return; // task branch — allowed
@@ -774,7 +774,7 @@ export function createHooks(deps: EnforceDeps): EnforceHooks {
         if (!branchName) return; // git failure: fail-open
         if (branchName === "main" || branchName === "master") {
           throw new Error(
-            "Blocked: no backlog task creation or status changes on main. Create a worktree first with `bun ~/.agents/bin/src/worktree-create.ts --create <title>` (new task) or `bun ~/.agents/bin/src/worktree-create.ts <task-id>` (existing task). Rules: docs/architecture/worktree-discipline.md.",
+            "Blocked: no backlog task creation or status changes on main. Create a worktree first with `bun ~/.agents/bin/src/worktree-create.ts --create <title>` (new task) or `bun ~/.agents/bin/src/worktree-create.ts <task-id>` (existing task). Rules: docs/trd/worktree-discipline.md.",
           );
         }
         // Hook 10: quality nudge on ANY non-main branch — `backlog task create`

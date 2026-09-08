@@ -13,7 +13,7 @@
  */
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
-import { basename, dirname, join, resolve } from "node:path";
+import { basename, dirname, join, parse, resolve } from "node:path";
 import { parse as parseYaml } from "yaml";
 
 const STATUSES = [
@@ -36,16 +36,17 @@ const REQUIRED_KEYS = [
   "supersedes",
 ] as const;
 
-// Architecture schema (docs/architecture/*.md)
+// Architecture schema (docs/trd/*.md, docs/adr/*.md, docs/prd/*.md)
 const ARCH_STATUSES = [
   "draft",
   "in-review",
   "approved",
+  "backfilled",
   "superseded",
   "archived",
 ] as const;
 
-const ARCH_TYPES = ["architecture", "adr"] as const;
+const ARCH_TYPES = ["architecture", "adr", "prd"] as const;
 
 const ARCH_REQUIRED_KEYS = [
   "date",
@@ -68,7 +69,8 @@ Modes:
 
 Options:
   --schema <val>  Select frontmatter schema: research (default) | architecture
-                  architecture schema applies to docs/architecture/*.md and
+                  architecture schema applies to docs/trd/*.md, docs/adr/*.md,
+ *                  docs/prd/*.md, and
                   validates: date, topic, status, type, author, related_to,
                   sources. related_to entries must resolve to existing files
                   (dangling -> ERROR) and the target's related_to must list this
@@ -99,6 +101,7 @@ Schema (required keys) — architecture:
   topic       string
   status      enum: ${ARCH_STATUSES.join(" | ")}
   type        enum: ${ARCH_TYPES.join(" | ")}
+  milestones  required non-empty for type: prd — backlog milestone ids resolving to backlog/milestones/<id> -*.md
   author      non-empty string
   related_to  array of relative paths (resolved against the doc's directory)
   sources     non-empty array
@@ -310,6 +313,17 @@ function parseTarget(absPath: string): DocEntry | null {
   }
 }
 
+function findMilestonesDir(startDir: string): string | null {
+  let cur = resolve(startDir);
+  const stop = parse(cur).root;
+  while (true) {
+    const candidate = join(cur, "backlog", "milestones");
+    if (existsSync(candidate)) return candidate;
+    if (cur === stop) return null;
+    cur = dirname(cur);
+  }
+}
+
 function validateArch(doc: DocEntry): {
   violations: string[];
   warnings: string[];
@@ -348,6 +362,54 @@ function validateArch(doc: DocEntry): {
   if ("author" in fm && (typeof fm.author !== "string" || !fm.author.trim())) {
     v.push("author must be a non-empty string");
   }
+  if (fm.type === "prd") {
+    const ms = fm.milestones;
+    if (!Array.isArray(ms) || ms.length === 0) {
+      v.push(
+        'type "prd" requires a non-empty milestones array of backlog milestone ids (e.g. "m-7")',
+      );
+    } else {
+      const msDir = findMilestonesDir(doc.dir);
+      for (const entry of ms) {
+        if (typeof entry !== "string" || !/^m-\d+$/.test(entry)) {
+          v.push(
+            `milestones entry must be a milestone id like "m-7": ${JSON.stringify(entry)}`,
+          );
+          continue;
+        }
+        const matched =
+          msDir !== null
+            ? readdirSync(msDir).find((f) => f.startsWith(`${entry} `))
+            : undefined;
+        if (!matched) {
+          v.push(
+            `dangling milestones ref (no backlog/milestones/${entry} - *.md file under the doc's repo root): ${entry}`,
+          );
+          continue;
+        }
+        if (msDir) {
+          // id/filename agreement: the milestone file's own `id:` frontmatter
+          // must equal the filename-derived id (ADR-005 linkage, loop 5).
+          try {
+            const raw = readFileSync(join(msDir, matched), "utf8");
+            const mfm = parseYaml(
+              raw.replace(/\r\n/g, "\n").split(/^---\n/m)[1] ?? "",
+            ) as {
+              id?: unknown;
+            };
+            if (typeof mfm?.id === "string" && mfm.id !== entry) {
+              v.push(
+                `milestone file ${matched} declares id "${mfm.id}" but its filename and the brief's milestones entry say "${entry}" — rename the file or fix the id`,
+              );
+            }
+          } catch {
+            v.push(`milestone file ${matched} is unreadable`);
+          }
+        }
+      }
+    }
+  }
+
   if (
     "sources" in fm &&
     (!Array.isArray(fm.sources) || fm.sources.length === 0)
