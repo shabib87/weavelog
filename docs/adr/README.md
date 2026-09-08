@@ -13,6 +13,7 @@ related_to:
   - ./0002-bash-homebrew-tooling.md
   - ./0003-three-phase-loop-model.md
   - ./0005-artifact-flow.md
+  - ./0007-tiered-loop-commands.md
 sources:
   - "TASK-15"
 ---
@@ -32,7 +33,8 @@ future agents/humans.
 | ADR-003 | three-phase loop model (WHY/WHAT/HOW × inner/outer roles) + decision-recording gate at end of WHY | approved | 2026-09-07 |
 | ADR-004 | model-selection benchmark policy (seat-weighted composite; HLE protocol pin; L0–L4 reviewer escalation; weekly/monthly drift cadence) | approved | 2026-09-07 |
 | ADR-005 | artifact flow — PRD/TRD/ADR/TASK doc classes, AC traceability rule (partially supersedes the 2026-07-04 doc-chain collapse) | approved | 2026-09-07 |
-| ADR-006 | conductor-dispatch (subagents return findings, conductor writes state) | (planned) | trigger: next architecture decision |
+| ADR-006 | conductor-dispatch (subagents return findings, conductor writes state) | (planned) — subject absorbed into ADR-007, never separately ratified | trigger: superseded by ADR-007 trigger |
+| ADR-007 | tiered loop commands (stitch/weave/loom/pulse) + weaver persona replace the always-on conductor protocol; two HITL gates preserved | in-review | 2026-09-07 |
 
 > Migration note (2026-09-07): legacy ADRs 0001/0002 were migrated from
 > the pre-reorg ADR location (dissolved by the ADR-005 reorg); ADR-002 satisfies the

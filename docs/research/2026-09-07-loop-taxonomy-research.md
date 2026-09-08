@@ -21,6 +21,7 @@ sources:
   - "docs/trd/backlog-lifecycle.md"
   - "docs/adr/README.md"
   - "docs/adr/0005-artifact-flow.md"
+  - "docs/adr/0007-tiered-loop-commands.md"
   - "docs/NORTH_STAR.md"
   - "docs/research/2026-08-15-addy-loop-engineering-series.md"
   - "docs/research/2026-08-15-loop-primitives-claude-codex-sdk.md"
@@ -469,8 +470,9 @@ ADR constraint they implement:
    implements (ADR-005 traceability rule; tasks that trace to nothing are rejected at the
    plan gate).
 
-**Cross-cutting ADR:** "tiered loop commands vs conductor-always-on" fires at the decision
-gate when the human ratifies this research — adjacent to ADR-003/004/005, supersedes none.
+**Cross-cutting ADR:** "tiered loop commands vs conductor-always-on" — **fired at the
+decision gate as ADR-007 (in-review)** when the human ratified this research; adjacent to
+ADR-003/004/005, supersedes none (absorbs the planned ADR-006).
 
 ## 8. Source classification (per TASK-79 AC #4)
 
@@ -513,9 +515,12 @@ gate when the human ratifies this research — adjacent to ADR-003/004/005, supe
 
 ## Decision gate (ADR-003)
 
-**Decision: none — research only.** This note records findings and recommendations; no
-hard-to-reverse choice is made here. The ADR fires at the decision gate when the human
-ratifies the §7 chain.
+**Decision: recorded — [ADR-007](../adr/0007-tiered-loop-commands.md) (in-review, fired at
+this gate on human ratification 2026-09-07):** tiered loop commands
+(`stitch`/`weave`/`loom`/`pulse`) + the `weaver` persona replace the always-on conductor
+protocol; two HITL gates preserved; budgets + tier-fit checker stay deterministic. The
+planned-but-never-ratified ADR-006 (conductor-dispatch) is absorbed there. Implementation
+still requires the §7 chain — this research performs none.
 
 **Lessons:**
 1. The strongest signal came from the repo itself — TASK-6 and the budget-caps design
