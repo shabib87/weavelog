@@ -503,20 +503,30 @@ describe("milestone PRD anchor validation (TASK-76, ADR-005)", () => {
 });
 
 describe("milestone id/filename mismatch (loop 5, ADR-005 linkage)", () => {
-  test("validateMilestoneAnchor rejects a target whose frontmatter id disagrees with its filename", () => {
+  test("--milestones exits 1 when a milestone file's frontmatter id disagrees with its filename", () => {
+    const { spawnSync } = require("node:child_process");
+    const { fileURLToPath, pathToFileURL } = require("node:url");
+    const { createRequire } = require("node:module");
+    const Bin = fileURLToPath(
+      new URL("../src/tools/task-validate.ts", import.meta.url),
+    );
     const root = mkdtempSync(join(tmpdir(), "milestone-id-mismatch-"));
-    mkdirSync(join(root, "docs", "prd"), { recursive: true });
+    mkdirSync(join(root, "backlog", "milestones"), { recursive: true });
     writeFileSync(
-      join(root, "docs", "prd", "2026-09-07-m-7-brief.md"),
-      '---\ndate: 2026-09-07\ntopic: brief\nstatus: approved\ntype: prd\nauthor: conductor\nrelated_to: []\nsources: ["TASK-76"]\nmilestones:\n  - m-7\n---\n\n# brief\n',
+      join(root, "backlog", "milestones", "m-7 - pre-publish-v0.1.0.md"),
+      '---\nid: m-6\ntitle: "Pre-publish v0.1.0"\n---\n\n## Description\n\nMilestone: Pre-publish v0.1.0\nPRD anchor: none — test fixture\n',
     );
-    // anchor target EXISTS but the brief's milestones list m-7 while the
-    // frontmatter id says m-6 — validateMilestoneAnchor must flag it.
-    const v = validateMilestoneAnchor(
-      "m-7",
-      "# m-7\nPRD anchor: docs/prd/2026-09-07-m-7-brief.md\n",
-      root,
+    const req = createRequire(import.meta.url);
+    const loader = join(dirname(req.resolve("tsx")), "loader.mjs");
+    const r = spawnSync(
+      process.execPath,
+      ["--import", pathToFileURL(loader).href, Bin, "--milestones"],
+      { encoding: "utf8", timeout: 60_000, cwd: root },
     );
-    assert.deepEqual(v, []);
+    assert.equal(r.status, 1, r.stdout + r.stderr);
+    assert.ok(
+      (r.stderr + r.stdout).includes('declares id "m-6"') &&
+        (r.stderr + r.stdout).includes('says "m-7"'),
+    );
   });
 });

@@ -98,3 +98,6 @@ and the old note's frontmatter `status: superseded`.
 ## Index (2026-09-07)
 
 - flagship-tier-pricing-quality-preliminary — TASK-61 spike: 7-candidate OpenRouter pricing/quality matrix for the ADR-004 roster (deepseek-v4-pro-0813, glm-5.3, qwen3.8-2.4t, kimi-k3 pro tier; flash tier flat-pricing cache reality); seat-weighted benchmark composite inputs; DeepSeek first-party peak hours (ET) vs OpenRouter flat pricing; GLM-5.3-flash promo expiry 2026-09-09; fed ADR-004 + TASK-75 roster adoption
+- model-redistribution-cost-quality (2026-08-30) — 6-model roster cost/quality rebalancing before ADR-004
+- openrouter-pricing-litellm-headroom-hooks (2026-09-05) — pricing bridge scope for sync-model-pricing.ts
+- headroom-memory-opencode-bounce (2026-09-06) — headroom proxy memory-tool injection fix + opencode bounce

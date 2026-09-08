@@ -64,7 +64,6 @@
 ## Research logs (dated findings) — selected subset
 
 Dated lab notebooks. **This table is a selected subset, not the corpus** — the authoritative research index is [research/README.md](./research/README.md). 
-Dated lab notebooks. Each captures a research session with evidence.
 
 | File | Topic | When | LOC | Last updated |
 |---|---|---|---|---|
