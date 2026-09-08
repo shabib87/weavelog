@@ -40,7 +40,8 @@ rounds) established:
 - Thin always-on context is evidence-backed (AGENTbench Feb 2026; 60–100-line budgets);
   loop behavior belongs in on-demand skills + deterministic triggers, not prose.
 - The repo already specifies the budget machinery (TASK-6 three caps + no-progress via
-  `session.diff`; `KEEL_MAX_*` named outcomes; `reviewer-loop.ts --budget-usd`).
+  `session.diff`; named-outcome budget caps (prior-art pattern per the repo's budget-caps
+  research); `reviewer-loop.ts --budget-usd`).
 - Nothing ships wrong-tier detection in any major harness — greenfield.
 - Naming: `weave` is the ratified composition principle (TASK-58); the ecosystem shows
   persona+command duality works (Ralph) and collisions hurt (Puck ×3).
@@ -59,7 +60,7 @@ accordingly.
 | HITL model | **Two gates preserved** — spec gate (claim-time, `spec-approved`) + merge gate; `pulse` never runs unattended past them | NORTH_STAR non-negotiable ("HITL is baked in"); `docs/trd/loop-factory.md:63` two-gates rule |
 | Dispatch model | **Subagents return findings; the weaver alone writes shared state** (backlog, docs, commits) | Absorbs the planned-but-never-ratified ADR-006; matches ADR-005 artifact flow and one-writer discipline (TASK-79 practice: scout/researchers read-only) |
 | Loop behavior location | **Skills + CLI triggers + hooks** — never always-on AGENTS.md; `payload/AGENTS.md` slims to the user-level contract + a routing line ("smallest loop that finishes the task") | Primitive-selection axes; thin-context evidence; project scaffold stays separate (TASK-28/29/30) |
-| Budgets + tier-fit checker | **One deterministic module** — extends TASK-6 + the budget-caps design + `risk-signals.ts`; inform (80%) → alert → soft-stop (100%) at iteration boundaries; never auto-migrate tiers unattended | Extends in-repo machinery rather than re-specifying; wrong-tier detection is greenfield; ADR-004 philosophy: deterministic signals on the merged diff, never LLM judgment. The budget config surface takes **weavelog-native names** (loom vocabulary) — keel/`KEEL_*` is cited prior-art pattern only, zero dependency, zero name adoption |
+| Budgets + tier-fit checker | **One deterministic module** — extends TASK-6 + the budget-caps design + `risk-signals.ts`; inform (80%) → alert → soft-stop (100%) at iteration boundaries; never auto-migrate tiers unattended | Extends in-repo machinery rather than re-specifying; wrong-tier detection is greenfield; ADR-004 philosophy: deterministic signals on the merged diff, never LLM judgment. The budget config surface takes **weavelog-native names** (loom vocabulary) — third-party prior-art patterns are cited in research docs, never adopted as names; zero dependency, zero name adoption |
 
 ## Consequences
 

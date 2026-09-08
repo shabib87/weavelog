@@ -328,8 +328,9 @@ detector driven by the SDK `session.diff` event (not manual diff hashing); tuple
 (sorted failing-test IDs + normalized error kind); split retry counters (inner-loop vs
 kick-back); one `reasoning_effort: high` re-dispatch on capability failure before
 abort+alert; a provisioned OpenRouter sub-key with a spending cap throttling runaway agents.
-`docs/research/2026-09-03-budget-caps-checkpoint-resume.md` (status: complete): `KEEL_MAX_*`
-cap family with **named non-zero exit outcomes** (`budget`/`deadline`), effective-cost token
+`docs/research/2026-09-03-budget-caps-checkpoint-resume.md` (status: complete): a
+cost-true cap family with **named non-zero exit outcomes** (`budget`/`deadline`),
+effective-cost token
 discounting, gross backstop, wall-clock deadline, and an opencode budget-guard plugin
 (`tool.execute.before` throw + `client.session.abort()`) — keel (`keel-harness/keel`) is
 cited prior art; its names are not adopted (weavelog-native naming per ADR-007). `src/tools/reviewer-loop.ts`
