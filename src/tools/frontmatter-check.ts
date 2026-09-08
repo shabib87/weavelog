@@ -377,13 +377,32 @@ function validateArch(doc: DocEntry): {
           );
           continue;
         }
-        const found =
-          msDir !== null &&
-          readdirSync(msDir).some((f) => f.startsWith(`${entry} `));
-        if (!found) {
+        const matched =
+          msDir !== null
+            ? readdirSync(msDir).find((f) => f.startsWith(`${entry} `))
+            : undefined;
+        if (!matched) {
           v.push(
             `dangling milestones ref (no backlog/milestones/${entry} - *.md file under the doc's repo root): ${entry}`,
           );
+          continue;
+        }
+        if (msDir) {
+          // id/filename agreement: the milestone file's own `id:` frontmatter
+          // must equal the filename-derived id (ADR-005 linkage, loop 5).
+          try {
+            const raw = readFileSync(join(msDir, matched), "utf8");
+            const mfm = parseYaml(raw.split(/^---\n/m)[1] ?? "") as {
+              id?: unknown;
+            };
+            if (typeof mfm?.id === "string" && mfm.id !== entry) {
+              v.push(
+                `milestone file ${matched} declares id "${mfm.id}" but its filename and the brief's milestones entry say "${entry}" — rename the file or fix the id`,
+              );
+            }
+          } catch {
+            v.push(`milestone file ${matched} is unreadable`);
+          }
         }
       }
     }

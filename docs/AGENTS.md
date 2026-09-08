@@ -13,7 +13,7 @@ them without explicit human instruction.
 | `prd/` | Ratified milestone briefs (PRD class) — the release scope of record; cross-referenced with `backlog/milestones/` (see `prd/README.md`). A brief moves to `archive/` when the milestone it scopes ships |
 | `trd/` | Durable technical design (TRD class — architecture schema, undated filenames) incl. the 2026-06-28 founding spec and `diagrams/`. Changed only via ADRs |
 | `adr/` | Decision records — Nygard sections + format contract in that README. Read it before writing an ADR |
-| `archive/` | Frozen provenance. **Never edit, never implement against, never add** (except whole-directory moves per the root AGENTS.md) |
+| `archive/` | Frozen provenance. **Never edit, never implement against, never add** (except whole-directory moves ratified by the human and recorded in backlog task records) |
 
 ## Artifact flow: idea → PRD → TRD → milestone ↔ PRD → TASK
 

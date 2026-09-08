@@ -61,8 +61,9 @@
 
 ---
 
-## Research logs (dated findings)
+## Research logs (dated findings) — selected subset
 
+Dated lab notebooks. **This table is a selected subset, not the corpus** — the authoritative research index is [research/README.md](./research/README.md). 
 Dated lab notebooks. Each captures a research session with evidence.
 
 | File | Topic | When | LOC | Last updated |
@@ -177,7 +178,7 @@ re-raised as backlog tasks. These files are read-only.
 | Root-level entry points | 5 | 540 |
 | Trackers | 0 | 0 |
 | Provenance & decisions | 7 | 1,226 |
-| Research logs (dated) | 10 | 2,017 |
+| Research logs (dated, subset) | 10 | 2,017 |
 | Research references (living) | 2 | 701 |
 | Learning logs | 16 | 1,919 |
 | TRD + PRD | 11 | 1,915 |

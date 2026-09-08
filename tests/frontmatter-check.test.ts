@@ -659,3 +659,53 @@ sources:
     assert.equal(r.status, 0, r.stdout);
   });
 });
+
+describe("frontmatter-check (milestone id/filename mismatch, loop 5)", () => {
+  function makeRepo2(files: Record<string, string>): string {
+    const root = join(tmpdir(), `fm-mismatch-${Date.now()}-${n++}`);
+    for (const [name, content] of Object.entries(files)) {
+      const p = join(root, name);
+      mkdirSync(join(p, ".."), { recursive: true });
+      writeFileSync(p, content);
+    }
+    created.push(root);
+    return root;
+  }
+
+  test("brief listing m-7 + milestone file 'm-7 - x.md' with id: m-6 => violation", () => {
+    const root = makeRepo2({
+      "backlog/milestones/m-7 - x.md": "---\nid: m-6\ntitle: x\n---\n\n# x\n",
+      "docs/prd/2026-09-07-b.md": `---
+date: 2026-09-07
+topic: Brief
+status: backfilled
+type: prd
+author: conductor
+related_to: []
+sources:
+  - "TASK-76"
+milestones:
+  - m-7
+---
+
+# Brief
+`,
+    });
+    const req = createRequire(import.meta.url);
+    const loader = join(dirname(req.resolve("tsx")), "loader.mjs");
+    const r = spawnSync(
+      process.execPath,
+      [
+        "--import",
+        pathToFileURL(loader).href,
+        BIN,
+        "--schema",
+        "architecture",
+        "docs/prd",
+      ],
+      { encoding: "utf8", timeout: 60_000, cwd: root },
+    );
+    assert.equal(r.status, 1, r.stdout);
+    assert.ok(r.stdout.includes("m-7") && r.stdout.includes("id"));
+  });
+});

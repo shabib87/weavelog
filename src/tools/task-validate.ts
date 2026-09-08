@@ -1170,6 +1170,22 @@ function main(): void {
     for (const f of readdirSync(msDir)) {
       if (!/^m-\d+ /.test(f) || !f.endsWith(".md")) continue;
       const id = f.split(" ")[0];
+      // id/filename agreement (ADR-005 linkage, loop 5): the file's own
+      // `id:` frontmatter must equal the filename-derived id.
+      try {
+        const mfm = parseYaml(
+          readFileSync(join(msDir, f), "utf8").split(/^---\n/m)[1] ?? "",
+        ) as { id?: unknown };
+        if (typeof mfm?.id === "string" && mfm.id !== id) {
+          all.push(
+            `milestone file ${f} declares id "${mfm.id}" but its filename says "${id}" — rename the file or fix the id`,
+          );
+          continue;
+        }
+      } catch {
+        all.push(`milestone file ${f} is unreadable`);
+        continue;
+      }
       all.push(
         ...validateMilestoneAnchor(
           id,

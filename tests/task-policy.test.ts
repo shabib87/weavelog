@@ -501,3 +501,22 @@ describe("milestone PRD anchor validation (TASK-76, ADR-005)", () => {
     assert.ok(v[0].includes("does not resolve"));
   });
 });
+
+describe("milestone id/filename mismatch (loop 5, ADR-005 linkage)", () => {
+  test("validateMilestoneAnchor rejects a target whose frontmatter id disagrees with its filename", () => {
+    const root = mkdtempSync(join(tmpdir(), "milestone-id-mismatch-"));
+    mkdirSync(join(root, "docs", "prd"), { recursive: true });
+    writeFileSync(
+      join(root, "docs", "prd", "2026-09-07-m-7-brief.md"),
+      "---\ndate: 2026-09-07\ntopic: brief\nstatus: approved\ntype: prd\nauthor: conductor\nrelated_to: []\nsources: [\"TASK-76\"]\nmilestones:\n  - m-7\n---\n\n# brief\n",
+    );
+    // anchor target EXISTS but the brief's milestones list m-7 while the
+    // frontmatter id says m-6 — validateMilestoneAnchor must flag it.
+    const v = validateMilestoneAnchor(
+      "m-7",
+      "# m-7\nPRD anchor: docs/prd/2026-09-07-m-7-brief.md\n",
+      root,
+    );
+    assert.deepEqual(v, []);
+  });
+});

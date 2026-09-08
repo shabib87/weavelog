@@ -4,7 +4,8 @@ topic: "Version scope"
 status: draft
 type: prd
 author: conductor
-related_to: []
+related_to:
+  - ./2026-09-05-v010-draft-brief.md
 sources:
   - "TASK-76"
 milestones:
