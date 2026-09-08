@@ -505,7 +505,7 @@ describe("milestone PRD anchor validation (TASK-76, ADR-005)", () => {
   });
 });
 
-describe("milestone id/filename mismatch (loop 5, ADR-005 linkage)", () => {
+describe("milestone id/filename agreement (ADR-005 linkage)", () => {
   test("--milestones exits 1 when a milestone file's frontmatter id disagrees with its filename", () => {
     const root = mkdtempSync(join(tmpdir(), "milestone-id-mismatch-"));
     mkdirSync(join(root, "backlog", "milestones"), { recursive: true });
