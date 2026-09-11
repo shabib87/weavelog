@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import {
   chmodSync,
+  cpSync,
   existsSync,
   lstatSync,
   mkdirSync,
@@ -876,6 +877,25 @@ describe("cli check risk-signals (TASK-78, ADR-004 L0->L1 detector)", () => {
 });
 
 describe("cli built artifact", () => {
+  test("built CLI runs as an executable package bin", {
+    skip: !existsSync(DIST),
+  }, () => {
+    const dir = makeDir("cli-bin");
+    const packageRoot = join(dir, "package");
+    cpSync(join(REPO, "dist"), join(packageRoot, "dist"), {
+      recursive: true,
+    });
+    const executable = join(packageRoot, "dist", "cli", "index.js");
+    chmodSync(executable, 0o755);
+    const r = spawnSync(executable, ["--help"], {
+      encoding: "utf8",
+      timeout: 30_000,
+      env: { ...process.env, WEAVELOG_STATE_DIR: join(dir, "state") },
+    });
+    assert.equal(r.status, 0, r.stderr);
+    assert.match(r.stdout, /Usage: weavelog/);
+  });
+
   test("dist/cli/index.js runs under plain node --help", {
     skip: !existsSync(DIST),
   }, () => {

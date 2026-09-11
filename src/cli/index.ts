@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { spawnSync } from "node:child_process";
 import type { Stats } from "node:fs";
 import {
