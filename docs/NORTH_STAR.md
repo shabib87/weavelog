@@ -32,7 +32,8 @@ tool validation and human-in-the-loop verification.
   check` enforces security on workspaces it produces, and security
   verification is woven into the loop.
 - **Host-composed, not host-built.** The host is a composition choice:
-  opencode first (v0.1), pi (0.2), Claude Code (0.3), ChatGPT-Codex (0.4). weavelog
+  OpenCode first (v0.1), Pi (0.2), hybrid (0.2.1), Codex (0.3), Claude Code
+  (0.4). weavelog
   composes hosts. It never builds a new agent host.
 - **The human directs AND verifies.** The human runs the conductor role:
   one-question-at-a-time dialogue, plan gate before implementation, merge
@@ -51,11 +52,15 @@ tool validation and human-in-the-loop verification.
 - Local-first state. State lives on the user's machine.
 - Terminal-native. Built for users who prefer terminal.
 - arm64 macOS is the only supported platform for now.
-- Maximize cost/quality through open-weight models. Hosts in subscription mode 
-  support comes later (Claude Code at 0.3, ChatGPT-Codex at 0.4), but those get 
-  provider model locked.
 - Zero silent failure. Every refusal is a log line and a non-zero exit. Every
   command leaves a ledger record.
+
+## Dated judgment
+
+Open-weight models are the current cost/quality preference, not a
+non-negotiable. OpenAI subscription routing is optional where a host supports
+it. ADR-007 requires an independent maker/checker process and honest reporting
+when cross-family review is unavailable.
 
 ## Out of scope
 

@@ -4,9 +4,8 @@ title: OpenRouter usage telemetry — continuous local trend dashboard skill
 status: To Do
 assignee: []
 created_date: '2026-09-05 16:59'
-updated_date: '2026-09-06 21:54'
+updated_date: '2026-09-11 04:02'
 labels: []
-milestone: m-7
 dependencies:
   - TASK-59
 priority: medium
@@ -27,3 +26,9 @@ Continuous, user-facing local telemetry: an ongoing capability (not a one-time a
 - [ ] #3 WHEN the telemetry skill runs THEN any harness user SHALL see a local dashboard of cost, tokens, and cache-hit trends over time from locally captured data, with no external service dependency
 - [ ] #4 WHEN trend analysis runs THEN harness-maturity vs cost/token-efficiency trends SHALL be visible as supplementary dogfood proof material suitable for thesis/v0.1.0 publish use
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+2026-09-11 correction: Usage telemetry remains an optional future capability; clear m-7 because it is not a release blocker.
+<!-- SECTION:NOTES:END -->

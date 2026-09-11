@@ -6,12 +6,13 @@ title: >-
 status: To Do
 assignee: []
 created_date: '2026-09-06 20:06'
-updated_date: '2026-09-06 20:36'
+updated_date: '2026-09-11 04:33'
 labels:
   - harness
 milestone: m-7
 dependencies:
   - TASK-59
+  - TASK-79
 priority: high
 ordinal: 51000
 ---
@@ -19,18 +20,19 @@ ordinal: 51000
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
-Harden weavelog own build and publish supply chain in .github/workflows/ci.yml and package.json per the ratified standard: semgrep installed via uv at an exact pinned version (replacing the floating pipx install semgrep), third-party actions pinned to full commit SHAs, least-privilege workflow permissions with persist-credentials false, a packageManager field with corepack-aligned npm ci, a standing npm audit gate failing on untriaged high and critical production advisories, and a numbered ADR recording the npm publish provenance adopt-or-skip verdict for the v0.1.0 path (verified registry state: weavelog@0.0.0 placeholder live, flightlead unpublished). Coordinate with TASK-45 Step 4 which owns the release-please workflow and may touch package.json publishConfig — rebase, different hunks. Boundary: manifest tracking of rtk, semgrep and node is deferred ticket A scope; this ticket pins only the CI install. Evidence: research note cli-bundling-vs-composition 2026-09-06.
+Outcome: harden Weavelog build, publish, and supply-chain machinery in package metadata and `.github/workflows/`. Why: v0.1 needs reproducible package evidence and a human-controlled publication path. Pin semgrep through uv, third-party actions to full commit SHAs, least-privilege permissions and checkout without persisted credentials; pin the package manager and reproducible install; fail npm audit on untriaged high or critical production advisories; build before pack; and record a numbered ADR for the npm provenance adopt-or-skip decision. TASK-63 owns release-please or equivalent publication-workflow wiring, which may only publish after TASK-67 evidence and an explicit human marker decision. It does not own external tool installation or TASK-83 public-history clearance.
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 WHEN the CI semgrep step runs THEN semgrep SHALL install via uv at an exact pinned version with metrics off, pinned rulesets and error mode, and zero pipx references SHALL remain under .github/workflows/
-- [ ] #2 WHEN any touched workflow is inspected THEN every third-party action SHALL be pinned to a full commit SHA with a version comment, the workflow SHALL declare least-privilege permissions, and checkout SHALL set persist-credentials to false
-- [ ] #3 WHEN package.json is inspected THEN a packageManager field SHALL pin the exact npm that produced the committed lockfile, CI SHALL run npm ci under it via corepack, and the current one-line lockfile bin drift SHALL be reconciled in the same change
-- [ ] #4 WHEN CI runs on main and pull requests and on a weekly schedule THEN a standing audit gate SHALL fail on untriaged high and critical production-dependency advisories, with every exception recorded in a committed triage entry with rationale and expiry
-- [ ] #5 WHEN this ticket closes THEN a numbered ADR SHALL record the npm provenance adopt-or-skip verdict for the v0.1.0 path with rationale citing verified registry state
-- [ ] #6 WHEN a tag or publish is attempted THEN this ticket SHALL be closed alongside TASK-53, TASK-54, TASK-56, TASK-62, TASK-64, TASK-66 and TASK-67 before the .github/publish-gate marker flips
-- [ ] #7 WHEN npm pack runs THEN the tarball SHALL contain a fresh build (prepack wired to run build+test, replacing the prepublishOnly-only arrangement per the 2026-09-06 cross-thread reconciliation; TASK-45 Step 1.11b named prepublishOnly — the deviation is recorded in its pointer note) with tar -tzf verification covering dist/, payload/ and zero backlog/
+- [ ] #1 WHEN the CI semgrep step runs THEN semgrep installs through the documented pinned channel with metrics off, pinned rulesets, error mode, and no pipx references under workflows
+- [ ] #2 WHEN a touched workflow is inspected THEN every third-party action is pinned to a full commit SHA with a version comment, least-privilege permissions, and checkout without persisted credentials
+- [ ] #3 WHEN package metadata is inspected THEN it pins the package manager that produced the lockfile and CI runs the reproducible install command
+- [ ] #4 WHEN CI runs on main, pull requests, and its scheduled cadence THEN the audit gate fails on untriaged high or critical production advisories with committed rationale and expiry for every exception
+- [ ] #5 WHEN this task closes THEN a numbered ADR records the npm provenance adopt-or-skip verdict for v0.1.0 with verified registry evidence
+- [ ] #6 WHEN a tag or npm publish is attempted THEN TASK-53, TASK-54, TASK-55, TASK-62, TASK-63, TASK-64, TASK-66, TASK-67, TASK-68, TASK-73, and TASK-84 are closed; TASK-56 cleanup is not a publication blocker
+- [ ] #7 WHEN npm pack runs THEN the exact tarball contains a fresh build, dist, payload, and zero backlog files
+- [ ] #8 WHEN the publication workflow is implemented THEN release-please or its approved equivalent prepares the release but cannot publish unless TASK-67 evidence is accepted and the human-controlled publish marker is set
 <!-- AC:END -->
 
 ## Definition of Done

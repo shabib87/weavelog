@@ -20,7 +20,7 @@ REVIEWER are choices the brief does not fix.
 
 - [ ] **Description:** `The inner harness: agent work you can audit. A deterministic CLI that composes an evidence-grade agentic devex stack.`
 - [ ] **Website:** none for v1 (docs site is in fog — brief "Fog (tracked, not built)")
-- [ ] **License display:** Apache-2.0 (matches LICENSE)
+- [ ] **License display:** MIT (matches LICENSE)
 - [ ] **Topics:** `ai-agents`, `cli`, `devex`, `agent-skills`, `opencode`, `agentic-loop`, `macos`, `arm64`
   - `<!-- REVIEWER: decision needed — topic list is not fixed by the brief; adjust at flip -->`
 - [ ] **Default branch:** `main`

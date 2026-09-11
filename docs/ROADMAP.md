@@ -15,17 +15,17 @@ Releases are tag-driven release-please over conventional commits;
 
 ---
 
-## v0.1.0 — opencode stranger test
+## v0.1.0 — OpenCode + Headroom stranger test
 
-**Goal:** a stranger on arm64 macOS installs **weavelog** from npm, runs the
-stranger test against opencode, and gets an auditable stack.
+**Goal:** a stranger on arm64 macOS installs the exact **weavelog** candidate,
+runs the OpenCode + Headroom stranger test, and gets an auditable stack.
 
 **Deliverables:**
-- `weavelog init` — installs opinionated deps (headroom[proxy], opencode,
-  markitdown, backlog.md), materializes `~/.agents/*` +
-  `~/.config/opencode/*` via the two-step user-modification flow, never
-  silently overwrites managed files. Models are opinionated defaults; init
-  asks and flags override.
+- `weavelog init` — verifies the required external-tool prerequisites using
+  pinned instructions, then materializes `~/.agents/*` +
+  `~/.config/opencode/*` via the two-step user-modification flow. It never
+  silently overwrites managed files or installs external tools. Models are
+  opinionated defaults; init asks and flags override.
 - `weavelog sync` — dev path: repo → live (dogfood loop).
 - `weavelog update` — release-driven dep bump + re-materialize.
 - `weavelog check` — deterministic gates: tests, lint, typecheck, semgrep
@@ -44,78 +44,82 @@ stranger test against opencode, and gets an auditable stack.
   failure: refusal = log line + non-zero exit.
 - Post-flip `~/.agents`: only open-standard files (AGENTS.md,
   .agents/skills/, host-standard dirs). No git, no node_modules, no state.
-- npm publish (OIDC trusted publishing, release-please, CHANGELOG.md).
+- Compiled package artifact: CLI, hook adapters, portable configuration, agents,
+  distributable skills and references, manifests, scaffolding, and MIT licensing.
+- Required external tools documented with pinned installation instructions:
+  OpenCode, Headroom, Backlog, review/security gates. MarkItDown, diagram tooling,
+  RTK, and credential-dependent integrations declare their own capability needs.
+- npm publish (OIDC trusted publishing, release-please, CHANGELOG.md) only after
+  the exact tarball passes TASK-67. Repository/history clearance remains a separate
+  m-5 public-release gate.
 - CI: typecheck, biome, tests, semgrep (telemetry off), frontmatter check.
 
-**Explicitly out:** pi, Claude Code, Codex hosts; plugin system; brew tap;
+**Explicitly out:** Pi, hybrid, Codex, and Claude Code hosts; plugin system; brew tap;
 docs site; governance/PR acceptance; LaunchAgent/scheduled checks.
 
-**Stranger test:** fresh arm64 Mac → `npm i -g weavelog` →
-`weavelog init` → `weavelog doctor` (all green) →
-`weavelog scaffold --project` → host loop runs in opencode.
+**Stranger test:** approved clean macOS user → exact packed tarball install →
+`weavelog init` → `weavelog doctor` → `weavelog scaffold --project` → an
+end-to-end task runs through OpenCode, Headroom, required hooks, verification, and
+audit records. Isolated configuration checks supplement this procedure; they do not
+replace it.
 
 ---
 
-## v0.2 — pi host + plugin system
+## v0.2 — Pi host
 
 **Goal:** pi passes the stranger test; plugins become a validated install
 surface; brew distribution opens.
 
 **Deliverables:**
 - pi host support: config materialization, skills path, doctor checks.
-- Plugin system: host plugin files as CLI-managed artifacts (src/hooks/,
-  emitted per host); skills validated against the Agent Skills standard.
+- Host plugin files are CLI-managed artifacts; skills remain validated against the
+  Agent Skills standard.
 - brew tap distribution.
 - `.pi/` pattern seeds from the author instance ported as templates.
 
-**Explicitly out:** Claude Code, Codex hosts; subscription-mode tiering;
-unattended runs.
+**Explicitly out:** hybrid, Codex, Claude Code; unattended runs.
 
 **Stranger test:** same ladder as 0.1 with pi as host, installable via brew.
 
 ---
 
-## v0.3 — Claude Code host (subscription-mode constraint)
+## v0.2.1 — hybrid routing
 
-**Goal:** Claude Code passes the stranger test under the subscription-mode
-routing constraint.
-
-**Constraint (non-negotiable):** inside subscription-mode hosts there is no
-cross-model OpenRouter reviewer; model tiering degrades to single-provider.
-The cross-model reviewer is replaced with cross agent fresh subagent reviewer (e.g. Sonnet writes, Opus reviews).
-
-**Deliverables:**
-- Claude Code host support: config, skills, hooks wiring, doctor checks.
-- Subscription-mode limitation in manifest + doctor (single-provider
-  tiering, documented).
-
-**Explicitly out:** Codex host; multi-provider reviewer routing inside
-subscription hosts; hosted/SaaS anything.
-
-**Stranger test:** same ladder with Claude Code as host; doctor reports the
-degraded tiering honestly.
+**Goal:** add the hybrid routing profile without changing the host-composition or
+human-gate rules. A ratified brief is required before tasks claim.
 
 ---
 
-## v0.4 — Codex host
+## v0.3 — Codex host
 
-**Goal:** Codex passes the stranger test.
+**Goal:** Codex passes the stranger test. OpenAI subscription routing is optional;
+the audit record states whether cross-family review was available and which explicit
+alternative the human selected when it was not.
+
+## v0.4 — Claude Code host
+
+**Goal:** Claude Code passes the stranger test under the independent-review policy.
+
+**Constraint:** a locked-in host may not provide cross-family review. It still uses
+an independent fresh-context checker; a missing family is disclosed and handled by
+the explicit-alternative rule in ADR-007.
 
 **Deliverables:**
-- Codex host support: config, skills, doctor checks (subagent format
-  verification as research lands).
-- Subscription-mode limitation in manifest + doctor (single-provider
-  tiering, documented).
+- Claude Code host support: config, skills, hooks wiring, doctor checks.
+- Reviewer-capability disclosure in manifest + doctor, including the explicit
+  alternative selected when cross-family review is unavailable.
 
-**Explicitly out:** unattended v1; new agent hosts; non-arm64/non-macOS.
+**Explicitly out:** multi-provider reviewer routing inside locked-in hosts;
+hosted/SaaS anything.
 
-**Stranger test:** same ladder with Codex as host.
+**Stranger test:** same ladder with Claude Code as host; doctor reports the
+available reviewer capability honestly.
 
 ---
 
 ## v1.0 — all hosts shipped + public corpus
 
-**Definition of 1.0:** Codex shipped (the host ladder complete) **and** the
+**Definition of 1.0:** all planned hosts shipped (the host ladder complete) **and** the
 evidence corpus public.
 
 **Explicitly out:** unattended runs; governance/PR acceptance; docs

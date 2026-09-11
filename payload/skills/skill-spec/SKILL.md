@@ -9,6 +9,7 @@ description: >-
   client-specific scaffolding (e.g. Cursor create-skill, Claude Code plugins) where
   you use them; on spec details, follow this skill. Also use when a skill fails
   to activate and you need a structured compliance pass.
+license: MIT
 metadata:
   author: github:@shabib87
   version: "1.0.0"
@@ -62,7 +63,7 @@ description: >-
   Build and validate ETL pipelines for PostgreSQL data warehouses. Use when
   the user needs to create, debug, or optimize data pipelines, transform
   schemas, or troubleshoot warehouse ingestion failures.
-license: Apache-2.0 (from v0.1.0; MIT pre-v0.1.0)
+license: MIT
 compatibility: Requires Python 3.12+ and uv
 metadata:
   author: data-team

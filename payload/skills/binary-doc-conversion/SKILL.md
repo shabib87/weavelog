@@ -6,7 +6,7 @@ description: >-
   mentions attachments or documents, when a source file is not source code or
   plain text/config, or when `file(1)` reports `data` — convert through
   markitdown instead of reading raw binary bytes.
-license: Apache-2.0 (from v0.1.0; MIT pre-v0.1.0)
+license: MIT
 metadata:
   author: github:@shabib87
   version: "1.0.0"

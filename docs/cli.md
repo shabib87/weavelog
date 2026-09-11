@@ -9,7 +9,7 @@
 
 | Command | Job |
 |---|---|
-| `weavelog init` | install opinionated deps (headroom[proxy], opencode, markitdown, semgrep, backlog.md), materialize `~/.agents/*` + `~/.config/opencode/*` (two-step user-modification flow), never silently overwrite managed files |
+| `weavelog init` | verifies required external-tool prerequisites against pinned instructions, then materializes `~/.agents/*` + `~/.config/opencode/*` (two-step user-modification flow); never silently overwrites managed files or installs external tools |
 | `weavelog sync` | dev path: repo → live (dogfood loop; ported config-sync) |
 | `weavelog update` | release-driven dep bump + re-materialize |
 | `weavelog check` | deterministic gates: tests, lint, typecheck, semgrep (telemetry off, pinned rulesets), secrets, frontmatter, manifest completeness |
@@ -94,7 +94,7 @@ check).
 |---|---|
 | Args | `--host <opencode>` (default: opencode), `--dry-run`, `--yes` (non-interactive), per-tool skip flags |
 | Asks | confirm each managed-file group before write (two-step user-modification flow) |
-| Ledger events | `install` per tool, `materialize` per file, `decision` per user confirmation, `refusal` per declined overwrite |
+| Ledger events | `prerequisite` per required tool, `materialize` per file, `decision` per user confirmation, `refusal` per declined overwrite |
 | Exit codes | `0` clean; `1` step failed; `3` managed-file conflict declined; `4` unsupported env |
 
 Managed-file rule: if a managed file exists and differs from the payload and
@@ -116,7 +116,7 @@ silently overwrites. The two-step flow: propose → user confirms → write.
 |---|---|
 | Args | `--tool <name>`, `--dry-run`, `--yes` |
 | Job | release-driven dep bump + re-materialize (init rules apply; never silent) |
-| Ledger events | `install` per bumped tool, `materialize` per re-written file |
+| Ledger events | `prerequisite` per checked tool, `materialize` per re-written file |
 | Exit codes | `0` clean; `1` bump failed; `3` managed-file conflict |
 
 ### `weavelog check`

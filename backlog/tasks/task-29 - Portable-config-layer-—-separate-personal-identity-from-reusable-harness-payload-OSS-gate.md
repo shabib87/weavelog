@@ -6,11 +6,12 @@ title: >-
 status: To Do
 assignee: []
 created_date: '2026-08-31 03:59'
-updated_date: '2026-09-03 00:55'
+updated_date: '2026-09-11 03:54'
 labels: []
-milestone: m-5
+milestone: m-4
 dependencies:
   - TASK-28
+  - TASK-79
 ordinal: 21000
 ---
 
@@ -30,4 +31,6 @@ NAMED DEFERRAL (trigger: m-5 open-source-release work starting OR the next model
 
 <!-- SECTION:NOTES:BEGIN -->
 Deferral recorded from TASK-23 session 2026-08-30 (deepseek NEEDS-RESCOPE finding 1 + kimi finding 3, resolved as post-v1).
+
+2026-09-10 correction: moved m-5 -> m-4. Portable configuration is host-portability foundation; m-7 release checklist retains the v0.1 subset as a blocker.
 <!-- SECTION:NOTES:END -->

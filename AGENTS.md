@@ -22,7 +22,7 @@ out of scope.
 weavelog/
 ├── AGENTS.md                  # This file
 ├── README.md                  # Project overview and quickstart
-├── LICENSE                    # Apache-2.0
+├── LICENSE                    # MIT
 ├── CLAUDE.md                  # Claude dispatch stub
 ├── package.json               # npm package (CLI)
 ├── tsconfig.json              # TypeScript config

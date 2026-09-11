@@ -15,10 +15,10 @@ Tagline: "The inner harness: agent work you can audit."
 
 It does four things:
 
-1. **Setup** (`init`, `update`) - install opinionated deps (e.g. [headroom](https://github.com/headroomlabs-ai/headroom) proxy,
-[opencode](https://opencode.ai/), [markitdown](https://github.com/microsoft/markitdown), [backlog.md](https://github.com/MrLesk/Backlog.md), [difit](https://github.com/yoshiko-pg/difit), materialize
-   `~/.agents/*` and `~/.config/opencode/*`, `~/.pi/` etc through a two-step
-   user-modification flow, and never silently overwrite managed files.
+1. **Setup** (`init`, `update`) - verify required external tools through pinned
+   instructions, then materialize `~/.agents/*` and `~/.config/opencode/*`
+   through a two-step user-modification flow. They never silently overwrite
+   managed files or install external tools.
 2. **Verify** (`check`) - run deterministic gates: tests, lint, typecheck, security, front-matter, manifest
    completeness.
 3. **Audit** (`doctor`, ledger) - verify the installed stack is healthy, and
@@ -37,8 +37,13 @@ Built on `opencode` + `OpenRouter` + `headroom` + `markitdown`, composing by ada
 
 - opencode (0.1.0+), 
 - pi (0.2.0+), 
-- Claude Code (0.3.0+), 
-- Codex (0.4.0+).
+- hybrid (0.2.1+),
+- Codex (0.3.0+),
+- Claude Code (0.4.0+).
+
+Subscription routing is optional. It may limit cross-family reviewer choice, but
+it does not remove the fresh-context maker/checker requirement; ADR-007 owns that
+policy.
 
 **weavelog* is **opinionated, not generic.** 
 

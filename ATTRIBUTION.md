@@ -18,12 +18,10 @@ names; symlinked third-party skills keep their upstream names).
 | DietrichGebert/ponytail (© 2026 DietrichGebert) | MIT | YAGNI ladder → implementer; canary-invariants technique |
 | third-party symlinks | own terms | diagram-design, tldraw-offline — un-prefixed, canonical copies outside the repo |
 | public concept-derived (ComposioHQ/awesome-claude-skills curation, 2025-10, author unattributable) | text MIT | as-content-research-writer (text from-scratch, concept derived) |
-| harness-original (this project) | Apache-2.0 | in-my-voice, prompt-triage, remove-ai-slop, simplify-language, tool-selection-rubric, verify-with-criteria, binary-doc-conversion; skill-spec core (addy distills credited in its frontmatter) |
+| harness-original (this project) | MIT | in-my-voice, prompt-triage, remove-ai-slop, simplify-language, tool-selection-rubric, verify-with-criteria, binary-doc-conversion; skill-spec core (addy distills credited in its frontmatter) |
 
-Relicense note: harness-original skills were MIT in the author instance
-pre-v0.1.0; from v0.1.0 they ship under Apache-2.0 (ratified license
-decision, `docs/prd/2026-09-05-v010-draft-brief.md`). Ported skill
-frontmatter carries the updated `license:` field.
+License correction: harness-original skills ship under MIT. Third-party content
+keeps its own license; the relevant skill frontmatter records its own lineage.
 
 ## Tool lineage
 
@@ -45,7 +43,7 @@ bundled that forbids it.
 weavelog exists because of MIT-licensed upstream work, a public
 concept-derived curation, and ideas published by peers. Reciprocity here
 means: (1) credit above, kept current as lineage grows; (2) weavelog's own
-contributions ship under Apache-2.0 for anyone to reuse; (3) borrowed
+contributions ship under MIT for anyone to reuse; (3) borrowed
 techniques point at their source, pinned; (4) upstreams that asked for
 nothing got credited first. If we missed an attribution, open an issue —
 fixing it takes priority.

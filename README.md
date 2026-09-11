@@ -70,8 +70,9 @@ Requirements: arm64 macOS, node, git. Models are opinionated defaults;
 |---|---|---|
 | v0.1.0+ | opencode | stranger test green + npm publish (this release) |
 | v0.2.0+ | pi + plugin system | brew tap |
-| v0.3.0+ | Claude Code | subscription-mode tiering shipped |
-| v0.4.0+ | Codex | stranger test green |
+| v0.2.1+ | hybrid | ratified brief + stranger test green |
+| v0.3.0+ | Codex | stranger test green |
+| v0.4.0+ | Claude Code | reviewer capability disclosed |
 | v1.0.0+ | all hosts | + complete documentation |
 
 Details: [`docs/ROADMAP.md`](docs/ROADMAP.md).
@@ -88,7 +89,7 @@ Details: [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 ## License & attribution
 
-Code: Apache-2.0 ([`LICENSE`](LICENSE), see [`NOTICE`](NOTICE)). Lineage and
+Code: MIT ([`LICENSE`](LICENSE), see [`NOTICE`](NOTICE)). Lineage and
 inspired-by: [`ATTRIBUTION.md`](ATTRIBUTION.md).
 
 **weavelog** name/logo © shabib87 — not covered by the code license.

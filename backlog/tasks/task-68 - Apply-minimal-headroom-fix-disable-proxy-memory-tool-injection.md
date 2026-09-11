@@ -1,15 +1,16 @@
 ---
 id: TASK-68
-title: Apply minimal headroom fix - disable proxy memory-tool injection
+title: Portable Headroom compatibility configuration
 status: To Do
 assignee: []
 created_date: '2026-09-06 22:11'
-updated_date: '2026-09-06 23:51'
+updated_date: '2026-09-11 04:05'
 labels:
   - harness
 milestone: m-7
 dependencies:
   - TASK-59
+  - TASK-79
 priority: high
 ordinal: 56000
 ---
@@ -17,18 +18,15 @@ ordinal: 56000
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
-Stop the recurring 'Model tried to call unavailable tool memory_save' bounce in opencode sessions. Root cause (verified 2026-09-06, see ~/.agents/docs/research/2026-09-06-headroom-memory-opencode-bounce.md): the launchd proxy com.headroom.proxy runs --memory, which injects memory tool schemas into every forwarded request; opencode validates tool calls against its own client-side registry and bounces injected tools. Minimal fix: add --no-memory-tools to ~/Library/LaunchAgents/com.headroom.proxy.plist ProgramArguments while keeping --mode cache, --memory, --memory-storage project and the HEADROOM_MODEL_ALIAS_MAP env byte-identical; back up the plist first; reload via launchctl bootout+bootstrap; verify savings, doctor, and no bounce across opencode/Claude Code/Codex; update the research doc. The broader stay/leave/build tool decision is tracked separately.
+Outcome: remove the Headroom memory-tool incompatibility through a reproducible, portable configuration path and verify it on the supported OpenCode profile. Why: a one-machine plist patch cannot be a release requirement.
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 WHEN the plist is edited, THE edit SHALL be preceded by a timestamped backup copy of com.headroom.proxy.plist
-- [ ] #2 WHEN the proxy reloads via bootout+bootstrap, THE ProgramArguments SHALL contain --no-memory-tools while --mode cache, --memory, --memory-storage project and the HEADROOM_MODEL_ALIAS_MAP environment value remain byte-identical to the backup
-- [ ] #3 WHEN a fresh opencode session runs, NO 'unavailable tool memory_save' bounce SHALL occur
-- [ ] #4 WHILE the proxy serves traffic after the change, THE savings counters in ~/.headroom/proxy_savings.json SHALL continue to increase relative to a pre-change snapshot
-- [ ] #5 WHEN headroom doctor -p 8788 runs post-change, IT SHALL report 0 failures with warnings unchanged from the pre-change baseline
-- [ ] #6 IF any client (opencode, Claude Code, Codex) fails after the change, THEN the plist backup SHALL be restored and reloaded as the documented rollback
-- [ ] #7 WHEN the work completes, THE research doc 2026-09-06-headroom-memory-opencode-bounce.md SHALL record the applied change and verification evidence
+- [ ] #1 WHEN the supported profile is configured from the documented portable source THEN Headroom disables incompatible memory-tool injection without embedding a personal absolute path
+- [ ] #2 WHEN a fresh OpenCode session uses the supported profile THEN it has no unavailable memory-tool bounce and produces an audit record
+- [ ] #3 IF the portable Headroom configuration fails THEN the documented rollback restores the prior configuration and names the failure
+- [ ] #4 WHEN this task closes THEN the exact candidate and clean-user procedure can reproduce the same Headroom behavior
 <!-- AC:END -->
 
 ## Definition of Done

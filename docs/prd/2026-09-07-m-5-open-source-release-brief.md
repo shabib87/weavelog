@@ -17,7 +17,7 @@ Public GitHub, LICENSE, CI/CD, and community docs for the v0.1.0 release.
 
 ## Requirements
 
-- R1. Repo goes public with LICENSE (Apache-2.0 per docs/research/2026-07-04-license-selection.md), NOTICE, ATTRIBUTION.
+- R1. Repo goes public with MIT LICENSE, NOTICE, ATTRIBUTION, and a separate history-clearance verdict.
 - R2. CI runs tests, lint, typecheck, sanitization on every PR.
 - R3. Community docs (README, CONTRIBUTING, security policy) exist and match the single-source rules.
 

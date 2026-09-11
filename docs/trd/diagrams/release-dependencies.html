@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Corrected release dependency graph</title>
+  <style>
+    :root { color: #18212b; background: #f4f6f8; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
+    body { margin: 0; } main { max-width: 1160px; margin: 0 auto; padding: 32px; }
+    h1 { margin: 0 0 8px; font-size: 30px; } p { line-height: 1.5; }
+    .note { color: #52606d; margin: 0 0 22px; }
+    svg { display: block; width: 100%; height: auto; background: #fff; border: 1px solid #d8e0e8; border-radius: 10px; }
+    .node { fill: #fff; stroke: #566574; stroke-width: 1.5; } .start, .gate { fill: #e8f4fa; stroke: #1677a8; }
+    .external { fill: #f4f6f8; stroke: #7c8894; stroke-dasharray: 5 4; }
+    .edge { fill: none; stroke: #607080; stroke-width: 1.7; marker-end: url(#arrow); } .dashed { stroke-dasharray: 6 5; }
+    .gate-edge { fill: none; stroke: #1677a8; stroke-width: 2; stroke-dasharray: 3 3; marker-end: url(#arrow); }
+    .name { font-size: 15px; font-weight: 700; } .sub { font: 11px ui-monospace, SFMono-Regular, Menlo, monospace; fill: #52606d; }
+    .legend { font-size: 12px; fill: #52606d; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Corrected release dependency graph</h1>
+  <p class="note">Generated from the corrected Backlog dependency metadata on 2026-09-11. Solid arrows are task dependencies; blue dashed arrows are human release gates. The gray dashed public-release path is intentionally separate from npm publication.</p>
+  <svg viewBox="0 0 1100 550" role="img" aria-labelledby="title description">
+    <title id="title">TASK-79 release dependency graph</title>
+    <desc id="description">TASK-79 precedes grouped release work, which must all finish before TASK-67 clean-user verification. A human release review precedes npm publication. TASK-83 m-5 public-source and history clearance precedes any GitHub public release.</desc>
+    <defs><marker id="arrow" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7z" fill="#607080"/></marker></defs>
+    <path class="edge" d="M220 115 H286"/><path class="edge" d="M220 115 H286 V228"/><path class="edge" d="M220 115 H286 V341"/>
+    <path class="edge" d="M480 115 H565 V230 H650"/><path class="edge" d="M480 228 H650"/><path class="edge" d="M480 341 H565 V230 H650"/>
+    <path class="gate-edge" d="M830 230 H875"/><path class="gate-edge" d="M995 230 H1032"/><path class="edge dashed" d="M480 455 H800"/>
+    <rect class="node start" x="48" y="76" width="172" height="78" rx="8"/><text class="name" x="64" y="106">TASK-79 correction</text><text class="sub" x="64" y="129">ADR · MIT · scope · graph</text>
+    <rect class="node" x="286" y="76" width="194" height="78" rx="8"/><text class="name" x="302" y="106">Required harness fixes</text><text class="sub" x="302" y="129">55 · 63 · 66 · 68 · 73 · 84</text>
+    <rect class="node" x="286" y="189" width="194" height="78" rx="8"/><text class="name" x="302" y="219">Portable package work</text><text class="sub" x="302" y="242">28 · 29 · 30 · 62 · 64</text>
+    <rect class="node" x="286" y="302" width="194" height="78" rx="8"/><text class="name" x="302" y="332">Release instructions + audit</text><text class="sub" x="302" y="355">53 · 54 (exact tarball)</text>
+    <rect class="node gate" x="650" y="191" width="180" height="78" rx="8"/><text class="name" x="666" y="221">TASK-67</text><text class="sub" x="666" y="244">clean-user install + dogfood</text>
+    <rect class="node gate" x="875" y="191" width="120" height="78" rx="8"/><text class="name" x="891" y="221">Human review</text><text class="sub" x="891" y="244">release decision</text>
+    <rect class="node start" x="1032" y="191" width="54" height="78" rx="8"/><text class="name" x="1043" y="221">npm</text><text class="sub" x="1040" y="244">0.1.0</text>
+    <rect class="node external" x="286" y="416" width="194" height="78" rx="8"/><text class="name" x="302" y="446">TASK-83 public clearance</text><text class="sub" x="302" y="469">m-5; separate from npm</text>
+    <rect class="node external" x="800" y="416" width="190" height="78" rx="8"/><text class="name" x="816" y="446">GitHub public release</text><text class="sub" x="816" y="469">after history verdict</text>
+    <text class="legend" x="48" y="525">Task 54 audits the package; m-5 audits public source and history. The two results are never interchangeable.</text>
+  </svg>
+</main>
+</body>
+</html>

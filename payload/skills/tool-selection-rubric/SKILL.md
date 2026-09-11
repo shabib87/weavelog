@@ -1,7 +1,7 @@
 ---
 name: tool-selection-rubric
 description: Use when comparing or selecting third-party tools, CLIs, frameworks, plugins, or repos to adopt — triggers on "which tool should I use", "compare X vs Y", "should I adopt", stars/maintenance/activity questions, or building an adoption shortlist
-license: Apache-2.0 (from v0.1.0; MIT pre-v0.1.0)
+license: MIT
 metadata:
   author: github:@shabib87
   version: "1.0.0"

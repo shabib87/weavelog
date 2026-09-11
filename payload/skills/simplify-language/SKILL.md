@@ -13,7 +13,7 @@ description: >-
   "simpler," "plain English," "ESL-readable," "AuDHD or visual-learner
   friendly," or references ASD-STE100 or Simplified Technical English by
   name.
-license: Apache-2.0 (from v0.1.0; MIT pre-v0.1.0)
+license: MIT
 metadata:
   author: github:@shabib87
   version: "1.0.0"

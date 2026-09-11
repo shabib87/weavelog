@@ -7,7 +7,7 @@ status: In Progress
 assignee:
   - conductor
 created_date: '2026-09-07 23:36'
-updated_date: '2026-09-11 01:55'
+updated_date: '2026-09-11 04:02'
 labels:
   - spec-approved
 dependencies: []
@@ -38,6 +38,12 @@ Large orchestrated research: settle how weavelog scales its conductor (full orch
 - [ ] #6 WHEN the draft is complete THEN at least two independent reviewers from different model families return fresh-context verdicts recorded as task comments, and all blocking objections are resolved before presentation
 - [ ] #7 WHILE TASK-76 (docs restructure) remains unmerged THEN sections the restructure will move carry an explicit reconciliation note rather than being pre-emptively restructured
 - [ ] #8 WHEN the synthesis is presented to the user THEN the task records how it feeds the PRD -> TRD -> ADR -> TASK chain with no implementation performed
+- [ ] #9 WHEN the correction is presented for ratification THEN ADR-006 and ADR-007 state the resolved command, budget, reviewer, recovery, and persona-prerequisite decisions without claiming future commands exist
+- [ ] #10 WHEN release scope is reconciled THEN the v0.1 capability table maps each required behavior to implementation evidence and a remaining task, without treating documentation as implementation
+- [ ] #11 WHEN active work is reconciled THEN every moved active task has a recorded before-and-after milestone disposition and release blockers are individually identified
+- [ ] #12 WHEN the corrected metadata is read THEN the dependency diagram is generated from its task dependencies and separately labels human release gates
+- [ ] #13 WHEN TASK-45 is read THEN it contains exact current blockers and one eligible next task after TASK-79 merges
+- [ ] #14 WHEN validation runs THEN active documentation, licensing, task references, DAG cycles, milestone-to-PRD links, and ordering conflicts have fresh recorded results
 <!-- AC:END -->
 
 ## Definition of Done
@@ -54,6 +60,8 @@ Large orchestrated research: settle how weavelog scales its conductor (full orch
 P0 Corpus assembly (scout agent): full backlog list + DONE history, docs/architecture/* (loop-factory, worktree-discipline, tool-boundaries, model-routing, backlog-lifecycle), ADR index + bodies, 9 named prior research docs. Output: compressed current-state brief (loop model, orchestration tiers, AGENTS.md layering, HITL gates, open questions). P1 External research (researcher x2, parallel, distinct engines, time-ranged >= 2026-01-01, trailing-90-days priority): R1 Tavily — four-loop taxonomy (turn/goal/time/proactive), shipped Claude Code loop commands Sept 2026, peer harness tiered routing + loop-as-command practice, AGENTS.md thin-context conventions, loop command naming conventions. R2 Exa — same questions independently, corroborate or flag disagreements. P2 Consolidation (conductor): taxonomy -> weavelog current-state mapping, gap analysis (conductor-always-on vs tiered routing), loop command name candidates (tier + HITL pauses + CLI trigger each), agent-primitives implications, PRD->TRD->ADR->TASK chain, TASK-76 reconciliation notes. Draft docs/research/2026-09-07-loop-taxonomy-research.md per AUTHORING.md research schema. P3 Review: >=2 fresh-context diff-reviewer-* agents from different model families; verdicts + blocking objections recorded as task comments; iterate until no blocking objections. P4 Verify + present: frontmatter-check validation; verify-with-criteria across all 7 ACs with fresh evidence; present synthesis + name recommendation to user. Deliverable: docs/research/2026-09-07-loop-taxonomy-research.md (status: open). No implementation, no docs restructure, no commits without human review.
 
 Plan-gate amendments (glm FIX-FIRST resolved): P0/P1 run in parallel (scout + R1 + R2 together); P2 may run ONE targeted follow-up research pass for P0-surfaced open questions. P2 adds a classification pass: every external claim tagged dated/pre-2026/undated; pre-2026/undated claims get 2026 corroboration or an explicit historical-context flag; start_date >= 2026-01-01 governs primary discovery only, targeted archival lookups permitted solely for corroboration. Frontmatter validation: npx tsx src/tools/frontmatter-check.ts docs/research from the worktree (research schema default); models_used_for_research populated with actual R1/R2/reviewer model IDs; supersedes: none unless a superseded same-directory filename applies. P0 brief preserves source identifiers verbatim (TASK-NN, doc filenames, ADR numbers) per claim. All recommended CLI triggers labelled recommended future surface. P4 verifies against ACs #1-#8 as recorded.
+
+P5 Correction (user-directed, 2026-09-10): reconcile ADR-006, release scope, MIT licensing, and the active backlog before any release implementation. Preserve four future commands and two human gates; correct stitch authorization, independent full review, budget/watchdog recovery, warp obligations, and prerequisite ordering. Update authoritative documents only through the ADR decision; give every active task an explicit retain/move/split/supersede disposition, repair dependencies and milestone mappings, create narrowly scoped verification work only after its spec gate, and record one executable release checklist in TASK-45. Validate documentation/frontmatter, license consistency, task references, milestone↔PRD links, DAG cycles, and ordering conflicts. Present ADR ratification and the complete diff at the merge gate; do not publish or close TASK-79 without ratification.
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
@@ -85,6 +93,14 @@ AGENTS.md slimming, name check, SDK verification; deps TASK-80+TASK-6). HUMAN ST
 approved for task/TASK-79; merge DEFERRED — human wants more refinement. PENDING: (1) human
 refinement of ADR-006, (2) ADR-006 approval + 3-place status flip, (3) difit merge gate.
 Worktree stays alive; branch is self-contained (TASK-80/81 travel with it).
+
+Correction implementation started 2026-09-10 under the user-approved Astra-reviewed plan. Existing TASK-79 research remains historical evidence; the current work is a release-queue and architecture reconciliation, not runtime command implementation.
+
+Correction validation (2026-09-10): architecture frontmatter 25/25 valid; active-task DAG parser reports 78 tasks with no cycles/dangling dependencies; biome check, tsc --noEmit, and git diff --check pass. Broad research validation remains red on 19 pre-existing legacy schema violations; no changed research file is invalid. Backlog task/draft creation hangs in this worktree (two attempts, no task written), so the required name-availability prerequisite is recorded as a TASK-80 claim gate and awaits creation after the human accepts its spec.
+
+2026-09-11 correction blocker: required m-5 follow-up task specification (uncreated because `backlog task create` blocks with no output in this worktree): Public repository and Git-history clearance. Outcome: independently audit the working tree and every reachable Git reference for personal data, credentials, private infrastructure, and obsolete identity material; record remediation or a decision to keep the repository private. Acceptance: (1) WHEN the audit runs THEN it records scope, commands, and dated results for working tree and all reachable refs; (2) IF it finds a concern THEN it records remediation or an explicit keep-private decision; (3) WHEN a GitHub public-release decision is requested THEN three independent analyze-fix-review passes provide recorded clearance. Intended metadata: High, task, m-5, depends on TASK-79, references the m-5 and v0.1 briefs. This is not satisfied by TASK-54.
+
+2026-09-11 correction blocker: required m-4 follow-up task specification (uncreated because `backlog task create` blocks with no output in this worktree): Verify weaver-persona name availability. Outcome: collect dated npm, GitHub, domain, trademark/conflict, spelling, and product-fit evidence for the persona name; the human approves or rejects it. Acceptance: (1) WHEN research completes THEN dated evidence and a recommendation are recorded; (2) IF the human has not approved the recommendation THEN TASK-80 cannot claim and no persona artifact, including documentation rename, ships; (3) WHEN approval is recorded THEN TASK-80 may proceed. Intended metadata: High, spike, m-4, depends on TASK-79, references ADR-006. This is distinct from TASK-57 product-name research. Required separate m-7 follow-up specification: Synchronize MIT live copies. Outcome: inventory all materialized host and skill copies affected by the earlier Apache change, synchronize only approved portable copies, and record exact paths/results. It must not be folded into TASK-55 hook activation.
 <!-- SECTION:NOTES:END -->
 
 ## Comments
@@ -154,5 +170,17 @@ author: @conductor
 created: 2026-09-11 01:55
 ---
 2026-09-10 design-fork round (human-directed): pre-build deliberation loop gap in ADR-006. R1 researcher (Tavily) + R2 researcher (built-in websearch; deviation: first 2/6 calls accidentally Tavily, disclosed) time-ranged >= 2026-01-01: naming+tiering the thinking phase ESTABLISHED (plan mode universal; spec-interview commands; light/full paths; Claude Code 'skip the plan if one sentence'; spec-kit short/full path; Amp oracle on-demand); cross-family adversarial pre-build deliberation NOT first-party mainstream (third-party niche: agent-kombat 2026-04-26, challenge-plans, adversarial-debate 2026-08, adversarial-review 2026-07-23; arXiv 2608.18167, 2608.00832); 'plan' maximal collision (~10 harnesses). Deliverable: docs/research/2026-09-10-pre-build-deliberation-loop.md (frontmatter validated). Plan-gate consultation (fresh context, cross-family): plan-gate-deepseek VERDICT APPROVE (recommends named sub-loop, no fifth command; binding constraints: no tri-state endpoint, adversarial pass must be ADDED not just named, tiers human-selected not complexity-gated); plan-gate-qwen VERDICT FIX-FIRST (3 blockers: phase conflation — scope WHAT-side grilling vs HOW-side plan-attack loci separately; B/C double-count weave hand-off without skip contract; research must land in docs/research/ before ADR cites it — resolved: note filed). Both converge: Option A (named sub-loop with inherited tiers). HUMAN DECISION (2026-09-10): Option A approved — ADR-006 amended in place (in-review revision rule): named pre-build deliberation sub-loop (candidate name warp, pending ratification), red-blue-white protocol (blue=maker drafts/defends, red=cross-family checker attacks, white=human referee; dissents preserved as receipts into the existing plan gate; models never sign), light tier = grilling only / full tier = adds cross-family attack pass, human-selected at invocation, never auto-migrated, pulse defaults to light, no new gate. B/C rejected (third-gate risk, hand-off double-count, pre-diff tier-fit unimplementable per ADR-004).
+---
+
+author: @astra-red-queue
+created: 2026-09-11 03:43
+---
+Fresh red review (Astra high, architecture): FIX-FIRST. Blockers: ADR-007 does not narrowly supersede conflicting ADR-004/model-routing reviewer policy; TASK-56 reviewer-policy obligations remain incomplete; active PRD/README host-order and degradation statements conflict; ADR-006 overstates existing reviewer-loop budget enforcement; AGENTS.md retains an Apache license reference. Concrete evidence supplied in review receipt.
+---
+
+author: @astra-red-queue
+created: 2026-09-11 03:43
+---
+Fresh red review (Astra high, backlog/release): FIX-FIRST. Blockers: TASK-67 contains a publish-gate prose cycle; TASK-66 marks required OpenCode/Headroom/Backlog tools optional; TASK-67 lacks required release dependencies; TASK-62/64 still require personal removals; TASK-81 still owns the name prerequisite after TASK-80; required workspace verification wiring has no task; TASK-54 is not split; the generated diagram does not represent metadata or human release review. Concrete evidence supplied in review receipt.
 ---
 <!-- COMMENTS:END -->

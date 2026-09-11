@@ -31,9 +31,10 @@ future agents/humans.
 | ADR-001 | weavelog architecture decisions (legacy, migrated from `docs/architecture/adr/` 2026-09-07) | approved | 2026-07-04 |
 | ADR-002 | bash-homebrew-tooling — satisfies the planned scripts-not-CLI decision (legacy, migrated 2026-09-07) | approved | 2026-06-29 |
 | ADR-003 | three-phase loop model (WHY/WHAT/HOW × inner/outer roles) + decision-recording gate at end of WHY | approved | 2026-09-07 |
-| ADR-004 | model-selection benchmark policy (seat-weighted composite; HLE protocol pin; L0–L4 reviewer escalation; weekly/monthly drift cadence) | approved | 2026-09-07 |
+| ADR-004 | model-selection benchmark policy (seat-weighted composite; HLE protocol pin; L0–L4 reviewer escalation; weekly/monthly drift cadence; reviewer fallback superseded by ADR-007) | superseded | 2026-09-07 |
 | ADR-005 | artifact flow — PRD/TRD/ADR/TASK doc classes, AC traceability rule (partially supersedes the 2026-07-04 doc-chain collapse) | approved | 2026-09-07 |
-| ADR-006 | tiered loop commands (stitch/weave/loom/pulse) + weaver persona replace the always-on conductor protocol; two HITL gates preserved; pre-build deliberation sub-loop (warp: red-blue-white protocol, light/full tiers); absorbs the conductor-dispatch subject (an ADR announced as "006" in research, never drafted) | in-review | 2026-09-07 |
+| ADR-006 | tiered loop commands (stitch/weave/loom/pulse) + weaver persona replace the always-on conductor protocol; two HITL gates preserved; pre-build deliberation sub-loop (warp: red-blue-white protocol, light/full tiers); absorbs the conductor-dispatch subject (an ADR announced as "006" in research, never drafted) | approved | 2026-09-07 |
+| ADR-007 | independent reviewer policy — fresh context, cross-family capability, explicit alternatives, and successor to ADR-004 reviewer fallback | approved | 2026-09-10 |
 
 > Migration note (2026-09-07): legacy ADRs 0001/0002 were migrated from
 > the pre-reorg ADR location (dissolved by the ADR-005 reorg); ADR-002 satisfies the

@@ -9,6 +9,7 @@ related_to:
   - ./runbook-decomposition.md
   - ./README.md
   - ../cli.md
+  - ../adr/0007-independent-review-policy.md
 sources:
   - "AGENT-STACK-RUNBOOK.md §Model tier protocol, §Current model tiers, §Watched / not-used, §Phase 2/3 (TASK-45 decomposition)"
 ---
@@ -35,7 +36,8 @@ Escalation ladder (ADR-004, 2026-09-07): reviewer/plan-gate seats run flash-firs
 climb on deterministic triggers — L0 `glm-5.3-flash` → L1 `deepseek-v4-pro-0813`
 (risk-signal triggers computed on the merged diff against base; no line count) → L2
 `glm-5.3` → L3 `qwen3.8-2.4t-a95b` → L4 `kimi-k3`. Final approval follows the relational
-family rule (family = vendor; never bless your own family's output). Trigger semantics
+family rule (family = vendor; never bless your own family's output unless the
+ADR-007 unavailable-family exception has an explicit human receipt). Trigger semantics
 live in `payload/config/prompts/reviewer.md` and `plan-reviewer.md`; per-agent model
 fields may name only L0–L4 seats.
 

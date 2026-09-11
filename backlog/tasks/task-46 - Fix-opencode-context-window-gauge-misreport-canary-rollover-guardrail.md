@@ -4,9 +4,8 @@ title: Fix opencode context-window gauge misreport + canary rollover guardrail
 status: To Do
 assignee: []
 created_date: '2026-09-05 16:58'
-updated_date: '2026-09-06 21:54'
+updated_date: '2026-09-11 04:02'
 labels: []
-milestone: m-7
 dependencies:
   - TASK-59
 priority: high
@@ -27,3 +26,9 @@ The opencode context-window gauge is unreliable. Case study: session ses_f9af9b1
 - [ ] #3 WHEN a canary token is planted early in a session THEN the conductor SHALL periodically demand it be echoed, and WHEN recall fails or degrades THEN the conductor SHALL receive a thread-rollover hint
 - [ ] #4 WHEN the canary guardrail ships THEN it SHALL be a conductor default requiring no per-session opt-in
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+2026-09-11 correction: OpenCode context-window canary remains future harness work; clear m-7 because it is not required for the supported v0.1 profile.
+<!-- SECTION:NOTES:END -->

@@ -4,9 +4,11 @@ title: Port privacy-audit bash checks to TypeScript (weavelog check integration)
 status: To Do
 assignee: []
 created_date: '2026-09-07 15:49'
-updated_date: '2026-09-07 15:55'
+updated_date: '2026-09-11 03:54'
 labels: []
-dependencies: []
+milestone: m-7
+dependencies:
+  - TASK-79
 ordinal: 59500
 ---
 
@@ -18,10 +20,10 @@ The privacy/sanitization checks (scan for absolute home-dir paths like /Users/, 
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 IF the bash originals are inventoried during spec, THEN every check they perform is either reimplemented in TypeScript or explicitly dropped with a recorded reason in the task
-- [ ] #2 WHEN weavelog check runs, THEN a privacy subcheck executes the sanitization scan (absolute home-dir paths, personal identifiers, secret patterns) with pass/fail semantics consistent with existing subchecks
-- [ ] #3 WHEN a scanned file set contains a violation, THEN the subcheck fails and its message names the file and the matched pattern
-- [ ] #4 WHEN the port lands, THEN no bash remains as implementation logic and AGENTS.md's pre-commit sanitization instruction points to the automated subcheck
+- [ ] #1 WHEN the privacy checks are inventoried THEN each legacy check is reimplemented in TypeScript or explicitly dropped with a recorded reason
+- [ ] #2 WHEN weavelog check runs THEN it performs deterministic privacy, workspace test, lint, typecheck, and security verification subchecks
+- [ ] #3 WHEN a scanned file set or workspace verification fails THEN the subcheck fails and names the file, failed command, or matched pattern
+- [ ] #4 WHEN the port lands THEN no bash remains as implementation logic and AGENTS.md points at the automated checks
 <!-- AC:END -->
 
 ## Definition of Done
@@ -31,3 +33,11 @@ The privacy/sanitization checks (scan for absolute home-dir paths like /Users/, 
 - [ ] #3 Branch is rebased on main and green
 - [ ] #4 All acceptance criteria checked with fresh evidence (one at a time, never batched)
 <!-- DOD:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+2026-09-10 correction: assigned to m-7 because deterministic privacy verification is a required v0.1 release gate.
+
+2026-09-10 correction: TASK-73 is the narrowly scoped workspace-verification wiring task. It owns deterministic integration, not an unrestricted orchestration framework.
+<!-- SECTION:NOTES:END -->

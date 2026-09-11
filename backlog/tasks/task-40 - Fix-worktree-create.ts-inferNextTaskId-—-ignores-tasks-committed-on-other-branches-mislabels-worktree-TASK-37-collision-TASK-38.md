@@ -6,10 +6,9 @@ title: >-
 status: To Do
 assignee: []
 created_date: '2026-09-04 19:35'
-updated_date: '2026-09-06 21:54'
+updated_date: '2026-09-11 04:02'
 labels:
   - harness
-milestone: m-7
 dependencies:
   - TASK-59
 priority: high
@@ -29,3 +28,9 @@ worktree-create.ts --create infers the next task ID via `backlog task list --jso
 - [ ] #2 WHEN inferNextTaskId runs THEN it accounts for task ids committed on ALL local branches (git ls-tree refs/heads), not just the checked-out working copy
 - [ ] #3 WHEN the fix lands THEN a regression test reproduces the collision (a task-N committed on a second branch) and asserts the worktree/branch/TASK.md match the backlog-created id
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+2026-09-11 correction: Worktree ID-collision repair remains future harness maintenance; clear m-7 because it is not a 0.1 release blocker. TASK-77 is the suspected duplicate and must be compared before either is closed.
+<!-- SECTION:NOTES:END -->

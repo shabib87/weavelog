@@ -1,7 +1,7 @@
 ---
 date: 2026-09-07
 topic: Model-selection benchmark policy (open-weight roster vs frontier)
-status: approved
+status: superseded
 type: adr
 author: conductor
 related_to:
@@ -13,6 +13,7 @@ related_to:
   - ../research/2026-09-07-flagship-tier-pricing-quality-preliminary.md
   - ./0003-three-phase-loop-model.md
   - ./0006-tiered-loop-commands.md
+  - ./0007-independent-review-policy.md
 sources:
   - "TASK-61"
 ---
@@ -21,12 +22,15 @@ sources:
 
 ## Status
 
-approved (2026-09-07) — TASK-61 evidence base closed; human sign-off received.
-Traces to NORTH_STAR non-negotiables and the ROADMAP
-milestone ladder (see Alignment below); amendable only via dated addenda
-(living-document split, Consequences).
+superseded by ADR-007 (2026-09-11) for the reviewer-fallback decision. ADR-007
+carries forward this record's benchmark selection, escalation triggers, and drift
+governance. Traces to NORTH_STAR non-negotiables and the ROADMAP milestone ladder.
 
-*(Revised 2026-09-10: status word synced to approved — frontmatter, this section, and the index row now agree; the body had drifted while frontmatter and index recorded the 2026-09-07 ratification.)*
+*(Revised 2026-09-10: status word synced to approved — frontmatter, this section, and the index row then agreed; the body had drifted while frontmatter and index recorded the 2026-09-07 ratification.)*
+
+**Transition recorded 2026-09-11:** ADR-007 was ratified. It supersedes this record
+for the reviewer-fallback decision and carries forward benchmark selection,
+escalation triggers, and drift governance unchanged.
 
 ## Context
 
@@ -123,15 +127,19 @@ Reviewer seats run flash-first and climb on triggers. Thresholds live in
 workflow config, are recorded per run with a reason code, and a diff never
 silently skips a level.
 
-**Host-mode scope (ROADMAP v0.3 constraint, non-negotiable):** this ladder
+**Host-mode scope (dated 2026-09-07 example):** this ladder
 assumes an OpenRouter-mode host (opencode 0.1, pi 0.2) where cross-model
-review is available. Inside subscription-mode hosts (Claude Code 0.3, Codex
-0.4) there is no cross-model OpenRouter reviewer; the ladder degrades to
+review is available. Inside subscription-mode hosts (Codex 0.3, Claude Code
+0.4 under the current ROADMAP) there is no cross-model OpenRouter reviewer; the ladder degrades to
 the ROADMAP-specified substitute — cross agent fresh subagent review
 (e.g. Sonnet writes, Opus reviews) — with the family-diversity intent
 preserved as fresh-context diversity. The manifest and doctor report the
 degraded tiering honestly. Seats are opinionated defaults; the human
 directs and can override per PRODUCT ("init asks and flags override").
+
+The host order in this paragraph is illustrative and follows the active ROADMAP;
+it is not an additional architecture decision. ADR-007 governs the unavailable
+cross-family fallback and its human receipt.
 
 | Level | Seat | Escalation triggers | Notes |
 |---|---|---|---|
@@ -239,3 +247,15 @@ policy target, not a 0.1.0 deliverable.
 | Phase-2 = opencode only (0.1.0) | ROADMAP v0.1.0 scope; pi config deferred to v0.2 deliverables |
 | Weekly/monthly drift cadence | NORTH_STAR: zero silent failure, evidence over claims; scheduling itself lands post-0.1.0 per ROADMAP explicit-out |
 | Escalation triggers via deterministic gates | NORTH_STAR: TDD + deterministic tool validation; ROADMAP v0.1.0 check-gate set |
+
+## Addendum 2026-09-11
+
+ADR-007 supersedes the host-mode wording above. Cross-family review is a
+separate capability, not the definition of independent maker/checker review.
+When a requested full review cannot obtain another family, the system reports
+the limitation and requires an explicit human-selected alternative; it does
+not silently call a same-provider fallback full cross-family review.
+
+ADR-007 ratification changed this record's frontmatter, Status section, and index
+entry together to `superseded`. ADR-007 is the successor for the changed host-mode
+reviewer decision and carries the retained policies forward by reference.

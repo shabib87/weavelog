@@ -8,7 +8,7 @@ description: >-
   sounds "AI", "cryptic", "slop", or "robotic", and before every doc or
   presentation handoff. Companion to simplify-language (that skill governs
   sentence construction; this one governs tell removal).
-license: Apache-2.0 (from v0.1.0; MIT pre-v0.1.0)
+license: MIT
 metadata:
   author: github:@shabib87
   version: "1.0.0"

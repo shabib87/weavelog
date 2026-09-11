@@ -6,69 +6,44 @@ title: >-
 status: To Do
 assignee: []
 created_date: '2026-09-10 02:30'
-updated_date: '2026-09-10 02:30'
+updated_date: '2026-09-11 04:05'
 labels: []
+milestone: m-4
 dependencies:
-  - TASK-80
   - TASK-6
-priority: medium
-ordinal: 64000
-type: task
+  - TASK-7
+  - TASK-8
+  - TASK-9
+  - TASK-80
 references:
   - docs/adr/0006-tiered-loop-commands.md
   - docs/research/2026-09-07-loop-taxonomy-research.md
 documentation:
   - docs/AGENTS.md
   - docs/trd/backlog-lifecycle.md
+priority: medium
+type: task
+ordinal: 64000
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
-Umbrella task for everything ADR-006 (tiered loop commands + weaver persona) obligates
-but no existing task tracks. Captured 2026-09-10 during the TASK-79 pre-merge audit so
-the ADR's implementation obligations cannot be lost at worktree cleanup. Scope, per
-ADR-006's Decision table and Consequences:
+Outcome: implement the future command surface that ADR-006 defines: stitch, weave, loom, and pulse; the budget and tier-fit modules; the user/project contract; and the OpenCode plugin-SDK lifecycle proof. Why: later command work must keep human decisions, review independence, recovery, and audit records intact.
 
-1. Four user-invocable loop commands — stitch (turn-based), weave (goal-based), loom
-   (nested goal-based queue), pulse (time-based, proactive-guarded) — as skills + CLI
-   triggers + hooks. Enters build scope only via a future PRD per ADR-005 artifact flow;
-   until then these are a recommended future CLI surface.
-2. Deterministic budget module — extends TASK-6 (three caps + session.diff no-progress)
-   with the 80% inform / alert / soft-stop-at-100% ladder, evaluated only at iteration
-   boundaries; weavelog-native config names, zero third-party name adoption.
-3. Tier-fit checker — deterministic wrong-tier detection extending risk-signals.ts
-   (ADR-004 mandate: signals on the merged diff, never LLM judgment); greenfield, no
-   shipped harness does this (research §5.2).
-4. payload/AGENTS.md slimming — user-level contract + one routing line; config-sync
-   changes for the user-level/project-level split (TASK-23/27 machinery, TASK-28/29/30
-   scaffold rules).
-5. weaver name availability check (TASK-57-style: npm/GitHub/domain/trademark) — PRD
-   item; gates persona adoption.
-6. opencode plugin-SDK lifecycle-hook expressibility verification — must pass before
-   weave's evaluator-loop mechanics ship.
+Scope is future implementation only. A separate human-approved weaver-persona availability task must precede TASK-80; it is distinct from the completed TASK-57 product-name research. TASK-80 performs the approved active-surface persona sweep. Do not ship a command merely because this umbrella task exists.
 
-Sequencing (DAG): TASK-80 (weaver sweep) and TASK-6 (budget base) first; then budget
-module, tier-fit checker, CLI surface in that order; SDK verification (item 6) before
-weave mechanics; name check (item 5) at PRD time. Child tasks spawned from this
-umbrella cite the ADR-006 decision row they implement (ADR-005 AC traceability).
-
-Scope notes (review round 3, 2026-09-10): (a) the Dispatch-model decision row
-(subagents return findings; the weaver alone writes shared state) is implemented via
-item 4's slimmed payload contract plus the weave/loom child tasks' dispatch design —
-child tasks must cite that row explicitly. (b) When TASK-8 is claimed, its decision CLI
-action set (approve|kickback|replan|stuck) must gain reject as a gate answer, per
-ADR-006's gate placement. (c) docs/trd/worktree-discipline.md:65 still carries the
-pre-ADR-006 vocabulary ("merge / kick back / re-plan") — harmonize when TASK-8 ships
-(TRD edits ride under an ADR; ADR-006 is that ADR).
+Sequencing: TASK-6 establishes the budget base; TASK-7 establishes review; TASK-8 establishes human decision actions; TASK-9 establishes recovery. Persona availability -> TASK-80 precedes the persona-dependent surface. Child tasks must cite the relevant ADR-006 decision row and the applicable budget, review, decision, or recovery task; this umbrella dependency list is not a substitute for those relationships.
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 WHEN the implementation plan is drafted THEN it records the sequencing TASK-80 and TASK-6 first, then budget module, tier-fit checker, CLI surface; SDK verification before weave mechanics; name availability check at PRD
-- [ ] #2 IF a child task is spawned from this umbrella THEN its description cites the ADR-006 decision row it implements
-- [ ] #3 WHILE the weaver name availability check has not passed THEN no weaver-named artifact ships outside documentation
-- [ ] #4 WHEN stitch/weave/loom/pulse ship THEN each maps to one taxonomy tier, pauses at the two human gates (plan approval + merge approval), and the deterministic budget module governs it at iteration boundaries
+- [ ] #1 WHEN the implementation plan is drafted THEN it sequences TASK-6 budget, TASK-7 review, TASK-8 decisions, TASK-9 recovery, and the separately approved persona-availability prerequisite -> TASK-80 before each dependent command capability
+- [ ] #2 IF a child task is spawned from this umbrella THEN its description cites the ADR-006 decision row and every applicable budget, review, decision, or recovery dependency
+- [ ] #3 WHILE the weaver-persona availability prerequisite is not approved THEN no weaver-named code, documentation, configuration, or diagram artifact ships
+- [ ] #4 WHEN stitch, weave, loom, or pulse ships THEN it maps to one taxonomy tier, pauses at plan and merge approval, and uses boundary-based budget accounting with the separate watchdog and checkpoint rules
+- [ ] #5 WHEN warp is implemented THEN it separates human-led WHAT dialogue from HOW plan attack, supports human-selected light and full tiers, preserves dissent receipts, charges budget boundaries, and routes changed scope through replan
+- [ ] #6 IF a requested full cross-family review cannot obtain another model family THEN the command reports that limitation and requires an explicit human-selected alternative before continuing
 <!-- AC:END -->
 
 ## Definition of Done
@@ -82,18 +57,13 @@ pre-ADR-006 vocabulary ("merge / kick back / re-plan") — harmonize when TASK-8
 ## Implementation Plan
 
 <!-- SECTION:PLAN:BEGIN -->
-Not planned yet. Planning happens at claim time (claim gate requires spec-approved
-first). Trigger for activation: ADR-006 ratified (TASK-79 merged) AND TASK-80 complete
-AND TASK-6 complete, or an explicit human decision to pull the loop surface forward
-into a PRD milestone.
+Not planned yet. Planning happens only when a future worker claims this task after its spec gate. Activation requires ratified ADR-006, approved persona-availability evidence, TASK-80 complete, and the relevant base task for each capability complete.
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
 
 <!-- SECTION:NOTES:BEGIN -->
-Created 2026-09-10 from the TASK-79 pre-merge audit (session 01a07f60 finding: ADR-006
-committed to six work items that no backlog task, ROADMAP milestone, or PRD tracked;
-capture-before-cleanup rule). Not claimed; spec gate runs at claim.
+Created 2026-09-10 from the TASK-79 pre-merge audit so ADR-006 obligations cannot be lost. 2026-09-11 correction: a separate persona check precedes TASK-80; completed TASK-57 applies only to the product name. Warp duties are explicit; child tasks carry their actual budget, review, decision, and recovery relationships.
 <!-- SECTION:NOTES:END -->
 
 ## Comments

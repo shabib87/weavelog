@@ -1,7 +1,7 @@
 ---
 name: prompt-triage
 description: Use when the conductor receives a dumped mega-prompt, wall-of-text brief, or voice-note transcript with 2+ mixed asks — triggers on pasted briefs over ~15 lines, "here's everything I want" dumps, or requests mixing bugfix + feature + refactor. Decomposes into structured intent lines, each with acceptance criteria and a route (named flow or backlog). Do NOT use for a single clear task (execute it) or pure queue filing. Terminates when every clause maps to exactly one intent line with a measurable finish line.
-license: Apache-2.0 (from v0.1.0; MIT pre-v0.1.0)
+license: MIT
 metadata:
   author: github:@shabib87
   version: "1.0.0"

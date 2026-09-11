@@ -1,16 +1,18 @@
 ---
 date: 2026-09-07
 topic: Tiered loop commands with a weaver persona replace the always-on conductor protocol
-status: in-review
+status: approved
 type: adr
 author: conductor
 related_to:
+  - ../trd/2026-06-28-weavelog-design.md
   - ../trd/backlog-lifecycle.md
   - ../trd/loop-factory.md
   - ../trd/worktree-discipline.md
   - ./0003-three-phase-loop-model.md
   - ./0004-model-selection-benchmark-policy.md
   - ./0005-artifact-flow.md
+  - ./0007-independent-review-policy.md
   - ../research/2026-09-07-loop-taxonomy-research.md
   - ../research/2026-09-10-pre-build-deliberation-loop.md
   - ../research/2026-09-03-budget-caps-checkpoint-resume.md
@@ -29,8 +31,8 @@ sources:
 
 ## Status
 
-in-review — human ratification pending, presented via difit 2026-09-07. Fired at the
-ADR-003 decision gate by the TASK-79 research note.
+approved (2026-09-11) — human ratification recorded after TASK-79 difit review.
+Fired at the ADR-003 decision gate by the TASK-79 research note.
 
 *(Revised 2026-09-10: added the pre-build deliberation sub-loop (warp) — the named
 thinking half with the red-blue-white protocol and light/full tiers; research basis
@@ -76,10 +78,11 @@ ever ratified; this ADR takes the 006 number (index row annotated accordingly).
 | Decision | Choice | Why |
 |---|---|---|
 | Loop surface | Four commands — **stitch** (turn-based small run), **weave** (goal-based full flow), **loom** (nested goal-based queue), **pulse** (time-based, proactive-guarded trigger) | One hand-off each; loom metaphor; rungs nest (loom = N weaves); semantics per research §5 |
-| Orchestrator persona | **weaver** — runs weave/loom; the current conductor, personified | TASK-58: "Weave is the composition principle"; availability check gates at PRD |
+| Orchestrator persona | **weaver** — runs weave/loom; the current conductor, personified | TASK-58: "Weave is the composition principle"; a name-availability task must pass before TASK-80 or any persona artifact |
 | HITL model | **Two gates preserved** — plan gate (before implementation, per ADR-003) + merge gate; `pulse` never runs unattended past them | NORTH_STAR :38/:63-64; ADR-003 Gates row — unchanged by this ADR; see Gate placement below |
 | Dispatch model | **Subagents return findings; the weaver alone writes shared state** (backlog, docs, commits) | absorbs the never-written conductor-dispatch ADR; ADR-005 artifact flow; one-writer discipline |
 | Loop behavior location | **Skills + CLI triggers + hooks** — never always-on AGENTS.md; `payload/AGENTS.md` slims to the user-level contract + a routing line | thin-context evidence (research §3); project scaffold stays separate (TASK-28/29/30) |
+| v0.1 installation boundary | **External tools are required prerequisites, installed through pinned instructions; `init` verifies and materializes package content** | Keeps the portable npm package reproducible without pretending it manages third-party installation; Pi host implementation remains v0.2 |
 | Budgets + tier-fit checker | **One deterministic module** — the 80% → 100% budget ladder, evaluated only at iteration boundaries; never auto-migrate tiers unattended | see Budget mechanics below |
 | Pre-build deliberation | **Named sub-loop (`warp`), not a command** — red-blue-white protocol (blue = maker drafts and defends, red = cross-family checker attacks, white = human referee); light tier = grilling only, full tier = adds the cross-family attack pass; human-selected at invocation; pulse defaults to light; no new gate | deliberation is human-inside, not a delegated hand-off; a command would create a de-facto third gate (ADR-003: WHAT uses continuous dialogue, not a gate); see The pre-build deliberation loop below |
 
@@ -92,9 +95,10 @@ loom, or pulse begins, you and the weaver work out what to build together — th
 with you, not from the agent working alone. A stitch skips that talking; it is for
 small things:
 
-- **stitch** — one quick job. You ask for something small; the weaver does it right
-  away and shows you the result. No big planning. (If the stitch touches a branch or
-  a tracked task, it still stops for you at the merge check.)
+- **stitch** — one already-authorized small action. It may proceed without a new
+  plan only while it stays inside that authorization. It cannot bypass a required
+  plan approval or merge approval. If the work grows beyond the authorization, it
+  stops, preserves its checkpoint and receipt, and returns for replanning.
 - **weave** — one whole build job, start to finish. The weaver drafts the build plan
   and stops for you (you approve, send it back with fixes, or reject), then builds and
   stops again with the finished result (you approve, send it back, or reject). Two
@@ -128,20 +132,25 @@ different rules, and this record must not blur them:
   evidence from the agent; you steer; you decide. This is continuous dialogue
   (ADR-003), carried by the grilling practice: one question at a time, with a
   recommended answer.
-- **HOW side (before the plan gate):** the agent drafts the plan autonomously, then a
-  **cross-family attack pass** runs before the plan gate opens.
+- **HOW side (before the plan gate):** the agent drafts the plan autonomously; on
+  the human-selected **Full** tier, a cross-family attack pass runs before the plan
+  gate opens.
 
 The **red-blue-white protocol** (full tier):
 
 - **Blue (maker):** the drafting agent writes the plan and defends it.
-- **Red (checker):** reviewer agents from a **different model family** attack the
-  draft. Never the same family grading itself — same-family review is the
-  false-consensus trap (arXiv 2608.18167, 2026-08).
+- **Red (checker):** a fresh-context checker attacks the draft. The checker must
+  be independent of the maker: it never grades its own work. A different model
+  family is required when full cross-family review was requested. If that family
+  is unavailable, the system reports the limitation, preserves the dissent
+  receipt, and asks the human to choose an explicit alternative; it does not
+  silently substitute same-family review.
 - **White (referee):** **you**. The weaver settles mechanical disputes on written
   policy; anything ambiguous escalates to you. Your signature at the plan gate stays
   the only approval — models never sign (four-eyes: a person signs, not a model).
-- Rounds are capped by the existing budget machinery (`reviewer-loop.ts
-  --budget-usd`); dissents are preserved and travel with the plan as **receipts into
+- Current `reviewer-loop.ts --budget-usd` reports total cost after reviews finish;
+  it is not dispatch-time round capping. TASK-81 must add boundary accounting and
+  bounded dispatch before this policy can be enforced. Dissents travel with the plan as **receipts into
   the existing plan gate** (NORTH_STAR: every gate produces a receipt). No new gate
   is created; ADR-003 stands unamended.
 
@@ -220,20 +229,25 @@ ADR-level decision amending this record and ADR-003 — not a skill or code chan
 
 ### Budget mechanics (detail)
 
-The one deterministic module extends TASK-6 + the budget-caps design + `risk-signals.ts`.
-All evaluations happen only at iteration boundaries; per cap:
+The deterministic budget account extends TASK-6 + the budget-caps design +
+`risk-signals.ts`. Usage is measured and acted on at iteration boundaries; per cap:
 
 - **inform at 80%** — a one-line note;
 - **alert** — on stall or risk-trigger (`session.diff` no-progress tuple,
   `risk-signals.ts`). Stall = no `session.diff` progress between consecutive iteration
   boundaries, evaluated at boundaries;
-- **soft-stop at 100%** — finish the current step, report, stop; never kill mid-edit.
-  The wall-clock cap's soft-stop can fire between boundaries: a timer runs in the
-  background, so a true hang cannot outlast the cap.
+- **soft-stop at 100%** — stop new dispatch, finish only a bounded cancellation
+  step, report, and preserve the checkpoint; never claim an in-flight edit was
+  safely completed.
 
 Iteration boundary = a completed agent step within the loop: weave → a completed
 per-AC verification pass; loom → a completed task; stitch → turn end; pulse inherits
 the boundary of the weave it fires. Never auto-migrate tiers unattended.
+
+The wall-clock watchdog is separate from budget accounting. It observes a hang
+between boundaries, stops further dispatch, requests bounded cancellation, and
+preserves the latest checkpoint and receipts for recovery. This is a required
+future behavior, not a claim that the machinery exists today.
 
 The budget config surface uses **weavelog-native names** (loom vocabulary) — third-party
 prior-art patterns are cited in research docs, never adopted as names; zero dependency,
@@ -254,7 +268,7 @@ zero name adoption.
 - The deterministic budget module extends the TASK-6 spec (currently To Do) —
   implementation sequencing must land TASK-6 before the budget module.
 - The `weaver` name must pass a TASK-57-style availability check
-  (npm/GitHub/domain/trademark) at PRD.
+  (npm/GitHub/domain/trademark) before TASK-80 and any persona artifact.
 - User-level and project-level AGENTS.md diverge — config-sync must handle both layers.
 
 ## Alternatives considered

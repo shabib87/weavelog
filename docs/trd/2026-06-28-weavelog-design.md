@@ -18,6 +18,20 @@ sources:
 
 ---
 
+## 0. v0.1 transition scope (2026-09-11)
+
+This is the founding design for the future Pi host. Its Pi-specific runtime,
+project-`init`, per-step approval, and shared-working-directory details are not the
+operative v0.1 release contract. ADR-006 and the v0.1 PRD set the current contract:
+OpenCode + Headroom is the supported v0.1 profile; external tools are required
+prerequisites installed with pinned instructions; `weavelog init` materializes and
+checks packaged configuration; `weavelog scaffold --project` creates project files;
+and human approval occurs at the plan and merge gates. Pi implementation remains
+v0.2 work. This narrow transition preserves the Pi architecture below as a future
+design rather than claiming it has shipped.
+
+---
+
 ## 1. Context & Motivation
 
 The original ADR (`docs/archive/stateless-multi-model-agent-swarm-adr.md`) proposed Pi + OpenRouter + Headroom + SwarmForge as the stack. After investigating each tool against its actual documentation and source code, three gaps emerged:
@@ -32,11 +46,11 @@ This design replaces the SwarmForge orchestration layer with a lightweight Pi Ty
 
 ### Primary Architectural Drivers
 
-1. **Pi-native orchestration.** All loop coordination lives in a Pi TypeScript extension. No separate orchestration tool is required.
+1. **Pi-native orchestration (v0.2).** All Pi-host loop coordination lives in a Pi TypeScript extension. No separate orchestration tool is required for that host.
 2. **Open standards first.** Skills follow the Agent Skills standard (`agentskills.io`). AGENTS.md follows `agents.md` conventions (<200 LOC). Roles use Pi's native `.pi/agents/<role>.md` convention. No bespoke formats where standards exist.
-3. **Two-tier setup.** Machine-level (`weavelog check`) verifies Pi, Headroom, env vars. Workspace-level (`weavelog init`) scaffolds project-local `.pi/agents/`, workflow configs, and associated files.
+3. **Two-tier setup (Pi host).** Machine-level (`weavelog check`) verifies Pi, Headroom, env vars. The future Pi project scaffold creates project-local `.pi/agents/`, workflow configs, and associated files.
 4. **Headroom compression + learning.** The Headroom proxy compresses tool outputs before each LLM call (via `@ryan_nookpi/pi-extension-headroom`). The `--learn` flag writes observed failure patterns back to AGENTS.md. When `--learn` is enabled, `--memory-storage=project` prevents cross-project memory bleed.
-5. **Human-gated verification.** Every step gates on human approval of a deterministic verifier's results. The verifier provides signal; the human provides judgment. No unattended autonomous runs in v1.
+5. **Human-gated verification.** The operative v0.1 contract has human plan and merge gates. The stricter per-step Pi-host proposal below is deferred for its own host release; no unattended autonomous runs in v1.
 
 ---
 
@@ -62,7 +76,7 @@ composes the harness — it does not run the loop.
 | Primitive (Osmani) | weavelog composes (init/check) | Pi runs |
 |---|---|---|
 | **Automations** | Workflow JSON configs (`.pi/workflows/`) | Extension spawns steps; v1 trigger is manual `/run` |
-| **Worktrees** | Deferred post-v1 (v1: sequential, shared cwd) | Git worktree isolation |
+| **Worktrees** | Pi-host sequencing decision deferred to v0.2 | Git worktree isolation |
 | **Skills** | `.pi/skills/<name>/SKILL.md` (Agent Skills standard) | Progressive disclosure at runtime |
 | **Plugins/connectors** | `weavelog plugin add` wrapper around `pi install` | Package loading |
 | **Sub-agents** | `.pi/agents/<role>.md` with per-role model/tools | Sub-agent processes, maker/checker split |
