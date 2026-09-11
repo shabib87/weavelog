@@ -3,11 +3,11 @@ id: TASK-79
 title: >-
   Loop taxonomy research — repo synthesis + harness comparison + loop command
   names
-status: In Progress
+status: Done
 assignee:
   - conductor
 created_date: '2026-09-07 23:36'
-updated_date: '2026-09-11 04:02'
+updated_date: '2026-09-11 05:02'
 labels:
   - spec-approved
 dependencies: []
@@ -30,28 +30,28 @@ Large orchestrated research: settle how weavelog scales its conductor (full orch
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 WHEN the research completes THEN a doc exists at docs/research/2026-09-07-loop-taxonomy-research.md carrying the AUTHORING.md research frontmatter (date matching filename prefix, topic, status, non-empty sources, models_used_for_research, supersedes) and passes frontmatter-check validation
-- [ ] #2 IF the research doc recommends loop commands THEN each recommended name maps to one taxonomy tier (turn/goal/time/proactive), states its HITL pause points, and names the CLI trigger it fires, labelled as recommended future CLI surface rather than an existing command
-- [ ] #3 WHEN external research is performed THEN at least two research agents query distinct engines (Tavily AND the built-in websearch engine; Exa unavailable in harness, deviation recorded 2026-09-07) with time-ranged searches (start_date >= 2026-01-01, prioritizing the trailing 90 days) and every external claim in the doc is dated and source-attributed
-- [ ] #4 WHEN a source predates 2026 OR is undated THEN its claims are either corroborated by a 2026-dated source or explicitly flagged as historical context in the doc, never presented as current state
-- [ ] #5 WHEN the research plan is recorded on the task THEN at least one plan-gate reviewer from a different model family reviews it before any research dispatch
-- [ ] #6 WHEN the draft is complete THEN at least two independent reviewers from different model families return fresh-context verdicts recorded as task comments, and all blocking objections are resolved before presentation
-- [ ] #7 WHILE TASK-76 (docs restructure) remains unmerged THEN sections the restructure will move carry an explicit reconciliation note rather than being pre-emptively restructured
-- [ ] #8 WHEN the synthesis is presented to the user THEN the task records how it feeds the PRD -> TRD -> ADR -> TASK chain with no implementation performed
-- [ ] #9 WHEN the correction is presented for ratification THEN ADR-006 and ADR-007 state the resolved command, budget, reviewer, recovery, and persona-prerequisite decisions without claiming future commands exist
-- [ ] #10 WHEN release scope is reconciled THEN the v0.1 capability table maps each required behavior to implementation evidence and a remaining task, without treating documentation as implementation
-- [ ] #11 WHEN active work is reconciled THEN every moved active task has a recorded before-and-after milestone disposition and release blockers are individually identified
-- [ ] #12 WHEN the corrected metadata is read THEN the dependency diagram is generated from its task dependencies and separately labels human release gates
-- [ ] #13 WHEN TASK-45 is read THEN it contains exact current blockers and one eligible next task after TASK-79 merges
-- [ ] #14 WHEN validation runs THEN active documentation, licensing, task references, DAG cycles, milestone-to-PRD links, and ordering conflicts have fresh recorded results
+- [x] #1 WHEN the research completes THEN a doc exists at docs/research/2026-09-07-loop-taxonomy-research.md carrying the AUTHORING.md research frontmatter (date matching filename prefix, topic, status, non-empty sources, models_used_for_research, supersedes) and passes frontmatter-check validation
+- [x] #2 IF the research doc recommends loop commands THEN each recommended name maps to one taxonomy tier (turn/goal/time/proactive), states its HITL pause points, and names the CLI trigger it fires, labelled as recommended future CLI surface rather than an existing command
+- [x] #3 WHEN external research is performed THEN at least two research agents query distinct engines (Tavily AND the built-in websearch engine; Exa unavailable in harness, deviation recorded 2026-09-07) with time-ranged searches (start_date >= 2026-01-01, prioritizing the trailing 90 days) and every external claim in the doc is dated and source-attributed
+- [x] #4 WHEN a source predates 2026 OR is undated THEN its claims are either corroborated by a 2026-dated source or explicitly flagged as historical context in the doc, never presented as current state
+- [x] #5 WHEN the research plan is recorded on the task THEN at least one plan-gate reviewer from a different model family reviews it before any research dispatch
+- [x] #6 WHEN the draft is complete THEN at least two independent reviewers from different model families return fresh-context verdicts recorded as task comments, and all blocking objections are resolved before presentation
+- [x] #7 WHILE TASK-76 (docs restructure) remains unmerged THEN sections the restructure will move carry an explicit reconciliation note rather than being pre-emptively restructured
+- [x] #8 WHEN the synthesis is presented to the user THEN the task records how it feeds the PRD -> TRD -> ADR -> TASK chain with no implementation performed
+- [x] #9 WHEN the correction is presented for ratification THEN ADR-006 and ADR-007 state the resolved command, budget, reviewer, recovery, and persona-prerequisite decisions without claiming future commands exist
+- [x] #10 WHEN release scope is reconciled THEN the v0.1 capability table maps each required behavior to implementation evidence and a remaining task, without treating documentation as implementation
+- [x] #11 WHEN active work is reconciled THEN every moved active task has a recorded before-and-after milestone disposition and release blockers are individually identified
+- [x] #12 WHEN the corrected metadata is read THEN the dependency diagram is generated from its task dependencies and separately labels human release gates
+- [x] #13 WHEN TASK-45 is read THEN it contains exact current blockers and one eligible next task after TASK-79 merges
+- [x] #14 WHEN validation runs THEN active documentation, licensing, task references, DAG cycles, milestone-to-PRD links, and ordering conflicts have fresh recorded results
 <!-- AC:END -->
 
 ## Definition of Done
 <!-- DOD:BEGIN -->
-- [ ] #1 Tests and lint pass with fresh output in the worktree
-- [ ] #2 Worktree is clean (no uncommitted changes)
-- [ ] #3 Branch is rebased on main and green
-- [ ] #4 All acceptance criteria checked with fresh evidence (one at a time, never batched)
+- [x] #1 Tests and lint pass with fresh output in the worktree
+- [x] #2 Worktree is clean (no uncommitted changes)
+- [x] #3 Branch is rebased on main and green
+- [x] #4 All acceptance criteria checked with fresh evidence (one at a time, never batched)
 <!-- DOD:END -->
 
 ## Implementation Plan
@@ -101,6 +101,8 @@ Correction validation (2026-09-10): architecture frontmatter 25/25 valid; active
 2026-09-11 correction blocker: required m-5 follow-up task specification (uncreated because `backlog task create` blocks with no output in this worktree): Public repository and Git-history clearance. Outcome: independently audit the working tree and every reachable Git reference for personal data, credentials, private infrastructure, and obsolete identity material; record remediation or a decision to keep the repository private. Acceptance: (1) WHEN the audit runs THEN it records scope, commands, and dated results for working tree and all reachable refs; (2) IF it finds a concern THEN it records remediation or an explicit keep-private decision; (3) WHEN a GitHub public-release decision is requested THEN three independent analyze-fix-review passes provide recorded clearance. Intended metadata: High, task, m-5, depends on TASK-79, references the m-5 and v0.1 briefs. This is not satisfied by TASK-54.
 
 2026-09-11 correction blocker: required m-4 follow-up task specification (uncreated because `backlog task create` blocks with no output in this worktree): Verify weaver-persona name availability. Outcome: collect dated npm, GitHub, domain, trademark/conflict, spelling, and product-fit evidence for the persona name; the human approves or rejects it. Acceptance: (1) WHEN research completes THEN dated evidence and a recommendation are recorded; (2) IF the human has not approved the recommendation THEN TASK-80 cannot claim and no persona artifact, including documentation rename, ships; (3) WHEN approval is recorded THEN TASK-80 may proceed. Intended metadata: High, spike, m-4, depends on TASK-79, references ADR-006. This is distinct from TASK-57 product-name research. Required separate m-7 follow-up specification: Synchronize MIT live copies. Outcome: inventory all materialized host and skill copies affected by the earlier Apache change, synchronize only approved portable copies, and record exact paths/results. It must not be folded into TASK-55 hook activation.
+
+2026-09-11 closure: human approved the TASK-79 difit review and ratified ADR-006 and ADR-007. ADR-004 is superseded by ADR-007 for the reviewer fallback. Fresh closure evidence: research document frontmatter 1/1 valid; architecture docs 25/25 valid; task DAG 81 tasks with zero missing dependencies/cycles; focused validation tests 125/125 pass; Biome, TypeScript, and git diff checks pass. Three fresh Astra-high red/blue review passes ended with zero critical, high, or medium findings.
 <!-- SECTION:NOTES:END -->
 
 ## Comments
@@ -184,3 +186,9 @@ created: 2026-09-11 03:43
 Fresh red review (Astra high, backlog/release): FIX-FIRST. Blockers: TASK-67 contains a publish-gate prose cycle; TASK-66 marks required OpenCode/Headroom/Backlog tools optional; TASK-67 lacks required release dependencies; TASK-62/64 still require personal removals; TASK-81 still owns the name prerequisite after TASK-80; required workspace verification wiring has no task; TASK-54 is not split; the generated diagram does not represent metadata or human release review. Concrete evidence supplied in review receipt.
 ---
 <!-- COMMENTS:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Merged correction commit 8a1c4f8 into main. Ratified ADR-006 and ADR-007; reconciled ADR-004 successor status, MIT restoration, release capability ledger, task graph, and release gates. Verified documentation, DAG, focused tests, Biome, TypeScript, and diff hygiene. TASK-55 is the next eligible implementation task.
+<!-- SECTION:FINAL_SUMMARY:END -->
