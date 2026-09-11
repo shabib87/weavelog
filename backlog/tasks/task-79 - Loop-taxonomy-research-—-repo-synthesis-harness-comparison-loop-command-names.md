@@ -7,7 +7,7 @@ status: In Progress
 assignee:
   - conductor
 created_date: '2026-09-07 23:36'
-updated_date: '2026-09-10 03:45'
+updated_date: '2026-09-11 01:55'
 labels:
   - spec-approved
 dependencies: []
@@ -148,5 +148,11 @@ author: conductor
 created: 2026-09-08 04:58
 ---
 Rebase + refactor round (2026-09-07): TASK-76 merged to main; task/TASK-79 rebased (no commits yet — artifacts untracked, clean rebase). Refactor to new docs/AGENTS.md rules applied and verified by fresh diff-reviewer-deepseek (VERDICT APPROVE, all non-blocking findings addressed; stray-artifact finding did not reproduce — git status shows only the two intended untracked artifacts). Doc now ends at the ADR-003 decision gate: Decision none — research only; ADR fires at the section 7 ratification gate per ADR-005.
+---
+
+author: @conductor
+created: 2026-09-11 01:55
+---
+2026-09-10 design-fork round (human-directed): pre-build deliberation loop gap in ADR-006. R1 researcher (Tavily) + R2 researcher (built-in websearch; deviation: first 2/6 calls accidentally Tavily, disclosed) time-ranged >= 2026-01-01: naming+tiering the thinking phase ESTABLISHED (plan mode universal; spec-interview commands; light/full paths; Claude Code 'skip the plan if one sentence'; spec-kit short/full path; Amp oracle on-demand); cross-family adversarial pre-build deliberation NOT first-party mainstream (third-party niche: agent-kombat 2026-04-26, challenge-plans, adversarial-debate 2026-08, adversarial-review 2026-07-23; arXiv 2608.18167, 2608.00832); 'plan' maximal collision (~10 harnesses). Deliverable: docs/research/2026-09-10-pre-build-deliberation-loop.md (frontmatter validated). Plan-gate consultation (fresh context, cross-family): plan-gate-deepseek VERDICT APPROVE (recommends named sub-loop, no fifth command; binding constraints: no tri-state endpoint, adversarial pass must be ADDED not just named, tiers human-selected not complexity-gated); plan-gate-qwen VERDICT FIX-FIRST (3 blockers: phase conflation — scope WHAT-side grilling vs HOW-side plan-attack loci separately; B/C double-count weave hand-off without skip contract; research must land in docs/research/ before ADR cites it — resolved: note filed). Both converge: Option A (named sub-loop with inherited tiers). HUMAN DECISION (2026-09-10): Option A approved — ADR-006 amended in place (in-review revision rule): named pre-build deliberation sub-loop (candidate name warp, pending ratification), red-blue-white protocol (blue=maker drafts/defends, red=cross-family checker attacks, white=human referee; dissents preserved as receipts into the existing plan gate; models never sign), light tier = grilling only / full tier = adds cross-family attack pass, human-selected at invocation, never auto-migrated, pulse defaults to light, no new gate. B/C rejected (third-gate risk, hand-off double-count, pre-diff tier-fit unimplementable per ADR-004).
 ---
 <!-- COMMENTS:END -->
