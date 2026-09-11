@@ -4,13 +4,16 @@ title: 'Pre-publish: reproducible release instructions'
 status: To Do
 assignee: []
 created_date: '2026-09-05 23:39'
-updated_date: '2026-09-11 04:00'
-labels: []
+updated_date: '2026-09-11 05:22'
+labels:
+  - spec-approved
 milestone: m-7
 dependencies:
   - TASK-58
   - TASK-59
   - TASK-79
+modified_files:
+  - README.md
 priority: high
 ordinal: 41000
 ---
@@ -40,4 +43,6 @@ Outcome: publish concise, reproducible installation, configuration, and release 
 
 <!-- SECTION:NOTES:BEGIN -->
 2026-09-11 correction: TASK-56 architecture policy is resolved in TASK-79 through ADR-007. TASK-56 unrelated cleanup remains separate and does not block this required release-instructions task.
+
+2026-09-11 partial progress: added the public pre-release README notice and labelled the quickstart as planned v0.1. The three release-instructions acceptance criteria remain unchecked; TASK-53 returns to To Do for the full supported-profile instructions.
 <!-- SECTION:NOTES:END -->

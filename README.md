@@ -13,6 +13,10 @@
 
 > The inner harness: agent work you can audit.
 
+> **Pre-release:** this public repository is not ready to install or use.
+> The commands below describe the planned v0.1 release flow; do not run them
+> as setup instructions yet.
+
 A deterministic CLI that composes an opinionated, evidence-grade agentic
 developer-experience stack on open standards. It installs the toolchain,
 materializes agent configs, runs deterministic gates, and records every
@@ -41,7 +45,7 @@ proves.
 
 See [NORTH_STAR.md](docs/NORTH_STAR.md) and [PRODUCT.md](docs/PRODUCT.md) for more details.
 
-## Quickstart (the stranger test)
+## Planned v0.1 quickstart (the stranger test)
 
 ```bash
 # 1. Install (npm at 0.1.0; brew tap at 0.2+)
