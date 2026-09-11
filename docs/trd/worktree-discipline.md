@@ -6,6 +6,7 @@ type: architecture
 author: conductor
 related_to:
   - ./runbook-decomposition.md
+  - ../adr/0006-tiered-loop-commands.md
 sources:
   - "TASK-23"
 ---

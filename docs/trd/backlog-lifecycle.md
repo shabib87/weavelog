@@ -10,6 +10,7 @@ related_to:
   - ./tool-boundaries.md
   - ../adr/0003-three-phase-loop-model.md
   - ../adr/0005-artifact-flow.md
+  - ../adr/0006-tiered-loop-commands.md
   - ./runbook-decomposition.md
   - runbook-decomposition.md
 sources:

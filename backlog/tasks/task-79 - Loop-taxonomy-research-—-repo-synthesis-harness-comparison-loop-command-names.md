@@ -7,7 +7,7 @@ status: In Progress
 assignee:
   - conductor
 created_date: '2026-09-07 23:36'
-updated_date: '2026-09-08 05:30'
+updated_date: '2026-09-10 03:45'
 labels:
   - spec-approved
 dependencies: []
@@ -61,9 +61,30 @@ Plan-gate amendments (glm FIX-FIRST resolved): P0/P1 run in parallel (scout + R1
 <!-- SECTION:NOTES:BEGIN -->
 P0-P3 complete (two research passes, two review rounds) + post-TASK-76 rebase refactor. Deliverable: docs/research/2026-09-07-loop-taxonomy-research.md (frontmatter-check ok under the NEW validator; status: open; uncommitted pending human review). TASK-76 merged (1dbe6cd); branch rebased; doc refactored to new docs rules: paths docs/architecture -> docs/trd + docs/adr (line refs re-verified), reconciliation note RESOLVED, ADR-005 flow adopted in section 7 (ADR cross-cutting, not a pipeline stage; TASK ACs cite TRD/ADR constraints), ADR-003 decision gate applied (Decision: none — research only) + Lessons block, ADR-status bullet added (ADR-003/004/005 approved, ADR-006 planned). Loop surface (future CLI): stitch / weave / loom / pulse; weaver persona recommended (availability check gated at PRD). Budget tuple extends TASK-6 + 2026-09-03-budget-caps-checkpoint-resume.md; risk-signals.ts ON MAIN (no sequencing gate). Fresh-reviewer loop on the refactor: diff-reviewer-deepseek VERDICT APPROVE — 6 non-blocking findings all addressed (name direction reworded per ADR-003, :145-154 anchor, ADR de-pipelined in section 7, task notes synced; finding-1 stray artifact did NOT reproduce — git status clean); AC #8 wording drift (linear chain vs ADR-005 flow) recorded, AC frozen per spec gate.
 
-HANDOFF (2026-09-07, human directive: commit only — different thread continues, worktree stays): branch task/TASK-79 fully committed at c41ec2a (7 commits ahead of main: research doc + task record + ADR-007 in-review + index updates + de-branding). Worktree .worktrees/TASK-79 alive. PENDING HUMAN GATES: (1) ADR-007 approval — flip status in-review->approved in THREE places (frontmatter, ## Status section, docs/adr/README.md index row) on explicit human "approved"; (2) merge gate — difit http://localhost:4968 (task/TASK-79 vs main), on merge: merge branch to main, mark TASK-79 Done via task-flow close, THEN worktree cleanup only if human says so. Standing rules: KEEL_*/third-party names stay out of decision records (research citations only); ADR-006 row stays annotated as absorbed; task AC #8 wording drift recorded, ACs frozen. Next thread: rebase onto main before further edits if main moved.
+HANDOFF (2026-09-07, human directive: commit only — different thread continues, worktree stays): branch task/TASK-79 fully committed at c41ec2a (7 commits ahead of main: research doc + task record + ADR-006 in-review + index updates + de-branding). Worktree .worktrees/TASK-79 alive. PENDING HUMAN GATES: (1) ADR-006 approval — flip status in-review->approved in THREE places (frontmatter, ## Status section, docs/adr/README.md index row) on explicit human "approved"; (2) merge gate — difit http://localhost:4968 (task/TASK-79 vs main), on merge: merge branch to main, mark TASK-79 Done via task-flow close, THEN worktree cleanup only if human says so. Standing rules: KEEL_*/third-party names stay out of decision records (research citations only); ADR-006 row stays annotated as absorbed; task AC #8 wording drift recorded, ACs frozen. Next thread: rebase onto main before further edits if main moved.
 
 Correction: 6 commits ahead of main (not 7) — c6ddbee..c41ec2a, see git log.
+
+Correction: 6 commits ahead of main (not 7) — c6ddbee..c41ec2a, see git log.
+
+UPDATE (2026-09-10, session 01a07f60): human directed ADR revision — 8th-grade plain-English
+sections, 6-step worked example (build-half scope), gate semantics restored to ADR-003's
+plan+merge (human rejected the gate redesign), gate vocabulary harmonized to the TASK-8 CLI
+(approve/kickback/reject; replan+stuck = lifecycle states), PRD/TRD brainstorming stated as
+human-collaborative never agent-solo, multi-run continuation across threads, renumbered
+0007->0006 (announced-but-never-drafted conductor-dispatch ADR absorbed; index annotated),
+rtk.ts removed at repo level (license blocker, human-directed 2026-09-09). Review loop: 3
+rounds x 4 model families (deepseek-v4-pro, kimi-k3, glm-5.3, qwen3.8) — final-round
+blockers: research S5 stale gate vocabulary (harmonized) + TASK-80 zero ACs (4 EARS ACs
+added; claim-gate refusal reproduced then resolved). ADR-0003/0004 status drift synced to
+approved (index+frontmatter already recorded 2026-09-07 ratification; dated revision notes).
+Gates green: frontmatter-check (adr 6/6, research doc ok), biome, tsc, DAG pass (no cycles,
+no dangling), claim-gate check on TASK-80. NEW TASKS: TASK-80 (weaver sweep, deps TASK-79),
+TASK-81 (ADR-006 implementation umbrella: budget module, tier-fit checker, CLI surface,
+AGENTS.md slimming, name check, SDK verification; deps TASK-80+TASK-6). HUMAN STATE: commits
+approved for task/TASK-79; merge DEFERRED — human wants more refinement. PENDING: (1) human
+refinement of ADR-006, (2) ADR-006 approval + 3-place status flip, (3) difit merge gate.
+Worktree stays alive; branch is self-contained (TASK-80/81 travel with it).
 <!-- SECTION:NOTES:END -->
 
 ## Comments

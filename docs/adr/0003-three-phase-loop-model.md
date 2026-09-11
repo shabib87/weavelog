@@ -7,7 +7,7 @@ author: conductor
 related_to:
   - ./README.md
   - ./0005-artifact-flow.md
-  - ./0007-tiered-loop-commands.md
+  - ./0006-tiered-loop-commands.md
   - ./0004-model-selection-benchmark-policy.md
   - ../trd/loop-factory.md
   - ../trd/backlog-lifecycle.md
@@ -20,9 +20,11 @@ sources:
 
 ## Status
 
-in-review (2026-09-07) — content restored from the 3-reviewer consensus
+approved (2026-09-07) — content restored from the 3-reviewer consensus
 (`loop-factory.md`, TASK-15); the decision-recording gate is new, added on
 human direction this session.
+
+*(Revised 2026-09-08: status word synced to approved — frontmatter, this section, and the index row now agree.)*
 
 ## Context
 

@@ -11,7 +11,7 @@ related_to:
   - ./test-guardrails.md
   - ../adr/README.md
   - ../adr/0003-three-phase-loop-model.md
-  - ../adr/0007-tiered-loop-commands.md
+  - ../adr/0006-tiered-loop-commands.md
 sources:
   - "TASK-15"
   - "TASK-22 (consensus restoration)"

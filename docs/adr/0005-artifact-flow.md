@@ -11,6 +11,7 @@ related_to:
   - ./0001-weavelog-architecture-decisions.md
   - ../AGENTS.md
   - ../trd/backlog-lifecycle.md
+  - ./0006-tiered-loop-commands.md
 sources:
   - "TASK-76"
 ---

@@ -21,7 +21,7 @@ sources:
   - "docs/trd/backlog-lifecycle.md"
   - "docs/adr/README.md"
   - "docs/adr/0005-artifact-flow.md"
-  - "docs/adr/0007-tiered-loop-commands.md"
+  - "docs/adr/0006-tiered-loop-commands.md"
   - "docs/NORTH_STAR.md"
   - "docs/research/2026-08-15-addy-loop-engineering-series.md"
   - "docs/research/2026-08-15-loop-primitives-claude-codex-sdk.md"
@@ -87,7 +87,8 @@ in harness — deviation recorded on TASK-79), P2 synthesis, cross-model review,
 **Reconciliation note (TASK-76) — RESOLVED 2026-09-07:** TASK-76 merged to main (commit
 1dbe6cd) and this doc was rebased and refactored to the new documentation rules
 (`docs/AGENTS.md`): technical docs now live in `docs/trd/`, ADRs in `docs/adr/`
-(ADR-003/004/005 ratified 2026-09-07; ADR-006 conductor-dispatch planned), and this doc ends
+(ADR-003/004/005 ratified 2026-09-07; the conductor-dispatch ADR announced as "ADR-006" was
+never drafted — its subject landed in ADR-006, tiered loop commands), and this doc ends
 at the ADR-003 decision gate. `src/tools/risk-signals.ts` (header: TASK-78) and its tests
 are on main — §5.2's sequencing gate is gone. Remaining pre-convention debt is in
 `docs/research/` only (e.g. `loop-taxonomy.md` lacks schema frontmatter) — documented in
@@ -100,7 +101,7 @@ are on main — §5.2's sequencing gate is gone. Remaining pre-convention debt i
 - **Loop model:** three phases (WHY → WHAT → HOW, progress, do not repeat) × two loop roles
   (inner = agent execution cycle; outer = human decision ownership). ONE boundary across all
   phases; the boundary is EVIDENCE. "Do NOT write '3 loops' anywhere" (TASK-15, TASK-22;
-  `docs/trd/loop-factory.md` — the two-gates rule is at :63).
+  `docs/trd/loop-factory.md` — the two-gates rule is at :48-50, the EARS gates AC at :64).
 - **Operational flow:** `backlog → spec → plan → worktree → validate → [HUMAN GATE: merge
   approval] → merge → done`. No work on main; no work without a backlog task
   (`docs/trd/worktree-discipline.md:19`).
@@ -111,7 +112,8 @@ are on main — §5.2's sequencing gate is gone. Remaining pre-convention debt i
 - **ADR status (post-TASK-76):** ADR-003 (three-phase loop model + decision gate) approved;
   ADR-004 (model-selection benchmark policy, L0–L4 reviewer escalation) approved;
   ADR-005 (artifact flow: PRD/TRD/ADR/TASK with AC traceability) approved — §7 aligns to it;
-  ADR-006 (conductor-dispatch) planned (`docs/adr/README.md`).
+  ADR-006 (tiered loop commands, in-review — absorbs the never-drafted conductor-dispatch
+  subject; `docs/adr/README.md`).
 - **Conductor is the always-on session** — there is no `conductor.md` agent; the conductor
   protocol lives in `payload/AGENTS.md` (82 LOC), materialized verbatim to
   `~/.config/opencode/AGENTS.md` by `weavelog sync` (one-way flow, TASK-23/TASK-27, Hook 8/9
@@ -270,7 +272,7 @@ art as much as external research. Deeper 2-axis split flagged for the §7 ADR.
 4. **NORTH_STAR constraint binds the proactive tier.** "Fully unattended autonomous runs"
    are out of scope; HITL is baked in. Therefore weavelog's proactive tier must be a
    **triggered weave, not an autonomous factory**: an event/schedule may START a loop, but
-   the loop still pauses at the two HITL gates (spec, merge). Peer harnesses allow unattended
+   the loop still pauses at the two HITL gates (plan, merge). Peer harnesses allow unattended
    completion (auto mode); weavelog deliberately does not — that is the differentiator, not a
    gap.
 5. **Mechanism gap.** weavelog's gates are already deterministic (claim gate, pre-commit hook,
@@ -298,15 +300,18 @@ on top (`spec-approved` before In Progress, `src/tools/task-flow.ts claim`). NOR
 "plan and merge gates" and this doc's "spec + merge" refer to the same human touchpoints at
 different lifecycle moments — spec sign-off happens at claim time, plan approval at
 activation. The naming (spec vs plan as the first gate) is an open question flagged for the
-§7 ADR. Consequence for `stitch`: any task-tracked stitch still passes the claim-time spec gate;
-only trivial untracked work skips it (backlog overview exemption).
+§7 ADR — **resolved by ADR-006 (2026-09-08): the gates remain plan approval + merge
+approval per ADR-003; the claim-time spec check (`spec-approved`, TASK-51) is backlog
+lifecycle, not a human gate.** Consequence for `stitch`: any task-tracked stitch still
+passes the claim-time spec check; only trivial untracked work skips it (backlog overview
+exemption).
 
 | Command | Rung | What it does | HITL pauses | Future CLI trigger |
 |---|---|---|---|---|
-| `stitch` | turn-based | small task, conductor works solo or with one implementer; no orchestration, still task-tracked when non-trivial (spec gate applies at claim) | spec gate if task-tracked; merge gate if worktree used | `weavelog stitch "<task>"` |
-| `weave` | goal-based | full conductor flow: task → spec gate → dispatch → per-AC verify → merge gate; stop condition = verified ACs + approved merge | **spec + merge** (the two dictated gates) | `weavelog weave TASK-N` |
-| `loom` | goal-based (nested) | Ralph-style loop over ready backlog tasks (deps Done), one worktree per task; = N queued `weave` iterations; stop = queue empty or budget spent (§2: rungs nest) | **spec + merge per task** | `weavelog loom [--max N]` |
-| `pulse` | time-based (proactive-guarded) | the TRIGGER is handed off (event/schedule starts a weave per firing); never runs unattended past the gates (NORTH_STAR constraint — the proactive rung, held at the gate) | **spec + merge** | `weavelog pulse --on <event>` |
+| `stitch` | turn-based | small task, conductor works solo or with one implementer; no orchestration, still task-tracked when non-trivial (claim-time spec check applies at claim) | claim-time spec check if task-tracked; merge gate if worktree used | `weavelog stitch "<task>"` |
+| `weave` | goal-based | full conductor flow: task → claim-time spec check → plan gate → dispatch → per-AC verify → merge gate; stop condition = verified ACs + approved merge | **plan + merge** (the two formal gates; the claim-time spec check is backlog lifecycle, not a gate — see reconciliation note above) | `weavelog weave TASK-N` |
+| `loom` | goal-based (nested) | Ralph-style loop over ready backlog tasks (deps Done), one worktree per task; = N queued `weave` iterations; stop = queue empty or budget spent (§2: rungs nest) | **plan + merge per task** (+ claim-time spec check per claimed task) | `weavelog loom [--max N]` |
+| `pulse` | time-based (proactive-guarded) | the TRIGGER is handed off (event/schedule starts a weave per firing); never runs unattended past the gates (NORTH_STAR constraint — the proactive rung, held at the gate) | **plan + merge** | `weavelog pulse --on <event>` |
 
 Human-approved name **direction** (2026-09-07; ratified at the §7 ADR): `weave` retained; `run`/`drain`/`watch` replaced with the
 loom-vocabulary set above — one coherent metaphor where the scale is the fabric: a stitch is
@@ -333,7 +338,7 @@ cost-true cap family with **named non-zero exit outcomes** (`budget`/`deadline`)
 effective-cost token
 discounting, gross backstop, wall-clock deadline, and an opencode budget-guard plugin
 (`tool.execute.before` throw + `client.session.abort()`) — keel (`keel-harness/keel`) is
-cited prior art; its names are not adopted (weavelog-native naming per ADR-007). `src/tools/reviewer-loop.ts`
+cited prior art; its names are not adopted (weavelog-native naming per ADR-006). `src/tools/reviewer-loop.ts`
 already implements `--budget-usd` (default 2.00) with a named BUDGET-CAP-EXCEEDED outcome.
 TASK-7 adds "PASS but over-budget = FAIL"; TASK-8 adds kick-back budget K=2 → auto-escalate
 and the `harness approve|kickback|replan|stuck` decision CLI.
@@ -473,8 +478,9 @@ ADR constraint they implement:
    plan gate).
 
 **Cross-cutting ADR:** "tiered loop commands vs conductor-always-on" — **fired at the
-decision gate as ADR-007 (in-review)** when the human ratified this research; adjacent to
-ADR-003/004/005, supersedes none (absorbs the planned ADR-006).
+decision gate as ADR-006 (in-review)** when the human ratified this research; adjacent to
+ADR-003/004/005, supersedes none (absorbs the conductor-dispatch subject that research had
+earmarked for an ADR-006 number that was never drafted).
 
 ## 8. Source classification (per TASK-79 AC #4)
 
@@ -517,7 +523,7 @@ ADR-003/004/005, supersedes none (absorbs the planned ADR-006).
 
 ## Decision gate (ADR-003)
 
-**Decision: recorded — [ADR-007](../adr/0007-tiered-loop-commands.md) (in-review, fired at
+**Decision: recorded — [ADR-006](../adr/0006-tiered-loop-commands.md) (in-review, fired at
 this gate on human ratification 2026-09-07):** tiered loop commands
 (`stitch`/`weave`/`loom`/`pulse`) + the `weaver` persona replace the always-on conductor
 protocol; two HITL gates preserved; budgets + tier-fit checker stay deterministic. The

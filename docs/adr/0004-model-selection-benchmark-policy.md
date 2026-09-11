@@ -12,7 +12,7 @@ related_to:
   - ../ROADMAP.md
   - ../research/2026-09-07-flagship-tier-pricing-quality-preliminary.md
   - ./0003-three-phase-loop-model.md
-  - 0003-three-phase-loop-model.md
+  - ./0006-tiered-loop-commands.md
 sources:
   - "TASK-61"
 ---
@@ -21,10 +21,12 @@ sources:
 
 ## Status
 
-in-review (2026-09-07) — TASK-61 evidence base closed; human sign-off gates
-the merge (HITL). Traces to NORTH_STAR non-negotiables and the ROADMAP
+approved (2026-09-07) — TASK-61 evidence base closed; human sign-off received.
+Traces to NORTH_STAR non-negotiables and the ROADMAP
 milestone ladder (see Alignment below); amendable only via dated addenda
 (living-document split, Consequences).
+
+*(Revised 2026-09-10: status word synced to approved — frontmatter, this section, and the index row now agree; the body had drifted while frontmatter and index recorded the 2026-09-07 ratification.)*
 
 ## Context
 
