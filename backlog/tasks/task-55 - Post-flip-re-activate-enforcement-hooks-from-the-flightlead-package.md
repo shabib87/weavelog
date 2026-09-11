@@ -1,11 +1,11 @@
 ---
 id: TASK-55
 title: Reproducible packaged enforcement adapters
-status: In Progress
+status: Done
 assignee:
   - '@conductor'
 created_date: '2026-09-06 06:26'
-updated_date: '2026-09-11 05:18'
+updated_date: '2026-09-11 06:12'
 labels:
   - spec-approved
 milestone: m-7
@@ -25,18 +25,18 @@ Outcome: package and document adapters that load every required enforcement and 
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 WHEN the supported profile is installed from the exact package THEN every required enforcement and verification adapter resolves from the installed package rather than a personal stale-path copy
-- [ ] #2 WHEN each required gate is intentionally tripped THEN it loads, refuses or records the expected result, and produces auditable evidence
-- [ ] #3 IF an adapter cannot resolve THEN doctor or check fails the supported profile with a named repair path; it does not silently fall back to a stale personal copy
-- [ ] #4 WHEN configuration is reproduced on another supported profile THEN the same adapters and intentional gate trips pass from the documented portable instructions
+- [x] #1 WHEN the supported profile is installed from the exact package THEN every required enforcement and verification adapter resolves from the installed package rather than a personal stale-path copy
+- [x] #2 WHEN each required gate is intentionally tripped THEN it loads, refuses or records the expected result, and produces auditable evidence
+- [x] #3 IF an adapter cannot resolve THEN doctor or check fails the supported profile with a named repair path; it does not silently fall back to a stale personal copy
+- [x] #4 WHEN configuration is reproduced on another supported profile THEN the same adapters and intentional gate trips pass from the documented portable instructions
 <!-- AC:END -->
 
 ## Definition of Done
 <!-- DOD:BEGIN -->
-- [ ] #1 Tests and lint pass with fresh output in the worktree
-- [ ] #2 Worktree is clean (no uncommitted changes)
-- [ ] #3 Branch is rebased on main and green
-- [ ] #4 All acceptance criteria checked with fresh evidence (one at a time, never batched)
+- [x] #1 Tests and lint pass with fresh output in the worktree
+- [x] #2 Worktree is clean (no uncommitted changes)
+- [x] #3 Branch is rebased on main and green
+- [x] #4 All acceptance criteria checked with fresh evidence (one at a time, never batched)
 <!-- DOD:END -->
 
 ## Implementation Plan
@@ -48,3 +48,15 @@ Outcome: package and document adapters that load every required enforcement and 
 4. Add portable supported-profile instructions and repeat the isolated-package proof on two profile roots.
 5. Run focused tests, full relevant verification, and Difit review; present the diff for human merge approval.
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+Final verification: packed adapter suite passed (5/5); packaged CLI executable test passed; typecheck and lint passed. Live OpenCode loaded both installed-package adapters. Intentional denylist trip produced an enforce gate-refusal receipt with matching sessionID, callID, and Blocked error.
+<!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Installed-package OpenCode adapters now load enforce and verify-gate from the package, emit audit evidence, and doctor rejects missing or stale adapters. Verified by packed-adapter tests, executable package test, typecheck, lint, and a live OpenCode gate-refusal audit receipt.
+<!-- SECTION:FINAL_SUMMARY:END -->
