@@ -179,6 +179,22 @@ describe("cli (--help)", () => {
 });
 
 describe("cli init", () => {
+  test("materializes both managed OpenCode adapters from this installed package", () => {
+    const f = initFixture(true);
+    const r = run(["init"], {
+      env: { WEAVELOG_LIVE_ROOT: f.live, WEAVELOG_STATE_DIR: f.state },
+    });
+    assert.equal(r.status, 0);
+    for (const adapter of ["enforce", "verify-gate"]) {
+      const adapterPath = join(f.config, "plugins", `${adapter}.ts`);
+      assert.ok(existsSync(adapterPath), `${adapter} adapter materialized`);
+      assert.ok(
+        readFileSync(adapterPath, "utf8").includes(join(REPO, "dist", "hooks")),
+        `${adapter} targets this installed package`,
+      );
+    }
+  });
+
   test("materializes config + skills + AGENTS.md, resolves .env tokens, symlinks diagram-design, writes ledger", () => {
     const f = initFixture(true);
     const r = run(["init"], {
@@ -362,6 +378,24 @@ describe("cli sync", () => {
 });
 
 describe("cli doctor", () => {
+  test("doctor fails loudly when required OpenCode adapters are absent", () => {
+    const dir = makeDir("doctor-missing-adapters");
+    const bins = versionEnv(dir);
+    const env = {
+      HOME: dir,
+      WEAVELOG_LIVE_ROOT: join(dir, "live"),
+      WEAVELOG_CONFIG_HOME: join(dir, "config"),
+      WEAVELOG_STATE_DIR: join(dir, "state"),
+      WEAVELOG_CHECK_PLIST: join(dir, "no-plist.plist"),
+      WEAVELOG_SKILLS_DIR: join(dir, "skills"),
+      ...bins,
+    };
+    const r = run(["doctor"], { env });
+    assert.notEqual(r.status, 0);
+    assert.match(r.stdout, /opencode\.adapters/);
+    assert.match(r.stdout, /weavelog init/);
+  });
+
   test("doctor on a clean fixture exits 0 (plist absent -> node-path guard skipped)", () => {
     const dir = makeDir("doctor");
     const bins = versionEnv(dir);

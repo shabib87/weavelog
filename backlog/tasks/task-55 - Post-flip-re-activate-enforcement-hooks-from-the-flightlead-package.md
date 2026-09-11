@@ -1,11 +1,13 @@
 ---
 id: TASK-55
 title: Reproducible packaged enforcement adapters
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@conductor'
 created_date: '2026-09-06 06:26'
-updated_date: '2026-09-11 04:05'
-labels: []
+updated_date: '2026-09-11 05:18'
+labels:
+  - spec-approved
 milestone: m-7
 dependencies:
   - TASK-58
@@ -36,3 +38,13 @@ Outcome: package and document adapters that load every required enforcement and 
 - [ ] #3 Branch is rebased on main and green
 - [ ] #4 All acceptance criteria checked with fresh evidence (one at a time, never batched)
 <!-- DOD:END -->
+
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+1. Inventory every required OpenCode enforcement and verification gate, its intentional trigger, expected refusal/report, and audit receipt; explicitly exclude optional Headroom learning.
+2. Add failing packed-artifact fixture tests for real emitted loaders, each required gate trip, audit receipts, unresolved/escaped helpers, stale personal-path non-fallback, and a second profile root.
+3. Implement managed OpenCode loader emission, package-contained resolution and compiled-helper validation, safe doctor/check health inspection, and bounded JSONL audit receipts.
+4. Add portable supported-profile instructions and repeat the isolated-package proof on two profile roots.
+5. Run focused tests, full relevant verification, and Difit review; present the diff for human merge approval.
+<!-- SECTION:PLAN:END -->

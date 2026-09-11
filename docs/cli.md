@@ -101,6 +101,21 @@ Managed-file rule: if a managed file exists and differs from the payload and
 was modified outside weavelog, init refuses and shows the diff; it never
 silently overwrites. The two-step flow: propose → user confirms → write.
 
+For the OpenCode profile, `init` also writes the managed `plugins/enforce.ts`
+and `plugins/verify-gate.ts` adapters. Each adapter imports only the compiled
+hook inside the installed weavelog package. It writes bounded load and gate
+receipts to `adapter-audit.jsonl` beside the normal ledger. `weavelog doctor`
+checks both adapters without executing them. If it names an adapter as missing,
+escaped, or invalid, run `weavelog init` to repair it; do not copy a plugin from
+another machine or a personal directory.
+
+Required adapter evidence consists of these enforced behaviors: dangerous
+command refusal, main-branch write and Backlog-lifecycle refusal, live-config
+write refusal, commit/frontmatter refusal, task-create quality refusal,
+session-start sync refusal reporting, and the verification gate’s stale-test
+write refusal. Report-only frontmatter and review reminders also produce a
+receipt. Optional Headroom learning is not part of this adapter proof battery.
+
 ### `weavelog sync`
 
 | Aspect | Behavior |
@@ -156,6 +171,7 @@ fail, counts) to the ledger; `--json` prints them for programmatic use.
 | `versions.pinned` | manifest versions pinned for all tools |
 | `platform.arm64` | arm64 macOS guard (hard exit `4` otherwise) |
 | `ledger.tail` | ledger exists, is readable, and its tail parses as JSONL |
+| `opencode.adapters` | both managed adapters point to compiled hooks inside the installed package |
 
 Each subcheck prints one line: id, pass/fail, and on failure a single
 copy-paste fix.

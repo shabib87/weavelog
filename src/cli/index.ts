@@ -18,6 +18,10 @@ import {
 import { homedir, tmpdir } from "node:os";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  emitOpenCodeAdapters,
+  inspectOpenCodeAdapters,
+} from "../hooks/opencode-adapters.js";
 import { checkDifitPointer, pinHygieneForDir } from "../tools/pin-hygiene.js";
 import {
   detectRiskSignals,
@@ -148,6 +152,10 @@ function stateDir(): string {
   return (
     process.env.WEAVELOG_STATE_DIR ?? join(HOME, ".local", "state", "weavelog")
   );
+}
+
+function packageRootValue(): string {
+  return process.env.WEAVELOG_PACKAGE_ROOT ?? REPO_ROOT;
 }
 
 function ledgerPath(): string {
@@ -549,6 +557,15 @@ function checkSkillsLayout(): CheckResult {
   };
 }
 
+function checkOpenCodeAdapters(): CheckResult {
+  const health = inspectOpenCodeAdapters({
+    packageRoot: packageRootValue(),
+    configRoot: configHomeValue(),
+    stateDir: stateDir(),
+  });
+  return { ok: health.ok, detail: health.detail };
+}
+
 async function checkProxyHealth(): Promise<CheckResult> {
   const bin =
     process.env.WEAVELOG_HEADROOM_BIN ??
@@ -752,6 +769,13 @@ function runInit(force: boolean): never {
     mkdirSync(dirname(p.dest), { recursive: true });
     writeFileSync(p.dest, p.content as Buffer);
     filesTouched.push(p.dest);
+  }
+  for (const adapter of emitOpenCodeAdapters({
+    packageRoot: packageRootValue(),
+    configRoot: plan.configTarget,
+    stateDir: stateDir(),
+  })) {
+    filesTouched.push(adapter.path);
   }
   const symlinkDest = join(plan.liveTarget, "skills", "diagram-design");
   if (filesTouched.includes(symlinkDest)) {
@@ -1229,6 +1253,7 @@ async function runDoctor(): Promise<never> {
   push("payload.integrity", checkPayloadIntegrity());
   push("templating.sanity", checkTemplatingSanity());
   push("skills.layout", checkSkillsLayout());
+  push("opencode.adapters", checkOpenCodeAdapters());
   push("proxy.health", await checkProxyHealth());
   push("backlog.binary", checkBacklogBinary());
   push("node.version", checkNodeVersion());

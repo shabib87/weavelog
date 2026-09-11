@@ -30,6 +30,6 @@
     "secrets/",
     "node_modules/"
   ],
-  "pluginsDeferral": true,
+  "pluginsDeferral": false,
   "hashSemantics": "sha256 of the bytes written to live (see config-sync --help)"
 }
