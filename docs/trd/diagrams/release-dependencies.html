@@ -21,16 +21,16 @@
 <body>
 <main>
   <h1>Corrected release dependency graph</h1>
-  <p class="note">Generated from the corrected Backlog dependency metadata on 2026-09-11. Solid arrows are task dependencies; blue dashed arrows are human release gates. The gray dashed public-release path is intentionally separate from npm publication.</p>
-  <svg viewBox="0 0 1100 550" role="img" aria-labelledby="title description">
-    <title id="title">TASK-79 release dependency graph</title>
-    <desc id="description">TASK-79 precedes grouped release work, which must all finish before TASK-67 clean-user verification. A human release review precedes npm publication. TASK-83 m-5 public-source and history clearance precedes any GitHub public release.</desc>
+  <p class="note">Generated from the corrected Backlog dependency metadata on 2026-09-12. Solid arrows are task dependencies; blue dashed arrows are human release gates. TASK-55 is completed evidence and TASK-56 is nonblocking cleanup; neither is a remaining release blocker. The gray dashed public-release path is intentionally separate from npm publication.</p>
+  <svg viewBox="0 0 1100 550" role="img" aria-labelledby="release-dependencies-title release-dependencies-description">
+    <title id="release-dependencies-title">TASK-79 release dependency graph</title>
+    <desc id="release-dependencies-description">TASK-79 precedes grouped remaining release work, which must all finish before TASK-67 clean-user verification. TASK-55 is completed evidence, and TASK-56 is nonblocking cleanup. A human release review precedes npm publication. TASK-83 m-5 public-source and history clearance precedes any GitHub public release.</desc>
     <defs><marker id="arrow" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto"><path d="M0,0 L9,3.5 L0,7z" fill="#607080"/></marker></defs>
     <path class="edge" d="M220 115 H286"/><path class="edge" d="M220 115 H286 V228"/><path class="edge" d="M220 115 H286 V341"/>
     <path class="edge" d="M480 115 H565 V230 H650"/><path class="edge" d="M480 228 H650"/><path class="edge" d="M480 341 H565 V230 H650"/>
     <path class="gate-edge" d="M830 230 H875"/><path class="gate-edge" d="M995 230 H1032"/><path class="edge dashed" d="M480 455 H800"/>
     <rect class="node start" x="48" y="76" width="172" height="78" rx="8"/><text class="name" x="64" y="106">TASK-79 correction</text><text class="sub" x="64" y="129">ADR · MIT · scope · graph</text>
-    <rect class="node" x="286" y="76" width="194" height="78" rx="8"/><text class="name" x="302" y="106">Required harness fixes</text><text class="sub" x="302" y="129">55 · 63 · 66 · 68 · 73 · 84</text>
+    <rect class="node" x="286" y="76" width="194" height="78" rx="8"/><text class="name" x="302" y="106">Required harness fixes</text><text class="sub" x="302" y="129">63 · 66 · 68 · 73 · 84</text>
     <rect class="node" x="286" y="189" width="194" height="78" rx="8"/><text class="name" x="302" y="219">Portable package work</text><text class="sub" x="302" y="242">28 · 29 · 30 · 62 · 64</text>
     <rect class="node" x="286" y="302" width="194" height="78" rx="8"/><text class="name" x="302" y="332">Release instructions + audit</text><text class="sub" x="302" y="355">53 · 54 (exact tarball)</text>
     <rect class="node gate" x="650" y="191" width="180" height="78" rx="8"/><text class="name" x="666" y="221">TASK-67</text><text class="sub" x="666" y="244">clean-user install + dogfood</text>

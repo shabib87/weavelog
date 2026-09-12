@@ -5,7 +5,7 @@ status: In Progress
 assignee:
   - '@conductor'
 created_date: '2026-09-05 06:01'
-updated_date: '2026-09-11 04:30'
+updated_date: '2026-09-12 06:45'
 labels:
   - 'wayfinder:map'
   - spec-approved
@@ -28,7 +28,7 @@ Outcome: maintain the single active release checklist for the Weavelog 0.1.0 Ope
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
 - [ ] #1 WHEN TASK-79 is reviewed THEN the release capability ledger, corrected task graph, ADRs, MIT inventory, and dependency diagram are linked from the v0.1 brief and have fresh validation evidence
-- [ ] #2 WHEN the m-7 release path is assessed THEN it lists TASK-53, TASK-54, TASK-55, TASK-62, TASK-63, TASK-64, TASK-66, TASK-67, TASK-68, TASK-73, TASK-28, TASK-29, TASK-30, and TASK-84 as exact remaining blockers
+- [ ] #2 WHEN the m-7 release path is assessed THEN it lists TASK-53, TASK-54, TASK-62, TASK-63, TASK-64, TASK-66, TASK-67, TASK-68, TASK-73, TASK-28, TASK-29, TASK-30, and TASK-84 as exact remaining blockers
 - [ ] #3 WHEN the public-source path is assessed THEN TASK-83 is listed as the separate m-5 repository-and-history clearance gate and is not inferred from TASK-54 npm artifact safety
 - [ ] #4 WHEN an implementation task merges THEN this checklist records its result, remaining blockers, and the next eligible task
 - [ ] #5 WHEN TASK-67 completes THEN the human release review decides whether the npm publish marker may change; no task flips it automatically
@@ -38,15 +38,18 @@ Outcome: maintain the single active release checklist for the Weavelog 0.1.0 Ope
 ## Definition of Done
 <!-- DOD:BEGIN -->
 - [ ] #1 Capability ledger and dependency graph are validated before this correction is presented for review
-- [ ] #2 Each remaining m-7 blocker and the separate m-5 public-source gate is named exactly once
-- [ ] #3 Each merged implementation task updates the evidence, blockers, and next task
-- [ ] #4 The human makes the publish-marker decision after TASK-67 evidence
+- [ ] #2 Each merged implementation task updates the evidence, blockers, and next task
+- [ ] #3 The human makes the publish-marker decision after TASK-67 evidence
+- [ ] #4 The canonical remaining-blocker set and separate m-5 public-source gate are accurate; repeated identifiers in evidence and the priority order do not expand that set
 <!-- DOD:END -->
 
 ## Implementation Plan
 
 <!-- SECTION:PLAN:BEGIN -->
-1. Maintain the corrected capability ledger and task graph in the v0.1 brief. 2. Keep the exact m-7 blockers and separate m-5 public-source gate current. 3. After each future merge, record evidence, blockers, and the next eligible task. 4. Present release evidence to the human; do not publish or flip a marker without the human decision.
+1. Reconcile TASK-45 against the corrected v0.1 brief and current dependency graph.
+2. Remove completed tasks from the remaining-blocker contract and record their completion evidence.
+3. Maintain the requested priority order subject to dependency eligibility, the separate public-source gate, and the separate future product-work chain.
+4. Name the next shipping task and present the task-spec diff for human review before committing.
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
@@ -172,6 +175,18 @@ Exact current blockers: ADR ratification; reproducible gate activation (TASK-55)
 2026-09-11 TASK-79 correction supersession: the current release checklist is the v0.1 capability ledger in docs/prd/2026-09-05-v010-draft-brief.md. Do not execute the historical flightlead/Apache/live-migration instructions above. Exact remaining blockers: TASK-53, TASK-54, TASK-55, TASK-62, TASK-63, TASK-64, TASK-66, TASK-67, TASK-68, TASK-73, TASK-28, TASK-29, TASK-30, TASK-84. TASK-83 is the separate m-5 public-source gate. Next executable task: TASK-55, subject to dependency eligibility and human plan approval.
 
 2026-09-11: the historical PORT PLAN v8 was replaced by the correction plan above. Its old detailed steps remain in notes as provenance only and are not executable instructions.
+
+## Current shipping order
+
+TASK-55 completed: `d386162` (`chore: complete task 55`) is on `main`; TASK-55 final verification recorded packed-adapter suite 5/5, packaged CLI executable test, typecheck, lint, and a live OpenCode gate-refusal receipt. It is completed evidence, not a remaining release blocker.
+
+TASK-28 → TASK-29 → TASK-30 → TASK-62 → TASK-64 → TASK-66 → TASK-68 → TASK-73 → TASK-63 → TASK-53 → TASK-54 → TASK-56 → TASK-84 → TASK-67 → human npm-release decision.
+
+TASK-28 is the next shipping task. TASK-83 is required only before making the GitHub repository public. TASK-82 → TASK-80 → TASK-81 is separate future product work and does not block v0.1.0.
+
+## Dependency eligibility
+
+The preceding Current shipping order is the human-requested priority order, not an executable dependency order. TASK-62 waits for TASK-66 and TASK-68; TASK-64 waits for TASK-66. TASK-56 appears in the priority order as nonblocking stale-document cleanup and does not gate v0.1.0 or npm publication. The v0.1 brief and release-dependency diagram record TASK-55 as completed evidence rather than a remaining release blocker.
 <!-- SECTION:NOTES:END -->
 
 <!-- SECTION:PLAN:END -->
