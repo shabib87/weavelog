@@ -5,7 +5,7 @@ status: In Progress
 assignee:
   - '@conductor'
 created_date: '2026-09-05 06:01'
-updated_date: '2026-09-12 06:45'
+updated_date: '2026-09-12 07:02'
 labels:
   - 'wayfinder:map'
   - spec-approved
@@ -49,7 +49,8 @@ Outcome: maintain the single active release checklist for the Weavelog 0.1.0 Ope
 1. Reconcile TASK-45 against the corrected v0.1 brief and current dependency graph.
 2. Remove completed tasks from the remaining-blocker contract and record their completion evidence.
 3. Maintain the requested priority order subject to dependency eligibility, the separate public-source gate, and the separate future product-work chain.
-4. Name the next shipping task and present the task-spec diff for human review before committing.
+4. After each approved implementation merge, reopen TASK-45 in a fresh worktree, record the evidence, remaining blockers, and next shipping task, then merge and remove that checkpoint worktree.
+5. Keep TASK-45 In Progress until TASK-67 evidence and the human npm-release decision; present every checkpoint diff for human review before committing.
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
