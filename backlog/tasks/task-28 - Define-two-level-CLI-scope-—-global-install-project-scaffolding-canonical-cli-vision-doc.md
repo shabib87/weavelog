@@ -3,11 +3,11 @@ id: TASK-28
 title: >-
   Define two-level CLI scope — global install + project scaffolding (canonical
   cli-vision doc)
-status: In Progress
+status: Done
 assignee:
   - '@conductor'
 created_date: '2026-08-31 03:58'
-updated_date: '2026-09-12 23:10'
+updated_date: '2026-09-13 15:47'
 labels:
   - harness
   - spec-approved
@@ -27,12 +27,12 @@ Define the canonical CLI-distribution contract for the npm-installed weavelog pa
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 WHEN docs/trd/cli-vision.md is read THEN it defines package fan-out, OpenCode materialization, the package exclusion list (secrets/, backlog/, docs/research/, state/, reports/, logs/, .worktrees/, node_modules/), the strict-JSON harness manifest config/harnesses/<id>.json, and the JSONC OpenCode template boundary.
-- [ ] #2 WHEN a declared target conflicts THEN the target contract defines default refusal and explicit --force replacement: exact eligible leaf targets only; TTY confirmation or --force --yes; a protected opaque backup; durable journal; rollback or recovery refusal; no merge, adoption, directory replacement, or undeclared-path replacement.
-- [ ] #3 WHEN project scaffolding is described THEN it creates project-owned AGENTS.md, Backlog, .env.example, and neutral docs README homes for research, adr, prd, and trd; it does not manage .gitignore, .env, .env.local, or .git; it uses the ADR-005 artifact flow and conductor-era v0.1 contract.
-- [ ] #4 WHEN the runbook successor, global AGENTS.md, README, corrected v0.1 brief, PRODUCT, ROADMAP, and documentation indexes mention the CLI vision THEN they use the canonical pointer and identify target behavior versus the TASK-29/TASK-30 delivery gap without duplicating the full contract.
-- [ ] #5 WHEN m-4 and m-5 briefs and affected downstream task records are read THEN they point to cli-vision.md and assign the approved global-materialization, project-scaffold, supported-profile, stranger-test, legacy-migration, and future-weaver work to their named tasks.
-- [ ] #6 WHEN ADR-0008 is ratified THEN its Decision table records the topology, ownership, force/backup/recovery boundary, profile and active-source boundary, project scaffold, and future weaver separation; its approved status is synchronized in frontmatter, Status, and ADR index before cli-vision.md is created.
+- [x] #1 WHEN docs/trd/cli-vision.md is read THEN it defines package fan-out, OpenCode materialization, the package exclusion list (secrets/, backlog/, docs/research/, state/, reports/, logs/, .worktrees/, node_modules/), the strict-JSON harness manifest config/harnesses/<id>.json, and the JSONC OpenCode template boundary.
+- [x] #2 WHEN a declared target conflicts THEN the target contract defines default refusal and explicit --force replacement: exact eligible leaf targets only; TTY confirmation or --force --yes; a protected opaque backup; durable journal; rollback or recovery refusal; no merge, adoption, directory replacement, or undeclared-path replacement.
+- [x] #3 WHEN project scaffolding is described THEN it creates project-owned AGENTS.md, Backlog, .env.example, and neutral docs README homes for research, adr, prd, and trd; it does not manage .gitignore, .env, .env.local, or .git; it uses the ADR-005 artifact flow and conductor-era v0.1 contract.
+- [x] #4 WHEN the runbook successor, global AGENTS.md, README, corrected v0.1 brief, PRODUCT, ROADMAP, and documentation indexes mention the CLI vision THEN they use the canonical pointer and identify target behavior versus the TASK-29/TASK-30 delivery gap without duplicating the full contract.
+- [x] #5 WHEN m-4 and m-5 briefs and affected downstream task records are read THEN they point to cli-vision.md and assign the approved global-materialization, project-scaffold, supported-profile, stranger-test, legacy-migration, and future-weaver work to their named tasks.
+- [x] #6 WHEN ADR-0008 is ratified THEN its Decision table records the topology, ownership, force/backup/recovery boundary, profile and active-source boundary, project scaffold, and future weaver separation; its approved status is synchronized in frontmatter, Status, and ADR index before cli-vision.md is created.
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -64,4 +64,12 @@ Created from TASK-23 session 2026-08-30; consolidates qwen/deepseek/kimi consult
 2026-09-12 superseding decision record: Human approved the amendment bundle and ratified ADR-0008. This note supersedes earlier in-thread notes that disallowed force replacement or proposed sibling backups. Final contract: default whole-run preflight refuses conflicts with no writes and nonzero exit; explicit --force replaces eligible declared leaf files only after TTY confirmation, or --force --yes noninteractively; stage first, preserve an opaque .bak under ~/.local/state/weavelog/backups/<run-id>/, journal the operation, roll back only when safe, and refuse recovery if a later change is detected. No merge, adoption, directory replacement, or protected/undeclared path replacement. Project scaffold does not require global OpenCode init/profile and never manages .gitignore, .env, .env.local, or .git. It creates neutral docs README homes for research, ADR, PRD, and TRD using ADR-005 flow; research is as-needed and ADRs are cross-cutting. TASK-80 depends on TASK-28 so the future persona sweep covers this scaffold. Terra review corrections: a JSONL conflict example contains no materialize event and exits 3; scaffold profile independence is explicit.
 
 2026-09-12 claim-gate fix traceability: detectHarnessDevFromCwd now extracts the URL field from each git remote -v line before matching repository identity. Standard fetch/push output previously passed the whole line to URL matching, so this Weavelog worktree could be misclassified and the TASK-28 claim gate could refuse. Added a regression test for standard remote output. Verified with `node --import tsx --test tests/task-policy.test.ts`: 41 passed, 0 failed.
+
+2026-09-13 final validation: npm run typecheck and npm run lint passed; task-policy 41/41, agents-install 31/31, payload templating 3/3, focused CLI sync 1/1, architecture frontmatter 27/27, milestone anchors, and git diff --check passed. Independent final review reported 0 critical, 0 high, and 0 medium findings.
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Defined and ratified the canonical CLI vision and ADR-0008. Updated CLI, product, roadmap, README, indexes, milestones, and downstream ownership records. Verified with typecheck, lint, focused suites, frontmatter, milestone validation, and diff checks.
+<!-- SECTION:FINAL_SUMMARY:END -->
