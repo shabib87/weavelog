@@ -14,6 +14,7 @@ related_to:
   - ./0003-three-phase-loop-model.md
   - ./0005-artifact-flow.md
   - ./0006-tiered-loop-commands.md
+  - ./0008-cli-distribution-contract.md
 sources:
   - "TASK-15"
 ---
@@ -35,6 +36,7 @@ future agents/humans.
 | ADR-005 | artifact flow — PRD/TRD/ADR/TASK doc classes, AC traceability rule (partially supersedes the 2026-07-04 doc-chain collapse) | approved | 2026-09-07 |
 | ADR-006 | tiered loop commands (stitch/weave/loom/pulse) + weaver persona replace the always-on conductor protocol; two HITL gates preserved; pre-build deliberation sub-loop (warp: red-blue-white protocol, light/full tiers); absorbs the conductor-dispatch subject (an ADR announced as "006" in research, never drafted) | approved | 2026-09-07 |
 | ADR-007 | independent reviewer policy — fresh context, cross-family capability, explicit alternatives, and successor to ADR-004 reviewer fallback | approved | 2026-09-10 |
+| ADR-008 | canonical CLI distribution contract — package fan-out, host manifests, identity overlays, replacement safety, and project scaffold | approved | 2026-09-12 |
 
 > Migration note (2026-09-07): legacy ADRs 0001/0002 were migrated from
 > the pre-reorg ADR location (dissolved by the ADR-005 reorg); ADR-002 satisfies the

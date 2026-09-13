@@ -199,6 +199,21 @@ describe("harness-dev context detection (AC #17)", () => {
     );
   });
 
+  test("detectHarnessDevFromCwd: standard git remote output recognizes weavelog", () => {
+    const runner = (args: string[], _opts?: { cwd?: string }) => {
+      if (args[0] === "remote") {
+        return {
+          status: 0,
+          stdout:
+            "origin\tgit@github.com:shabib87/weavelog.git (fetch)\norigin\tgit@github.com:shabib87/weavelog.git (push)\n",
+          stderr: "",
+        };
+      }
+      return { status: 128, stdout: "", stderr: "unhandled" };
+    };
+    assert.equal(detectHarnessDevFromCwd("/repos/TASK-28", runner), true);
+  });
+
   test("backlog project_name matching a canonical repo -> harness-dev (works in every worktree)", () => {
     assert.equal(
       isHarnessDevContext({ backlogProjectName: "agents-harness" }),

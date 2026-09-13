@@ -4,13 +4,14 @@ title: Supported-profile doctor and check semantics
 status: To Do
 assignee: []
 created_date: '2026-09-06 20:33'
-updated_date: '2026-09-11 04:00'
+updated_date: '2026-09-12 20:15'
 labels:
   - harness
 milestone: m-7
 dependencies:
   - TASK-59
   - TASK-79
+  - TASK-29
 priority: high
 type: bug
 ordinal: 54000
@@ -19,7 +20,7 @@ ordinal: 54000
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
-Outcome: doctor and check distinguish preparation warnings from failures of the installed supported profile. Why: before initialization, setup guidance may warn; after initialization, OpenCode, Headroom, Backlog, and required gates are release requirements and must fail loudly when absent.
+Outcome: make doctor and check report supported-profile readiness honestly. Before initialization, missing setup tools may warn; after initialization, required profile components fail loudly. Add active OpenCode-source conflict detection from docs/trd/cli-vision.md: init/update refuse unsupported global profiles before writes, while doctor/check report unsupported state. Why: destination-path checks alone cannot detect competing active OpenCode configuration.
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
@@ -29,6 +30,7 @@ Outcome: doctor and check distinguish preparation warnings from failures of the 
 - [ ] #3 WHEN the fix lands THEN tests pin the doctor output shape through the Backlog seam and a scrubbed PATH
 - [ ] #4 WHEN the README quickstart is inspected THEN it distinguishes pre-init setup warnings from post-init required-tool failures
 - [ ] #5 WHEN this task closes THEN dependent portability tasks rerun their doctor evidence after it lands
+- [ ] #6 WHEN doctor or check evaluates the OpenCode profile THEN it detects conflicting active OpenCode configuration sources, reports the profile as unsupported, and does not claim successful readiness; init/update refuse the unsupported profile before writing, and --force does not bypass this check.
 <!-- AC:END -->
 
 ## Definition of Done
@@ -44,4 +46,6 @@ Outcome: doctor and check distinguish preparation warnings from failures of the 
 
 <!-- SECTION:NOTES:BEGIN -->
 2026-09-10 correction: OpenCode, Headroom, Backlog, required gates, and audit output are core supported-profile requirements. Pre-init warnings do not mean those tools are optional after init.
+
+2026-09-12 scope alignment: active OpenCode-source conflict detection is included in this supported-profile check and depends on TASK-29 materialization behavior; `--force` cannot bypass an unsupported profile.
 <!-- SECTION:NOTES:END -->

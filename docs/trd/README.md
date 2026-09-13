@@ -15,6 +15,8 @@ related_to:
   - headroom-proxy.md
   - model-routing.md
   - runbook-decomposition.md
+  - ./cli-vision.md
+  - ../adr/0008-cli-distribution-contract.md
 sources:
   - "TASK-15"
 ---
@@ -47,6 +49,7 @@ See [loop-factory.md](./loop-factory.md) for the full model, diagram, and EARS a
 | [worktree-discipline.md](./worktree-discipline.md) | architecture | Worktree flow, HITL merge gate, crash contract |
 | [headroom-proxy.md](./headroom-proxy.md) | architecture | Proxy stack utilization |
 | [runbook-decomposition.md](./runbook-decomposition.md) | architecture | Runbook section map (post-decomposition index) |
+| [cli-vision.md](./cli-vision.md) | architecture | Canonical package fan-out, ownership, replacement, and project scaffold contract (ADR-008) |
 | [2026-06-28-weavelog-design.md](./2026-06-28-weavelog-design.md) | founding TRD | Full original architecture design (ETCSLV, isolation, budgets, rollback) |
 | [adr/README.md](../adr/README.md) | adr | ADR index + Nygard template (ADR-001..N, added incrementally) |
 | [diagrams/](./diagrams/) | architecture | Generated diagrams (HTML) |

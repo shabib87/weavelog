@@ -6,7 +6,7 @@ title: >-
 status: To Do
 assignee: []
 created_date: '2026-09-06 20:35'
-updated_date: '2026-09-11 04:33'
+updated_date: '2026-09-12 20:16'
 labels: []
 milestone: m-7
 dependencies:
@@ -31,7 +31,7 @@ ordinal: 55000
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
-Execute the TASK-45 stranger test and lock its evidence before the publish marker changes. Local part: procedure V2 ratified by two 3-reviewer plan-gate passes (2026-09-06) — `sudo sysadminctl -addUser stranger` with `-admin` so brew provisioning works, `sudo createhomedir -c -u stranger`, secureTokenStatus must report OFF (abort to immediate teardown if ON), and a `sudo -i -u stranger` login shell. Node is brew node@22 and is verified by version output. The release candidate is staged through macOS Shared only after privacy verification, then SHA-256 is verified by stranger. The README battery proves OpenCode plus Headroom, hooks, manifest, scaffold, an end-to-end task, verification, and audit records. The CI battery is supplementary, not gate-of-record. Dependencies must be complete while the marker is unset; sanitized evidence is recorded in TASK-45, then the human release review decides the marker. Why: TASK-45 needs V2 evidence and the procedure must not live only in chat.
+Execute the TASK-45 stranger test and record exact-candidate evidence before the publish marker changes. Follow the approved V2 clean-user procedure, README quickstart, and the target-versus-delivery boundary in docs/trd/cli-vision.md. Verify global preflight/refusal and force-backup recovery, active-source refusal, and the project scaffold contract. Why: release evidence must prove safe behavior rather than rely on documentation claims.
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
@@ -44,6 +44,7 @@ Execute the TASK-45 stranger test and lock its evidence before the publish marke
 - [ ] #6 WHEN the ticket is picked up THEN every dependency is complete and the publish marker remains unset
 - [ ] #7 WHEN the run completes THEN TASK-45 records sw_vers, uname -m, node version, doctor output and exit code, ledger tail, and exit codes without absolute home paths or secrets; teardown is evidence out, exit stranger shell, pkill stranger, deleteUser, revert home mode, remove Shared staging, then post-asserts green
 - [ ] #8 WHEN the evidence is accepted THEN the human release review decides whether the npm publish marker may change
+- [ ] #9 WHEN the exact candidate exercises CLI conflict and scaffold paths THEN the evidence proves default all-target preflight refuses with nonzero exit and no declared writes; confirmed --force preserves opaque protected .bak files and journal evidence with safe rollback or recovery refusal; conflicting OpenCode sources remain unsupported; and scaffold creates all four docs homes without requiring a global OpenCode profile or managing .gitignore, .env, .env.local, or .git.
 <!-- AC:END -->
 
 ## Definition of Done
@@ -59,4 +60,6 @@ Execute the TASK-45 stranger test and lock its evidence before the publish marke
 
 <!-- SECTION:NOTES:BEGIN -->
 2026-09-10 correction: TASK-67 precedes the publish-gate marker. Its former marker-before-pickup wording created a prose cycle and is superseded.
+
+2026-09-12 scope alignment: exact-candidate evidence now includes the ADR-0008 conflict, force-backup, recovery, supported-profile, and project-scaffold contract. Documentation alone is not release proof.
 <!-- SECTION:NOTES:END -->

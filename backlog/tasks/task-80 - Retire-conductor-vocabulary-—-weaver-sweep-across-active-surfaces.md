@@ -4,13 +4,14 @@ title: Retire conductor vocabulary — weaver sweep across active surfaces
 status: To Do
 assignee: []
 created_date: '2026-09-10 01:54'
-updated_date: '2026-09-11 04:30'
+updated_date: '2026-09-12 20:16'
 labels:
   - spec-approved
 milestone: m-4
 dependencies:
   - TASK-79
   - TASK-82
+  - TASK-28
 priority: high
 ordinal: 63500
 ---
@@ -18,7 +19,7 @@ ordinal: 63500
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
-Outcome: replace the active agent-role term conductor with the approved persona name after a separate persona-name availability task has human approval. Scope includes payload, source, tests, active technical and product documents, relevant task assignees, and the dispatch diagram; historical attribution and archived research remain unchanged. Why: no persona artifact may ship until its name is checked independently of the Weavelog product name.
+Outcome: replace the active agent-role term conductor with the approved persona name after the separate human-approved name-availability task. Include payload, source, tests, active technical and product documents, relevant task assignees, the dispatch diagram, and the conductor-era project AGENTS.md template defined by TASK-28 and docs/trd/cli-vision.md. Historical attribution and archived research remain unchanged. Why: the future persona rename must cover the project scaffold created by the v0.1 CLI contract.
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
@@ -43,4 +44,6 @@ Outcome: replace the active agent-role term conductor with the approved persona 
 2026-09-11 correction: TASK-57 ratified the product name Weavelog; it is not weaver-persona availability evidence. A separate human-approved persona-name availability task must pass before TASK-80 is claimed. Its specification is recorded in TASK-79 while Backlog task creation is unavailable.
 
 2026-09-11 correction: predecessor is TASK-82 (Verify weaver persona name availability). TASK-80 must not be claimed until TASK-82 has recorded human approval.
+
+2026-09-12 scope alignment: TASK-28 is a dependency so the future rename includes the conductor-era project scaffold AGENTS template.
 <!-- SECTION:NOTES:END -->

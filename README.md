@@ -17,12 +17,33 @@
 > The commands below describe the planned v0.1 release flow; do not run them
 > as setup instructions yet.
 
+> **Setup model:** Weavelog is an opinionated, greenfield-first harness. It
+> does not merge with or adopt existing agent rules or host configuration.
+> Setup checks for conflicts before writing. You can choose `--force` to
+> replace an eligible declared file after confirmation; Weavelog keeps a
+> protected backup. Custom combinations outside the supported profile are
+> the project owner's responsibility to validate.
+
+The [CLI vision](docs/trd/cli-vision.md) describes the target contract. It is
+not proof that every behavior has shipped; see the linked delivery tasks and
+the release status before relying on a feature.
+
+## Why **Weavelog**?
+
+As I learned more about AI and agentic work, I experimented with my workflow. I developed stronger views on how people like me should compose tools and work.
+
+**weavelog** is the result of my own learnings and experiments. It is a deterministic CLI that composes an opinionated, evidence-grade agentic developer-experience stack on open standards. It installs the toolchain, materializes agent configs, runs deterministic gates, and records every decision in an append-only ledger.
+
+> TL;DR: **weavelog** is an outer, harness-agnostic tool. It controls guardrails, removes tool-plumbing overhead, and helps teams ship with an agentic SDLC. It is still SDLC, now with AI.
+
+## What is **Weavelog**?
+
 A deterministic CLI that composes an opinionated, evidence-grade agentic
 developer-experience stack on open standards. It installs the toolchain,
 materializes agent configs, runs deterministic gates, and records every
 decision in an append-only ledger.
 
-## Why **Weavelog**
+## Why the name **Weavelog**?
 
 The name comes from the project's non-negotiable: verification gates are
 woven into every loop, the harness composes an opinionated stack from
@@ -33,7 +54,7 @@ proves.
 
 ## What this is
 
-**weavelog** composes opinionated agentic control plane, i.e. the inner harness.
+**weavelog** composes an opinionated agentic control plane: the inner harness.
 
 - Agents spec, implement, verify, and document. 
 - The human directs and verifies (plan and merge gates).
@@ -51,7 +72,7 @@ See [NORTH_STAR.md](docs/NORTH_STAR.md) and [PRODUCT.md](docs/PRODUCT.md) for mo
 # 1. Install (npm at 0.1.0; brew tap at 0.2+)
 npm i -g weavelog
 
-# 2. Install deps + materialize configs (asks before every write)
+# 2. Check prerequisites and materialize the declared setup
 weavelog init
 
 # 3. Verify the stack — all subchecks green
@@ -64,8 +85,8 @@ weavelog scaffold --project ./my-project
 cd ./my-project
 ```
 
-Requirements: arm64 macOS, node, git. Models are opinionated defaults;
-`init` asks and flags override. Full command spec:
+Requirements: arm64 macOS, node, and the tools listed in the CLI reference.
+Models are opinionated defaults; `init` asks and flags override. Full command spec:
 [`docs/cli.md`](docs/cli.md).
 
 ## Roadmap ladder
@@ -89,6 +110,7 @@ Details: [`docs/ROADMAP.md`](docs/ROADMAP.md).
 | [`docs/PRODUCT.md`](docs/PRODUCT.md) | Product strategy, moat, PMF, landscape |
 | [`docs/ROADMAP.md`](docs/ROADMAP.md) | Milestone ladder |
 | [`docs/cli.md`](docs/cli.md) | CLI spec — commands, exit codes, ledger |
+| [`docs/trd/cli-vision.md`](docs/trd/cli-vision.md) | Canonical package, ownership, replacement, and scaffold contract |
 | [`ATTRIBUTION.md`](ATTRIBUTION.md) | Lineage — what came from where |
 
 ## License & attribution
