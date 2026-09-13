@@ -5,7 +5,7 @@ status: In Progress
 assignee:
   - '@conductor'
 created_date: '2026-09-05 06:01'
-updated_date: '2026-09-12 07:02'
+updated_date: '2026-09-13 15:49'
 labels:
   - 'wayfinder:map'
   - spec-approved
@@ -30,7 +30,7 @@ Outcome: maintain the single active release checklist for the Weavelog 0.1.0 Ope
 - [ ] #1 WHEN TASK-79 is reviewed THEN the release capability ledger, corrected task graph, ADRs, MIT inventory, and dependency diagram are linked from the v0.1 brief and have fresh validation evidence
 - [ ] #2 WHEN the m-7 release path is assessed THEN it lists TASK-53, TASK-54, TASK-62, TASK-63, TASK-64, TASK-66, TASK-67, TASK-68, TASK-73, TASK-28, TASK-29, TASK-30, and TASK-84 as exact remaining blockers
 - [ ] #3 WHEN the public-source path is assessed THEN TASK-83 is listed as the separate m-5 repository-and-history clearance gate and is not inferred from TASK-54 npm artifact safety
-- [ ] #4 WHEN an implementation task merges THEN this checklist records its result, remaining blockers, and the next eligible task
+- [x] #4 WHEN an implementation task merges THEN this checklist records its result, remaining blockers, and the next eligible task
 - [ ] #5 WHEN TASK-67 completes THEN the human release review decides whether the npm publish marker may change; no task flips it automatically
 - [ ] #6 IF legacy flightlead, Apache, or live-migration instructions conflict with this checklist THEN they are treated as historical notes and do not direct release work
 <!-- AC:END -->
@@ -188,6 +188,8 @@ TASK-28 is the next shipping task. TASK-83 is required only before making the Gi
 ## Dependency eligibility
 
 The preceding Current shipping order is the human-requested priority order, not an executable dependency order. TASK-62 waits for TASK-66 and TASK-68; TASK-64 waits for TASK-66. TASK-56 appears in the priority order as nonblocking stale-document cleanup and does not gate v0.1.0 or npm publication. The v0.1 brief and release-dependency diagram record TASK-55 as completed evidence rather than a remaining release blocker.
+
+2026-09-13 checkpoint: TASK-28 merged to main as cdaac59 (parents bedbac1 and bc795e2). Its canonical CLI vision and ADR-0008 are now the release-contract baseline. Current remaining release blockers are TASK-53, TASK-54, TASK-62, TASK-63, TASK-64, TASK-66, TASK-67, TASK-68, TASK-73, TASK-29, TASK-30, and TASK-84; TASK-28 is removed. TASK-29 is dependency-eligible (TASK-28 and TASK-79 are Done) and is the next task in the current shipping order. TASK-45 remains In Progress because AC #1, #2, #3, #5, and #6 are not complete.
 <!-- SECTION:NOTES:END -->
 
 <!-- SECTION:PLAN:END -->
