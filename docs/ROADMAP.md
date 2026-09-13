@@ -20,12 +20,18 @@ Releases are tag-driven release-please over conventional commits;
 **Goal:** a stranger on arm64 macOS installs the exact **weavelog** candidate,
 runs the OpenCode + Headroom stranger test, and gets an auditable stack.
 
+The deliverables below describe the v0.1.0 target. The [CLI vision](./trd/cli-vision.md)
+separates target behavior from current delivery; TASK-29, TASK-30, TASK-66,
+and TASK-67 own implementation and proof.
+
 **Deliverables:**
-- `weavelog init` — verifies the required external-tool prerequisites using
-  pinned instructions, then materializes `~/.agents/*` +
-  `~/.config/opencode/*` via the two-step user-modification flow. It never
-  silently overwrites managed files or installs external tools. Models are
-  opinionated defaults; init asks and flags override.
+- `weavelog init` — verifies required external-tool prerequisites using
+  pinned instructions, then materializes shared skills and OpenCode-native
+  configuration from declared package inputs. Normal conflicts refuse before
+  writes. A user-confirmed `--force` replacement preserves an opaque backup
+  under Weavelog's protected local state. It does not install external tools.
+  See the [canonical CLI vision](./trd/cli-vision.md) for target behavior and
+  delivery status.
 - `weavelog sync` — dev path: repo → live (dogfood loop).
 - `weavelog update` — release-driven dep bump + re-materialize.
 - `weavelog check` — deterministic gates: tests, lint, typecheck, semgrep
@@ -34,8 +40,10 @@ runs the OpenCode + Headroom stranger test, and gets an auditable stack.
 - `weavelog doctor` — installed? authenticated? config parses? proxy
   healthy? cache mode=cache? python3.13? :8788 launchd-owned? semgrep smoke?
   ledger tail? manifest drift? arm64 guard.
-- `weavelog scaffold --project` — backlog init, AGENTS.md, docs/research,
-  ADRs, .gitignore, .env.example (never touches .env/.env.local).
+- `weavelog scaffold --project` — initialize Backlog and create a project-owned
+  conductor-era `AGENTS.md`, `.env.example`, and neutral docs README homes for
+  research, ADR, PRD, and TRD. Weavelog does not manage `.gitignore`, `.env`,
+  `.env.local`, or `.git`.
 - Manifest: `weavelog.json` (JSON, CLI-managed): per-tool install channel
   (brew/pipx/npm/uv) + version + doctor check id. Completeness rule:
   every external binary invoked in skills/src/payload must appear in the

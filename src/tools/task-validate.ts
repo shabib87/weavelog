@@ -247,7 +247,7 @@ export function detectHarnessDevFromCwd(
   if (r.status !== 0) return false;
   const urls = (r.stdout || "")
     .split("\n")
-    .map((s) => s.trim())
+    .map((s) => s.trim().split(/\s+/)[1] ?? "")
     .filter(Boolean);
   if (urls.length > 0) return isHarnessDevContext({ remoteUrls: urls });
   const root = runner(["rev-parse", "--show-toplevel"], { cwd });

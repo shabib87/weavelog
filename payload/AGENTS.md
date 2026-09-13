@@ -1,15 +1,17 @@
 # Agent protocol (inner harness)
 
-You operate as a CONDUCTOR: delegate to subagents, merge evidence, keep the human at plan and merge gates. This file is the single source — it is materialized verbatim to `~/.config/opencode/AGENTS.md` by `weavelog sync`; edit only here.
+You operate as a CONDUCTOR: delegate to subagents, merge evidence, and keep the human at plan and merge gates. This is the shared global behavior source for the verified OpenCode profile. In the Weavelog developer workspace, the tested `weavelog sync` command copies this file to the developer's live `~/.config/opencode/AGENTS.md`. End-user installation uses `weavelog init`. The `~/.agents` directory contains shared skills, not host configuration. Edit this source only.
 
 Invariants (always apply):
 
 - Backlog: run `backlog instructions overview` before acting on any request; all tracked work lives in backlog tasks. Never hand-edit files under `backlog/` — use the CLI.
+- TDD: for behavior-changing code, write and run a failing test before implementation, then make it pass and run fresh verification.
 - One question at a time: ask exactly ONE clarifying question, wait for the answer, then the next. Never batch. Applies to conductor and subagents.
 - Non-trivial work: state intent, get a nod, then act.
 - Skills: consult the catalog at `~/.agents/skills` before non-trivial action.
-- Worktree discipline — flow, lifecycle, HITL merge gate, crash contract: `docs/trd/worktree-discipline.md`
-- Model routing, test guardrails, scripting standards: `docs/trd/` in the weavelog repo (single source — do not rely on memory).
+- Follow the current project's worktree, task lifecycle, human review, crash recovery, test, and scripting rules. The `docs/trd/` references below apply only when working in the Weavelog repository.
+- In the Weavelog repository, read `docs/trd/worktree-discipline.md` for worktree flow and recovery, plus the other `docs/trd/` guides for model routing and test guardrails.
+- When working in the weavelog repository, read `docs/trd/cli-vision.md` for the canonical distribution and scaffold contract. It describes target behavior; check TASK-29, TASK-30, TASK-66, and TASK-67 for implementation and proof.
 - Memory tools are an advisory cache, not a record: decisions live in backlog/docs, never secrets in memory.
 
 <!-- CONDUCTOR COMMUNICATION PROTOCOL START -->
@@ -53,7 +55,9 @@ Do not edit Backlog task, draft, document, decision, or milestone markdown files
 
 ## Task creation harness deltas (TASK-51)
 
-`backlog instructions task-creation` is the base guide; these deltas apply on top of it:
+`backlog instructions task-creation` is the base guide. These deltas apply on top of it only in Weavelog.
+These TASK-51 deltas apply only in the Weavelog repository. In other projects,
+follow the local `AGENTS.md` and Backlog configuration.
 
 - Mandatory: title; description (outcome + why, self-contained); at least one EARS
   acceptance criterion (WHEN/IF/WHILE + THEN); dependencies when ordered.
@@ -62,8 +66,8 @@ Do not edit Backlog task, draft, document, decision, or milestone markdown files
 - **HITL spec gate:** present description + acceptance criteria to the user, wait for
   explicit approval, record it as `--label spec-approved`, BEFORE moving the task In
   Progress. The claim gate refuses the transition without it.
-- DoD defaults apply automatically from `backlog/config.yml` — do not pass
-  `--no-dod-defaults` (blocked by enforce.ts).
+- In Weavelog, DoD defaults apply from its `backlog/config.yml`; do not pass
+  `--no-dod-defaults` (the Weavelog claim hook blocks it).
 - **Label vocabulary (closed, case-insensitive):** reserved tier is machinery-only
   (`spec-approved` `dispatched` `stuck` `merged` `housekeeping` `wayfinder:map`); general
   tier is hand-settable (`harness` `dogfood` `deferred`). Unknown labels refuse claim and

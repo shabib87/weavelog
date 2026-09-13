@@ -15,18 +15,27 @@ Tagline: "The inner harness: agent work you can audit."
 
 It does four things:
 
-1. **Setup** (`init`, `update`) - verify required external tools through pinned
-   instructions, then materialize `~/.agents/*` and `~/.config/opencode/*`
-   through a two-step user-modification flow. They never silently overwrite
-   managed files or install external tools.
+1. **Setup** (`init`, `update`) — verify required external tools through pinned
+   instructions, then materialize shared skills and OpenCode-native
+   configuration from declared package inputs. The canonical target contract
+   is [the CLI vision](./trd/cli-vision.md). This is the target contract;
+   TASK-29, TASK-30, TASK-66, and TASK-67 own implementation and proof. It
+   allows a user-confirmed `--force` replacement with a protected backup. It
+   does not merge or adopt an existing agent setup, or install external tools.
 2. **Verify** (`check`) - run deterministic gates: tests, lint, typecheck, security, front-matter, manifest
    completeness.
 3. **Audit** (`doctor`, ledger) - verify the installed stack is healthy, and
    append every command's files-touched, decisions, errors, and exit code to
    an append-only JSONL ledger.
-4. **Scaffold** (`scaffold --project`) - turn a repo into an agentic
-   workspace: backlog, AGENTS.md, docs/research, ADRs, .gitignore,
-   .env.example.
+4. **Scaffold** (`scaffold --project`) — create a project-owned conductor-era
+   `AGENTS.md`, Backlog, `.env.example`, and neutral README homes for research,
+   ADR, PRD, and TRD. Weavelog does not manage `.gitignore`, `.env`,
+   `.env.local`, or `.git`.
+
+
+> `weavelog` is **strongly opinionated**. It is not a generic agent host. The is that the use (builder profile like the author) does not have to think or spend time on DXP plumbing, focus on **building the product**.
+>
+> Hence the the strong opinions control agent tools like skills, subagents, model selection as well as the core agent settings, e.g. `~/.config/opencode/opencode.jsonc`.
 
 
 ### First iteration (v0.1.0)
@@ -55,6 +64,13 @@ specific workflow
 
 It does not try to be all things to all teams. The philosophy is developed in public
 alignment with Addy Osmani's [blog](https://addyosmani.com/blog/) on Loop Engineering and Agentic SDLC.
+
+Weavelog is greenfield-first. It installs its declared setup as a whole and
+does not merge or adopt existing agent rules or host configuration. If
+preflight finds a conflict, setup refuses by default. A user may choose
+`--force` for an eligible whole-file replacement after confirmation; the CLI
+preserves an opaque backup and records the action. Users remain responsible
+for custom combinations outside the supported profile.
 
 ## What weavelog is NOT
 

@@ -18,6 +18,8 @@ them without explicit human instruction.
 ## Artifact flow: idea → PRD → TRD → milestone ↔ PRD → TASK
 
 Full rules in [adr/0005-artifact-flow.md](./adr/0005-artifact-flow.md).
+The canonical CLI distribution contract is [trd/cli-vision.md](./trd/cli-vision.md),
+ratified by [ADR-0008](./adr/0008-cli-distribution-contract.md).
 Summary:
 
 - **PRD** — ratified milestone brief in `prd/` (human-owned at kickoff;

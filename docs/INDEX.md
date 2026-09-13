@@ -2,7 +2,7 @@
 
 > **Purpose:** Navigation map for agents and humans. Read this to decide
 > what to read and what to skip. Updated as part of Phase 1.85c.
-> **Last updated:** 2026-09-07 (ADR rows reconciled; research/plans/learnings
+> **Last updated:** 2026-09-12 (ADR-008 ratified; CLI vision added; research/plans/learnings
 > corpus entries: `docs/research/README.md` tracks the dated research corpus;
 > `archive/learnings/` and `archive/plans/` rows are indexed here)
 
@@ -52,12 +52,13 @@
 | File | Type | Purpose | When | LOC | Last updated |
 |---|---|---|---|---|---|
 | `research/RESEARCH.md` | Provenance | WHY behind every design decision, source-by-source | On unfamiliar territory | 241 | 2026-07-22 |
-| `adr/0001-weavelog-architecture-decisions.md` | ADR | Historical umbrella record — traceability table routes each bundled decision to its current home. Do not implement from §2 | On design changes | 344 | 2026-09-07 |
+| `adr/0001-weavelog-architecture-decisions.md` | ADR | Historical umbrella record — traceability table routes each bundled decision to its current home. Do not implement from §2 | On design changes | 346 | 2026-09-07 |
 | `adr/0002-bash-homebrew-tooling.md` | ADR | Bash/Homebrew decision (approved: TypeScript only; reformatted to contract) | On distribution/language | 67 | 2026-09-07 |
-| `adr/0003-three-phase-loop-model.md` | ADR | Three-phase loop model + decision-recording gate (WHY ends in ADR or explicit no-decision) | Every WHY phase | 99 | 2026-09-07 |
-| `adr/0004-model-selection-benchmark-policy.md` | ADR | Seat-weighted benchmark policy; L0–L4 reviewer escalation; weekly/monthly drift cadence | Model decisions | 236 | 2026-09-07 |
-| `adr/0005-artifact-flow.md` | ADR | idea→PRD→TRD→milestone↔PRD→TASK doc classes; machine-checked bidirectional milestone linkage | Planning any task | 125 | 2026-09-07 |
-| `AGENTS.md` | Rules | Documentation rules (nested AGENTS.md): schemas, versioning, artifact flow, machine-checked linkage | When writing docs | 114 | 2026-09-07 |
+| `adr/0003-three-phase-loop-model.md` | ADR | Three-phase loop model + decision-recording gate (WHY ends in ADR or explicit no-decision) | Every WHY phase | 104 | 2026-09-07 |
+| `adr/0004-model-selection-benchmark-policy.md` | ADR | Seat-weighted benchmark policy; L0–L4 reviewer escalation; weekly/monthly drift cadence | Model decisions | 261 | 2026-09-07 |
+| `adr/0005-artifact-flow.md` | ADR | idea→PRD→TRD→milestone↔PRD→TASK doc classes; machine-checked bidirectional milestone linkage | Planning any task | 127 | 2026-09-07 |
+| `adr/0008-cli-distribution-contract.md` | ADR | Package fan-out, host manifests, replacement safety, and project scaffold | CLI distribution changes | 126 | 2026-09-12 |
+| `AGENTS.md` | Rules | Documentation rules (nested AGENTS.md): schemas, versioning, artifact flow, machine-checked linkage | When writing docs | 116 | 2026-09-07 |
 
 ---
 
@@ -129,6 +130,7 @@ Each captures what went wrong, root cause, and blog candidate.
 | `trd/test-guardrails.md` | TDD ordering, EARS ACs, verify-gate semantics | TDD work | 159 |
 | `trd/headroom-proxy.md` | Proxy stack utilization | Proxy work | 180 |
 | `trd/runbook-decomposition.md` | Runbook section map (post-decomposition index) | Runbook archaeology | 84 |
+| `trd/cli-vision.md` | Canonical CLI distribution target contract (ADR-008) | CLI changes | 294 |
 | `prd/README.md` | PRD index — ratified milestone briefs cross-referenced with backlog milestones | Milestone planning | 38 |
 | `archive/superpowers/specs/2026-07-07-weavelog-footer-theme-design.md` | Author footer/theme design (not product) | On author workspace | 151 |
 
@@ -176,12 +178,12 @@ re-raised as backlog tasks. These files are read-only.
 |---|---|---|
 | Root-level entry points | 5 | 540 |
 | Trackers | 0 | 0 |
-| Provenance & decisions | 7 | 1,226 |
+| Provenance & decisions | 8 | 1,388 |
 | Research logs (dated, subset) | 10 | 2,017 |
 | Research references (living) | 2 | 701 |
 | Learning logs | 16 | 1,919 |
-| TRD + PRD | 11 | 1,915 |
+| TRD + PRD | 12 | 2,209 |
 | Open questions (TBD) | 6 | 344 |
 | Implementation plans | 4 | 3,853 |
 | Author workspace | 1 | 93 |
-| **Total** | **62** | **12,608** |
+| **Total** | **62** | **13,064** |
