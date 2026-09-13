@@ -30,11 +30,11 @@ the release status before relying on a feature.
 
 ## Why **Weavelog**?
 
-As I progressed on my own agentic and AI learnings, I started experimenting and tuning my workflow, and forming stronger opinions on how I or folks like me should compose tools and work.
+As I learned more about AI and agentic work, I experimented with my workflow. I developed stronger views on how people like me should compose tools and work.
 
 **weavelog** is the result of my own learnings and experiments. It is a deterministic CLI that composes an opinionated, evidence-grade agentic developer-experience stack on open standards. It installs the toolchain, materializes agent configs, runs deterministic gates, and records every decision in an append-only ledger.
 
-> TLDR: **weavelog** is the ourter harness agnostic tool that contorls guardrails, removes tool plumbing overhead and helps to ship following agentic SDLC (funny I have to say `Agentic SDLC`, it is just SDLC - but with AI).
+> TL;DR: **weavelog** is an outer, harness-agnostic tool. It controls guardrails, removes tool-plumbing overhead, and helps teams ship with an agentic SDLC. It is still SDLC, now with AI.
 
 ## What is **Weavelog**?
 
@@ -43,7 +43,7 @@ developer-experience stack on open standards. It installs the toolchain,
 materializes agent configs, runs deterministic gates, and records every
 decision in an append-only ledger.
 
-## Why **Weavelog**
+## Why the name **Weavelog**?
 
 The name comes from the project's non-negotiable: verification gates are
 woven into every loop, the harness composes an opinionated stack from
@@ -54,7 +54,7 @@ proves.
 
 ## What this is
 
-**weavelog** composes opinionated agentic control plane, i.e. the inner harness.
+**weavelog** composes an opinionated agentic control plane: the inner harness.
 
 - Agents spec, implement, verify, and document. 
 - The human directs and verifies (plan and merge gates).
