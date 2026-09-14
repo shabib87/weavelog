@@ -1,11 +1,11 @@
 ---
 id: TASK-3
 title: 'MVP: prove one OpenCode SDK invocation'
-status: In Progress
+status: Done
 assignee:
   - '@conductor'
 created_date: '2026-08-24 02:48'
-updated_date: '2026-09-14 05:11'
+updated_date: '2026-09-14 05:17'
 labels:
   - spec-approved
 milestone: m-4
@@ -101,3 +101,9 @@ Verification (fresh, this worktree)
 
 AC5 evidence: deepseek/deepseek-v4.1-flash present in weavelog.json models and payload small_model; worker seats and ladder unchanged; hold note tracked + updated; docs agree; no live seat reassigned.
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+TASK-3 spike complete. Proved one bounded OpenCode SDK invocation against @opencode-ai/sdk 1.18.30 (== installed opencode 1.18.30): session create + named-agent prompt returned a usable result with the real request/response shape (AC1); invalid-model error, abort-on-cancel (pending prompt resolves with MessageAbortedError, no hang) and a verified server close (AC2); the real installed Hook 8 refused a live-harness write and logged a gate-refusal receipt (AC3); version/commands/results/limitations recorded as TASK-4 inputs (AC4). Folded the approved DeepSeek V4.1 Flash roster addition (small_model A/B slot; worker seats and ladder unchanged) with an ADR-004 append-only addendum, TRD/cli docs, and the now-tracked 2026-09-11 hold note (AC5). Verified: tsc clean, biome clean, 692/695 tests (3 pre-existing failures identical on main), architecture frontmatter 27/27, research note valid, privacy scan clean; independent review APPROVE. Live implementer/scout seat reconciliation remains a manual human step (weavelog sync refused; not forced).
+<!-- SECTION:FINAL_SUMMARY:END -->
