@@ -259,3 +259,15 @@ not silently call a same-provider fallback full cross-family review.
 ADR-007 ratification changed this record's frontmatter, Status section, and index
 entry together to `superseded`. ADR-007 is the successor for the changed host-mode
 reviewer decision and carries the retained policies forward by reference.
+
+## Addendum 2026-09-14
+
+Records a roster-list addition, not a decision change. `deepseek/deepseek-v4.1-flash`
+enters the machine-readable `models` roster and takes the `small_model` manual A/B
+slot (human override recorded 2026-09-11). It receives **no seat**: the worker seats
+(`implementer`, `scout`) and the escalation ladder are unchanged. Seat eligibility
+still waits on Terminal-Bench 2.1, SWE-bench Pro, and HLE-with-tools scores under the
+carried-forward benchmark governance. Provenance:
+`docs/research/2026-09-11-deepseek-v4.1-flash-evaluation-hold.md`; applied via TASK-3.
+The reviewer-fallback supersession by ADR-007 is unaffected.
+

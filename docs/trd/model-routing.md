@@ -23,8 +23,11 @@ Every seat on the host gets a model tier, expressed in `opencode.jsonc` as two k
 - `model` — the default workhorse. Runs the conductor. As of the 2026-08-30 snapshot:
   `openrouter/z-ai/glm-5.3-flash` (1M context, native multimodal, cheapest-capable
   planning).
-- `small_model` — the cheap bulk default. `openrouter/deepseek/deepseek-v4-flash-0731`
-  (1M context, text-only, cheapest reliable executor) — the scout and implementer seats.
+- `small_model` — the cheap bulk default for new sessions. Currently the
+  `openrouter/deepseek/deepseek-v4.1-flash` manual A/B slot (human override
+  2026-09-11, no seat — see the research hold note and ADR-004 Addendum
+  2026-09-14). The worker seats (`implementer`, `scout`) still carry
+  `deepseek/deepseek-v4-flash-0731` in their own agent files.
 
 Model identity facts: the ID format is `openrouter/<org>/<model>`. `model` /
 `small_model` apply to **new sessions only** — existing sessions keep their model.
@@ -161,9 +164,10 @@ Reasons persist so nobody re-adopts these without addressing the stated blocker.
 - `payload/config/opencode.jsonc` — `model`, `small_model`, `provider.openrouter` (the
   `baseURL http://localhost:8788/v1` proxy route, `setCacheKey`, and the qwen order
   pin), `enabled_providers: ["openrouter"]`.
-- `weavelog.json` — machine-readable `models` list (the manifest default; the seven
-  manifest models: glm-5.3-flash, glm-5.3, deepseek-v4-flash-0731, deepseek-v4-pro-0813,
-  qwen3.8-flash, qwen3.8-2.4t-a95b, kimi-k3).
+- `weavelog.json` — machine-readable `models` list (the manifest default; the eight
+  manifest models: glm-5.3-flash, glm-5.3, deepseek-v4-flash-0731,
+  deepseek/deepseek-v4.1-flash, deepseek-v4-pro-0813, qwen3.8-flash,
+  qwen3.8-2.4t-a95b, kimi-k3).
 - `payload/config/agents/*.md` — per-seat `model` overrides (scout, plan-gate-*,
   diff-reviewer-*, qa, researcher, implementer, vision-*, security).
 - `src/tools/stack-check.ts` — model expiry sweep plus the roster drift gate against the
