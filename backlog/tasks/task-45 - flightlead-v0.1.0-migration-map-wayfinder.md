@@ -1,11 +1,11 @@
 ---
 id: TASK-45
 title: Establish the executable v0.1.0 release baseline
-status: In Review
+status: Done
 assignee:
   - '@conductor'
 created_date: '2026-09-05 06:01'
-updated_date: '2026-09-13 19:45'
+updated_date: '2026-09-14 00:47'
 labels:
   - 'wayfinder:map'
 milestone: m-7
@@ -32,15 +32,15 @@ Outcome: finish a one-time release reset so the author can merge this correction
 - [x] #3 WHEN the release dependency graph is validated THEN required tasks resolve without cycles, completed TASK-11/TASK-55 make TASK-3 dependency-eligible, and package clearance remains distinct from TASK-83 public-source/history clearance.
 - [x] #4 WHEN a fresh implementation session begins THEN repository AGENTS.md supplies the shipping mottos and bounded execution rules, the current release brief points to TASK-3, and the interim dashboard rule distinguishes live worktree progress from merged main progress without requiring a backlog redesign.
 - [x] #5 WHEN the release diagram is opened THEN it sits beside the milestone brief and visually shows the release progression and grouped 0.1.0 prerequisites, links to the scope of record, and contains no session handoff instructions or duplicate progress tracker.
-- [ ] #6 WHEN the correction has passed independent review and the human has approved and merged it THEN TASK-45 closes as a completed release-baseline correction without claiming that implementation, local release proof or publication is complete.
+- [x] #6 WHEN the correction has passed independent review and the human has approved and merged it THEN TASK-45 closes as a completed release-baseline correction without claiming that implementation, local release proof or publication is complete.
 <!-- AC:END -->
 
 ## Definition of Done
 <!-- DOD:BEGIN -->
 - [x] #1 The approved scope, local testing strategy and transferred release responsibilities are consistent across active tasks and documents.
 - [x] #2 Fresh diagram, document, link and dependency checks pass; an independent reviewer reports no unresolved blocking findings.
-- [ ] #3 The human reviews the final diff and explicitly approves the correction before commit and merge.
-- [ ] #4 The correction is merged, closure is recorded without a release-readiness claim, and the TASK-45 worktree is retired only when clean.
+- [x] #3 The human reviews the final diff and explicitly approves the correction before commit and merge.
+- [x] #4 The correction is merged, closure is recorded without a release-readiness claim, and the TASK-45 worktree is retired only when clean.
 <!-- DOD:END -->
 
 ## Implementation Plan
@@ -220,6 +220,18 @@ Final Astra-high delta consultation: VERDICT APPROVE, no blocking findings. Fres
 2026-09-13 SINGLE-WORKTREE CORRECTION (explicit human instruction): TASK-85 was relocated unchanged from its metadata worktree into .worktrees/TASK-45; pre/post SHA-256 matched and Backlog CLI reads TASK-85 successfully from this worktree. Its source worktree was verified clean, then removed; unused task/TASK-85 branch had no unique commits and was deleted safely. All changes from this thread now belong to task/TASK-45. Prior instructions to merge or retire two worktrees are superseded: review and merge TASK-45 once, close this bounded correction after the human gate, then retire this clean worktree. TASK-85 remains deferred and unstarted. The accepted release baseline, local test strategy and TASK-3 starting point are unchanged; no further planning or consultation is required.
 
 2026-09-13 explicitly requested verification follow-up: TASK-86 was created through Backlog CLI inside the existing TASK-45 worktree, with no separate worktree. It extends the established EARS requirement layer, Gherkin scenario layer and default DoD with observable per-AC test cases, tailored per-task completion evidence, and a finite migration of all To Do tasks captured at activation. The user requested this second deferred task; earlier sole-TASK-85 exception wording is superseded. The current 41 other To Do records are not bulk rewritten here. TASK-86 is a 0.1.1+ candidate, not a promised version or a blocker for TASK-3, TASK-45 closure or publication. Ambiguous requirements need human clarification; syntax alone is not deterministic verification. Preserve existing defaults, intent, approval and safety gates; no new framework, schema, skill or universal enforcement gate. The next implementation task and all release/local-test decisions remain unchanged.
+
+2026-09-13 human-approved merge: the user explicitly approved merging to main and cleaning the worktree. The complete 25-file diff matched the reviewed patch before commit. Commit 9a7fb00 was created on task/TASK-45 and fast-forwarded into main; both operations exited 0. Fresh checks: PRD frontmatter 9/9, milestone anchors, staged diff whitespace, and 83 Backlog CLI reads with no missing dependencies or cycles all passed. TASK-3 remains eligible through completed TASK-11/TASK-55; TASK-85/TASK-86 remain deferred with no dependents. The final Astra-high review approved the same baseline and follow-up specifications with no blockers.
+
+The installed global CLI initially rejected valid harness labels because its older remote parser includes the git remote display suffix. The repository version already contains the fix (8c57caa): detection returned true locally and false in the installed copy. A temporary launcher used the existing repository CLI and an isolated ledger directory; the unchanged pre-commit hook passed pin hygiene and task validation. No hook bypass, new runtime fix, dependency installation or global CLI modification was used.
+
+Closure records completion of the release-baseline correction only. SDK implementation, installer completion, local candidate proof and publication remain open in their owning tasks. The worktree was clean after the baseline merge. This closure-only metadata will be committed on the same task branch and merged before removal; removal is permitted only after another clean-state check.
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Completed the human-approved release-baseline correction and merged commit 9a7fb00 into main. The release brief and visual map record one OpenCode SDK workflow before 0.1.0, full installer safety and safe testing on the author's Mac. TASK-67 owns installed-package evidence and the human release decision; TASK-63 owns publication enforcement. Shipping rules and deferred TASK-85/TASK-86 are recorded. Fresh document, milestone, dependency and pre-commit checks passed; the final independent Astra-high review found no blockers. This closes TASK-45 only, not release implementation or publication. Next implementation session: TASK-3.
+<!-- SECTION:FINAL_SUMMARY:END -->
 
 <!-- SECTION:PLAN:END -->
