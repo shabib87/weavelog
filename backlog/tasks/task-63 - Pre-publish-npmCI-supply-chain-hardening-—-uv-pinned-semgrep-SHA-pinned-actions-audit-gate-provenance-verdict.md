@@ -6,7 +6,7 @@ title: >-
 status: To Do
 assignee: []
 created_date: '2026-09-06 20:06'
-updated_date: '2026-09-11 04:33'
+updated_date: '2026-09-13 17:08'
 labels:
   - harness
 milestone: m-7
@@ -30,7 +30,7 @@ Outcome: harden Weavelog build, publish, and supply-chain machinery in package m
 - [ ] #3 WHEN package metadata is inspected THEN it pins the package manager that produced the lockfile and CI runs the reproducible install command
 - [ ] #4 WHEN CI runs on main, pull requests, and its scheduled cadence THEN the audit gate fails on untriaged high or critical production advisories with committed rationale and expiry for every exception
 - [ ] #5 WHEN this task closes THEN a numbered ADR records the npm provenance adopt-or-skip verdict for v0.1.0 with verified registry evidence
-- [ ] #6 WHEN a tag or npm publish is attempted THEN TASK-53, TASK-54, TASK-55, TASK-62, TASK-63, TASK-64, TASK-66, TASK-67, TASK-68, TASK-73, and TASK-84 are closed; TASK-56 cleanup is not a publication blocker
+- [ ] #6 WHEN a tag or npm publish is attempted THEN TASK-3, TASK-4, TASK-5, TASK-7, TASK-29, TASK-30, TASK-53, TASK-54, TASK-62, TASK-63, TASK-64, TASK-66, TASK-67, TASK-68, TASK-73, TASK-55 are closed and the human release decision is recorded; TASK-67 accepts local proof on the author's Mac without an external tester, another machine or a clean-user CI job.
 - [ ] #7 WHEN npm pack runs THEN the exact tarball contains a fresh build, dist, payload, and zero backlog files
 - [ ] #8 WHEN the publication workflow is implemented THEN release-please or its approved equivalent prepares the release but cannot publish unless TASK-67 evidence is accepted and the human-controlled publish marker is set
 <!-- AC:END -->
@@ -47,4 +47,6 @@ Outcome: harden Weavelog build, publish, and supply-chain machinery in package m
 
 <!-- SECTION:NOTES:BEGIN -->
 2026-09-06 cross-thread reconciliation: closure-set AC now explicit IDs; prepack AC added (pack freshness gap found by the stranger-test 3-reviewer passes). Coordinate hunks with TASK-67 CI battery job (same workflow files; 67 rebases on this rewrite).
+
+2026-09-13 shipping audit: align the publish gate with actual supported installer dependencies, including TASK-29/TASK-30 and bounded reviewer correctness TASK-7. Keep existing supply-chain and publication controls. Remove author-machine TASK-84 from the gate.
 <!-- SECTION:NOTES:END -->

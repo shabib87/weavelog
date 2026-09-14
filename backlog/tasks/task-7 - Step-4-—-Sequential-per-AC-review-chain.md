@@ -1,16 +1,15 @@
 ---
 id: TASK-7
-title: Step 4 — Sequential per-AC review chain
+title: Repair shipped reviewer failure and cost reporting
 status: To Do
 assignee: []
 created_date: '2026-08-24 02:48'
-updated_date: '2026-09-05 23:01'
+updated_date: '2026-09-13 17:10'
 labels: []
 milestone: m-4
 dependencies:
-  - TASK-6
   - TASK-11
-priority: medium
+priority: high
 type: task
 ordinal: 6000
 ---
@@ -18,19 +17,22 @@ ordinal: 6000
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
-Sequential chain (not parallel): Reviewer 1 (logic, DeepSeek Pro) runs first → if FAIL, back to reasoning-depth escalation or worker → only if logic passes, Reviewer 2 (security, Qwen) runs. Per-AC rubric mode on reviewer-loop.ts (one verdict per AC). Structured output (json_schema) + parser + tests — build parser on --report <path> JSON output ({totalUsd, reviews:[{model, costUsd, content, usage}]}), not from zero. Classify: ERROR lines → transient (retry review); verdict FAIL → capability (escalate worker). Do NOT parse "STATUS: FAILED" (hallucinated). 3-family diversity: implementer GLM / logic reviewer DeepSeek Pro / security reviewer Qwen. Driver passes --models deepseek-v4-pro-0813,qwen3.8 explicitly. Assert family-disjointness at startup. DeepSeek V4 Pro 0813 — pin dated slug, reasoning_effort: max (or xhigh — equivalent per docs) at top level. --check-ac via task-flow.ts close for gate-pass transition. Per-task lifetime review budget (kick-backs re-fire: up to 3 firings). Rule: PASS but over-budget = FAIL.
+Outcome: make the existing reviewer-loop.ts helper report invocation failures and estimated costs honestly before npm release. Why: the audit reproduced exit 0 when every reviewer failed, and retry usage undercounting that hid a threshold breach. Preserve the existing roster and independent review policy. TASK-4 owns the MVP TypeScript workflow through OpenCode; this standalone OpenRouter helper does not automatically load OpenCode agents, skills or hooks. Advanced per-AC review orchestration, multi-rung escalation and lifetime budgeting remain future work.
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 Sequential chain: logic reviewer (DeepSeek Pro) first, security reviewer (Qwen) second
-- [ ] #2 Per-AC rubric mode: one verdict per acceptance criterion
-- [ ] #3 Structured output parser built on --report JSON, not from zero
-- [ ] #4 ERROR lines → transient (retry); verdict FAIL → capability (escalate) — not STATUS: FAILED
-- [ ] #5 3-family diversity: GLM implementer / DeepSeek logic / Qwen security
-- [ ] #6 Family-disjointness asserted at startup (implementer family ∉ reviewer families)
-- [ ] #7 DeepSeek V4 Pro 0813 slug pinned; reasoning_effort at top level (not inside provider: {})
-- [ ] #8 --check-ac used via task-flow.ts close for gate-pass transition
-- [ ] #9 Per-task lifetime review budget stated (up to 3 firings)
-- [ ] #10 PASS but over-budget = FAIL rule enforced
+- [ ] #1 WHEN any required reviewer request fails or yields no usable response after the allowed retry THEN the helper exits nonzero and records the failed reviewer in its report without exposing credentials.
+- [ ] #2 WHEN a reviewer request is retried THEN the reported usage and estimated total include every billed attempt; the audit fixture costing 0.15 cannot report 0.05 or pass a 0.06 threshold.
+- [ ] #3 IF catalog pricing or usage is unavailable THEN the report names the cost as unknown and does not claim a known zero cost or successful budget check.
+- [ ] #4 WHEN the CLI describes or evaluates --budget-usd THEN it accurately states and tests its post-run estimated-cost threshold; it does not claim that checking after requests prevents spending.
+- [ ] #5 WHEN verification runs THEN fake-provider tests cover failures, empty responses, retry accounting, missing cost data and successful reporting without live model spend; existing independent review and human approval remain required.
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+2026-09-13 audit reproduced the failures using memory-only fake fetch/auth/plan inputs, without network or credentials: all reviewers reject -> exit 0; first attempt 0.10 plus retry 0.05 -> reports 0.05 and exits 0 at threshold 0.06. Sources: src/tools/reviewer-loop.ts:150-179,183-192,219. Previous SDK-dependent sequential-review scope is deferred; revive it when one SDK dispatch exists and a demonstrated review failure requires it. The old TASK-6 dependency is unnecessary for this standalone repair.
+
+2026-09-13 scope clarification: the bounded SDK controller now belongs in 0.1.0 under TASK-3/4/5. This task remains a standalone reviewer correctness repair. Do not infer native OpenCode agent, skill or hook integration from this helper's raw API requests.
+<!-- SECTION:NOTES:END -->

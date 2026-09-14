@@ -4,7 +4,7 @@ title: Supported-profile doctor and check semantics
 status: To Do
 assignee: []
 created_date: '2026-09-06 20:33'
-updated_date: '2026-09-12 20:15'
+updated_date: '2026-09-13 16:46'
 labels:
   - harness
 milestone: m-7
@@ -48,4 +48,6 @@ Outcome: make doctor and check report supported-profile readiness honestly. Befo
 2026-09-10 correction: OpenCode, Headroom, Backlog, required gates, and audit output are core supported-profile requirements. Pre-init warnings do not mean those tools are optional after init.
 
 2026-09-12 scope alignment: active OpenCode-source conflict detection is included in this supported-profile check and depends on TASK-29 materialization behavior; `--force` cannot bypass an unsupported profile.
+
+2026-09-13 fresh audit evidence, no fixes applied: full suite outside sandbox exits 1 with three leaf failures in tests/cli/index.test.ts:417,460,478. The doctor success fixtures never install the OpenCode adapters required since commit b9751c8; initialize those fixtures and preserve missing-adapter negative coverage. Their fake Headroom binary also causes a real fixed localhost:8788 health request; isolate that boundary. The stack-only failure is a product regression: src/cli/index.ts:404 defaults to docs/architecture/worktree-discipline.md, which no longer exists. A focused rerun with WEAVELOG_DIFIT_DOC set to the existing docs/trd file passes (one test, exit 0). Correct the default path here. These are bounded repairs within supported-profile doctor/check work, not grounds for a redesign.
 <!-- SECTION:NOTES:END -->

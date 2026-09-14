@@ -6,7 +6,7 @@ title: >-
 status: To Do
 assignee: []
 created_date: '2026-09-10 02:30'
-updated_date: '2026-09-11 04:05'
+updated_date: '2026-09-13 17:20'
 labels: []
 milestone: m-4
 dependencies:
@@ -64,6 +64,10 @@ Not planned yet. Planning happens only when a future worker claims this task aft
 
 <!-- SECTION:NOTES:BEGIN -->
 Created 2026-09-10 from the TASK-79 pre-merge audit so ADR-006 obligations cannot be lost. 2026-09-11 correction: a separate persona check precedes TASK-80; completed TASK-57 applies only to the product name. Warp duties are explicit; child tasks carry their actual budget, review, decision, and recovery relationships.
+
+2026-09-13 draft review: TASK-7 now establishes standalone reviewer failure and cost reporting only. It does not establish the former sequential per-AC SDK review chain, worker escalation or lifetime review budgets. Those remain future integration requirements of this existing umbrella and must be explicitly specified here before dependent commands are implemented. This task is outside the first npm release; no new child tasks are created by this audit.
+
+2026-09-13 user sequencing: the first release may keep the conductor role, while ADR-006 on-demand behavior is the next OpenCode increment before Pi/Codex. Preferred delivery order is stitch/weave, then loom, then pulse, reusing the first release's SDK controller. This is incremental delivery of the approved four-command destination, not a reduction to a two-command design or permission to bypass any command's budget, review, recovery, persona or human-gate requirements. At activation, scope each increment against the existing dependencies; do not start a new broad audit or create new tasks as part of this thread.
 <!-- SECTION:NOTES:END -->
 
 ## Comments

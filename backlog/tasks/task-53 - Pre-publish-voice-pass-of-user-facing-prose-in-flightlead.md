@@ -4,7 +4,7 @@ title: 'Pre-publish: reproducible release instructions'
 status: To Do
 assignee: []
 created_date: '2026-09-05 23:39'
-updated_date: '2026-09-11 05:22'
+updated_date: '2026-09-13 17:08'
 labels:
   - spec-approved
 milestone: m-7
@@ -45,4 +45,6 @@ Outcome: publish concise, reproducible installation, configuration, and release 
 2026-09-11 correction: TASK-56 architecture policy is resolved in TASK-79 through ADR-007. TASK-56 unrelated cleanup remains separate and does not block this required release-instructions task.
 
 2026-09-11 partial progress: added the public pre-release README notice and labelled the quickstart as planned v0.1. The three release-instructions acceptance criteria remain unchecked; TASK-53 returns to To Do for the full supported-profile instructions.
+
+2026-09-13 user correction: instructions include the implemented TypeScript SDK workflow and its configured roster/skills/hooks. TASK-67 validates these instructions locally on the author's Mac. Do not require an external tester or second machine.
 <!-- SECTION:NOTES:END -->

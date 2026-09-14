@@ -67,6 +67,42 @@ weavelog/
 | `docs/archive/tbd/` | Open blindspot docs (frozen 2026-09-07) | Do not implement against; re-raise live questions as backlog tasks |
 | `docs/archive/` | Superseded research | **Do not use.** Provenance only. |
 
+## Shipping discipline
+
+**Done is better than perfect. Incremental releases are better than a big bang.
+Stop yak shaving.** These rules govern work on weavelog; they do not change the
+instructions shipped to other projects.
+
+- Work on one implementation task at a time. Subagents help finish or verify
+  that task; they do not start separate product work.
+- Once the human approves scope and the implementation plan, execute. Reopen
+  planning only for a specific blocker, a failed promised behavior, or an explicit
+  human scope change. Research only the unanswered question blocking that task.
+- End each session with a tested increment or a specific blocker recorded in the
+  existing task, including the next action. Do not substitute another plan for
+  implementation when the next action is already known.
+- Keep future ideas in existing backlog tasks without activating them. Do not
+  add a skill, abstraction, research document, or planning layer unless it is
+  needed for the current accepted outcome or the human explicitly requests it.
+- Release when the agreed criteria have evidence and the human approves. Use
+  the release, then select the next small improvement. Do not wait for the full
+  future command suite or additional hosts.
+- "Done" means verified against the agreed scope. It never means skipping TDD,
+  independent review, security, backup/recovery, or human approval gates.
+
+For the current release, read the [v0.1.0 brief](docs/prd/2026-09-05-v010-draft-brief.md)
+and its [release diagram](docs/prd/release-dependencies.html). The existing
+milestone and brief own scope; individual Backlog tasks own progress, exact
+dependencies and evidence. TASK-67 owns final installed-package proof and the
+human release decision; TASK-63 owns publication enforcement. TASK-45 ends with
+the approved release-baseline correction and is not a live progress tracker.
+
+Until the backlog workflow is separately improved, main shows merged progress;
+the active task worktree shows live progress. Run the dashboard from the active
+worktree during that task. Update its Backlog record and merge the record with
+the implementation. No dashboard redesign or task-administration policy change
+is required before TASK-3. Keep existing code-isolation and human approval gates.
+
 ## Build & test commands
 
 ```bash

@@ -36,6 +36,11 @@ in place). Linkage asymmetry by design: a brief may list several
 milestones (e.g. the v0.1.0 brief covers m-6 and m-7), while each
 milestone anchors exactly one brief.
 
+Milestone diagrams live beside their briefs in this directory, not in technical
+architecture diagrams. The [v0.1.0 release diagram](./release-dependencies.html)
+is a companion to the existing m-7 brief. It shows grouped prerequisites;
+Backlog tasks remain the source for exact dependencies and current evidence.
+
 ## Flow (ADR-0005)
 
 idea → PRD (requirements inside) → TRD → milestone ↔ PRD → TASK;

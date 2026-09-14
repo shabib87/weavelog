@@ -1,17 +1,16 @@
 ---
 id: TASK-3
-title: 'Step 0 — Spike: opencode SDK non-interactive invocation'
+title: 'MVP: prove one OpenCode SDK invocation'
 status: To Do
 assignee: []
 created_date: '2026-08-24 02:48'
-updated_date: '2026-09-06 16:51'
+updated_date: '2026-09-13 17:08'
 labels: []
 milestone: m-4
 dependencies:
   - TASK-11
   - TASK-55
-  - TASK-56
-priority: high
+priority: medium
 type: spike
 ordinal: 2000
 ---
@@ -19,27 +18,23 @@ ordinal: 2000
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
-Blocking spike — gate everything on this. Verify opencode SDK (`@opencode-ai/sdk`) can run non-interactively under bun. Success criteria: (1) `createOpencode()` + `session.prompt({format: json_schema})` + `session.abort()` + `event.subscribe()` reliability under bun; (2) v1 vs v2 surface — pin which surface the `format` field lives on (json_schema is v2-only); (3) Named events — verify `session.idle`, `session.error`, `session.diff`, `session.compacted` fire; (4) `noReply` context injection — verify `session.prompt({body: {noReply: true}})` injects context without response; (5) `StructuredOutputError` handling — verify error name in `result.data.info.error?.name`; (6) Abort-cost semantics — does `session.abort` yield a final cost chunk? Apply pessimistic rule if not; (7) Abort deadline / kill ladder — `session.abort(deadlineMs)` → `server.close()`; (8) Plugin hooks fire under in-process serve — `tool.execute.before/after`, custom `tool()`, `shell.env`, `experimental.session.compacting`; (9) Deny-list enforcement — native permission globs (`edit: {"backlog/**": "deny"}`) as primary, `tool.execute.before` as second layer, `--auto` / `permission: {"*": "allow"}` for non-denied, `permission.asked` event as deny-list-miss detector; (10) `reasoning_effort` through headroom proxy — probe that proxy passes it through (use "high"; "max"="xhigh" per docs); (11) Headroom CCR TTL probe — default 1800s, verify long sessions don't degrade; (12) Agent `steps` limit — verify `steps: N` caps iterations.
+Outcome: verify the pinned OpenCode SDK can run one bounded task under the supported Node runtime, select agents from the existing roster, exercise installed skills and hooks, return a result and terminate on failure. Why: a TypeScript-controlled workflow is part of the user's 0.1.0 MVP. Prove it now in a disposable local project on the author's Mac; neither npm publication nor an external tester is a prerequisite. Defer proxy TTL research, broad event inventories and cross-host features.
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 createOpencode() + session.prompt + session.abort + event.subscribe all work under bun
-- [ ] #2 v1 vs v2 surface pinned — format: json_schema confirmed on v2 surface
-- [ ] #3 Named events verified: session.idle, session.error, session.diff, session.compacted fire as documented
-- [ ] #4 noReply context injection verified — session.prompt({body: {noReply: true}}) injects without response
-- [ ] #5 StructuredOutputError handling verified — error name appears in result.data.info.error?.name
-- [ ] #6 Abort-cost semantics resolved — session.abort yields final cost chunk or pessimistic rule applied
-- [ ] #7 Plugin hooks fire under in-process serve — tool.execute.before/after, custom tool(), shell.env, experimental.session.compacting
-- [ ] #8 Deny-list enforcement verified — native permission globs block writes to backlog/, AGENTS.md, .harness/
-- [ ] #9 reasoning_effort passes through headroom proxy — no 400 errors
-- [ ] #10 Headroom CCR TTL impact on long sessions probed and documented
-- [ ] #11 Agent steps limit verified — steps: N caps iterations and triggers summarize-and-recommend
-- [ ] #12 WHEN the spike probes #9/#10 through the headroom proxy THEN a request with usage: {include: true} SHALL return cost data unstripped by the proxy, and the per-request cost as seen by the caller SHALL be recorded in the spike findings
+- [ ] #1 WHEN the probe runs against the pinned supported SDK version THEN it creates a session, sends a task and records a usable result with the actual request and response shape.
+- [ ] #2 WHEN the task times out, errors or is cancelled THEN execution terminates through a verified abort/close path and records the failure without claiming completion.
+- [ ] #3 WHEN the SDK task attempts an operation forbidden by the installed profile THEN the real hook or permission boundary refuses it and records evidence.
+- [ ] #4 WHEN the probe concludes THEN its version, commands, results and limitations are recorded in this task, providing the inputs for TASK-4 without requiring a new research document or milestone.
 <!-- AC:END -->
 
 ## Implementation Notes
 
 <!-- SECTION:NOTES:BEGIN -->
 2026-09-06 DAG update (human-approved): dependencies extended to TASK-55 (re-activate live enforcement) and TASK-56 (repo cleanup pass) — driver chain starts on a clean, enforcement-protected repo.
+
+2026-09-13 shipping audit: remove the TASK-56 cleanup dependency. The former twelve-probe Bun/TTL/event/cost investigation is deferred until a concrete runner requirement needs it. Current official SDK documentation: https://opencode.ai/docs/sdk/ . Its example/table formatting fields differ, so verify the pinned installed version instead of preserving an untested v1/v2 assertion.
+
+2026-09-13 user correction: TypeScript SDK orchestration is the intended harness, not an optional post-release feature. The prior TASK-45 dependency and post-publication wording are superseded. Official documentation read: https://opencode.ai/docs/sdk/ and https://opencode.ai/docs/agents/ . Validate the pinned API and effective profile locally before the runner.
 <!-- SECTION:NOTES:END -->

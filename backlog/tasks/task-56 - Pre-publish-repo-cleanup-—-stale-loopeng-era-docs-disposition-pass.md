@@ -4,15 +4,16 @@ title: Stale-document cleanup — separate from release policy
 status: To Do
 assignee: []
 created_date: '2026-09-06 07:08'
-updated_date: '2026-09-11 04:26'
+updated_date: '2026-09-13 16:46'
 labels:
   - harness
   - spec-approved
+  - deferred
 milestone: m-7
 dependencies:
   - TASK-58
   - TASK-59
-priority: high
+priority: low
 ordinal: 44000
 ---
 
@@ -55,6 +56,8 @@ Outcome: maintain a human-ratified disposition for stale non-spine documentation
 2026-09-07 plan-gate merge (Qwen + DeepSeek, both APPROVE-WITH-CHANGES): six amendments applied - AC#11 reference-not-restate (resolves AC#11 vs AC#8 conflict), AC#12 file fix (control-plane article is README:32 not PRODUCT) + semantic coverage of the NORTH_STAR subscription-mode sentence, AC#1 inventory regenerated from disk (archive x4, root docs x2, weavelog-design filename), AC#2 grep scoped like AC#3, AC#4 reclassified as standing publish-time constraint (no publish-gate marker exists), description-only obligations promoted (ADR-0001 flag and anchor pin to AC#5, brief-dated-record + trace-link pointers to AC#6, follow-up-task creation to DoD#6, restatement-budget home and reviewer-semantics home to AC#8). New danglers added to AC#10: README inspired-by line, NORTH_STAR CONTRIBUTING.md link. AC#7 reworded to word-boundary policy phrases with per-hit human adjudication. Human calls recorded for execution: NOTICE Apache-2.0 section 4d attribution placement, privacy-audit blind spot for the real name frozen in the byte-identical brief, host naming pick (Codex vs ChatGPT-Codex).
 
 2026-09-11 correction: the old publish-gate acceptance criterion is superseded. TASK-56 now retains only stale-document cleanup; ADR-007 resolves its reviewer-policy decision in TASK-79. The m-7 checklist, not this cleanup task, owns release blockers.
+
+2026-09-13 shipping audit: preserve this task and its existing approved criteria, but remove it from the active release/SDK path. Revive when a specific stale document blocks a user or an active implementation task, or the human explicitly schedules cleanup. Fix release instructions in TASK-53 without starting a repository-wide prose sweep.
 <!-- SECTION:NOTES:END -->
 
 2026-09-07 carve-out (TASK-76 reorg): TASK-76 updated PATH LITERALS in root

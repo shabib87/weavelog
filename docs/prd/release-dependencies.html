@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>weavelog · Release map</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&amp;family=Montserrat:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    :root {
+      --paper: #f5f5f5; --ink: #282c34; --muted: #4a5d70;
+      --rule: rgba(40,44,52,.12); --accent: #4387ab; --link: #2e6a92;
+      --sans: "Montserrat", system-ui, sans-serif;
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+    }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.6 var(--sans); }
+    main { max-width: 1344px; margin: auto; padding: 40px 32px; }
+    .eyebrow { font: 12px var(--mono); color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+    h1 { font: 700 40px/1.2 "DM Sans", system-ui, sans-serif; margin: 16px 0; }
+    h2 { font: 700 24px/1.3 "DM Sans", system-ui, sans-serif; margin: 24px 0 12px; }
+    p { margin: 12px 0; } a { color: var(--link); text-underline-offset: 4px; }
+    .lead { max-width: 960px; }
+    .diagram-scroll { overflow-x: auto; }
+    svg { display: block; width: 100%; min-width: 960px; height: auto; }
+    svg text { fill: var(--ink); font-family: var(--sans); }
+    .node { fill: #fff; stroke: var(--ink); stroke-width: 1; }
+    .terminal { fill: #e9eaeb; stroke: var(--muted); }
+    .edge { fill: none; stroke: var(--muted); stroke-width: 1.2; marker-end: url(#arrow); }
+    .approval { stroke-dasharray: 4 4; }
+    .name { font-size: 12px; font-weight: 600; }
+    .tech { font: 12px var(--mono); }
+    .detail, .legend { font-size: 12px; fill: var(--muted); }
+    .badge { fill: var(--paper); stroke: var(--rule); }
+    .count { font: 8px var(--mono); fill: var(--muted); }
+    .caption { color: var(--muted); font-size: 12px; max-width: 1080px; }
+    footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--rule); color: var(--muted); font-size: 12px; }
+    @media (max-width: 640px) { main { padding: 24px 16px; } h1 { font-size: 32px; } }
+    @media print { main { padding: 0; } .diagram-scroll { overflow: visible; } svg { min-width: 0; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <p class="eyebrow">Release milestones · OpenCode first</p>
+    <h1>Release map</h1>
+    <p class="lead">Ship one TypeScript-controlled OpenCode workflow and safe npm setup.
+      Use the existing subagent roster, skills and hooks. Prove the installed package on your own Mac.</p>
+    <p><a href="./2026-09-05-v010-draft-brief.md">Release scope and evidence</a> ·
+      <a href="../../AGENTS.md#shipping-discipline">Shipping rules</a></p>
+  </header>
+  <section aria-labelledby="release-progression-heading">
+    <h2 id="release-progression-heading">Release progression</h2>
+    <div class="diagram-scroll">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 288" role="img" aria-labelledby="release-progression-title release-progression-desc">
+        <title id="release-progression-title">Incremental releases before additional hosts</title>
+        <desc id="release-progression-desc">The first OpenCode release precedes weaver and stitch/weave, then loom, then pulse, before the existing additional-host roadmap.</desc>
+        <rect width="1280" height="288" fill="#f5f5f5"/>
+        <text class="detail" x="64" y="40">Ordered increments, not dates or estimated duration. Each increment keeps its own verification and human gates.</text>
+        <line x1="112" y1="128" x2="1112" y2="128" stroke="#bfc0c0" stroke-width="1"/>
+        <line x1="112" y1="128" x2="112" y2="104" stroke="#4a5d70" stroke-width="1"/>
+        <circle cx="112" cy="128" r="4" fill="#4387ab"/>
+        <text class="name" x="112" y="80" text-anchor="middle">0.1.0</text>
+        <text class="detail" x="112" y="96" text-anchor="middle">SDK workflow + safe npm setup</text>
+        <line x1="376" y1="128" x2="376" y2="152" stroke="#4a5d70" stroke-width="1"/>
+        <circle cx="376" cy="128" r="4" fill="#4a5d70"/>
+        <text class="name" x="376" y="176" text-anchor="middle">Weaver · stitch / weave</text>
+        <text class="detail" x="376" y="196" text-anchor="middle">Existing TASK-82 → 80 · 81</text>
+        <line x1="616" y1="128" x2="616" y2="104" stroke="#4a5d70" stroke-width="1"/>
+        <circle cx="616" cy="128" r="4" fill="#4a5d70"/>
+        <text class="name" x="616" y="80" text-anchor="middle">Loom</text>
+        <text class="detail" x="616" y="96" text-anchor="middle">Next OpenCode increment</text>
+        <line x1="856" y1="128" x2="856" y2="152" stroke="#4a5d70" stroke-width="1"/>
+        <circle cx="856" cy="128" r="4" fill="#4a5d70"/>
+        <text class="name" x="856" y="176" text-anchor="middle">Pulse</text>
+        <text class="detail" x="856" y="196" text-anchor="middle">Next OpenCode increment</text>
+        <line x1="1112" y1="128" x2="1112" y2="104" stroke="#4a5d70" stroke-width="1"/>
+        <circle cx="1112" cy="128" r="4" fill="#4a5d70"/>
+        <text class="name" x="1112" y="80" text-anchor="middle">Additional hosts</text>
+        <text class="detail" x="1112" y="96" text-anchor="middle">Pi → hybrid → Codex → Claude</text>
+        <line x1="64" y1="232" x2="1216" y2="232" stroke="#bfc0c0" stroke-width="1"/>
+        <text class="legend" x="64" y="264">0.1.0 may retain the conductor role. The later command suite does not block the first release.</text>
+      </svg>
+    </div>
+  </section>
+  <h2>0.1.0 release prerequisites</h2>
+  <!-- Diagram-design: dependency graph, doc-wide 1280×720, grouped overview.
+       Active CodeWithShabib skin; system font fallbacks preserve offline use.
+       Nodes group task ownership, not parallel execution or exact dependency edges. -->
+  <div class="diagram-scroll">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-labelledby="release-dependencies-title release-dependencies-desc">
+      <title id="release-dependencies-title">The release prerequisites for weavelog 0.1.0</title>
+      <desc id="release-dependencies-desc">Workflow, installation and package work converge on an exact-artifact audit, followed by local installed-package proof and a human decision before npm publication.</desc>
+      <defs>
+        <marker id="arrow" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#4a5d70"/></marker>
+        <marker id="arrow-accent" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#4387ab"/></marker>
+        <marker id="arrow-link" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#2e6a92"/></marker>
+      </defs>
+      <rect width="1280" height="720" fill="#f5f5f5"/>
+      <text class="detail" x="64" y="56">Foundation: existing roster, skills, CLI and hook adapters · TASK-11 · 28 · 55 · 79</text>
+      <text class="detail" x="64" y="88">Required work and gates for the first release; exact dependencies and status live in Backlog.</text>
+      <path class="edge" d="M224 224 V232 Q224 240 232 240 H560 Q568 240 568 248 V264"/>
+      <path class="edge" d="M640 224 V264"/>
+      <path class="edge" d="M1056 224 V232 Q1056 240 1048 240 H720 Q712 240 712 248 V264"/>
+      <path class="edge" d="M640 344 V384"/>
+      <path class="edge" d="M640 464 V504"/>
+      <path class="edge approval" d="M800 544 H896"/>
+      <g class="release-node" data-next="1">
+        <rect class="node" x="64" y="144" width="320" height="80" rx="8"/>
+        <rect class="badge" x="320" y="152" width="56" height="16" rx="4"/>
+        <text class="count" x="348" y="164" text-anchor="middle">1 next</text>
+        <text class="name" x="80" y="176">Prove the SDK workflow</text>
+        <text class="tech" x="80" y="196">TASK-3 → 4 → 5 · repair 7</text>
+        <text class="detail" x="80" y="212">Roster + skills + hooks</text>
+      </g>
+      <g class="release-node" data-next="1">
+        <rect class="node" x="480" y="144" width="320" height="80" rx="8"/>
+        <rect class="badge" x="736" y="152" width="56" height="16" rx="4"/>
+        <text class="count" x="764" y="164" text-anchor="middle">1 next</text>
+        <text class="name" x="496" y="176">Finish safe installation</text>
+        <text class="tech" x="496" y="196">TASK-29 · 30 · 62 · 64 · 66 · 68</text>
+        <text class="detail" x="496" y="212">Replacement + backup + recovery</text>
+      </g>
+      <g class="release-node" data-next="1">
+        <rect class="node" x="896" y="144" width="320" height="80" rx="8"/>
+        <rect class="badge" x="1152" y="152" width="56" height="16" rx="4"/>
+        <text class="count" x="1180" y="164" text-anchor="middle">1 next</text>
+        <text class="name" x="912" y="176">Prepare the package</text>
+        <text class="tech" x="912" y="196">TASK-53 · 63 · 73</text>
+        <text class="detail" x="912" y="212">Instructions + build + security</text>
+      </g>
+      <g class="release-node" data-next="1">
+        <rect class="node" x="480" y="264" width="320" height="80" rx="8"/>
+        <rect class="badge" x="736" y="272" width="56" height="16" rx="4"/>
+        <text class="count" x="764" y="284" text-anchor="middle">1 next</text>
+        <text class="name" x="496" y="296">Inspect the exact artifact</text>
+        <text class="tech" x="496" y="316">TASK-54</text>
+        <text class="detail" x="496" y="332">Freeze the candidate; audit every shipped file</text>
+      </g>
+      <g class="release-node" data-next="1">
+        <rect class="node" x="480" y="384" width="320" height="80" rx="8"/>
+        <rect class="badge" x="736" y="392" width="56" height="16" rx="4"/>
+        <text class="count" x="764" y="404" text-anchor="middle">1 next</text>
+        <text class="name" x="496" y="416">Prove the installed candidate</text>
+        <text class="tech" x="496" y="436">TASK-67</text>
+        <text class="detail" x="496" y="452">Own Mac · isolated state · real workflow</text>
+      </g>
+      <g class="release-node" data-next="1">
+        <rect class="node" x="480" y="504" width="320" height="80" rx="8"/>
+        <rect class="badge" x="736" y="512" width="56" height="16" rx="4"/>
+        <text class="count" x="764" y="524" text-anchor="middle">1 next</text>
+        <text class="name" x="496" y="536">Human release review</text>
+        <text class="tech" x="496" y="556">Publication requires explicit approval</text>
+        <text class="detail" x="496" y="572">Review the evidence and known limits</text>
+      </g>
+      <g class="release-node" data-next="0">
+        <rect class="node terminal" x="896" y="504" width="320" height="80" rx="8"/>
+        <rect class="badge" x="1152" y="512" width="56" height="16" rx="4"/>
+        <text class="count" x="1180" y="524" text-anchor="middle">0 next</text>
+        <text class="name" x="912" y="536">Publish to npm</text>
+        <text class="tech" x="912" y="556">0.1.0</text>
+        <text class="detail" x="912" y="572">Independent installation</text>
+      </g>
+      <text class="detail" x="64" y="632">TASK-67 proves effective configuration, package provenance, replacement/recovery and the real SDK workflow.</text>
+      <line x1="64" y1="656" x2="1216" y2="656" stroke="#bfc0c0" stroke-width="1"/>
+      <text class="legend" x="64" y="688">Solid arrows: grouped prerequisites</text>
+      <text class="legend" x="416" y="688">Dashed arrow: human approval</text>
+      <text class="legend" x="800" y="688">Badge: next groups or gates unlocked</text>
+    </svg>
+  </div>
+  <p class="caption">This is a grouped release overview, not an exact task DAG or a parallel-work plan.
+    Backlog owns individual dependencies. TASK-7 must precede TASK-5.
+    TASK-62 waits for TASK-66 and TASK-68; TASK-64 waits for TASK-66.
+    TASK-54 follows the workflow proof and final package inputs; TASK-67 tests that exact artifact.</p>
+
+  <p class="caption">Local proof: TASK-67 tests the exact candidate on the author's Mac with isolated effective configuration and installed-package provenance.
+    Full replacement, protected backups, journaling and recovery remain required; a live-path test requires verified backups and tested restoration.
+    External testers, another machine and clean-user CI are optional; general CI/security remain.</p>
+  <p class="caption">Separate public-source gate: TASK-83 clears repository and Git history before a human-approved GitHub public release.
+    TASK-56 cleanup and TASK-84 personal synchronization do not block npm.</p>
+  <footer>
+    <p>Scope: the existing release milestone and brief. Progress and evidence: individual Backlog tasks.
+      Final proof and human decision: TASK-67. Publication enforcement: TASK-63.</p>
+    <p>Static HTML · Google Fonts are optional; system fonts are used offline.</p>
+  </footer>
+</main>
+</body>
+</html>

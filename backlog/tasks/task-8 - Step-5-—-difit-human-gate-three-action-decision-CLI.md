@@ -4,12 +4,13 @@ title: Step 5 — difit human gate + three-action decision CLI
 status: To Do
 assignee: []
 created_date: '2026-08-24 02:48'
-updated_date: '2026-09-05 23:01'
+updated_date: '2026-09-13 16:48'
 labels: []
 milestone: m-4
 dependencies:
   - TASK-7
   - TASK-11
+  - TASK-6
 priority: medium
 type: task
 ordinal: 7000
@@ -36,3 +37,9 @@ INVESTIGATION SCOPE (added 2026-09-01, owner request): (1) difit browser comment
 - [ ] #9 Secret scrubbing in findings→--comment pipeline
 - [ ] #10 Stuck-state alert surfaces via the harness stuck <id> decision CLI (moved from TASK-6 — CLI does not exist until this step)
 <!-- AC:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+2026-09-13 draft review: TASK-7 now owns the standalone shipped reviewer repair. Keep the explicit TASK-6 dependency so this decision CLI cannot start before SDK dispatch and kick-back budgeting exist. It is not an npm-release blocker.
+<!-- SECTION:NOTES:END -->

@@ -66,7 +66,16 @@ proves.
 
 See [NORTH_STAR.md](docs/NORTH_STAR.md) and [PRODUCT.md](docs/PRODUCT.md) for more details.
 
-## Planned v0.1 quickstart (the stranger test)
+## Planned v0.1 quickstart (independent installation)
+
+The release test proves independent installation, not recruitment of another
+tester. The author can test the exact package safely on one Mac using isolated
+configuration, state and project roots or a local test account. TASK-67 verifies
+effective configuration, package provenance and an actual SDK-controlled workflow
+with the roster, skills and hooks. File changes alone are not runtime proof.
+Replacement, protected backups and recovery remain required; a real-path test
+needs verified backups and a tested restoration path. External testers, another
+machine and clean-user CI are optional; general CI/security checks remain.
 
 ```bash
 # 1. Install (npm at 0.1.0; brew tap at 0.2+)
@@ -75,7 +84,7 @@ npm i -g weavelog
 # 2. Check prerequisites and materialize the declared setup
 weavelog init
 
-# 3. Verify the stack — all subchecks green
+# 3. Verify required checks; optional-tool warnings are allowed
 weavelog doctor
 
 # 4. Scaffold a project workspace
@@ -101,6 +110,13 @@ Models are opinionated defaults; `init` asks and flags override. Full command sp
 | v1.0.0+ | all hosts | + complete documentation |
 
 Details: [`docs/ROADMAP.md`](docs/ROADMAP.md).
+
+Before adding Pi/Codex, deliver the existing OpenCode follow-up incrementally:
+weaver with stitch/weave, then loom, then pulse. The first release may retain the
+conductor role while TypeScript controls one explicitly started workflow. See
+the [release brief](docs/prd/2026-09-05-v010-draft-brief.md) and
+[release map](docs/prd/release-dependencies.html); the command suite does not block
+0.1.0.
 
 ## Docs map
 

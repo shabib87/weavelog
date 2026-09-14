@@ -1,14 +1,13 @@
 ---
 id: TASK-45
-title: v0.1.0 release map — correction checklist and blockers
-status: In Progress
+title: Establish the executable v0.1.0 release baseline
+status: In Review
 assignee:
   - '@conductor'
 created_date: '2026-09-05 06:01'
-updated_date: '2026-09-13 15:49'
+updated_date: '2026-09-13 19:45'
 labels:
   - 'wayfinder:map'
-  - spec-approved
 milestone: m-7
 dependencies: []
 references:
@@ -16,41 +15,42 @@ references:
   - docs/research/2026-09-03-loopeng-packaged-distribution.md
   - docs/research/2026-09-02-loopeng-moat-analysis.md
   - docs/prd/2026-09-05-v010-draft-brief.md
+  - docs/prd/release-dependencies.html
 ordinal: 35000
 ---
 
 ## Description
 
 <!-- SECTION:DESCRIPTION:BEGIN -->
-Outcome: maintain the single active release checklist for the Weavelog 0.1.0 OpenCode plus Headroom package. Why: legacy flightlead migration requirements are historical notes, not release instructions. The source of capability detail is the corrected v0.1 brief; this task records blockers, evidence locations, and the next executable release task.
+Outcome: finish a one-time release reset so the author can merge this correction, close TASK-45 and start TASK-3. Establish the approved release scope, ownership, dependency map and shipping discipline using existing records. The milestone and release brief own scope; individual tasks own progress/evidence; TASK-67 owns the final local installed-package evidence and human release decision; TASK-63 enforces publication prerequisites. This task does not implement or publish 0.1.0 and is not a permanent progress tracker. Preserve historical notes as provenance.
 <!-- SECTION:DESCRIPTION:END -->
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 WHEN TASK-79 is reviewed THEN the release capability ledger, corrected task graph, ADRs, MIT inventory, and dependency diagram are linked from the v0.1 brief and have fresh validation evidence
-- [ ] #2 WHEN the m-7 release path is assessed THEN it lists TASK-53, TASK-54, TASK-62, TASK-63, TASK-64, TASK-66, TASK-67, TASK-68, TASK-73, TASK-28, TASK-29, TASK-30, and TASK-84 as exact remaining blockers
-- [ ] #3 WHEN the public-source path is assessed THEN TASK-83 is listed as the separate m-5 repository-and-history clearance gate and is not inferred from TASK-54 npm artifact safety
-- [x] #4 WHEN an implementation task merges THEN this checklist records its result, remaining blockers, and the next eligible task
-- [ ] #5 WHEN TASK-67 completes THEN the human release review decides whether the npm publish marker may change; no task flips it automatically
-- [ ] #6 IF legacy flightlead, Apache, or live-migration instructions conflict with this checklist THEN they are treated as historical notes and do not direct release work
+- [x] #1 WHEN this release correction is reviewed THEN the existing brief records one TypeScript-controlled OpenCode workflow before 0.1.0, independent npm installation with full replacement/backup/recovery, safe local proof on the author's Mac, known limits and the later weaver/command sequence before additional hosts.
+- [x] #2 WHEN remaining release work is inspected THEN existing tasks own every requirement: TASK-67 owns final installed-package evidence and the human release decision, TASK-63 owns publication enforcement, and no future release evidence or progress update requires TASK-45 to remain open.
+- [x] #3 WHEN the release dependency graph is validated THEN required tasks resolve without cycles, completed TASK-11/TASK-55 make TASK-3 dependency-eligible, and package clearance remains distinct from TASK-83 public-source/history clearance.
+- [x] #4 WHEN a fresh implementation session begins THEN repository AGENTS.md supplies the shipping mottos and bounded execution rules, the current release brief points to TASK-3, and the interim dashboard rule distinguishes live worktree progress from merged main progress without requiring a backlog redesign.
+- [x] #5 WHEN the release diagram is opened THEN it sits beside the milestone brief and visually shows the release progression and grouped 0.1.0 prerequisites, links to the scope of record, and contains no session handoff instructions or duplicate progress tracker.
+- [ ] #6 WHEN the correction has passed independent review and the human has approved and merged it THEN TASK-45 closes as a completed release-baseline correction without claiming that implementation, local release proof or publication is complete.
 <!-- AC:END -->
 
 ## Definition of Done
 <!-- DOD:BEGIN -->
-- [ ] #1 Capability ledger and dependency graph are validated before this correction is presented for review
-- [ ] #2 Each merged implementation task updates the evidence, blockers, and next task
-- [ ] #3 The human makes the publish-marker decision after TASK-67 evidence
-- [ ] #4 The canonical remaining-blocker set and separate m-5 public-source gate are accurate; repeated identifiers in evidence and the priority order do not expand that set
+- [x] #1 The approved scope, local testing strategy and transferred release responsibilities are consistent across active tasks and documents.
+- [x] #2 Fresh diagram, document, link and dependency checks pass; an independent reviewer reports no unresolved blocking findings.
+- [ ] #3 The human reviews the final diff and explicitly approves the correction before commit and merge.
+- [ ] #4 The correction is merged, closure is recorded without a release-readiness claim, and the TASK-45 worktree is retired only when clean.
 <!-- DOD:END -->
 
 ## Implementation Plan
 
 <!-- SECTION:PLAN:BEGIN -->
-1. Reconcile TASK-45 against the corrected v0.1 brief and current dependency graph.
-2. Remove completed tasks from the remaining-blocker contract and record their completion evidence.
-3. Maintain the requested priority order subject to dependency eligibility, the separate public-source gate, and the separate future product-work chain.
-4. After each approved implementation merge, reopen TASK-45 in a fresh worktree, record the evidence, remaining blockers, and next shipping task, then merge and remove that checkpoint worktree.
-5. Keep TASK-45 In Progress until TASK-67 evidence and the human npm-release decision; present every checkpoint diff for human review before committing.
+1. Record the user-approved bounded reset: this task establishes the release baseline, not the release itself. Transfer ongoing evidence and human release review to TASK-67; retain publication enforcement in TASK-63 and scope/progress in the existing milestone, brief and tasks.
+2. Reconcile the own-Mac testing strategy across active release requirements and documentation. Retain full ADR-0008 replacement, protected backups, journaling/recovery, exact-artifact and effective-configuration/runtime proof. External tester, second machine and clean-user CI are optional; general CI/security remain.
+3. Write repository shipping discipline and the interim dashboard rule. Keep the HTML a visual release/milestone map beside the brief, not a handoff or progress document. TASK-3 is the fresh implementation starting point; no new tracker, milestone, skill or research phase. The only new tasks are the explicitly human-requested TASK-85 administration follow-up and TASK-86 verification-contract/To Do migration follow-up. Both remain deferred and neither blocks this correction, TASK-3 or 0.1.0.
+4. Run fresh criterion-based checks and obtain the requested Astra high independent review. Correct only concrete scope/ownership/diagram defects. Present the complete diff for human review.
+5. After explicit human commit/merge approval, merge the correction, record bounded task closure, and retire the clean task worktree. Start TASK-3 in a new implementation session; release tasks remain open until their own evidence is accepted.
 <!-- SECTION:PLAN:END -->
 
 ## Implementation Notes
@@ -177,7 +177,7 @@ Exact current blockers: ADR ratification; reproducible gate activation (TASK-55)
 
 2026-09-11: the historical PORT PLAN v8 was replaced by the correction plan above. Its old detailed steps remain in notes as provenance only and are not executable instructions.
 
-## Current shipping order
+## Historical shipping order - superseded by the 2026-09-13 audit draft
 
 TASK-55 completed: `d386162` (`chore: complete task 55`) is on `main`; TASK-55 final verification recorded packed-adapter suite 5/5, packaged CLI executable test, typecheck, lint, and a live OpenCode gate-refusal receipt. It is completed evidence, not a remaining release blocker.
 
@@ -185,11 +185,41 @@ TASK-28 → TASK-29 → TASK-30 → TASK-62 → TASK-64 → TASK-66 → TASK-68 
 
 TASK-28 is the next shipping task. TASK-83 is required only before making the GitHub repository public. TASK-82 → TASK-80 → TASK-81 is separate future product work and does not block v0.1.0.
 
-## Dependency eligibility
+## Historical dependency eligibility - superseded by the 2026-09-13 audit draft
 
 The preceding Current shipping order is the human-requested priority order, not an executable dependency order. TASK-62 waits for TASK-66 and TASK-68; TASK-64 waits for TASK-66. TASK-56 appears in the priority order as nonblocking stale-document cleanup and does not gate v0.1.0 or npm publication. The v0.1 brief and release-dependency diagram record TASK-55 as completed evidence rather than a remaining release blocker.
 
 2026-09-13 checkpoint: TASK-28 merged to main as cdaac59 (parents bedbac1 and bc795e2). Its canonical CLI vision and ADR-0008 are now the release-contract baseline. Current remaining release blockers are TASK-53, TASK-54, TASK-62, TASK-63, TASK-64, TASK-66, TASK-67, TASK-68, TASK-73, TASK-29, TASK-30, and TASK-84; TASK-28 is removed. TASK-29 is dependency-eligible (TASK-28 and TASK-79 are Done) and is the next task in the current shipping order. TASK-45 remains In Progress because AC #1, #2, #3, #5, and #6 are not complete.
+
+2026-09-13 shipping audit: user confirmed the next release serves anyone installing independently from npm, and explicitly retained replacement plus backup/recovery in the first release. A guided/manual-only preview and a fresh-only installer were not selected. This draft backlog amendment keeps those requirements. Changed specifications require human review before implementation; no new spec-approved label is inferred. No new tasks or milestones were created. Historical notes above remain provenance, not the execution order.
+
+2026-09-13 audit evidence: code at main 8121283. Typecheck exits 0; Biome exits 0 (51 files checked). Full tests outside sandbox exit 1 with three leaf failures in doctor/check; TASK-66 records the two stale adapter fixtures, the real moved-document-path regression and local proxy isolation. Separate temporary build, built CLI help and isolated init checks exit 0. No clean-user installed host task was run, so npm readiness is not proven. Reviewer fake-provider reproductions found all-failure exit 0 and retry-cost undercounting; TASK-7 now owns the bounded repair. The backlog remains 81 tasks, with no new task or milestone. Independent draft review found no cycles or missing IDs, then requested explicit TASK-8 -> TASK-6 ordering after the TASK-7 change; this has been restored.
+
+Draft status: these task changes are prepared for human review, not merged or release approval. The existing v0.1 brief and release-dependency diagram are reconciled in this same draft: TASK-84 is removed from npm gates and TASK-7 is included. Keep ADR-0008 and all replacement, backup and recovery behavior unchanged. This is a bounded correction, not a new research phase.
+
+2026-09-13 user correction supersedes the audit draft's post-release SDK recommendation: the product is a TypeScript-controlled process over OpenCode using the existing roster/skills/hooks. SDK tasks TASK-3/4/5 belong before 0.1.0. The user can test installation and the actual workflow safely on their own Mac; another person is never a gate. Earlier clean-user V2 account mechanics are one possible test method, not a mandatory release dependency. Preserve all agreed replacement, backup and recovery behavior. These are still uncommitted draft amendments, not implemented capabilities or publication approval.
+
+2026-09-13 thread convergence: the user's core request is to ship the smallest useful release, test it safely on their own Mac, and improve it through real use without adding tasks or repeating broad audits. Settled choices: independent npm setup; full replacement/backup/recovery; a bounded TypeScript SDK workflow before 0.1.0; current conductor role acceptable temporarily; ADR-006 weaver/on-demand command direction retained for the next OpenCode increment before Pi/Codex. Conductor role and SDK control are different concerns, so retaining the former does not defer the latter. Earlier external-tester and post-release-SDK recommendations are superseded. The description, acceptance criteria and five-step plan are the current draft baseline; historical notes are evidence only. No new audit is needed. TASK-3 is next. Review/merge of this existing draft is still pending; no code or runtime behavior is claimed implemented.
+
+2026-09-13 human follow-up: release-dependencies.html belongs beside the milestone brief, not in technical architecture diagrams. Human requested the shipping rules and mottos in repository AGENTS.md, a diagram-design update, and a final coverage check before review. This authorizes preparation of this handoff only; commit, merge and publication approval remain separate.
+
+2026-09-13 review handoff: human criteria mapped to evidence. (1) "release-dependencies.html does not belong in trd/diagram ... should be together": moved to docs/prd/release-dependencies.html beside the existing milestone brief; brief, PRD index and root AGENTS links resolve, old architecture-index entry removed. (2) "ensure the rules ... are written": root AGENTS Shipping discipline records the three mottos and one-task, stop-planning, tested-increment, scope-control and preserved-safety rules; payload instructions unchanged. (3) "captured everything discussed": independent review found no missing or contradictory operative requirement across tasks, brief and diagram; the brief opening records the SDK/roster/skills/hooks distinction, full installer safety, local proof, temporary conductor, later commands before hosts, and TASK-3 next. (4) "use diagram skill": rebuilt a static doc-wide dependency overview with seven grouped nodes; exact edges remain in Backlog, public-source clearance remains explicit outside the graph. Fresh checks: diagram self_check exit 0; geometry 1 file, 0 findings, exit 0; PRD frontmatter 9/9 valid, exit 0; milestone anchors exit 0; diff check exit 0. All 81 Backlog task reads exit 0; graph has no missing dependencies or cycles; TASK-3 dependencies TASK-11/TASK-55 are Done. Safari visual review covered header, graph/gate and follow-up/motto sections with no clipping or connector overlap observed; font-family computed metrics were not queried and offline fallback is disclosed. VERDICT: APPROVE for human review of this documentation/backlog correction, not product readiness. No new tasks/milestones, runtime changes, commits, merges or publication. TASK-45 stays open as the release checklist; after human review/merge, start TASK-3 without another broad audit.
+
+2026-09-13 FINAL OWNERSHIP CORRECTION (human-approved plan): the prior instructions to keep TASK-45 open as the sole live release checklist are superseded. TASK-45 is now the bounded release-baseline correction. Original migration and later audit notes remain historical evidence only; current description, criteria and plan govern. Future implementation tasks record their own progress, TASK-67 owns candidate evidence and human release review, and TASK-63 owns publication enforcement. No release requirements are declared complete or removed by this ownership transfer. Human merge approval remains pending.
+
+2026-09-13 final independent review: gpt-6-astra at high reasoning reviewed the inherited thread and final release-baseline diff. VERDICT: APPROVE for human review/merge, with no unresolved findings. Initial ROADMAP mandatory clean-user wording, TASK-68 test wording and TASK-45 evidence-ownership gaps are corrected. Active 0.1.0 requirements consistently accept the author's own Mac with isolated effective configuration/state/project or a local account, exact TASK-54-cleared artifact hash and installed provenance, real SDK/roster/skills/hooks workflow, full replacement/protected backups/journaling/recovery, and verified backup/restoration for real-path tests. Another person/machine/clean-user CI are optional; general CI/security remain required. Historical notes and filenames are provenance, not active instructions.
+
+Criteria evidence: AC1 scope/limits/sequence mapped in the brief and task requirements; AC2 ownership mapped in TASK-67 AC7/DoD5 and TASK-63 AC6/8; AC3 all 81 Backlog CLI reads exit 0, no missing IDs/cycles, TASK-3 dependencies TASK-11/TASK-55 Done; AC4 root AGENTS shipping rules and dashboard distinction, brief TASK-3 starting point; AC5 relocated HTML has two accessible SVG figures (ordinal release progression plus grouped prerequisites), valid local links, no old file or session handoff/TASK-45 tracker. Parent's fresh Safari preview verified both diagrams with no clipping or connector overlap; font computed metrics were not queried, offline fallback disclosed. Fresh commands: python3 skill scripts/self_check.py docs/prd/release-dependencies.html exit 0; python3 skill repository scripts/verify-geometry.py ... exit 0, zero findings; node --import tsx src/tools/frontmatter-check.ts --schema architecture docs/prd exit 0, 9/9; node --import tsx src/tools/task-validate.ts --milestones exit 0; git diff --check exit 0. Independent reviewer repeated document/graph checks.
+
+AC6 and approval/merge/retirement DoD remain pending. This is not release readiness: the SDK controller, installer fixes and exact installed-package proof remain in their existing tasks. Known product test failures remain TASK-66 work, not claimed fixed here. After explicit human approval, commit/merge this correction, close TASK-45 as the bounded reset, retire its clean worktree, and begin TASK-3 without another broad audit.
+
+2026-09-13 explicitly requested deferred follow-up: TASK-85 was created through Backlog CLI in its metadata-only task worktree under the current worktree rules. This one user-requested task is the only exception to earlier no-new-task statements; the 0.1.0 scope and dependencies are unchanged. TASK-85 is unassigned, To Do, low priority, harness/deferred, no milestone/dependencies/spec approval/implementation plan, and has four unchecked EARS criteria plus all four default DoD items. It covers task administration without an implementation worktree, one dashboard view, recoverable Git history, and preserved code/spec/human gates. Candidate: 0.1.1+, not a promised version. Revive after 0.1.0 ships or explicit human confirmation that the interim workflow demonstrably blocked implementation.
+
+Final Astra-high delta consultation: VERDICT APPROVE, no blocking findings. Fresh Backlog JSON read and metadata assertions exit 0; dependency scans find no task depending on TASK-85; its worktree contains only the new task file and otherwise matches main. Main is clean; TASK-3 depends only on completed TASK-11/TASK-55. TASK-67 local proof and full installer safety remain unchanged. TASK-45 remains In Review pending human commit/merge/closure approval. Review and merge both the release correction and the task-85 metadata addition, then retire both clean worktrees; do not activate TASK-85 before its revival and human spec/plan gates. The next implementation session remains TASK-3.
+
+2026-09-13 SINGLE-WORKTREE CORRECTION (explicit human instruction): TASK-85 was relocated unchanged from its metadata worktree into .worktrees/TASK-45; pre/post SHA-256 matched and Backlog CLI reads TASK-85 successfully from this worktree. Its source worktree was verified clean, then removed; unused task/TASK-85 branch had no unique commits and was deleted safely. All changes from this thread now belong to task/TASK-45. Prior instructions to merge or retire two worktrees are superseded: review and merge TASK-45 once, close this bounded correction after the human gate, then retire this clean worktree. TASK-85 remains deferred and unstarted. The accepted release baseline, local test strategy and TASK-3 starting point are unchanged; no further planning or consultation is required.
+
+2026-09-13 explicitly requested verification follow-up: TASK-86 was created through Backlog CLI inside the existing TASK-45 worktree, with no separate worktree. It extends the established EARS requirement layer, Gherkin scenario layer and default DoD with observable per-AC test cases, tailored per-task completion evidence, and a finite migration of all To Do tasks captured at activation. The user requested this second deferred task; earlier sole-TASK-85 exception wording is superseded. The current 41 other To Do records are not bulk rewritten here. TASK-86 is a 0.1.1+ candidate, not a promised version or a blocker for TASK-3, TASK-45 closure or publication. Ambiguous requirements need human clarification; syntax alone is not deterministic verification. Preserve existing defaults, intent, approval and safety gates; no new framework, schema, skill or universal enforcement gate. The next implementation task and all release/local-test decisions remain unchanged.
 <!-- SECTION:NOTES:END -->
 
 <!-- SECTION:PLAN:END -->

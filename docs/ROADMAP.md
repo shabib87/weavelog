@@ -9,6 +9,11 @@ host's scanned path, at least one enforced gate runs, a file manifest exists,
 and `doctor` verifies the stack (installed? authenticated? config parses?
 proxy up? versions pinned? arm64?). A stranger can install, run, and audit.
 
+For v0.1.0, "stranger test" means proof of independent installation. The author
+can produce that evidence on their own Mac; another person or machine is not a
+release prerequisite. The [release brief](./prd/2026-09-05-v010-draft-brief.md)
+records the scope, and TASK-67 owns the final evidence and human release decision.
+
 Distribution: npm (OIDC trusted publishing) at 0.1.0; brew tap at 0.2+.
 Releases are tag-driven release-please over conventional commits;
 `CHANGELOG.md` is automatic; CI gates publish on privacy-audit-done.
@@ -17,14 +22,17 @@ Releases are tag-driven release-please over conventional commits;
 
 ## v0.1.0 — OpenCode + Headroom stranger test
 
-**Goal:** a stranger on arm64 macOS installs the exact **weavelog** candidate,
-runs the OpenCode + Headroom stranger test, and gets an auditable stack.
+**Goal:** the exact **weavelog** candidate supports independent npm installation
+on arm64 macOS and one auditable TypeScript-controlled OpenCode + Headroom workflow.
 
 The deliverables below describe the v0.1.0 target. The [CLI vision](./trd/cli-vision.md)
 separates target behavior from current delivery; TASK-29, TASK-30, TASK-66,
 and TASK-67 own implementation and proof.
 
 **Deliverables:**
+- A bounded TypeScript SDK controller over the existing OpenCode roster, skills
+  and hooks: TASK-3 proves invocation, TASK-4 implements workflow transitions and
+  gates, and TASK-5 proves one real project. TASK-7 repairs reviewer reporting.
 - `weavelog init` — verifies required external-tool prerequisites using
   pinned instructions, then materializes shared skills and OpenCode-native
   configuration from declared package inputs. Normal conflicts refuse before
@@ -65,11 +73,22 @@ and TASK-67 own implementation and proof.
 **Explicitly out:** Pi, hybrid, Codex, and Claude Code hosts; plugin system; brew tap;
 docs site; governance/PR acceptance; LaunchAgent/scheduled checks.
 
-**Stranger test:** approved clean macOS user → exact packed tarball install →
-`weavelog init` → `weavelog doctor` → `weavelog scaffold --project` → an
-end-to-end task runs through OpenCode, Headroom, required hooks, verification, and
-audit records. Isolated configuration checks supplement this procedure; they do not
-replace it.
+**Local release proof:** isolated configuration/state/project roots or a local
+test account on the author's Mac → exact TASK-54-cleared tarball install →
+`weavelog init` → `weavelog doctor` → `weavelog scaffold --project` → one real
+SDK-controlled workflow using OpenCode, Headroom, the roster, skills, required
+hooks, independent review, human gates and audit records. TASK-67 verifies the
+artifact hash, installed-package provenance and effective configuration sources
+so the working setup cannot hide missing inputs. Full replacement, protected
+backups, journaling and recovery remain required. A real configuration-path test
+uses verified backups and a tested restoration path. Another tester, another
+machine and a clean-user CI job are optional; general CI/security checks remain.
+
+**Next OpenCode increments, before additional hosts:** retain the conductor role
+temporarily for 0.1.0, then introduce the weaver persona and stitch/weave, followed
+by loom and pulse through existing ADR-006 tasks and their safety prerequisites.
+The full command suite does not block 0.1.0. The host-version ladder below remains
+unchanged; these are incremental OpenCode releases within that ladder.
 
 ---
 
