@@ -166,7 +166,7 @@ Reasons persist so nobody re-adopts these without addressing the stated blocker.
   pin), `enabled_providers: ["openrouter"]`.
 - `weavelog.json` — machine-readable `models` list (the manifest default; the eight
   manifest models: glm-5.3-flash, glm-5.3, deepseek-v4-flash-0731,
-  deepseek/deepseek-v4.1-flash, deepseek-v4-pro-0813, qwen3.8-flash,
+  deepseek-v4.1-flash, deepseek-v4-pro-0813, qwen3.8-flash,
   qwen3.8-2.4t-a95b, kimi-k3).
 - `payload/config/agents/*.md` — per-seat `model` overrides (scout, plan-gate-*,
   diff-reviewer-*, qa, researcher, implementer, vision-*, security).

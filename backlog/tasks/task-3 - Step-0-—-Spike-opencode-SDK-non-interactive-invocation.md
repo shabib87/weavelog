@@ -5,7 +5,7 @@ status: In Progress
 assignee:
   - '@conductor'
 created_date: '2026-08-24 02:48'
-updated_date: '2026-09-14 05:05'
+updated_date: '2026-09-14 05:11'
 labels:
   - spec-approved
 milestone: m-4
@@ -41,12 +41,6 @@ Outcome: verify the pinned OpenCode SDK can run one bounded task under the suppo
 ## Implementation Notes
 
 <!-- SECTION:NOTES:BEGIN -->
-2026-09-06 DAG update (human-approved): dependencies extended to TASK-55 (re-activate live enforcement) and TASK-56 (repo cleanup pass) — driver chain starts on a clean, enforcement-protected repo.
-
-2026-09-13 shipping audit: remove the TASK-56 cleanup dependency. The former twelve-probe Bun/TTL/event/cost investigation is deferred until a concrete runner requirement needs it. Current official SDK documentation: https://opencode.ai/docs/sdk/ . Its example/table formatting fields differ, so verify the pinned installed version instead of preserving an untested v1/v2 assertion.
-
-2026-09-13 user correction: TypeScript SDK orchestration is the intended harness, not an optional post-release feature. The prior TASK-45 dependency and post-publication wording are superseded. Official documentation read: https://opencode.ai/docs/sdk/ and https://opencode.ai/docs/agents/ . Validate the pinned API and effective profile locally before the runner.
-
 2026-09-14 TASK-3 spike complete (conductor; researcher + scout + implementer subagents). No new research doc.
 
 SDK pin and setup
@@ -100,10 +94,10 @@ Live drift / blocker (not forced)
 Verification (fresh, this worktree)
 - `npx tsc --noEmit`: clean.
 - `npx biome check`: 51 files, no findings.
-- Full suite `node --import tsx --test "tests/**/*.test.ts"`: 695 tests, 692 pass, 3 fail, 0 skipped. The 3 failures (cli doctor, cli check) are PRE-EXISTING baseline failures — verified identical on main (692/695, same two tests). No new failure introduced.
+- Full suite `node --import tsx --test "tests/**/*.test.ts"`: 695 tests, 692 pass, 3 fail, 0 skipped. The 3 failures (cli doctor, cli check) are PRE-EXISTING baseline failures — verified identical on main (692/695; the same three failing tests across two suites). No new failure introduced.
 - The compiled-adapters test failed initially only because a fresh worktree has no dist/; `npm run build` (tsc -p tsconfig.build.json) then 5/5 pass. dist/ is gitignored.
 - Frontmatter: architecture schema 27/27 valid (trd+adr+prd); the research note validates (ok true).
-- Privacy scan of `git diff main`: no /Users/ paths, emails, machine temp paths, or secret patterns.
+- Privacy scan of `git diff main`: no absolute home paths, emails, machine temp paths, or secret patterns.
 
 AC5 evidence: deepseek/deepseek-v4.1-flash present in weavelog.json models and payload small_model; worker seats and ladder unchanged; hold note tracked + updated; docs agree; no live seat reassigned.
 <!-- SECTION:NOTES:END -->
