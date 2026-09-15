@@ -100,6 +100,7 @@ export interface FailureRecord {
     completion_tokens: number;
     total_tokens: number;
   } | null;
+  billedUnknown: boolean;
   costUsd: number | null;
 }
 
@@ -136,7 +137,9 @@ function hasBilledUsage(
 ): u is { prompt_tokens: number; completion_tokens: number } {
   return (
     typeof u?.prompt_tokens === "number" &&
-    typeof u?.completion_tokens === "number"
+    typeof u?.completion_tokens === "number" &&
+    u.prompt_tokens >= 0 &&
+    u.completion_tokens >= 0
   );
 }
 
@@ -144,6 +147,9 @@ export async function runReviewLoop(deps: RunLoopDeps): Promise<LoopResult> {
   const doFetch = deps.fetchImpl ?? fetch;
   const maxTokens = deps.maxTokens ?? 10_000;
   const budgetUsd = deps.budgetUsd ?? 2.0;
+  if (!Number.isFinite(budgetUsd)) {
+    throw new Error("budgetUsd must be a finite number");
+  }
   const rubric = deps.rubric ?? DEFAULT_RUBRIC;
   const secrets = [deps.authKey];
 
@@ -194,7 +200,11 @@ export async function runReviewLoop(deps: RunLoopDeps): Promise<LoopResult> {
   class ReviewerAttemptError extends Error {
     constructor(
       message: string,
-      readonly billed: { promptTokens: number; completionTokens: number } | null,
+      readonly billed: {
+        promptTokens: number;
+        completionTokens: number;
+      } | null,
+      readonly billedUnknown: boolean,
     ) {
       super(message);
     }
@@ -202,19 +212,34 @@ export async function runReviewLoop(deps: RunLoopDeps): Promise<LoopResult> {
 
   const summarize = (
     usages: (Usage | undefined)[],
-  ): { known: boolean; promptTokens: number; completionTokens: number } => {
-    let known = usages.length > 0;
+  ): {
+    known: boolean;
+    anyBilled: boolean;
+    unknownBilled: boolean;
+    promptTokens: number;
+    completionTokens: number;
+  } => {
+    let anyBilled = false;
+    let unknownBilled = false;
     let promptTokens = 0;
     let completionTokens = 0;
     for (const u of usages) {
+      if (u === undefined || u === null) continue;
       if (!hasBilledUsage(u)) {
-        known = false;
-        break;
+        unknownBilled = true;
+        continue;
       }
+      anyBilled = true;
       promptTokens += u.prompt_tokens;
       completionTokens += u.completion_tokens;
     }
-    return { known, promptTokens, completionTokens };
+    return {
+      known: anyBilled && !unknownBilled,
+      anyBilled,
+      unknownBilled,
+      promptTokens,
+      completionTokens,
+    };
   };
 
   const review = async (model: string): Promise<AttemptResult> => {
@@ -255,7 +280,13 @@ export async function runReviewLoop(deps: RunLoopDeps): Promise<LoopResult> {
       const s = summarize(usages);
       throw new ReviewerAttemptError(
         String((e as Error).message ?? e),
-        s.known ? { promptTokens: s.promptTokens, completionTokens: s.completionTokens } : null,
+        s.anyBilled
+          ? {
+              promptTokens: s.promptTokens,
+              completionTokens: s.completionTokens,
+            }
+          : null,
+        s.unknownBilled,
       );
     }
   };
@@ -308,7 +339,12 @@ export async function runReviewLoop(deps: RunLoopDeps): Promise<LoopResult> {
     const r = results[i];
     const model = deps.models[i];
     if (r.status === "rejected") {
-      const billed = r.reason instanceof ReviewerAttemptError ? r.reason.billed : null;
+      const billed =
+        r.reason instanceof ReviewerAttemptError ? r.reason.billed : null;
+      const billedUnknown =
+        r.reason instanceof ReviewerAttemptError
+          ? r.reason.billedUnknown
+          : false;
       failures.push({
         model,
         error: redact(String(r.reason), secrets),
@@ -320,17 +356,17 @@ export async function runReviewLoop(deps: RunLoopDeps): Promise<LoopResult> {
                 completion_tokens: billed.completionTokens,
                 total_tokens: billed.promptTokens + billed.completionTokens,
               },
+        billedUnknown,
         costUsd:
-          billed === null
+          billed === null || billedUnknown
             ? null
             : costFor(model, billed.promptTokens, billed.completionTokens),
       });
       continue;
     }
-    const costUsd =
-      r.value.usageKnown
-        ? costFor(model, r.value.promptTokens, r.value.completionTokens)
-        : null;
+    const costUsd = r.value.usageKnown
+      ? costFor(model, r.value.promptTokens, r.value.completionTokens)
+      : null;
     reviews.push({
       model,
       content: r.value.content,
@@ -347,15 +383,19 @@ export async function runReviewLoop(deps: RunLoopDeps): Promise<LoopResult> {
 
   const anyUnknownCost =
     reviews.some((x) => x.costUsd === null) ||
-    failures.some((f) => f.billedUsage !== null && f.costUsd === null);
+    failures.some(
+      (f) => f.billedUnknown || (f.billedUsage !== null && f.costUsd === null),
+    );
   const totalUsd: number | null = anyUnknownCost
     ? null
     : [
         ...reviews.map((x) => x.costUsd as number),
-        ...failures.map((f) => f.costUsd as number | null).filter((c): c is number => c !== null),
+        ...failures
+          .map((f) => f.costUsd as number | null)
+          .filter((c): c is number => c !== null),
       ].reduce((sum, c) => sum + c, 0);
   const budgetExceeded = totalUsd !== null && totalUsd > budgetUsd;
-  const budgetIndeterminate = failures.length === 0 && totalUsd === null;
+  const budgetIndeterminate = totalUsd === null;
 
   return {
     exitCode:
