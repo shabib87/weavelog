@@ -67,6 +67,9 @@ No work on main. No work without a backlog task.
   2026-09-01 against the running server — no comments endpoint), so the DECISION
   itself arrives via chat until TASK-8 ships the decision CLI. Investigating a
   comments→batch-prompt export path is part of TASK-8.
+- **Worktree dependencies.** A task worktree resolves devDependencies through the parent
+  repo's `node_modules` (Node resolution walks up past the worktree root), so no per-worktree
+  install is required; invoke `difit` through `npx` (dated clarification 2026-09-14, TASK-4).
 - **Bypass:** `ENFORCE_DISABLED=true` disables both the hook and the write-block (mirrors the
   enforce.ts kill-switch); `git commit --no-verify` is the native git bypass for the hook alone.
   Both are permitted ONLY to merge an approved task branch onto main — never for direct edits

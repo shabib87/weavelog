@@ -1,0 +1,381 @@
+/** Bounded controller: ordered stages, evidence checks, no commit/merge. */
+
+import type { TaskDependencyStatus } from "../tools/task-validate.js";
+import {
+  type CommandResult,
+  type ExecRunner,
+  isRefusalCommand,
+  isRefusalText,
+  parseReviewVerdict,
+} from "./evidence.js";
+import {
+  appendLedger,
+  type LedgerEntry,
+  outcomeExitCode,
+  type RunOutcome,
+  type RunRecord,
+  writeRunRecord,
+} from "./record.js";
+import {
+  evaluateStage,
+  nextStage,
+  type RunEvidence,
+  type StageName,
+} from "./stages.js";
+import { eligibilityErrors, type RunnerTask } from "./task.js";
+import type {
+  AgentModelIdentity,
+  AgentResult,
+  AgentSession,
+  AgentSessionFactory,
+} from "./types.js";
+
+export interface ControllerDeps {
+  exec: ExecRunner;
+  sessions: AgentSessionFactory;
+  stateDir: string;
+  now?: () => Date;
+}
+
+export interface ControllerInput {
+  task: RunnerTask;
+  dependencies: TaskDependencyStatus[];
+  worktreePath: string;
+  harnessDev?: boolean;
+  maxRework?: number;
+  commands?: { command: string; args: string[] }[];
+  agents?: { implementer: string; reviewer: string };
+  /** Cancellation signal; when aborted the controller stops and records it. */
+  signal?: AbortSignal;
+  /** Per-agent-stage timeout (ms). 0 disables it. */
+  stageTimeoutMs?: number;
+}
+
+const DEFAULT_STAGE_TIMEOUT_MS = 1_800_000;
+
+/**
+ * Race a stage prompt against cancellation and a timeout. Both paths abort the
+ * session and reject, so the controller records the run instead of hanging.
+ */
+async function promptWithGuards(
+  session: AgentSession,
+  prompt: { agent: string; text: string },
+  input: ControllerInput,
+): Promise<AgentResult> {
+  const timeoutMs = input.stageTimeoutMs ?? DEFAULT_STAGE_TIMEOUT_MS;
+  const signal = input.signal;
+  if (!signal && timeoutMs <= 0) return session.prompt(prompt);
+
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  let onAbort: (() => void) | undefined;
+  const stop = new Promise<never>((_resolve, reject) => {
+    if (signal) {
+      onAbort = () => {
+        session.abort().catch(() => {});
+        reject(new Error("cancelled by abort signal"));
+      };
+      if (signal.aborted) onAbort();
+      else signal.addEventListener("abort", onAbort, { once: true });
+    }
+    if (timeoutMs > 0) {
+      timer = setTimeout(() => {
+        session.abort().catch(() => {});
+        reject(new Error(`timed out after ${timeoutMs}ms`));
+      }, timeoutMs);
+    }
+  });
+
+  try {
+    return await Promise.race([session.prompt(prompt), stop]);
+  } finally {
+    if (timer) clearTimeout(timer);
+    if (signal && onAbort) signal.removeEventListener("abort", onAbort);
+  }
+}
+
+export const DEFAULT_COMMANDS: { command: string; args: string[] }[] = [
+  { command: "npm", args: ["test"] },
+  { command: "npm", args: ["run", "lint"] },
+  { command: "npm", args: ["run", "typecheck"] },
+];
+
+export const DEFAULT_AGENTS = {
+  implementer: "implementer",
+  reviewer: "diff-reviewer-glm",
+};
+
+function implementPrompt(task: RunnerTask): string {
+  const acs = task.acceptanceCriteria
+    .map((ac) => `${ac.index}. ${ac.text}`)
+    .join("\n");
+  return [
+    `You are the implementer for backlog task ${task.id}: ${task.title}.`,
+    "",
+    `Outcome: ${task.description}`,
+    "",
+    "Acceptance criteria:",
+    acs,
+    "",
+    "Work only inside this worktree. Do not commit, merge, push, or mark the task Done.",
+    "When finished, reply with a short summary. If a hook or permission refuses an",
+    "operation, reply with the refusal text and stop.",
+  ].join("\n");
+}
+
+function reviewPrompt(task: RunnerTask): string {
+  return [
+    `Independently review the current diff for backlog task ${task.id}: ${task.title}.`,
+    "You did not write this code. Report only what you can verify from the diff and",
+    "the recorded command output. Output a final line starting with",
+    '"VERDICT:" followed by APPROVE, APPROVE-WITH-FIXES, or REJECT.',
+  ].join("\n");
+}
+
+interface ImplementRun {
+  evidence: { agentCompleted: boolean; refused: boolean; error?: string };
+  identity: AgentModelIdentity;
+  text: string;
+}
+
+async function runImplement(
+  deps: ControllerDeps,
+  input: ControllerInput,
+  agent: string,
+): Promise<ImplementRun> {
+  let session: AgentSession | undefined;
+  try {
+    session = await deps.sessions.start({
+      cwd: input.worktreePath,
+      title: `runner ${input.task.id} implement`,
+    });
+    const result: AgentResult = await promptWithGuards(
+      session,
+      { agent, text: implementPrompt(input.task) },
+      input,
+    );
+    const refused =
+      isRefusalText(result.text) ||
+      (result.error ? isRefusalText(result.error.message) : false);
+    const agentCompleted = !result.error && !refused;
+    return {
+      evidence: {
+        agentCompleted,
+        refused,
+        error: result.error?.message ?? (refused ? result.text : undefined),
+      },
+      identity: result.identity,
+      text: result.text,
+    };
+  } catch (error) {
+    return {
+      evidence: {
+        agentCompleted: false,
+        refused: false,
+        error: (error as Error).message,
+      },
+      identity: { agent },
+      text: "",
+    };
+  } finally {
+    await session?.close().catch(() => {});
+  }
+}
+
+interface ReviewRun {
+  evidence: {
+    verdict: ReturnType<typeof parseReviewVerdict>;
+    text: string;
+    identity: AgentModelIdentity;
+  };
+  identity: AgentModelIdentity;
+  text: string;
+}
+
+async function runReview(
+  deps: ControllerDeps,
+  input: ControllerInput,
+  agent: string,
+): Promise<ReviewRun> {
+  let session: AgentSession | undefined;
+  try {
+    session = await deps.sessions.start({
+      cwd: input.worktreePath,
+      title: `runner ${input.task.id} review`,
+    });
+    const result: AgentResult = await promptWithGuards(
+      session,
+      { agent, text: reviewPrompt(input.task) },
+      input,
+    );
+    return {
+      evidence: {
+        verdict: parseReviewVerdict(result.text),
+        text: result.text,
+        identity: result.identity,
+      },
+      identity: result.identity,
+      text: result.text,
+    };
+  } catch (error) {
+    const identity: AgentModelIdentity = { agent };
+    return {
+      evidence: { verdict: "UNKNOWN", text: "", identity },
+      identity,
+      text: `reviewer error: ${(error as Error).message}`,
+    };
+  } finally {
+    await session?.close().catch(() => {});
+  }
+}
+
+function runVerify(
+  deps: ControllerDeps,
+  input: ControllerInput,
+  commands: { command: string; args: string[] }[],
+): { commands: CommandResult[]; refusal?: string } {
+  const results = commands.map((c) =>
+    deps.exec.run(c.command, c.args, { cwd: input.worktreePath }),
+  );
+  const refused = results.find(isRefusalCommand);
+  return {
+    commands: results,
+    refusal: refused
+      ? `verify refused: ${refused.stderr || refused.stdout}`
+      : undefined,
+  };
+}
+
+/**
+ * Run one bounded task through implement -> verify -> review -> human-gate.
+ * TypeScript checks each stage's evidence; a missing or failed check refuses.
+ * The controller never commits, merges, publishes, or marks work Done.
+ */
+export async function runController(
+  deps: ControllerDeps,
+  input: ControllerInput,
+): Promise<RunRecord> {
+  const now = deps.now ?? (() => new Date());
+  const startedAt = now().toISOString();
+  const task = input.task;
+  const commands = input.commands ?? DEFAULT_COMMANDS;
+  const agents = input.agents ?? DEFAULT_AGENTS;
+  const maxRework = input.maxRework ?? 1;
+
+  const reasons: string[] = [];
+  const identities: AgentModelIdentity[] = [];
+  const allCommands: CommandResult[] = [];
+  const agentOutputs: { stage: StageName; text: string }[] = [];
+  const evidence: RunEvidence = {};
+  let rework = 0;
+  let stage: StageName = "implement";
+  let outcome: RunOutcome = "failed";
+
+  const eligibility = eligibilityErrors(
+    task,
+    input.dependencies,
+    input.harnessDev ?? false,
+  );
+  try {
+    if (!eligibility.ok) {
+      reasons.push(...eligibility.errors);
+      outcome = "refused";
+    } else {
+      while (true) {
+        if (input.signal?.aborted) {
+          reasons.push("cancelled: abort signal received");
+          outcome = "failed";
+          break;
+        }
+
+        if (stage === "human-gate") {
+          reasons.push(
+            "awaiting human merge approval — controller stopped at the merge gate",
+          );
+          outcome = "awaiting-human";
+          break;
+        }
+
+        if (stage === "implement") {
+          const run = await runImplement(deps, input, agents.implementer);
+          evidence.implement = run.evidence;
+          identities.push(run.identity);
+          agentOutputs.push({ stage: "implement", text: run.text });
+          if (run.evidence.refused) {
+            reasons.push(
+              `implement refused: ${run.evidence.error ?? "refusal"}`,
+            );
+            outcome = "refused";
+            break;
+          }
+        } else if (stage === "verify") {
+          const run = runVerify(deps, input, commands);
+          evidence.verify = { commands: run.commands };
+          allCommands.push(...run.commands);
+          if (run.refusal) {
+            reasons.push(run.refusal);
+            outcome = "refused";
+            break;
+          }
+        } else if (stage === "review") {
+          const run = await runReview(deps, input, agents.reviewer);
+          evidence.review = run.evidence;
+          identities.push(run.identity);
+          agentOutputs.push({ stage: "review", text: run.text });
+        }
+
+        const check = evaluateStage(stage, evidence);
+        if (check.ok) {
+          const advanced = nextStage(stage);
+          stage = advanced ?? "human-gate";
+          continue;
+        }
+
+        reasons.push(check.reason);
+        if (stage === "implement") {
+          outcome = "failed";
+          break;
+        }
+        if (rework < maxRework) {
+          rework += 1;
+          stage = "implement";
+          continue;
+        }
+        outcome = "failed";
+        break;
+      }
+    }
+  } catch (error) {
+    reasons.push(`controller error: ${(error as Error).message}`);
+    outcome = "failed";
+  }
+
+  const endedAt = now().toISOString();
+  const record: RunRecord = {
+    taskId: task.id,
+    title: task.title,
+    worktreePath: input.worktreePath,
+    outcome,
+    finalStage: stage,
+    rework,
+    reasons,
+    identities,
+    commands: allCommands,
+    agentOutputs,
+    startedAt,
+    endedAt,
+  };
+  writeRunRecord(deps.stateDir, record);
+
+  const ledger: LedgerEntry = {
+    ts: endedAt,
+    command: "runner",
+    args: [task.id],
+    filesTouched: [],
+    decisions: [outcome, stage],
+    errors: reasons,
+    exitCode: outcomeExitCode(outcome),
+  };
+  appendLedger(deps.stateDir, ledger);
+
+  return record;
+}
