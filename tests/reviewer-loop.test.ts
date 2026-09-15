@@ -284,6 +284,44 @@ describe("reviewer-loop runReviewLoop (fake providers)", () => {
     assert.equal(result.totalUsd, null);
   });
 
+  test("AC2: a completed attempt without a usage field makes the total unknown, not understated", async () => {
+    let chatCalls = 0;
+    const fetchImpl = ((url: string | URL, init?: RequestInit) => {
+      if (String(url).includes("/models")) {
+        return Promise.resolve(
+          new Response(JSON.stringify(PRICED_CATALOG), { status: 200 }),
+        );
+      }
+      const body = JSON.parse(String(init?.body ?? "{}")) as { model: string };
+      if (body.model === MODEL_A) {
+        chatCalls++;
+        if (chatCalls === 1) {
+          // completed 200 exchange that reports no usage at all
+          return Promise.resolve(chatResponse(""));
+        }
+        return Promise.resolve(
+          chatResponse("VERDICT: APPROVE", {
+            prompt_tokens: 100_000,
+            completion_tokens: 100_000,
+            total_tokens: 200_000,
+          }),
+        );
+      }
+      return Promise.reject(new Error("no script"));
+    }) as typeof fetch;
+    const result = await runReviewLoop({
+      ...BASE_DEPS,
+      models: [MODEL_A],
+      fetchImpl,
+    });
+    assert.equal(result.reviews.length, 1);
+    assert.equal(result.reviews[0].costUsd, null);
+    assert.equal(result.reviews[0].usage, null);
+    assert.equal(result.totalUsd, null);
+    assert.equal(result.budgetIndeterminate, true);
+    assert.equal(result.exitCode, 2);
+  });
+
   test("library rejects a non-finite budgetUsd instead of silently passing the cap", async () => {
     await assert.rejects(
       () =>

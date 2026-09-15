@@ -224,7 +224,10 @@ export async function runReviewLoop(deps: RunLoopDeps): Promise<LoopResult> {
     let promptTokens = 0;
     let completionTokens = 0;
     for (const u of usages) {
-      if (u === undefined || u === null) continue;
+      if (u === undefined || u === null) {
+        unknownBilled = true;
+        continue;
+      }
       if (!hasBilledUsage(u)) {
         unknownBilled = true;
         continue;
