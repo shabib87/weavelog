@@ -38,8 +38,9 @@
       }
     }
   },
-  // Only OpenRouter is enabled; all other built-in providers are ignored.
-  "enabled_providers": ["openrouter"],
+  // Expose OpenRouter plus the direct OpenAI and Anthropic connection flows.
+  // Credentials and selected-model routing remain independently configured.
+  "enabled_providers": ["openrouter", "openai", "anthropic"],
   // 8-model roster (TASK-75, ADR-004, 2026-09-07): conductor/default
   // glm-5.3-flash; bulk worker deepseek-v4-flash-0731; vision/UI qwen3.8-flash.
   // deepseek-v4.1-flash is the small_model manual A/B slot (human decision
