@@ -5,7 +5,7 @@ status: In Progress
 assignee:
   - conductor
 created_date: '2026-08-24 02:48'
-updated_date: '2026-09-15 03:47'
+updated_date: '2026-09-15 04:00'
 labels:
   - spec-approved
 milestone: m-4
@@ -59,6 +59,8 @@ Outcome: make the existing reviewer-loop.ts helper report invocation failures an
 Claimed via task-flow gate (spec-approved on task branch); worktree .worktrees/TASK-7 branch task/TASK-7. Main duplicate record reverted to HEAD so the task branch copy is canonical.
 
 Validation (fresh, this session, worktree .worktrees/TASK-7): tsc --noEmit clean under repo-local typescript 6.0.3 (types:["node"] set, no extra flags); biome check clean; full suite 735 tests / 731 pass / 3 fail — the 3 are pre-existing on main (tests/cli doctor+check fixtures, unchanged by this diff); npm run build produces dist/cli/index.js. Fake-provider tests (tests/reviewer-loop.test.ts, in-memory fetch/auth/plan, no network spend): all-fail -> exit 2 with failures recorded; empty-after-retry -> failure not placeholder; retry sums 0.10+0.05=0.15 and exits 1 vs 0.06 cap; missing pricing/usage -> costUsd null + budgetIndeterminate, nonzero exit; --help states post-run cap that does not prevent spending; failure records redact Bearer/key strings; happy path reports verdicts + summed usage, exit 0. Observations for human (out of scope): CI runs tests before build, so the compiled-adapters test likely fails on fresh CI runners (needs dist/ or a skip guard); worktree needed npm run build to satisfy it. Note: runReviewLoop exitCode mapping = failures 2 > indeterminate 2 > exceeded 1 > 0.
+
+Review round 1 (glm + deepseek): both APPROVE, minors only. Human chose fix-before-merge. Fixing: (a) billed usage from failed reviewers counted in report/total (attempts that returned usage payloads; hard-failed requests treated as unbilled per API contract), FailureRecord gains billedUsage + costUsd; (b) --budget-usd validated finite, exits 2 before auth/network; (c) negative pricing strings rejected -> unknown cost; (d) ReviewRecord.usage nullable (null when usage unknown, no misleading 0/0/0); (e) tests: partial-usage case, billed-failure case, negative-pricing case, NaN-budget CLI case, all-fail exit asserted as exactly 2.
 <!-- SECTION:NOTES:END -->
 
 ## Final Summary

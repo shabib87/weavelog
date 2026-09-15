@@ -88,13 +88,19 @@ export interface ReviewRecord {
     prompt_tokens: number;
     completion_tokens: number;
     total_tokens: number;
-  };
+  } | null;
   costUsd: number | null;
 }
 
 export interface FailureRecord {
   model: string;
   error: string;
+  billedUsage: {
+    prompt_tokens: number;
+    completion_tokens: number;
+    total_tokens: number;
+  } | null;
+  costUsd: number | null;
 }
 
 export interface LoopResult {
@@ -185,9 +191,37 @@ export async function runReviewLoop(deps: RunLoopDeps): Promise<LoopResult> {
     usageKnown: boolean;
   }
 
+  class ReviewerAttemptError extends Error {
+    constructor(
+      message: string,
+      readonly billed: { promptTokens: number; completionTokens: number } | null,
+    ) {
+      super(message);
+    }
+  }
+
+  const summarize = (
+    usages: (Usage | undefined)[],
+  ): { known: boolean; promptTokens: number; completionTokens: number } => {
+    let known = usages.length > 0;
+    let promptTokens = 0;
+    let completionTokens = 0;
+    for (const u of usages) {
+      if (!hasBilledUsage(u)) {
+        known = false;
+        break;
+      }
+      promptTokens += u.prompt_tokens;
+      completionTokens += u.completion_tokens;
+    }
+    return { known, promptTokens, completionTokens };
+  };
+
   const review = async (model: string): Promise<AttemptResult> => {
     // Always-think models (kimi, glm, qwen3.x) can empty max_tokens on reasoning;
     // instruct minimal reasoning up front and retry once with double budget on empty content.
+    // Hard-failed requests carry no usage payload (the API does not bill them),
+    // so only attempts that returned a payload count as billed.
     const usages: (Usage | undefined)[] = [];
     const attempt = async (
       sys: string,
@@ -197,30 +231,33 @@ export async function runReviewLoop(deps: RunLoopDeps): Promise<LoopResult> {
       usages.push(resp.usage);
       return resp.choices?.[0]?.message?.content;
     };
-    let content = await attempt(sysBase, maxTokens);
-    if (content == null || content.trim() === "") {
-      content = await attempt(
-        `${sysBase} SKIP ALL internal reasoning entirely; only output the final answer.`,
-        maxTokens * 2,
-      );
-    }
-    if (content == null || content.trim() === "") {
-      throw new Error(
-        "no usable response after the allowed retry (empty content)",
-      );
-    }
-    let usageKnown = usages.length > 0;
-    let promptTokens = 0;
-    let completionTokens = 0;
-    for (const u of usages) {
-      if (!hasBilledUsage(u)) {
-        usageKnown = false;
-        break;
+    try {
+      let content = await attempt(sysBase, maxTokens);
+      if (content == null || content.trim() === "") {
+        content = await attempt(
+          `${sysBase} SKIP ALL internal reasoning entirely; only output the final answer.`,
+          maxTokens * 2,
+        );
       }
-      promptTokens += u.prompt_tokens;
-      completionTokens += u.completion_tokens;
+      if (content == null || content.trim() === "") {
+        throw new Error(
+          "no usable response after the allowed retry (empty content)",
+        );
+      }
+      const s = summarize(usages);
+      return {
+        content,
+        promptTokens: s.promptTokens,
+        completionTokens: s.completionTokens,
+        usageKnown: s.known,
+      };
+    } catch (e) {
+      const s = summarize(usages);
+      throw new ReviewerAttemptError(
+        String((e as Error).message ?? e),
+        s.known ? { promptTokens: s.promptTokens, completionTokens: s.completionTokens } : null,
+      );
     }
-    return { content, promptTokens, completionTokens, usageKnown };
   };
 
   const catalog = (await fetchJson("https://openrouter.ai/api/v1/models").catch(
@@ -242,8 +279,25 @@ export async function runReviewLoop(deps: RunLoopDeps): Promise<LoopResult> {
     }
     const inM = Number(inStr) * 1e6;
     const outM = Number(outStr) * 1e6;
-    if (!Number.isFinite(inM) || !Number.isFinite(outM)) return null;
+    if (
+      !Number.isFinite(inM) ||
+      !Number.isFinite(outM) ||
+      inM < 0 ||
+      outM < 0
+    ) {
+      return null;
+    }
     return { inM, outM };
+  };
+
+  const costFor = (
+    model: string,
+    promptTokens: number,
+    completionTokens: number,
+  ): number | null => {
+    const p = price(model);
+    if (p === null) return null;
+    return (promptTokens * p.inM + completionTokens * p.outM) / 1e6;
   };
 
   const results = await Promise.allSettled(deps.models.map(review));
@@ -254,34 +308,53 @@ export async function runReviewLoop(deps: RunLoopDeps): Promise<LoopResult> {
     const r = results[i];
     const model = deps.models[i];
     if (r.status === "rejected") {
-      failures.push({ model, error: redact(String(r.reason), secrets) });
+      const billed = r.reason instanceof ReviewerAttemptError ? r.reason.billed : null;
+      failures.push({
+        model,
+        error: redact(String(r.reason), secrets),
+        billedUsage:
+          billed === null
+            ? null
+            : {
+                prompt_tokens: billed.promptTokens,
+                completion_tokens: billed.completionTokens,
+                total_tokens: billed.promptTokens + billed.completionTokens,
+              },
+        costUsd:
+          billed === null
+            ? null
+            : costFor(model, billed.promptTokens, billed.completionTokens),
+      });
       continue;
     }
-    const p = price(model);
     const costUsd =
-      p !== null && r.value.usageKnown
-        ? (r.value.promptTokens * p.inM + r.value.completionTokens * p.outM) /
-          1e6
+      r.value.usageKnown
+        ? costFor(model, r.value.promptTokens, r.value.completionTokens)
         : null;
     reviews.push({
       model,
       content: r.value.content,
-      usage: {
-        prompt_tokens: r.value.promptTokens,
-        completion_tokens: r.value.completionTokens,
-        total_tokens: r.value.promptTokens + r.value.completionTokens,
-      },
+      usage: r.value.usageKnown
+        ? {
+            prompt_tokens: r.value.promptTokens,
+            completion_tokens: r.value.completionTokens,
+            total_tokens: r.value.promptTokens + r.value.completionTokens,
+          }
+        : null,
       costUsd,
     });
   }
 
-  const anyUnknownCost = reviews.some((x) => x.costUsd === null);
-  const totalUsd: number | null =
-    reviews.length === 0 || anyUnknownCost
-      ? null
-      : reviews.reduce((sum, x) => sum + (x.costUsd as number), 0);
-  const budgetExceeded =
-    failures.length === 0 && totalUsd !== null && totalUsd > budgetUsd;
+  const anyUnknownCost =
+    reviews.some((x) => x.costUsd === null) ||
+    failures.some((f) => f.billedUsage !== null && f.costUsd === null);
+  const totalUsd: number | null = anyUnknownCost
+    ? null
+    : [
+        ...reviews.map((x) => x.costUsd as number),
+        ...failures.map((f) => f.costUsd as number | null).filter((c): c is number => c !== null),
+      ].reduce((sum, c) => sum + c, 0);
+  const budgetExceeded = totalUsd !== null && totalUsd > budgetUsd;
   const budgetIndeterminate = failures.length === 0 && totalUsd === null;
 
   return {
@@ -335,6 +408,9 @@ if (
     : DEFAULT_RUBRIC;
   const maxTokens = Number(opt("--max-tokens") || 10000);
   const budgetUsd = Number(opt("--budget-usd") || 2.0);
+  if (!Number.isFinite(budgetUsd)) {
+    fail("--budget-usd must be a finite number (e.g. 2.00)", 2);
+  }
   const reportPath = opt("--report");
 
   const key = (

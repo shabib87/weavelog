@@ -15,10 +15,14 @@ const BIN = fileURLToPath(
 // the runbook verification battery because it costs real model tokens. These tests
 // gate the CLI contract and the model-selection logic without spending anything.
 
-function run(args: string[]) {
+function run(
+  args: string[],
+  opts: { env?: Record<string, string> } = {},
+) {
   return spawnSync(process.execPath, ["--import", "tsx", BIN, ...args], {
     encoding: "utf8",
     timeout: 30_000,
+    ...(opts.env ? { env: { ...process.env, ...opts.env } } : {}),
   });
 }
 
@@ -189,7 +193,7 @@ describe("reviewer-loop runReviewLoop (fake providers)", () => {
         return Promise.reject(new Error("HTTP 500: upstream exploded"));
       }) as typeof fetch,
     });
-    assert.equal(result.exitCode !== 0, true);
+    assert.equal(result.exitCode, 2);
     assert.equal(result.failures.length, 2);
     assert.deepEqual(
       result.failures.map((f) => f.model).sort(),
@@ -197,6 +201,103 @@ describe("reviewer-loop runReviewLoop (fake providers)", () => {
     );
     assert.ok(result.failures[0].error.includes("HTTP 500"));
     assert.equal(result.reviews.length, 0);
+  });
+
+  test("AC2: billed usage from a reviewer that later fails still reaches the report and total", async () => {
+    let chatCalls = 0;
+    const fetchImpl = ((url: string | URL, init?: RequestInit) => {
+      if (String(url).includes("/models")) {
+        return Promise.resolve(
+          new Response(JSON.stringify(PRICED_CATALOG), { status: 200 }),
+        );
+      }
+      const body = JSON.parse(String(init?.body ?? "{}")) as { model: string };
+      if (body.model === MODEL_A) {
+        chatCalls++;
+        if (chatCalls === 1) {
+          // first attempt billed but empty content
+          return Promise.resolve(
+            chatResponse("", {
+              prompt_tokens: 100_000,
+              completion_tokens: 100_000,
+              total_tokens: 200_000,
+            }),
+          );
+        }
+        return Promise.reject(new Error("HTTP 500: upstream exploded"));
+      }
+      return Promise.reject(new Error("no script"));
+    }) as typeof fetch;
+    const result = await runReviewLoop({
+      ...BASE_DEPS,
+      models: [MODEL_A],
+      fetchImpl,
+    });
+    assert.equal(result.exitCode, 2);
+    const failure = result.failures[0];
+    assert.equal(failure.model, MODEL_A);
+    assert.deepEqual(failure.billedUsage, {
+      prompt_tokens: 100_000,
+      completion_tokens: 100_000,
+      total_tokens: 200_000,
+    });
+    assert.ok(Math.abs((failure.costUsd as number) - 0.02) < 1e-9);
+    assert.ok(Math.abs((result.totalUsd as number) - 0.02) < 1e-9);
+  });
+
+  test("AC3: negative catalog pricing is rejected as unknown, never reported as a cost", async () => {
+    const fetchImpl = makeFakeFetch(
+      new Map([
+        [
+          MODEL_A,
+          [
+            chatResponse("VERDICT: APPROVE", {
+              prompt_tokens: 100_000,
+              completion_tokens: 100_000,
+              total_tokens: 200_000,
+            }),
+          ],
+        ],
+      ]),
+      {
+        data: [
+          {
+            id: MODEL_A,
+            pricing: { prompt: "-1", completion: "-1" },
+          },
+        ],
+      },
+    );
+    const result = await runReviewLoop({
+      ...BASE_DEPS,
+      models: [MODEL_A],
+      fetchImpl,
+    });
+    assert.equal(result.exitCode !== 0, true);
+    assert.equal(result.reviews[0].costUsd, null);
+    assert.equal(result.reviews[0].usage.prompt_tokens, 100_000);
+    assert.equal(result.totalUsd, null);
+    assert.equal(result.budgetIndeterminate, true);
+  });
+
+  test("AC3: one-sided usage (prompt only) is unknown cost, not a partial estimate", async () => {
+    const fetchImpl = makeFakeFetch(
+      new Map([
+        [
+          MODEL_A,
+          [chatResponse("VERDICT: APPROVE", { prompt_tokens: 100_000 })],
+        ],
+      ]),
+    );
+    const result = await runReviewLoop({
+      ...BASE_DEPS,
+      models: [MODEL_A],
+      fetchImpl,
+    });
+    assert.equal(result.exitCode !== 0, true);
+    assert.equal(result.reviews[0].costUsd, null);
+    assert.equal(result.reviews[0].usage, null);
+    assert.equal(result.budgetIndeterminate, true);
   });
 
   test("AC1: empty content after the allowed retry is a failure, not a placeholder success", async () => {
@@ -274,6 +375,7 @@ describe("reviewer-loop runReviewLoop (fake providers)", () => {
     assert.equal(result.exitCode !== 0, true);
     assert.equal(result.reviews.length, 1);
     assert.equal(result.reviews[0].costUsd, null);
+    assert.equal(result.reviews[0].usage.prompt_tokens, 100_000);
     assert.equal(result.totalUsd, null);
     assert.equal(result.budgetIndeterminate, true);
     assert.equal(result.budgetExceeded, false);
@@ -292,6 +394,7 @@ describe("reviewer-loop runReviewLoop (fake providers)", () => {
     });
     assert.equal(result.exitCode !== 0, true);
     assert.equal(result.reviews[0].costUsd, null);
+    assert.equal(result.reviews[0].usage, null);
     assert.equal(result.totalUsd, null);
     assert.equal(result.budgetIndeterminate, true);
   });
@@ -301,6 +404,18 @@ describe("reviewer-loop runReviewLoop (fake providers)", () => {
     assert.equal(r.status, 0);
     assert.match(r.stdout, /after all reviews/i);
     assert.match(r.stdout, /does not prevent spending/);
+  });
+
+  test("AC4: non-finite --budget-usd is rejected before any request", () => {
+    const plan = join(tmpdir(), `plan-${Date.now()}.md`);
+    writeFileSync(plan, "# test plan\n");
+    const r = run(
+      ["--plan", plan, "--budget-usd", "abc"],
+      { env: { HOME: tmpdir() } },
+    );
+    assert.equal(r.status, 2);
+    assert.ok(r.stderr.includes("--budget-usd must be a finite number"));
+    assert.ok(!r.stdout.includes("VERDICT:"));
   });
 
   test("AC1: failure records never contain the auth key or Bearer tokens", async () => {
