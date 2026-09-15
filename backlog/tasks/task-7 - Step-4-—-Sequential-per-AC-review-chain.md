@@ -1,11 +1,11 @@
 ---
 id: TASK-7
 title: Repair shipped reviewer failure and cost reporting
-status: In Progress
+status: Done
 assignee:
   - conductor
 created_date: '2026-08-24 02:48'
-updated_date: '2026-09-15 04:24'
+updated_date: '2026-09-15 04:41'
 labels:
   - spec-approved
 milestone: m-4
@@ -63,6 +63,8 @@ Validation (fresh, this session, worktree .worktrees/TASK-7): tsc --noEmit clean
 Review round 1 (glm + deepseek): both APPROVE, minors only. Human chose fix-before-merge. Fixing: (a) billed usage from failed reviewers counted in report/total (attempts that returned usage payloads; hard-failed requests treated as unbilled per API contract), FailureRecord gains billedUsage + costUsd; (b) --budget-usd validated finite, exits 2 before auth/network; (c) negative pricing strings rejected -> unknown cost; (d) ReviewRecord.usage nullable (null when usage unknown, no misleading 0/0/0); (e) tests: partial-usage case, billed-failure case, negative-pricing case, NaN-budget CLI case, all-fail exit asserted as exactly 2.
 
 Review rounds 3-4: deepseek APPROVE (r3); glm r3 APPROVE-WITH-FIXES with one major (200-without-usage classified never-billed -> possible understated exit 0) — fixed in bce50b2 (undefined/null usage entries now unknown-billed; hard failures remain unbilled; new test pins mixed sequence -> total unknown, exit 2). glm r4 APPROVE, confirms no silent-drop path remains and the Infinity-token minor is unreachable through the JSON boundary (left unchanged, documented here). Final gates: 26/26 fake-provider tests, full suite 738 pass / 3 fail (pre-existing main cli fixtures), biome check exit 0, tsc --noEmit clean, build OK. Head: bce50b2.
+
+Merged to main (fast-forward cd62520..ab0df71) after human merge approval; both diff reviewers APPROVE (deepseek r3, glm r4); gates: 26/26 fake-provider tests, suite at main baseline, biome 0 errors, tsc clean, build OK.
 <!-- SECTION:NOTES:END -->
 
 ## Final Summary
