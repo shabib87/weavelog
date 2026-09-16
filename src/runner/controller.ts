@@ -1,5 +1,6 @@
 /** Bounded controller: ordered stages, evidence checks, no commit/merge. */
 
+import { randomUUID } from "node:crypto";
 import type { TaskDependencyStatus } from "../tools/task-validate.js";
 import {
   type CommandResult,
@@ -29,6 +30,7 @@ import type {
   AgentSession,
   AgentSessionFactory,
 } from "./types.js";
+import { createRunTmpDir } from "./workspace.js";
 
 export interface ControllerDeps {
   exec: ExecRunner;
@@ -49,6 +51,8 @@ export interface ControllerInput {
   signal?: AbortSignal;
   /** Per-agent-stage timeout (ms). 0 disables it. */
   stageTimeoutMs?: number;
+  /** Per-run id for `.weavelog-tmp/<run-id>`; generated when omitted. */
+  runId?: string;
 }
 
 const DEFAULT_STAGE_TIMEOUT_MS = 1_800_000;
@@ -117,6 +121,8 @@ function implementPrompt(task: RunnerTask): string {
     acs,
     "",
     "Work only inside this worktree. Do not commit, merge, push, or mark the task Done.",
+    "You must not use rtk or other wrappers that write outside the worktree.",
+    "Use standard commands and $TMPDIR only for scratch files.",
     "When finished, reply with a short summary. If a hook or permission refuses an",
     "operation, reply with the refusal text and stop.",
   ].join("\n");
@@ -128,6 +134,8 @@ function reviewPrompt(task: RunnerTask): string {
     "You did not write this code. Report only what you can verify from the diff and",
     "the recorded command output. Output a final line starting with",
     '"VERDICT:" followed by APPROVE, APPROVE-WITH-FIXES, or REJECT.',
+    "You must not use rtk or other wrappers that write outside the worktree.",
+    "Use standard commands and $TMPDIR only for scratch files.",
   ].join("\n");
 }
 
@@ -141,12 +149,14 @@ async function runImplement(
   deps: ControllerDeps,
   input: ControllerInput,
   agent: string,
+  tmpDir: string,
 ): Promise<ImplementRun> {
   let session: AgentSession | undefined;
   try {
     session = await deps.sessions.start({
       cwd: input.worktreePath,
       title: `runner ${input.task.id} implement`,
+      tmpDir,
     });
     const result: AgentResult = await promptWithGuards(
       session,
@@ -195,12 +205,14 @@ async function runReview(
   deps: ControllerDeps,
   input: ControllerInput,
   agent: string,
+  tmpDir: string,
 ): Promise<ReviewRun> {
   let session: AgentSession | undefined;
   try {
     session = await deps.sessions.start({
       cwd: input.worktreePath,
       title: `runner ${input.task.id} review`,
+      tmpDir,
     });
     const result: AgentResult = await promptWithGuards(
       session,
@@ -260,6 +272,7 @@ export async function runController(
   const commands = input.commands ?? DEFAULT_COMMANDS;
   const agents = input.agents ?? DEFAULT_AGENTS;
   const maxRework = input.maxRework ?? 1;
+  const runId = input.runId ?? randomUUID();
 
   const reasons: string[] = [];
   const identities: AgentModelIdentity[] = [];
@@ -269,6 +282,7 @@ export async function runController(
   let rework = 0;
   let stage: StageName = "implement";
   let outcome: RunOutcome = "failed";
+  let tmpDir = "";
 
   const eligibility = eligibilityErrors(
     task,
@@ -276,6 +290,7 @@ export async function runController(
     input.harnessDev ?? false,
   );
   try {
+    tmpDir = createRunTmpDir(input.worktreePath, runId);
     if (!eligibility.ok) {
       reasons.push(...eligibility.errors);
       outcome = "refused";
@@ -296,7 +311,12 @@ export async function runController(
         }
 
         if (stage === "implement") {
-          const run = await runImplement(deps, input, agents.implementer);
+          const run = await runImplement(
+            deps,
+            input,
+            agents.implementer,
+            tmpDir,
+          );
           evidence.implement = run.evidence;
           identities.push(run.identity);
           agentOutputs.push({ stage: "implement", text: run.text });
@@ -317,7 +337,7 @@ export async function runController(
             break;
           }
         } else if (stage === "review") {
-          const run = await runReview(deps, input, agents.reviewer);
+          const run = await runReview(deps, input, agents.reviewer, tmpDir);
           evidence.review = run.evidence;
           identities.push(run.identity);
           agentOutputs.push({ stage: "review", text: run.text });

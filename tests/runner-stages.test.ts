@@ -1,5 +1,11 @@
 import assert from "node:assert/strict";
-import { existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, test } from "node:test";
@@ -71,6 +77,7 @@ const failExec: ExecRunner = {
 interface FakeSessions {
   factory: AgentSessionFactory;
   calls: { agent: string; text: string; cwd: string }[];
+  starts: { cwd: string; title: string; tmpDir?: string }[];
   closed: number;
 }
 
@@ -83,9 +90,11 @@ function fakeSessions(
   }) => AgentResult | Error,
 ): FakeSessions {
   const calls: FakeSessions["calls"] = [];
+  const starts: FakeSessions["starts"] = [];
   const state = { closed: 0 };
   const factory: AgentSessionFactory = {
-    start({ cwd }) {
+    start({ cwd, title, tmpDir }) {
+      starts.push({ cwd, title, tmpDir });
       return Promise.resolve({
         id: `session-${calls.length + 1}`,
         prompt(opts) {
@@ -107,6 +116,7 @@ function fakeSessions(
   return {
     factory,
     calls,
+    starts,
     get closed() {
       return state.closed;
     },
@@ -455,5 +465,72 @@ describe("runner controller", () => {
     assert.ok(rec.reasons.some((r) => /server did not start/.test(r)));
     assert.ok(rec.recordPath);
     assert.ok(existsSync(rec.recordPath));
+  });
+
+  test("AC1: creates a per-run .weavelog-tmp dir inside the worktree and passes it to the session", async () => {
+    const f = fakeSessions(({ n }) =>
+      n === 1 ? approve("implemented") : approve(),
+    );
+    await runController(deps(f.factory), input({ runId: "run-xyz" }));
+    const expected = join(dir, ".weavelog-tmp", "run-xyz");
+    assert.ok(existsSync(expected), "run temp dir should be created");
+    assert.ok(f.starts.length >= 1);
+    assert.equal(f.starts[0].tmpDir, expected);
+  });
+
+  test("AC1: records a failed run when the per-run temp directory cannot be created", async () => {
+    const worktreeFile = join(dir, "not-a-directory");
+    writeFileSync(worktreeFile, "not a worktree");
+    const f = fakeSessions(() => approve());
+
+    const rec = await runController(
+      deps(f.factory),
+      input({ worktreePath: worktreeFile, runId: "mkdir-failure" }),
+    );
+
+    assert.equal(rec.outcome, "failed");
+    assert.ok(rec.reasons.some((reason) => /controller error/i.test(reason)));
+    assert.ok(rec.recordPath);
+    assert.ok(existsSync(rec.recordPath));
+    assert.equal(f.starts.length, 0);
+  });
+
+  test("AC1: the implement prompt tells the worker to use $TMPDIR, not /tmp", async () => {
+    const f = fakeSessions(({ n }) =>
+      n === 1 ? approve("implemented") : approve(),
+    );
+    await runController(deps(f.factory), input({ runId: "run-prompt" }));
+    assert.match(f.calls[0].text, /\$TMPDIR/);
+  });
+
+  test("AC1: controller prompts prohibit external-writing wrappers", async () => {
+    const f = fakeSessions(({ n }) =>
+      n === 1 ? approve("implemented") : approve(),
+    );
+    await runController(deps(f.factory), input({ runId: "run-prompt-safety" }));
+
+    for (const call of f.calls) {
+      assert.match(
+        call.text,
+        /must not use rtk or other wrappers that write outside the worktree/i,
+      );
+      assert.match(
+        call.text,
+        /use standard commands and \$TMPDIR only for scratch files/i,
+      );
+    }
+  });
+
+  test("AC3: a rejected external-directory permission is recorded as refusal evidence", async () => {
+    const refusal =
+      "Blocked: external-directory permission rejected (/Users/someone/other-project)";
+    const f = fakeSessions(() => ({
+      text: refusal,
+      error: { name: "PermissionRefused", message: refusal },
+      identity: IDENTITY,
+    }));
+    const rec = await runController(deps(f.factory), input());
+    assert.equal(rec.outcome, "refused");
+    assert.ok(rec.reasons.some((r) => /external-directory/.test(r)));
   });
 });

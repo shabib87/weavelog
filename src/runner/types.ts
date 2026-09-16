@@ -25,6 +25,16 @@ export interface AgentSession {
   close(): Promise<void>;
 }
 
+export interface AgentSessionStart {
+  cwd: string;
+  title: string;
+  /**
+   * Per-run temp directory. When set, the session points TMPDIR at it before
+   * starting the server and restores the previous value on close.
+   */
+  tmpDir?: string;
+}
+
 export interface AgentSessionFactory {
-  start(opts: { cwd: string; title: string }): Promise<AgentSession>;
+  start(opts: AgentSessionStart): Promise<AgentSession>;
 }
