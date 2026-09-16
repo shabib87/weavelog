@@ -5,7 +5,7 @@ status: In Progress
 assignee:
   - conductor
 created_date: '2026-09-15 05:13'
-updated_date: '2026-09-15 05:25'
+updated_date: '2026-09-15 05:48'
 labels:
   - spec-approved
 dependencies: []
@@ -47,6 +47,10 @@ Outcome: restore the CLI doctor and check test baseline so the SDK controller ca
 
 <!-- SECTION:NOTES:BEGIN -->
 2026-09-15 blocker: claim attempt from .worktrees/TASK-88 was refused by the lifecycle guard even though git rev-parse reports task/TASK-88. The guard uses the host process cwd (main) rather than the command cwd, so it reports main. No bypass used; TASK-88 remains To Do.
+
+2026-09-15 SDK run failure: controller receipt ~/.local/state/weavelog/runs/TASK-88-2026-09-15T05-33-58-956Z.json records implement error 'fetch failed'; no commands or worktree changes occurred. Direct read-only OpenCode calls succeeded, including the configured implementer model. SDK is 1.18.30 while installed OpenCode CLI is 1.18.31; this is the current version-skew hypothesis. No bypass or version change attempted.
+
+2026-09-15 version-aligned retry still failed at implement: receipt ~/.local/state/weavelog/runs/TASK-88-2026-09-15T05-47-43-622Z.json reports 'fetch failed'. A read-only SDK session-create plus implementer prompt succeeds under 1.18.31, so version skew is not the sole cause. The remaining failure is specific to the controller's full implement-stage run; no task code changed.
 <!-- SECTION:NOTES:END -->
 
 ## Comments

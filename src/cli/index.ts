@@ -401,7 +401,7 @@ function stackVersionChecks(
   if (difitSpec) {
     const docPath =
       process.env.WEAVELOG_DIFIT_DOC ??
-      join(REPO_ROOT, "docs", "architecture", "worktree-discipline.md");
+      join(REPO_ROOT, "docs", "trd", "worktree-discipline.md");
     const doc = existsSync(docPath) ? readFileSync(docPath, "utf8") : null;
     const pointer = checkDifitPointer(difitSpec.version, doc);
     results.push({
