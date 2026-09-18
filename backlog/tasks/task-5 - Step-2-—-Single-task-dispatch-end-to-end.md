@@ -1,11 +1,11 @@
 ---
 id: TASK-5
 title: 'MVP: prove the SDK workflow on a local project'
-status: In Review
+status: Done
 assignee:
   - '@conductor'
 created_date: '2026-08-24 02:48'
-updated_date: '2026-09-18 03:19'
+updated_date: '2026-09-18 03:21'
 labels:
   - harness
   - spec-approved
@@ -112,6 +112,8 @@ Outcome: use TASK-4 to run TASK-88 on the author Mac, with an isolated worktree,
 2026-09-18 TASK-5 re-review after bounded fixes: all medium findings resolved; no blocker remains; independent verdict APPROVE. Remaining low-severity observations are deferred to future controller hardening. AC #4 remains pending on the human gate.
 
 2026-09-18 human merge approval accepted the reviewed notes-to-receipt linkage for AC #4: this TASK-5 record names the durable receipt; the receipt identifies TASK-88, result, commands, reviewer identity, evidence, and awaiting-human status. TASK-88 is now Done and merged, and its post-rebase verification remained valid.
+
+2026-09-18 post-rebase integrated verification on top of merged TASK-88: build passed; scoped repository suite 787/787 with one approved skip group; Biome and tsc passed. Human approved merge and all five acceptance criteria are satisfied.
 <!-- SECTION:NOTES:END -->
 
 ## Comments
@@ -141,3 +143,9 @@ created: 2026-09-15 12:37
 HITL spec re-gate approved by user 2026-09-15: payload-managed /tmp/weavelog/<run-id> permission setting added to TASK-5.
 ---
 <!-- COMMENTS:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Completed the local SDK workflow proof. The controller now uses worktree-local managed temp state, persists heartbeat history and durable receipts, rejects external-directory requests, supports safe verification-only runs, and gives reviewers recorded command evidence. TASK-88 reached awaiting-human with zero rework and independent approval. After rebasing onto merged TASK-88, build, scoped repository tests 787/787 plus one approved skip group, Biome, and TypeScript passed.
+<!-- SECTION:FINAL_SUMMARY:END -->
