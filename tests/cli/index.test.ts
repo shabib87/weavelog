@@ -464,11 +464,16 @@ describe("cli doctor", () => {
       WEAVELOG_CHECK_PLIST: join(dir, "Library", "LaunchAgents", CHECK_PLIST),
       WEAVELOG_SKILLS_DIR: join(dir, "skills"),
       ...bins,
+      // Absent headroom keeps proxy.health on its documented skip path instead
+      // of a real localhost:8788 request that depends on the host machine.
+      WEAVELOG_HEADROOM_BIN: join(dir, "no-headroom"),
     };
     const init = run(["init"], { env });
     assert.equal(init.status, 0, `init failed: ${init.stderr}`);
     const r = run(["doctor"], { env });
     assert.equal(r.status, 0);
+    assert.match(r.stdout, /\[pass\] opencode\.adapters/);
+    assert.match(r.stdout, /\[warn\] proxy\.health .*skipped/);
   });
 });
 
