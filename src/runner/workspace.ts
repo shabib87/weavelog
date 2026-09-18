@@ -1,16 +1,17 @@
 /**
- * Per-run temp workspace for one controller run (TASK-5).
+ * Per-run workspace for one controller run (TASK-5).
  *
- * The controller creates `.weavelog-tmp/<run-id>` inside the target worktree.
- * The SDK session points TMPDIR at that directory for the server lifetime and
- * restores the previous value when it closes, so a worker never writes scratch
- * files to the shared `/tmp`.
+ * The controller creates `<worktree>/.weavelog/runs/<run-id>/` inside the target
+ * worktree. The SDK session points TMPDIR at the run's `tmp` child for the
+ * server lifetime and restores the previous value when it closes, so a worker
+ * never writes scratch files to the shared `/tmp`.
  */
 
 import { mkdirSync } from "node:fs";
 import { join, resolve } from "node:path";
 
-export const RUN_TMP_ROOT = ".weavelog-tmp";
+export const RUN_ROOT = ".weavelog/runs";
+export const RUN_TMP_DIR = "tmp";
 
 /** A run id must be a single path segment with no traversal. */
 export function assertSafeRunId(runId: string): void {
@@ -19,17 +20,26 @@ export function assertSafeRunId(runId: string): void {
   }
 }
 
-/** Absolute per-run temp dir inside the worktree. */
-export function runTmpDir(worktreePath: string, runId: string): string {
+/** Absolute per-run root inside the worktree: `<worktree>/.weavelog/runs/<run-id>`. */
+export function runRootDir(worktreePath: string, runId: string): string {
   assertSafeRunId(runId);
-  return join(resolve(worktreePath), RUN_TMP_ROOT, runId);
+  return join(resolve(worktreePath), RUN_ROOT, runId);
 }
 
-/** Create the per-run temp dir and return its absolute path. */
-export function createRunTmpDir(worktreePath: string, runId: string): string {
-  const dir = runTmpDir(worktreePath, runId);
-  mkdirSync(dir, { recursive: true });
-  return dir;
+/** Absolute TMPDIR for a run: the `tmp` child of the run root. */
+export function runTmpDir(worktreePath: string, runId: string): string {
+  return join(runRootDir(worktreePath, runId), RUN_TMP_DIR);
+}
+
+/** Create the per-run root and its tmp child; return both absolute paths. */
+export function createRunRoot(
+  worktreePath: string,
+  runId: string,
+): { root: string; tmp: string } {
+  const root = runRootDir(worktreePath, runId);
+  const tmp = join(root, RUN_TMP_DIR);
+  mkdirSync(tmp, { recursive: true });
+  return { root, tmp };
 }
 
 /**

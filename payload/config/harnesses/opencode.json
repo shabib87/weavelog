@@ -22,7 +22,6 @@
     "agents/security.md": "config/agents/security.md",
     "agents/vision-kimi.md": "config/agents/vision-kimi.md",
     "agents/vision-qwen.md": "config/agents/vision-qwen.md",
-    "plugins/opencode-tmp.ts": "config/plugins/opencode-tmp.ts",
     "prompts/plan-reviewer.md": "config/prompts/plan-reviewer.md",
     "prompts/reviewer.md": "config/prompts/reviewer.md",
     "prompts/vision.md": "config/prompts/vision.md"

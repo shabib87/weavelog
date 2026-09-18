@@ -4,6 +4,7 @@ import { appendFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { CommandResult } from "./evidence.js";
 import type { StageName } from "./stages.js";
+import type { RunStatus, RunStatusSnapshot } from "./status.js";
 import type { AgentModelIdentity } from "./types.js";
 
 export type RunOutcome = "succeeded" | "failed" | "refused" | "awaiting-human";
@@ -22,6 +23,12 @@ export interface RunRecord {
   startedAt: string;
   endedAt: string;
   recordPath?: string;
+  /** Worktree-local `.weavelog/runs/<run-id>/status.json` for this run. */
+  statusPath?: string;
+  /** Every status transition captured during the run, oldest first. */
+  statusHistory?: RunStatusSnapshot[];
+  /** Terminal status snapshot for the run. */
+  finalStatus?: RunStatus;
 }
 
 export interface LedgerEntry {

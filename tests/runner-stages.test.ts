@@ -23,6 +23,7 @@ import {
 } from "../src/runner/evidence.ts";
 import type { RunRecord } from "../src/runner/record.ts";
 import { evaluateStage, nextStage, STAGE_ORDER } from "../src/runner/stages.ts";
+import { type RunStatus, runStatusPath } from "../src/runner/status.ts";
 import type { RunnerTask } from "../src/runner/task.ts";
 import type { AgentResult, AgentSessionFactory } from "../src/runner/types.ts";
 
@@ -343,6 +344,25 @@ describe("runner controller", () => {
     assert.ok(rec.reasons.some((r) => /verify failed/i.test(r)));
   });
 
+  test("AC4: implementation-ready mode skips the mutating stage and disables rework", async () => {
+    const f = fakeSessions(() => approve());
+    const rec = await runController(
+      deps(f.factory),
+      input({ implementationReady: true, maxRework: 9 }),
+    );
+
+    assert.equal(rec.outcome, "awaiting-human");
+    assert.equal(rec.rework, 0);
+    assert.equal(rec.commands.length, 3);
+    assert.deepEqual(
+      f.calls.map((call) => call.agent),
+      ["diff-reviewer-glm"],
+    );
+    assert.match(f.calls[0].text, /Verified command evidence:/);
+    assert.match(f.calls[0].text, /npm test: exit 0/);
+    assert.match(f.calls[0].text, /Do not rerun commands/);
+  });
+
   test("AC3: a hook/permission refusal is preserved and stops the run", async () => {
     const refusal =
       "Blocked: /tmp/x is a live harness file — edit the repo copy";
@@ -467,15 +487,16 @@ describe("runner controller", () => {
     assert.ok(existsSync(rec.recordPath));
   });
 
-  test("AC1: creates a per-run .weavelog-tmp dir inside the worktree and passes it to the session", async () => {
+  test("AC1: creates a per-run .weavelog/runs dir inside the worktree and passes its tmp child to the session", async () => {
     const f = fakeSessions(({ n }) =>
       n === 1 ? approve("implemented") : approve(),
     );
     await runController(deps(f.factory), input({ runId: "run-xyz" }));
-    const expected = join(dir, ".weavelog-tmp", "run-xyz");
-    assert.ok(existsSync(expected), "run temp dir should be created");
+    const runRoot = join(dir, ".weavelog", "runs", "run-xyz");
+    assert.ok(existsSync(runRoot), "run root should be created");
+    assert.ok(existsSync(join(runRoot, "tmp")), "run tmp dir should exist");
     assert.ok(f.starts.length >= 1);
-    assert.equal(f.starts[0].tmpDir, expected);
+    assert.equal(f.starts[0].tmpDir, join(runRoot, "tmp"));
   });
 
   test("AC1: records a failed run when the per-run temp directory cannot be created", async () => {
@@ -514,11 +535,11 @@ describe("runner controller", () => {
         call.text,
         /must not use rtk or other wrappers that write outside the worktree/i,
       );
-      assert.match(
-        call.text,
-        /use standard commands and \$TMPDIR only for scratch files/i,
-      );
     }
+    assert.match(
+      f.calls[0].text,
+      /use standard commands and \$TMPDIR only for scratch files/i,
+    );
   });
 
   test("AC3: a rejected external-directory permission is recorded as refusal evidence", async () => {
@@ -532,5 +553,134 @@ describe("runner controller", () => {
     const rec = await runController(deps(f.factory), input());
     assert.equal(rec.outcome, "refused");
     assert.ok(rec.reasons.some((r) => /external-directory/.test(r)));
+  });
+
+  function readStatus(path: string): RunStatus {
+    return JSON.parse(readFileSync(path, "utf8")) as RunStatus;
+  }
+
+  test("AC1: persists a per-run status file inside the gitignored run dir", async () => {
+    const f = fakeSessions(({ n }) =>
+      n === 1 ? approve("implemented") : approve(),
+    );
+    const rec = await runController(
+      deps(f.factory),
+      input({ runId: "run-status" }),
+    );
+    const path = runStatusPath(dir, "run-status");
+    assert.ok(existsSync(path), "status file should exist");
+    const status = readStatus(path);
+    assert.equal(status.taskId, "TASK-9");
+    assert.equal(status.runId, "run-status");
+    assert.equal(status.stage, "human-gate");
+    assert.equal(status.state, "awaiting-human");
+    assert.equal(rec.statusPath, path);
+  });
+
+  test("AC1: status file reflects session busy, retrying and idle states", async () => {
+    const snapshots: RunStatus[] = [];
+    const path = runStatusPath(dir, "run-live");
+    const factory: AgentSessionFactory = {
+      start({ onStatus }) {
+        return Promise.resolve({
+          id: "session-1",
+          prompt({ agent }) {
+            if (agent !== "implementer") return Promise.resolve(approve());
+            onStatus?.({ state: "busy" });
+            snapshots.push(readStatus(path));
+            onStatus?.({
+              state: "retrying",
+              attempt: 2,
+              message: "rate limited",
+            });
+            snapshots.push(readStatus(path));
+            onStatus?.({ state: "idle" });
+            snapshots.push(readStatus(path));
+            return Promise.resolve(approve("implemented"));
+          },
+          abort: () => Promise.resolve(),
+          close: () => Promise.resolve(),
+        });
+      },
+    };
+
+    await runController(deps(factory), input({ runId: "run-live" }));
+
+    assert.deepEqual(
+      snapshots.map((s) => s.state),
+      ["busy", "retrying", "idle"],
+    );
+    assert.ok(snapshots.every((s) => s.stage === "implement"));
+    assert.equal(snapshots[1].attempt, 2);
+    assert.equal(snapshots[1].message, "rate limited");
+  });
+
+  test("AC1: status file records a refused run", async () => {
+    const f = fakeSessions(() => ({
+      text: "Blocked: refused by hook",
+      identity: IDENTITY,
+    }));
+    await runController(deps(f.factory), input({ runId: "run-refused" }));
+    assert.equal(
+      readStatus(runStatusPath(dir, "run-refused")).state,
+      "refused",
+    );
+  });
+
+  test("AC1: status file records a failed run", async () => {
+    const f = fakeSessions(({ n }) =>
+      n === 1 ? approve("implemented") : approve(),
+    );
+    await runController(
+      deps(f.factory, failExec),
+      input({ runId: "run-failed", maxRework: 0 }),
+    );
+    assert.equal(readStatus(runStatusPath(dir, "run-failed")).state, "failed");
+  });
+
+  test("AC1: the durable run record keeps status history after the worktree run dir is deleted", async () => {
+    const runId = "run-durable";
+    const factory: AgentSessionFactory = {
+      start({ onStatus }) {
+        return Promise.resolve({
+          id: "session-1",
+          prompt({ agent }) {
+            if (agent !== "implementer") return Promise.resolve(approve());
+            onStatus?.({ state: "busy" });
+            onStatus?.({
+              state: "retrying",
+              attempt: 2,
+              message: "rate limited",
+            });
+            onStatus?.({ state: "idle" });
+            return Promise.resolve(approve("implemented"));
+          },
+          abort: () => Promise.resolve(),
+          close: () => Promise.resolve(),
+        });
+      },
+    };
+
+    const rec = await runController(deps(factory), input({ runId }));
+    assert.ok(rec.recordPath);
+
+    // Simulate deletion of the target worktree's local run directory.
+    rmSync(join(dir, ".weavelog"), { recursive: true, force: true });
+    const persisted = JSON.parse(
+      readFileSync(rec.recordPath, "utf8"),
+    ) as RunRecord;
+
+    assert.deepEqual(
+      persisted.statusHistory?.map((s) => s.state),
+      ["busy", "retrying", "idle", "awaiting-human"],
+    );
+    assert.equal(persisted.statusHistory?.[1]?.stage, "implement");
+    assert.equal(persisted.statusHistory?.[1]?.attempt, 2);
+    assert.equal(persisted.statusHistory?.[1]?.message, "rate limited");
+    assert.ok(
+      persisted.statusHistory?.every((s) => typeof s.at === "string"),
+      "every transition should carry a timestamp",
+    );
+    assert.equal(persisted.finalStatus?.state, "awaiting-human");
   });
 });

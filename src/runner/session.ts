@@ -14,6 +14,7 @@ import type {
 } from "@opencode-ai/sdk";
 import { createOpencode } from "@opencode-ai/sdk";
 import { watchPermissionRequests } from "./permissions.js";
+import { sessionStatusStateOf } from "./status.js";
 import type {
   AgentModelIdentity,
   AgentResult,
@@ -82,6 +83,7 @@ export interface SessionCompletion {
 export function observeSessionCompletion(
   events: AsyncIterable<unknown>,
   sessionId: string,
+  onEvent?: (event: unknown) => void,
 ): SessionCompletion {
   let armed = false;
   let resolveIdle: () => void = () => {};
@@ -95,6 +97,7 @@ export function observeSessionCompletion(
     },
     events: (async function* () {
       for await (const event of events) {
+        onEvent?.(event);
         if (armed && isIdleForSession(event, sessionId)) resolveIdle();
         yield event;
       }
@@ -205,7 +208,7 @@ export async function closeEventSubscription(
 }
 
 export const sdkSessionFactory: AgentSessionFactory = {
-  async start({ cwd, title, tmpDir }): Promise<AgentSession> {
+  async start({ cwd, title, tmpDir, onStatus }): Promise<AgentSession> {
     const previous = process.cwd();
     process.chdir(cwd);
     const restoreTmpDir = tmpDir ? setTmpDir(tmpDir) : undefined;
@@ -231,7 +234,14 @@ export const sdkSessionFactory: AgentSessionFactory = {
       const events = await client.event.subscribe({
         signal: eventAbort.signal,
       });
-      const completion = observeSessionCompletion(events.stream, id);
+      const completion = observeSessionCompletion(
+        events.stream,
+        id,
+        (event) => {
+          const update = sessionStatusStateOf(event, id);
+          if (update) onStatus?.(update);
+        },
+      );
       const watching = watchPermissionRequests({
         events: completion.events,
         worktreePath: cwd,

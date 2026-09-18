@@ -89,30 +89,23 @@
       "type": "local",
       "command": ["{env:HOME}/.local/bin/headroom", "mcp", "serve"],
       "enabled": true
-    },
-    "chrome-devtools": {
-      "type": "local",
-      // Enable only while a CDP session runs:
-      //   pnpm exec electron-vite dev -- --remote-debugging-port=9333
-      // npx path is pinned to node v22.23.1 (nvm) — update if you upgrade node.
-      "command": [
-        "{env:HOME}/.nvm/versions/node/v22.23.1/bin/npx",
-        "-y",
-        "chrome-devtools-mcp@latest",
-        "--browserUrl=http://[IP_ADDRESS]:9333"
-      ],
-      "enabled": false
-    },
-    "Astro docs": {
-      "type": "remote",
-      "url": "https://mcp.docs.astro.build/mcp",
-      "enabled": true
     }
   },
   "permission": {
     // Tavily free tier = 1k credits/month shared with mobile apps.
     // Cheap ops (search/extract/map/crawl, 1-5 credits) self-serve; only research
     // (4-250 credits, dynamic) is human-gated. researcher.md restates this policy.
-    "tavily_tavily_research*": "ask"
+    "tavily_tavily_research*": "ask",
+    // Skills auto-load from ~/.agents/skills (external to any project dir); each
+    // activation reads the SKILL.md body, which trips external_directory (default
+    // ask) on every session. Allow the skills tree only.
+    "external_directory": {
+      // opencode tmp dir
+      "/tmp/*": "deny",
+      "~/.agents/skills/**": "allow",
+      // weavelog's own materialize-state dir (config-sync writes
+      // config-materialize.json there); also outside any project dir.
+      "~/.local/state/weavelog/**": "allow"
+    }
   }
 }

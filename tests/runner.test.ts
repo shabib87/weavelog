@@ -1,6 +1,12 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { chmodSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import {
+  chmodSync,
+  mkdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, test } from "node:test";
@@ -16,7 +22,7 @@ let stateDir: string;
 let callsLog: string;
 
 const FAKE = `#!/bin/bash
-echo "$@" >> "${"CALLSLOG"}"
+echo "$PWD\t$@" >> "${"CALLSLOG"}"
 if [ "$1" = "task" ] && [ "$2" = "view" ]; then
   cat "${"VIEWFILE"}"
   exit 0
@@ -121,6 +127,20 @@ describe("runner CLI", () => {
     assert.match(r.stdout, /DRY-RUN/i);
     assert.match(r.stdout, /implement/);
     assert.ok(!r.stdout.includes("CLAIMED"));
+    assert.match(
+      readFileSync(callsLog, "utf8"),
+      new RegExp(
+        `${repoDir.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}/\\.worktrees/TASK-1\\ttask view TASK-1 --json`,
+      ),
+    );
+  });
+
+  test("--implementation-ready dry-run skips implement and disables rework", () => {
+    const r = run(["TASK-1", "--implementation-ready", "--dry-run"]);
+    assert.equal(r.status, 0);
+    assert.match(r.stdout, /stages=verify -> review -> human-gate/);
+    assert.match(r.stdout, /maxRework=0/);
+    assert.doesNotMatch(r.stdout, /stages=implement/);
   });
 
   test("--max-rework N value is not miscounted as a positional", () => {

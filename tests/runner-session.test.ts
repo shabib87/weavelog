@@ -42,6 +42,30 @@ describe("runner SDK session cleanup", () => {
   });
 });
 
+describe("runner SDK session status", () => {
+  test("forwards subscribed SDK events to the status observer", async () => {
+    const events = [
+      {
+        type: "session.status",
+        properties: { sessionID: "session-1", status: { type: "busy" } },
+      },
+      { type: "session.idle", properties: { sessionID: "session-1" } },
+    ];
+    const observed: unknown[] = [];
+    const completion = observeSessionCompletion(
+      streamOf(events),
+      "session-1",
+      (event) => observed.push(event),
+    );
+
+    for await (const _event of completion.events) {
+      // Consuming the shared event stream drives both status and permission observers.
+    }
+
+    assert.deepEqual(observed, events);
+  });
+});
+
 describe("runner SDK async prompt", () => {
   test("returns a promptAsync result error without waiting for session idle", async () => {
     let idleWaited = false;

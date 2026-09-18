@@ -1,5 +1,7 @@
 /** Shared types for the TASK-4 TypeScript controller. */
 
+import type { SessionStatusUpdate } from "./status.js";
+
 export interface AgentModelIdentity {
   agent: string;
   providerID?: string;
@@ -33,6 +35,8 @@ export interface AgentSessionStart {
    * starting the server and restores the previous value on close.
    */
   tmpDir?: string;
+  /** Live OpenCode session status/idle updates for the persisted run status. */
+  onStatus?: (update: SessionStatusUpdate) => void;
 }
 
 export interface AgentSessionFactory {

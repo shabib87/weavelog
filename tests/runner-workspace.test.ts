@@ -1,19 +1,21 @@
 /**
- * Unit tests for the per-run temp workspace and TMPDIR lifecycle (TASK-5).
+ * Unit tests for the per-run workspace and TMPDIR lifecycle (TASK-5).
  *
- * The controller creates `.weavelog-tmp/<run-id>` inside the target worktree
- * and the SDK session points TMPDIR at it for the server lifetime, restoring
- * the previous value on close.
+ * The controller creates `<worktree>/.weavelog/runs/<run-id>/` and points the
+ * SDK session TMPDIR at its `tmp` child for the server lifetime, restoring the
+ * previous value on close.
  */
 
 import assert from "node:assert/strict";
-import { existsSync, mkdirSync, rmSync, statSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, rmSync, statSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, test } from "node:test";
 import {
-  createRunTmpDir,
-  RUN_TMP_ROOT,
+  createRunRoot,
+  RUN_ROOT,
+  RUN_TMP_DIR,
+  runRootDir,
   runTmpDir,
   setTmpDir,
 } from "../src/runner/workspace.ts";
@@ -33,23 +35,41 @@ describe("runner run workspace", () => {
     rmSync(dir, { recursive: true, force: true });
   });
 
-  test("runTmpDir nests the run id under .weavelog-tmp in the worktree", () => {
-    assert.equal(runTmpDir(dir, "run-1"), join(dir, RUN_TMP_ROOT, "run-1"));
-  });
-
-  test("createRunTmpDir creates the directory inside the worktree", () => {
-    const created = createRunTmpDir(dir, "run-2");
-    assert.ok(existsSync(created), "temp dir should exist");
-    assert.ok(statSync(created).isDirectory(), "temp path should be a dir");
-    assert.ok(
-      created.startsWith(join(dir, RUN_TMP_ROOT)),
-      "temp dir should live under .weavelog-tmp",
+  test("the worktree-local runtime root is gitignored", () => {
+    assert.match(
+      readFileSync(join(process.cwd(), ".gitignore"), "utf8"),
+      /^\.weavelog\/$/m,
     );
   });
 
-  test("createRunTmpDir refuses a run id that escapes the worktree", () => {
-    assert.throws(() => createRunTmpDir(dir, "../escape"), /run id/i);
-    assert.throws(() => createRunTmpDir(dir, "nested/../escape"), /run id/i);
+  test("runRootDir nests the run id under .weavelog/runs in the worktree", () => {
+    assert.equal(runRootDir(dir, "run-1"), join(dir, RUN_ROOT, "run-1"));
+  });
+
+  test("runTmpDir is the tmp child of the run root", () => {
+    assert.equal(
+      runTmpDir(dir, "run-1"),
+      join(dir, RUN_ROOT, "run-1", RUN_TMP_DIR),
+    );
+  });
+
+  test("createRunRoot creates the run root and its tmp child inside the worktree", () => {
+    const created = createRunRoot(dir, "run-2");
+    assert.equal(created.root, join(dir, RUN_ROOT, "run-2"));
+    assert.equal(created.tmp, join(created.root, RUN_TMP_DIR));
+    assert.ok(existsSync(created.root), "run root should exist");
+    assert.ok(statSync(created.root).isDirectory(), "run root should be a dir");
+    assert.ok(existsSync(created.tmp), "run tmp dir should exist");
+    assert.ok(statSync(created.tmp).isDirectory(), "run tmp should be a dir");
+    assert.ok(
+      created.root.startsWith(join(dir, RUN_ROOT)),
+      "run root should live under .weavelog/runs",
+    );
+  });
+
+  test("createRunRoot refuses a run id that escapes the worktree", () => {
+    assert.throws(() => createRunRoot(dir, "../escape"), /run id/i);
+    assert.throws(() => createRunRoot(dir, "nested/../escape"), /run id/i);
   });
 
   test("setTmpDir sets TMPDIR and restore replaces the previous value", () => {

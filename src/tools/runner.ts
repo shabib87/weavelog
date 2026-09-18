@@ -9,7 +9,7 @@
  * Done, or bypasses a hook/permission refusal.
  *
  * Usage:
- *   runner <task-id> [--max-rework N] [--dry-run]
+ *   runner <task-id> [--max-rework N] [--implementation-ready] [--dry-run]
  *
  * Exit codes: 0 awaiting human gate / success, 1 failed or refused, 2 usage.
  * Env: RUNNER_BACKLOG — backlog binary (default ~/.bun/bin/backlog). Tests only.
@@ -36,7 +36,7 @@ import {
 } from "../runner/task.js";
 import { resolveDependencyStatuses } from "./task-validate.js";
 
-const HELP = `Usage: runner <task-id> [--max-rework N] [--stage-timeout-ms N] [--dry-run]
+const HELP = `Usage: runner <task-id> [--max-rework N] [--stage-timeout-ms N] [--implementation-ready] [--dry-run]
 
 Runs one claimed Backlog task through one bounded OpenCode workflow:
   implement -> verify -> review -> [HUMAN GATE: merge approval]
@@ -44,6 +44,7 @@ Runs one claimed Backlog task through one bounded OpenCode workflow:
 Options:
   --max-rework N         Bounded rework attempts after a failed verify/review (default 1)
   --stage-timeout-ms N   Abort an agent stage after N ms (default 1800000; 0 disables)
+  --implementation-ready Skip implement and disable rework; verify/review an existing diff
   --dry-run              Print the plan and exit; starts no session
   --help                 Show this help
 
@@ -146,7 +147,9 @@ async function main(): Promise<void> {
   }
   if (args.length === 0) fail2(`missing <task-id> — see --help`);
 
-  const maxRework = numberFlag(args, "--max-rework", 1) ?? 1;
+  const requestedMaxRework = numberFlag(args, "--max-rework", 1) ?? 1;
+  const implementationReady = args.includes("--implementation-ready");
+  const maxRework = implementationReady ? 0 : requestedMaxRework;
   const stageTimeoutMs = numberFlag(args, "--stage-timeout-ms", undefined);
   const dryRun = args.includes("--dry-run");
   const positionals = positionalsOf(args);
@@ -157,7 +160,11 @@ async function main(): Promise<void> {
   if (!existsSync(BACKLOG)) fail2(`backlog binary not found: ${BACKLOG}`);
 
   const repoRoot = resolveRepoRoot();
+  // The selected task's Backlog record may not exist on this controller branch.
+  // Read it from the target worktree, where its task branch owns the record.
+  const worktreePath = join(repoRoot, ".worktrees", taskId);
   const view = spawnSync(BACKLOG, ["task", "view", taskId, "--json"], {
+    cwd: existsSync(worktreePath) ? worktreePath : undefined,
     encoding: "utf8",
     timeout: 30_000,
   });
@@ -181,7 +188,6 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  const worktreePath = join(repoRoot, ".worktrees", task.id);
   if (!existsSync(worktreePath)) {
     console.log(
       `worktree not found: ${worktreePath} — create it with \`worktree-create ${task.id}\``,
@@ -189,7 +195,11 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  const stages = ["implement", "verify", "review", "human-gate"].join(" -> ");
+  const stages = (
+    implementationReady
+      ? ["verify", "review", "human-gate"]
+      : ["implement", "verify", "review", "human-gate"]
+  ).join(" -> ");
   if (dryRun) {
     console.log(
       `DRY-RUN ${task.id} worktree=${worktreePath} stages=${stages} maxRework=${maxRework}`,
@@ -211,6 +221,7 @@ async function main(): Promise<void> {
       worktreePath,
       harnessDev,
       maxRework,
+      implementationReady,
       stageTimeoutMs,
       signal: abort.signal,
       commands: DEFAULT_COMMANDS,
