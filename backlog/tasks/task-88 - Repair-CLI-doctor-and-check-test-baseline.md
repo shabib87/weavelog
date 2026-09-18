@@ -1,11 +1,11 @@
 ---
 id: TASK-88
 title: Repair CLI doctor and check test baseline
-status: In Review
+status: Done
 assignee:
   - conductor
 created_date: '2026-09-15 05:13'
-updated_date: '2026-09-18 03:16'
+updated_date: '2026-09-18 03:18'
 labels:
   - spec-approved
 dependencies: []
@@ -35,8 +35,8 @@ Outcome: restore the CLI doctor and check test baseline so the SDK controller ca
 ## Definition of Done
 <!-- DOD:BEGIN -->
 - [x] #1 Tests and lint pass with fresh output in the worktree
-- [ ] #2 Worktree is clean (no uncommitted changes)
-- [ ] #3 Branch is rebased on main and green
+- [x] #2 Worktree is clean (no uncommitted changes)
+- [x] #3 Branch is rebased on main and green
 - [x] #4 All acceptance criteria checked with fresh evidence (one at a time, never batched)
 <!-- DOD:END -->
 
@@ -60,6 +60,8 @@ Outcome: restore the CLI doctor and check test baseline so the SDK controller ca
 2026-09-18 human approved excluding exactly three unrelated live Headroom assertions from the completion gate: 2K tokens_saved, CCR hashes, and 10K tokens_saved. TASK-88 focused CLI tests, all remaining repository tests, lint, typecheck, and independent review remain required.
 
 2026-09-18 controlled verification succeeded with no implementer and zero rework. Focused CLI suite: 40 passed, 0 failed. Approved repository command: 742 tests, 738 passed, 0 failed, with exactly the three named live Headroom assertions excluded. Lint and typecheck exited 0. Independent reviewer diff-reviewer-glm returned APPROVE. The controller stopped at the human gate with final status awaiting-human. Durable receipt: ~/.local/state/weavelog/runs/TASK-88-2026-09-18T02-57-14-833Z.json. No commit or merge occurred.
+
+2026-09-18 post-rebase verification: focused CLI 40/40; scoped repository 738/738 with one approved skip group; Biome and tsc passed. Branch rebased onto main at 96c1768 before merge.
 <!-- SECTION:NOTES:END -->
 
 ## Comments
@@ -77,3 +79,9 @@ created: 2026-09-15 05:25
 HITL plan gate approved by user 2026-09-15: five-step test-first repair plan presented in chat.
 ---
 <!-- COMMENTS:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Repaired the default stack-only documentation path and made both doctor success fixtures install adapters and isolate Headroom health. Verified after rebase with focused CLI 40/40, scoped repository 738/738 plus the approved Headroom skip group, Biome, TypeScript, and independent reviewer APPROVE. Controller receipt ended awaiting-human with zero rework before human merge approval.
+<!-- SECTION:FINAL_SUMMARY:END -->
