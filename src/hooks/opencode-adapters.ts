@@ -13,6 +13,7 @@ export const ADAPTER_AUDIT_FILE = "adapter-audit.jsonl";
 const ADAPTERS = [
   { name: "enforce", exportName: "Enforce", hook: "enforce.js" },
   { name: "verify-gate", exportName: "default", hook: "verify-gate.js" },
+  { name: "opencode-tmp", exportName: "WeavelogTmp", hook: "opencode-tmp.js" },
 ] as const;
 
 export interface AdapterOptions {

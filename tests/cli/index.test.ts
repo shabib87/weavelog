@@ -180,13 +180,13 @@ describe("cli (--help)", () => {
 });
 
 describe("cli init", () => {
-  test("materializes both managed OpenCode adapters from this installed package", () => {
+  test("materializes all managed OpenCode adapters from this installed package", () => {
     const f = initFixture(true);
     const r = run(["init"], {
       env: { WEAVELOG_LIVE_ROOT: f.live, WEAVELOG_STATE_DIR: f.state },
     });
     assert.equal(r.status, 0);
-    for (const adapter of ["enforce", "verify-gate"]) {
+    for (const adapter of ["enforce", "verify-gate", "opencode-tmp"]) {
       const adapterPath = join(f.config, "plugins", `${adapter}.ts`);
       assert.ok(existsSync(adapterPath), `${adapter} adapter materialized`);
       assert.ok(

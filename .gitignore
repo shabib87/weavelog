@@ -39,3 +39,5 @@ state/
 node_modules
 TASK.md
 .worktrees/
+.weavelog-tmp/
+.weavelog/

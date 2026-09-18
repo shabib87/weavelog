@@ -45,7 +45,7 @@ test("emitted enforce adapter loads its installed-package target and records a g
   );
 
   const adapters = emitOpenCodeAdapters({ packageRoot, configRoot, stateDir });
-  assert.equal(adapters.length, 2);
+  assert.equal(adapters.length, 3);
   const enforce = adapters.find((adapter) => adapter.name === "enforce");
   assert.ok(enforce);
   assert.ok(existsSync(enforce.path));
@@ -65,6 +65,42 @@ test("emitted enforce adapter loads its installed-package target and records a g
   const receipt = readFileSync(join(stateDir, "adapter-audit.jsonl"), "utf8");
   assert.match(receipt, /"adapter":"enforce"/);
   assert.match(receipt, /"outcome":"gate-refusal"/);
+});
+
+test("emitted opencode-tmp adapter loads its installed-package target and sets a safe shell TMPDIR", async () => {
+  const dir = fixture("tmp");
+  const packageRoot = join(dir, "installed");
+  const configRoot = join(dir, "config");
+  const stateDir = join(dir, "state");
+  const hookPath = join(packageRoot, "dist", "hooks", "opencode-tmp.js");
+  writeFileSync(
+    hookPath,
+    `export const WeavelogTmp = async () => ({
+      "shell.env": async (input, output) => {
+        output.env.TMPDIR = input.cwd + "/.weavelog-tmp/fallback";
+      },
+    });\n`,
+  );
+
+  const adapters = emitOpenCodeAdapters({ packageRoot, configRoot, stateDir });
+  const tmp = adapters.find((adapter) => adapter.name === "opencode-tmp");
+  assert.ok(tmp);
+  assert.ok(existsSync(tmp.path));
+  assert.ok(
+    readFileSync(tmp.path, "utf8").includes(pathToFileURL(hookPath).href),
+  );
+
+  const loaded = await import(
+    `${pathToFileURL(tmp.path).href}?test=${Date.now()}`
+  );
+  const hooks = await loaded.default({});
+  const output = { env: {} as Record<string, string> };
+  await hooks["shell.env"]({ cwd: dir, sessionID: "s1" }, output);
+  assert.equal(output.env.TMPDIR, join(dir, ".weavelog-tmp", "fallback"));
+
+  const receipt = readFileSync(join(stateDir, "adapter-audit.jsonl"), "utf8");
+  assert.match(receipt, /"adapter":"opencode-tmp"/);
+  assert.match(receipt, /"outcome":"gate-result"/);
 });
 
 test("missing installed verify-gate target fails health with a named init repair and no personal fallback", () => {
@@ -183,8 +219,18 @@ test("compiled package adapters load the real enforce and verify-gate refusals",
     ),
     /verification gate/,
   );
+  const tmpPath = adapters.find(
+    (adapter) => adapter.name === "opencode-tmp",
+  )?.path;
+  assert.ok(tmpPath);
+  const tmp = await import(`${pathToFileURL(tmpPath).href}?test=${Date.now()}`);
+  const tmpHooks = await tmp.default({});
+  const tmpOutput = { env: {} as Record<string, string> };
+  await tmpHooks["shell.env"]({ cwd: dir, sessionID: "tmp" }, tmpOutput);
+  assert.ok(tmpOutput.env.TMPDIR.startsWith(join(dir, ".weavelog", "runs")));
   const receipts = readFileSync(join(stateDir, "adapter-audit.jsonl"), "utf8");
   assert.match(receipts, /"adapter":"enforce"/);
   assert.match(receipts, /"adapter":"verify-gate"/);
+  assert.match(receipts, /"adapter":"opencode-tmp"/);
   assert.match(receipts, /"outcome":"gate-refusal"/);
 });

@@ -1,5 +1,6 @@
 /** Bounded controller: ordered stages, evidence checks, no commit/merge. */
 
+import { randomUUID } from "node:crypto";
 import type { TaskDependencyStatus } from "../tools/task-validate.js";
 import {
   type CommandResult,
@@ -22,6 +23,14 @@ import {
   type RunEvidence,
   type StageName,
 } from "./stages.js";
+import {
+  type RunStatus,
+  type RunStatusSnapshot,
+  type RunStatusState,
+  runStatusPath,
+  type SessionStatusUpdate,
+  writeRunStatus,
+} from "./status.js";
 import { eligibilityErrors, type RunnerTask } from "./task.js";
 import type {
   AgentModelIdentity,
@@ -29,6 +38,7 @@ import type {
   AgentSession,
   AgentSessionFactory,
 } from "./types.js";
+import { createRunRoot } from "./workspace.js";
 
 export interface ControllerDeps {
   exec: ExecRunner;
@@ -49,6 +59,10 @@ export interface ControllerInput {
   signal?: AbortSignal;
   /** Per-agent-stage timeout (ms). 0 disables it. */
   stageTimeoutMs?: number;
+  /** Per-run id for `.weavelog/runs/<run-id>`; generated when omitted. */
+  runId?: string;
+  /** Skip the mutating implement stage for an already-complete target diff. */
+  implementationReady?: boolean;
 }
 
 const DEFAULT_STAGE_TIMEOUT_MS = 1_800_000;
@@ -117,17 +131,34 @@ function implementPrompt(task: RunnerTask): string {
     acs,
     "",
     "Work only inside this worktree. Do not commit, merge, push, or mark the task Done.",
+    "You must not use rtk or other wrappers that write outside the worktree.",
+    "Use standard commands and $TMPDIR only for scratch files.",
     "When finished, reply with a short summary. If a hook or permission refuses an",
     "operation, reply with the refusal text and stop.",
   ].join("\n");
 }
 
-function reviewPrompt(task: RunnerTask): string {
+function reviewPrompt(task: RunnerTask, commands: CommandResult[]): string {
+  const commandEvidence = commands
+    .map(
+      (result) =>
+        `${result.command} ${result.args.join(" ")}: exit ${result.exitCode}`,
+    )
+    .join("\n");
   return [
     `Independently review the current diff for backlog task ${task.id}: ${task.title}.`,
     "You did not write this code. Report only what you can verify from the diff and",
-    "the recorded command output. Output a final line starting with",
+    "the recorded command results below.",
+    "",
+    "Verified command evidence:",
+    commandEvidence,
+    "",
+    "Do not rerun commands or create scratch or temporary files.",
+    "Use read-only inspection of the current diff and source files.",
+    "Output a final line starting with",
     '"VERDICT:" followed by APPROVE, APPROVE-WITH-FIXES, or REJECT.',
+    "Do not modify files.",
+    "You must not use rtk or other wrappers that write outside the worktree.",
   ].join("\n");
 }
 
@@ -141,12 +172,16 @@ async function runImplement(
   deps: ControllerDeps,
   input: ControllerInput,
   agent: string,
+  tmpDir: string,
+  onStatus: (update: SessionStatusUpdate) => void,
 ): Promise<ImplementRun> {
   let session: AgentSession | undefined;
   try {
     session = await deps.sessions.start({
       cwd: input.worktreePath,
       title: `runner ${input.task.id} implement`,
+      tmpDir,
+      onStatus,
     });
     const result: AgentResult = await promptWithGuards(
       session,
@@ -195,16 +230,21 @@ async function runReview(
   deps: ControllerDeps,
   input: ControllerInput,
   agent: string,
+  tmpDir: string,
+  commands: CommandResult[],
+  onStatus: (update: SessionStatusUpdate) => void,
 ): Promise<ReviewRun> {
   let session: AgentSession | undefined;
   try {
     session = await deps.sessions.start({
       cwd: input.worktreePath,
       title: `runner ${input.task.id} review`,
+      tmpDir,
+      onStatus,
     });
     const result: AgentResult = await promptWithGuards(
       session,
-      { agent, text: reviewPrompt(input.task) },
+      { agent, text: reviewPrompt(input.task, commands) },
       input,
     );
     return {
@@ -226,6 +266,13 @@ async function runReview(
   } finally {
     await session?.close().catch(() => {});
   }
+}
+
+/** Terminal run outcome as a persisted status state. */
+function terminalStatusState(outcome: RunOutcome): RunStatusState {
+  if (outcome === "refused") return "refused";
+  if (outcome === "awaiting-human") return "awaiting-human";
+  return "failed";
 }
 
 function runVerify(
@@ -259,7 +306,56 @@ export async function runController(
   const task = input.task;
   const commands = input.commands ?? DEFAULT_COMMANDS;
   const agents = input.agents ?? DEFAULT_AGENTS;
-  const maxRework = input.maxRework ?? 1;
+  const maxRework = input.implementationReady ? 0 : (input.maxRework ?? 1);
+  const runId = input.runId ?? randomUUID();
+
+  let statusPath: string | undefined;
+  try {
+    statusPath = runStatusPath(input.worktreePath, runId);
+  } catch {
+    statusPath = undefined;
+  }
+  let statusPersisted = false;
+  const statusHistory: RunStatusSnapshot[] = [];
+  let finalStatus: RunStatus | undefined;
+  /**
+   * Capture the run status transition, then best-effort persist it. A write
+   * failure (for example when the run temp dir cannot be created) must never
+   * mask the controller outcome; the captured history still reaches the durable
+   * run record.
+   */
+  const writeStatus = (
+    state: RunStatusState,
+    at: StageName,
+    extra: { attempt?: number; message?: string } = {},
+  ): void => {
+    const snapshot: RunStatus = {
+      taskId: task.id,
+      runId,
+      stage: at,
+      state,
+      attempt: extra.attempt,
+      message: extra.message,
+      startedAt,
+      updatedAt: now().toISOString(),
+    };
+    statusHistory.push({ ...snapshot, at: snapshot.updatedAt });
+    finalStatus = snapshot;
+    if (!statusPath) return;
+    try {
+      writeRunStatus(statusPath, snapshot);
+      statusPersisted = true;
+    } catch {
+      // Status is advisory; the run record remains the source of truth.
+    }
+  };
+  const stageStatus =
+    (at: StageName) =>
+    (update: SessionStatusUpdate): void =>
+      writeStatus(update.state, at, {
+        attempt: update.attempt,
+        message: update.message,
+      });
 
   const reasons: string[] = [];
   const identities: AgentModelIdentity[] = [];
@@ -267,8 +363,9 @@ export async function runController(
   const agentOutputs: { stage: StageName; text: string }[] = [];
   const evidence: RunEvidence = {};
   let rework = 0;
-  let stage: StageName = "implement";
+  let stage: StageName = input.implementationReady ? "verify" : "implement";
   let outcome: RunOutcome = "failed";
+  let tmpDir = "";
 
   const eligibility = eligibilityErrors(
     task,
@@ -276,6 +373,7 @@ export async function runController(
     input.harnessDev ?? false,
   );
   try {
+    tmpDir = createRunRoot(input.worktreePath, runId).tmp;
     if (!eligibility.ok) {
       reasons.push(...eligibility.errors);
       outcome = "refused";
@@ -296,7 +394,13 @@ export async function runController(
         }
 
         if (stage === "implement") {
-          const run = await runImplement(deps, input, agents.implementer);
+          const run = await runImplement(
+            deps,
+            input,
+            agents.implementer,
+            tmpDir,
+            stageStatus("implement"),
+          );
           evidence.implement = run.evidence;
           identities.push(run.identity);
           agentOutputs.push({ stage: "implement", text: run.text });
@@ -317,7 +421,14 @@ export async function runController(
             break;
           }
         } else if (stage === "review") {
-          const run = await runReview(deps, input, agents.reviewer);
+          const run = await runReview(
+            deps,
+            input,
+            agents.reviewer,
+            tmpDir,
+            allCommands,
+            stageStatus("review"),
+          );
           evidence.review = run.evidence;
           identities.push(run.identity);
           agentOutputs.push({ stage: "review", text: run.text });
@@ -349,6 +460,8 @@ export async function runController(
     outcome = "failed";
   }
 
+  writeStatus(terminalStatusState(outcome), stage);
+
   const endedAt = now().toISOString();
   const record: RunRecord = {
     taskId: task.id,
@@ -363,6 +476,9 @@ export async function runController(
     agentOutputs,
     startedAt,
     endedAt,
+    statusPath: statusPersisted ? statusPath : undefined,
+    statusHistory,
+    finalStatus,
   };
   writeRunRecord(deps.stateDir, record);
 
