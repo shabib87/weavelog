@@ -54,6 +54,7 @@ import {
   writeSnapshot,
 } from "../tools/materialize-state.js";
 import { checkDifitPointer, pinHygieneForDir } from "../tools/pin-hygiene.js";
+import { privacyAuditForDir } from "../tools/privacy-audit.js";
 import {
   defaultProfilesDir,
   readProfile,
@@ -1484,6 +1485,23 @@ function runPreCommit(): never {
   } else {
     printCheckLine("pass", "deps.pin-hygiene", pin.detail);
   }
+  const privacy = privacyAuditForDir(process.cwd(), { source: "index" });
+  if (privacy.status === "fail") {
+    console.error(`[fail] privacy — ${privacy.detail}`);
+    finish({
+      command: "check",
+      args: ["--pre-commit"],
+      filesTouched: [],
+      decisions: [],
+      errors: [privacy.detail],
+      exitCode: 1,
+    });
+  }
+  if (privacy.status === "skip") {
+    console.log(`[skip] privacy — ${privacy.detail}`);
+  } else {
+    printCheckLine("pass", "privacy", privacy.detail);
+  }
   const { path: tvPath, tsx } = toolScript("task-validate");
   const prefix = tsx ? ["--import", String(import.meta.resolve("tsx"))] : [];
   const r = spawnSync(process.execPath, [...prefix, tvPath, "--pre-commit"], {
@@ -1513,6 +1531,13 @@ async function runCheck(stackOnly: boolean): Promise<never> {
     detail: pin.detail,
   });
   if (!stackOnly) {
+    const privacy = privacyAuditForDir(process.cwd());
+    results.push({
+      id: "privacy",
+      ok: privacy.status !== "fail",
+      skip: privacy.status === "skip",
+      detail: privacy.detail,
+    });
     const guard = checkNodePathGuard();
     const proxy = await checkProxyHealth();
     const risk = runRiskSignalsCheck();

@@ -1,14 +1,23 @@
 ---
 id: TASK-73
 title: Port privacy-audit bash checks to TypeScript (weavelog check integration)
-status: To Do
-assignee: []
+status: In Progress
+assignee:
+  - '@conductor'
 created_date: '2026-09-07 15:49'
-updated_date: '2026-09-11 03:54'
-labels: []
+updated_date: '2026-09-20 05:56'
+labels:
+  - spec-approved
 milestone: m-7
 dependencies:
   - TASK-79
+modified_files:
+  - src/tools/privacy-audit.ts
+  - src/cli/index.ts
+  - AGENTS.md
+  - tests/privacy-audit.test.ts
+  - tests/cli/index.test.ts
+  - tests/payload/privacy.test.ts
 ordinal: 59500
 ---
 
@@ -20,10 +29,10 @@ The privacy/sanitization checks (scan for absolute home-dir paths like /Users/, 
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 WHEN the privacy checks are inventoried THEN each legacy check is reimplemented in TypeScript or explicitly dropped with a recorded reason
+- [x] #1 WHEN the privacy checks are inventoried THEN each legacy check is reimplemented in TypeScript or explicitly dropped with a recorded reason
 - [ ] #2 WHEN weavelog check runs THEN it performs deterministic privacy, workspace test, lint, typecheck, and security verification subchecks
-- [ ] #3 WHEN a scanned file set or workspace verification fails THEN the subcheck fails and names the file, failed command, or matched pattern
-- [ ] #4 WHEN the port lands THEN no bash remains as implementation logic and AGENTS.md points at the automated checks
+- [x] #3 WHEN a scanned file set or workspace verification fails THEN the subcheck fails and names the file, failed command, or matched pattern
+- [x] #4 WHEN the port lands THEN no bash remains as implementation logic and AGENTS.md points at the automated checks
 <!-- AC:END -->
 
 ## Definition of Done
@@ -34,10 +43,35 @@ The privacy/sanitization checks (scan for absolute home-dir paths like /Users/, 
 - [ ] #4 All acceptance criteria checked with fresh evidence (one at a time, never batched)
 <!-- DOD:END -->
 
+## Implementation Plan
+
+<!-- SECTION:PLAN:BEGIN -->
+1. Recon (done): the only legacy bash privacy logic is scripts/privacy-audit + scripts/privacy-audit-strings.txt (git grep for 'shabibhossain', '/Users/shabibhossain', '@weavelog' over tracked files with 8 hard-coded excludes). tests/payload/privacy.test.ts duplicates a subset over payload/docs. weavelog check (src/cli/index.ts runCheck/runPreCommit) has no content privacy subcheck.
+2. Add src/tools/privacy-audit.ts: pure rule matcher + privacyAuditForDir(root) wrapper. Rules: (a) forbidden personal identifier strings, (b) absolute macOS home paths (/Users/<name>) with a documented allowlist for intentional test fixtures, (c) secret patterns (AWS/GitHub/OpenAI/OpenRouter token shapes, private-key headers). Enumerate tracked files via 'git ls-files' (non-repo => fail-closed with reason); apply the legacy excludes.
+3. Wire a 'privacy' subcheck into runCheck (full mode) and runPreCommit (replacing the manual ritual); fail names file + matched pattern, exit 1.
+4. Delete scripts/privacy-audit and scripts/privacy-audit-strings.txt.
+5. Refactor tests/payload/privacy.test.ts to import the new module (single source of truth).
+6. Update AGENTS.md MUST-NOT (lines 138-141) to point at the automated weavelog check subcheck instead of the manual grep ritual.
+7. Tests: tests/privacy-audit.test.ts unit cases (clean, personal string, home path, secret, excluded path, non-repo) + CLI case that check/check --pre-commit fails naming file+pattern.
+8. Verify fresh: npm test, npm run lint, npm run typecheck; then check each AC one at a time with that evidence.
+<!-- SECTION:PLAN:END -->
+
 ## Implementation Notes
 
 <!-- SECTION:NOTES:BEGIN -->
 2026-09-10 correction: assigned to m-7 because deterministic privacy verification is a required v0.1 release gate.
 
 2026-09-10 correction: TASK-73 is the narrowly scoped workspace-verification wiring task. It owns deterministic integration, not an unrestricted orchestration framework.
+
+Inventory (AC#1): the only legacy bash privacy logic was scripts/privacy-audit + scripts/privacy-audit-strings.txt (git grep for 'shabibhossain', '/Users/shabibhossain', '@weavelog' over tracked files with 8 hard-coded excludes); tests/payload/privacy.test.ts duplicated a subset over payload/docs. Reimplemented in TS as src/tools/privacy-audit.ts (personal-identifier + secret-pattern rules, git ls-files enumeration, workspace-root guard, documented excludes). Wired as the 'privacy' subcheck in runCheck (full mode) and runPreCommit. Bash originals deleted; AGENTS.md MUST-NOT now points at the automated subcheck; tests/payload/privacy.test.ts consumes the module (single source of truth).
+
+Explicit drops with reason (AC#1): (a) the generic '/Users/<name>' blanket regex — the AGENTS.md instruction text itself contains '/Users/', frozen docs/archive and test fixtures intentionally use example absolute paths, and the legacy scan only matched specific identifiers; author home paths remain covered by the personal-identifier needle. (b) workspace test/lint/typecheck runners and binary semgrep inside 'weavelog check' — owned by CI and TASK-63, and running the repo suite inside check risks recursion (tests spawn check). Security is delivered in check as the secret-pattern content scan; semgrep/audit/provenance stay in CI (TASK-63).
+
+Evidence: tests/privacy-audit.test.ts (8 tests) + 2 CLI cases in tests/cli/index.test.ts pass; npm test 801 tests / 4 fail — identical 4 pre-existing environmental failures as main (headroom-compress live proxy, checkDiagramDesign drift); npm run lint clean; npm run typecheck clean; 'weavelog check' prints '[pass] privacy — clean (269 tracked files scanned)'; 'weavelog check --pre-commit' exits 0.
+
+Coordination: TASK-63's plan step 8 still runs scripts/privacy-audit as part of its verify battery. TASK-63 must switch that reference to the automated 'weavelog check' subcheck after it rebases on main.
+
+Independent diff review (diff-reviewer-glm): PASS WITH ISSUES. Resolved: (2) trackedFiles now passes an explicit maxBuffer and distinguishes rev-parse failure (skip) from git ls-files failure (fail closed with a named reason), so the pre-commit gate cannot silently pass; (3) nested-directory skip now has a distinct message; (5) files > 5 MB are not buffered. Added a nested-in-repo guard test and strengthened the dirty-case assertions. Re-verified: tests/privacy-audit.test.ts 9/9, npm test 802 tests / 4 pre-existing environmental failures (same as main) / 1 skip, lint clean, typecheck clean, check --pre-commit exit 0 with '[pass] privacy — clean (269 tracked files scanned)'.
+
+Open for human decision before merge: (a) AC#2 wording still names workspace test/lint/typecheck + binary semgrep subchecks, which were dropped-with-reason under approved option A; AC#2 remains unchecked pending a scope decision. (b) Review finding: the reimplemented needle set matches only the legacy literal forms, so it does not match the identifier forms actually in the tree ('Shabib Hossain', 'shabib87', 'codewithshabib'); adding those forms needs matching excludes and is a policy call. (c) The plan's generic '/Users/<name>' rule was dropped with reason (AGENTS.md text and frozen fixtures self-trigger).
 <!-- SECTION:NOTES:END -->

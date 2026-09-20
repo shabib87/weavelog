@@ -627,6 +627,87 @@ describe("cli check --pre-commit (pin-hygiene gate)", () => {
   });
 });
 
+describe("cli check privacy (TASK-73)", () => {
+  // Assembled at runtime so this file is not itself a scan offender.
+  const Personal = ["shabib", "hossain"].join("");
+  const Secret = ["AKIA", "ABCDEFGHIJKLMNOP"].join("");
+
+  function git(args: string[], cwd: string): void {
+    const r = spawnSync("git", args, { cwd, encoding: "utf8" });
+    if (r.status !== 0)
+      throw new Error(`git ${args.join(" ")} failed: ${r.stderr}`);
+  }
+
+  test("check --pre-commit fails naming the file and pattern when a tracked file carries a personal identifier", () => {
+    const dir = makeDir("privacy-dirty");
+    git(["init", "-b", "main"], dir);
+    git(["config", "user.email", "t@t.com"], dir);
+    git(["config", "user.name", "T"], dir);
+    write(join(dir, "weavelog.json"), JSON.stringify({ tools: {} }));
+    write(
+      join(dir, "package.json"),
+      JSON.stringify({ dependencies: { yaml: "2.9.0" } }),
+    );
+    write(join(dir, "package-lock.json"), "{}");
+    write(join(dir, "notes.md"), `contact ${Personal}\n`);
+    git(["add", "."], dir);
+    const r = run(["check", "--pre-commit"], {
+      cwd: dir,
+      env: { WEAVELOG_STATE_DIR: join(dir, "state") },
+    });
+    assert.equal(r.status, 1);
+    assert.ok(r.stderr.includes("privacy"), "names the privacy subcheck");
+    assert.ok(r.stderr.includes("notes.md"), "names the offending file");
+  });
+
+  test("check --pre-commit passes the privacy subcheck on a clean tracked tree", () => {
+    const dir = makeDir("privacy-clean");
+    git(["init", "-b", "main"], dir);
+    git(["config", "user.email", "t@t.com"], dir);
+    git(["config", "user.name", "T"], dir);
+    write(join(dir, "weavelog.json"), JSON.stringify({ tools: {} }));
+    write(
+      join(dir, "package.json"),
+      JSON.stringify({ dependencies: { yaml: "2.9.0" } }),
+    );
+    write(join(dir, "package-lock.json"), "{}");
+    write(join(dir, "notes.md"), "use ~ for home paths\n");
+    git(["add", "."], dir);
+    const r = run(["check", "--pre-commit"], {
+      cwd: dir,
+      env: { WEAVELOG_STATE_DIR: join(dir, "state") },
+    });
+    assert.equal(r.status, 0);
+    assert.ok(
+      r.stdout.includes("[pass] privacy"),
+      "privacy line is a pass, not a skip",
+    );
+  });
+
+  test("check --pre-commit catches a staged secret even when the working tree is clean", () => {
+    const dir = makeDir("privacy-staged");
+    git(["init", "-b", "main"], dir);
+    git(["config", "user.email", "t@t.com"], dir);
+    git(["config", "user.name", "T"], dir);
+    write(join(dir, "weavelog.json"), JSON.stringify({ tools: {} }));
+    write(
+      join(dir, "package.json"),
+      JSON.stringify({ dependencies: { yaml: "2.9.0" } }),
+    );
+    write(join(dir, "package-lock.json"), "{}");
+    write(join(dir, "notes.md"), `token ${Secret}\n`);
+    git(["add", "."], dir);
+    write(join(dir, "notes.md"), "clean\n");
+    const r = run(["check", "--pre-commit"], {
+      cwd: dir,
+      env: { WEAVELOG_STATE_DIR: join(dir, "state") },
+    });
+    assert.equal(r.status, 1);
+    assert.ok(r.stderr.includes("privacy"), "names the privacy subcheck");
+    assert.ok(r.stderr.includes("notes.md"), "names the staged file");
+  });
+});
+
 describe("cli difit.pointer", () => {
   test("check --stack-only exits 1 naming difit.pointer when the doc loses the pin", () => {
     const dir = makeDir("difit-doc");

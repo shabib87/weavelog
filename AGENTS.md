@@ -136,9 +136,9 @@ node --import tsx --test tests/cli/index.test.ts
 - MUST NOT add dependencies without explicit human approval.
 - MUST NOT target platforms other than macOS for v1.
 - MUST NOT commit absolute home-dir paths, personal emails, API keys, or
-  machine-specific identifiers. Use `~` for home paths. Run a sanitization
-  scan (grep for `/Users/`, personal identifiers, secret patterns) before
-  any commit. `weavelog check` will automate this when available.
+  machine-specific identifiers. Use `~` for home paths. The `weavelog check`
+  privacy subcheck scans tracked files for personal identifiers and secret
+  patterns; `weavelog check --pre-commit` runs it before every commit.
 
 ## Standards
 
