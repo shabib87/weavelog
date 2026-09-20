@@ -91,10 +91,14 @@ describe("findPrivacyOffenders", () => {
     );
   });
 
-  test("matches home paths case-insensitively", () => {
-    const hit = findPrivacyOffenders("notes.md", "path /users/realuser/x\n");
-    assert.equal(hit.length, 1);
-    assert.equal(hit[0]?.rule, "home-path");
+  test("does not flag lowercase URL routes that resemble home paths", () => {
+    assert.deepEqual(
+      findPrivacyOffenders(
+        "api.md",
+        "GET /users/12345 and https://api.github.com/users/octocat\n",
+      ),
+      [],
+    );
   });
 
   test("flags a personal name when the local needle rule is built", () => {

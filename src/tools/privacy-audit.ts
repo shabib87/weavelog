@@ -48,9 +48,11 @@ export const GENERIC_PRIVACY_RULES: PrivacyRule[] = [
   {
     id: "home-path",
     scope: "personal",
-    // Absolute macOS home paths, excluding obvious synthetic fixture names.
+    // Canonical macOS home paths only; excluding obvious synthetic fixture
+    // names. Case-sensitive on purpose so lowercase URL routes like
+    // /users/<id> are not false positives.
     pattern:
-      /\/Users\/(?!(?:x|me|test|someone|you|yourname|name)\b)[A-Za-z0-9._-]+/i,
+      /\/Users\/(?!(?:x|me|test|someone|you|yourname|name)\b)[A-Za-z0-9._-]+/,
   },
   { id: "secret", scope: "secret", pattern: /(AKIA|ASIA)[0-9A-Z]{16}/ },
   { id: "secret", scope: "secret", pattern: /gh[pousr]_[A-Za-z0-9]{36,}/ },
