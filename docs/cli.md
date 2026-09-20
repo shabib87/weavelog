@@ -3,16 +3,19 @@
 > **Authority:** Command-level behavior. The canonical distribution target
 > contract lives in [`docs/trd/cli-vision.md`](trd/cli-vision.md). The
 > corrected v0.1.0 brief and runbook verification battery define release
-> scope. Target behavior below does not claim delivery until its named task
-> passes verification.
+> scope. TASK-29 delivers the global materialization contract: the `init`,
+> `update`, `versions`, and `sync` sections below describe delivered
+> behavior. `scaffold` and the doctor battery remain target contract until
+> their named tasks pass verification.
 
 ## Commands
 
 | Command | Job |
 |---|---|
-| `weavelog init` | verifies required external-tool prerequisites, preflights all declared targets, and materializes shared skills plus OpenCode-native configuration; it does not install external tools |
-| `weavelog sync` | dev path: repo → live (dogfood loop; ported config-sync) |
-| `weavelog update` | release-driven dep bump + re-materialize |
+| `weavelog init` | materializes declared global targets from the installed package's harness manifest: renders config (AGENTS.md, opencode.jsonc, agents/, prompts/) to `~/.config/opencode` and copies skills to `~/.agents/skills`; whole-run preflight refuses all-or-nothing; it does not install external tools |
+| `weavelog sync` | dev path: repo → live (dogfood loop; config-sync); carries the AC #6 self-staleness guard (refuses stale or shadowed installs; report records the resolved package) |
+| `weavelog update` | materialization refresh: re-renders declared global targets from the installed payload on the same ownership contract as `init` |
+| `weavelog versions` | report-only tool-version report: checks installed tools against `weavelog.json` pins and prints per-channel update and rollback hints |
 | `weavelog check` | deterministic gates: tests, lint, typecheck, semgrep (telemetry off, pinned rulesets), secrets, frontmatter, manifest completeness |
 | `weavelog doctor` | installed? authenticated? config parses? proxy healthy? cache mode=cache? python3.13? :8788 launchd-owned? semgrep smoke? ledger tail? |
 | `weavelog scaffold --project` | creates project-owned conductor-era `AGENTS.md`, Backlog, `.env.example`, and neutral docs README homes for research, ADR, PRD, and TRD |
@@ -39,6 +42,11 @@ Exit-code contract:
 | `3` | managed-file conflict — the command refused before writing; use confirmed `--force` replacement only when intentional |
 | `4` | environment unsupported (non-arm64, non-macOS, missing runtime) |
 
+Delivered today: `init`, `update`, `sync`, and `versions` emit only `0`,
+`1`, and `2`; refusals exit `1`. Codes `3` and `4` remain target contract —
+`3` belongs to the scaffold conflict-refusal contract (TASK-30) and `4` to
+the runbook platform guard — until their owning tasks deliver.
+
 ---
 
 ## Ledger
@@ -50,31 +58,55 @@ it, the public corpus is built from it.
 
 ### Format sketch
 
-One JSON object per line:
+One JSON object per line — a run summary from `init`/`update`/`sync`:
 
 ```json
 {
   "ts": "2026-09-05T14:32:01.512Z",
-  "run": "8f14e45f",
-  "command": "init",
-  "args": { "host": "opencode", "dryRun": false, "force": false },
-  "events": [
-    { "type": "refusal", "path": "~/.config/opencode/AGENTS.md", "reason": "modified managed target; no files written; explicit --force replacement required" }
-  ],
+  "command": "update",
+  "args": [],
+  "filesTouched": ["AGENTS.md"],
+  "decisions": ["materialized 1 target(s)"],
   "errors": [],
-  "exit": 3
+  "exitCode": 0,
+  "resolvedPackageRoot": "/usr/local/lib/node_modules/weavelog",
+  "resolvedBinPath": "/usr/local/bin/weavelog"
 }
 ```
 
-This conflict example has no materialization event. Preflight refuses before
-any declared target is written, and the command exits nonzero.
+Materialization commands add a per-target summary on refusal or replacement:
+
+```json
+{
+  "ts": "2026-09-05T14:33:00.000Z",
+  "command": "init",
+  "args": [],
+  "filesTouched": [],
+  "decisions": [],
+  "errors": ["unowned target — no active-profile ownership receipt; no silent adoption — target opencode.jsonc"],
+  "exitCode": 1,
+  "targets": [
+    { "liveRel": "opencode.jsonc", "action": "refused", "reason": "unowned — no active-profile ownership receipt; no silent adoption" }
+  ],
+  "resolvedPackageRoot": "/usr/local/lib/node_modules/weavelog",
+  "resolvedBinPath": "/usr/local/bin/weavelog"
+}
+```
+
+The refusal example has no write: preflight refuses before any declared
+target is written, and the command exits nonzero.
 
 Field rules:
 
 - `ts` — ISO-8601 UTC.
-- `run` — short run id; all events of one invocation share it.
-- `events[].type` — `install` | `materialize` | `gate` | `refusal` | `error` | `decision`.
-- Every `refusal` and `error` names the file and the reason.
+- `command` — the CLI command; `args` — the effective flag list (string array).
+- `filesTouched` — declared targets written this run (omitted when empty).
+- `decisions` — run-level outcome notes; `errors` — refusal/failure details.
+- `targets` — per-target decision (create/update/replaced/refused) on
+  materialization commands; each refusal names the target and the reason.
+- `resolvedPackageRoot` / `resolvedBinPath` — AC #6 install-guard fields on
+  `init`/`update`/`sync` runs; record the resolved installed package even on
+  refusal paths.
 - The file is append-only. weavelog never rewrites or truncates it.
 
 ### Manifest
@@ -82,7 +114,8 @@ Field rules:
 `weavelog.json` (JSON, CLI-managed). This runtime inventory is separate from
 the strict package control manifest at `payload/config/harnesses/<id>.json`.
 Per-tool: install channel
-(brew/pipx/npm/uv), version, doctor check id. Completeness rule: every
+(app/git/npm/pipx), version, check id (what `check`/`versions` verify).
+Completeness rule: every
 external binary invoked in skills/src/payload must appear in the manifest —
 `check` enforces this (manifest-completeness gate; drift is a `doctor`
 check).
@@ -95,36 +128,39 @@ check).
 
 | Aspect | Behavior |
 |---|---|
-| Args | `--host <opencode>` (default: opencode), `--dry-run`, `--force`, `--yes` (non-interactive confirmation), per-tool skip flags |
-| Asks | preflight all targets; normal conflicts refuse. `--force` confirms each exact eligible target before whole-file replacement |
-| Ledger events | `prerequisite` per required tool, `materialize` per file, `decision` per confirmation, `refusal` per conflict, `backup` and `recovery` actions |
-| Exit codes | `0` clean; `1` step failed; `3` managed-file conflict declined; `4` unsupported env |
+| Args | `--force`, `--yes` (non-interactive confirmation) |
+| Preflight | whole-run and all-or-nothing: every declared target is decided before any write; absent → create, owned+unchanged → update, unowned/changed/ambiguous/state-missing → refuse the run (exit `1`, zero writes, per-target reasons) |
+| Journal | `ledger.jsonl` lines per target: `intent` for every action (`create`/`update`/`replaced`); `completion` only for replacements; `rollback` on safe failure. A dangling replacement `intent` without a later completion or rollback marks the target interrupted — the next run refuses automatic recovery. Run summary records decisions, errors, targets, and AC #6 fields |
+| Exit codes | `0` clean; `1` refusal or failure; `2` usage error |
 
-Target contract: preflight every declared target before writing. Absent global
-targets may be created. A proven Weavelog-owned, unchanged target may be
-updated. Unowned, modified, ambiguous, or state-missing targets refuse by
-default. `--force` allows confirmed replacement of exact declared leaf files
-only; it never merges or adopts configuration. Interactive use requires a
-confirmation. Noninteractive use requires both `--force --yes`. `--yes` alone
-does not permit replacement.
+Target contract (delivered by TASK-29): preflight every declared target
+before writing. Absent global targets are created. A proven Weavelog-owned,
+unchanged target (live hash equals the journaled state hash) is updated.
+Unowned, modified, ambiguous, or state-missing targets refuse the run. The
+whole run is all-or-nothing: one refusal means zero writes and exit `1`.
+`--force` allows confirmed replacement of exact declared leaf files only; it
+never merges or adopts configuration, and skills are never force-eligible.
+Interactive use requires a confirmation. Noninteractive use requires both
+`--force --yes`. `--yes` alone does not permit replacement.
 
 Before replacement, stage the new content and journal intent. Move the old
 file to a unique opaque `.bak` under
 `~/.local/state/weavelog/backups/<run-id>/`; never overwrite a backup. Keep
-the backup. Do not parse, hash, or log its contents. If replacement fails,
-restore the old file when safe. If a later change makes restoration unsafe,
-refuse recovery and report the journal and backup paths. A known conflicting
-active OpenCode configuration source makes the profile unsupported; `--force`
-does not bypass that check.
+the backup. Do not parse, hash, or log its contents. If replacement fails
+safely, restore the old file and journal the rollback. If a later change
+makes restoration unsafe, refuse recovery and report the journal and backup
+paths. An interrupted run (replacement intent without a later completion or
+rollback) refuses automatic recovery on the next run.
 
 The state and backup directories use mode `0700`; backup files use mode
 `0600`. The CLI refuses symlinks and non-regular targets, even with
-`--force`.
+`--force`. Ownership state uses opaque target-id digests and immutable
+content-addressed render snapshots; profile inputs resolve by precedence
+(flags > confirmed answers > profile > package-safe defaults) and never
+include secret values.
 
-This is the target contract for TASK-29. The current `init` implementation
-does not yet provide the complete manifest-driven ownership, force backup,
-journal recovery, and active-source behavior. TASK-29, TASK-66, and TASK-67
-own delivery and proof.
+Target contract (TASK-66): a known conflicting active OpenCode configuration
+source makes the profile unsupported; `--force` does not bypass that check.
 
 For the OpenCode profile, `init` also writes the managed `plugins/enforce.ts`
 and `plugins/verify-gate.ts` adapters. Each adapter imports only the compiled
@@ -145,10 +181,16 @@ receipt. Optional Headroom learning is not part of this adapter proof battery.
 
 | Aspect | Behavior |
 |---|---|
-| Args | `--reverse` (live → repo, for capture), `--dry-run` |
-| Job | tested developer-only dogfood path: Weavelog repository → developer live configuration |
-| Ledger events | `materialize` per synced file; `decision` for post-sync diff summary |
-| Exit codes | `0` clean (post-sync diff empty); `1` sync failed or diff non-empty after sync |
+| Args | none (repo → live, forward-only) |
+| Job | tested developer-only dogfood path: Weavelog repository → developer live configuration via the config-sync machinery; no-op when already in sync (exit 0) |
+| Journal | run summary records decisions, errors, and AC #6 fields (`resolvedPackageRoot`, `resolvedBinPath`) |
+| Exit codes | `0` clean (post-sync diff empty); `1` sync failed, diff non-empty after sync, or the AC #6 guard refused |
+
+`sync` carries the AC #6 self-staleness guard: before materializing it
+resolves the installed package and refuses (exit `1`, zero writes) when
+another weavelog install shadows the resolved bin on PATH or the installed
+payload is older than the repo payload being materialized. The run report
+records `resolvedPackageRoot` and `resolvedBinPath`.
 
 `sync` is not the end-user installer. User installation follows `init` and
 `update` ownership rules.
@@ -157,10 +199,22 @@ receipt. Optional Headroom learning is not part of this adapter proof battery.
 
 | Aspect | Behavior |
 |---|---|
-| Args | `--tool <name>`, `--dry-run`, `--force`, `--yes` |
-| Job | release-driven dependency update and re-materialize using the same ownership, preflight, backup, and recovery rules as `init` |
-| Ledger events | `prerequisite` per checked tool, `materialize` per file, plus any replacement backup or recovery action |
-| Exit codes | `0` clean; `1` update failed; `3` managed-file conflict; `4` unsupported env |
+| Args | `--force`, `--yes` (non-interactive confirmation) |
+| Job | materialization refresh: re-renders declared global targets from the installed payload on the same ownership, whole-run preflight, journal, backup, and recovery rules as `init` |
+| Journal | `ledger.jsonl` lines per target under the `update` command identity; run summary records decisions, errors, targets, and AC #6 fields |
+| Exit codes | `0` clean; `1` refusal or failure; `2` usage error |
+
+`update` is a refresh, not a dependency-update tool: it never changes
+versions. Version drift reporting lives in `weavelog versions`.
+
+### `weavelog versions`
+
+| Aspect | Behavior |
+|---|---|
+| Args | none |
+| Job | report-only tool-version report: checks every `weavelog.json` tool version against the installed tool and prints per-channel update notes (pipx/npm/app/git) plus rollback hints; never applies updates |
+| Journal | run summary with command `versions`; drift is reported, nothing changed |
+| Exit codes | `0` healthy (all tools at pinned versions); `1` drift found (report-only) |
 
 ### `weavelog check`
 
@@ -178,28 +232,36 @@ fail, counts) to the ledger; `--json` prints them for programmatic use.
 
 | Aspect | Behavior |
 |---|---|
-| Args | `--check <id>` (run one subcheck), `--json` |
-| Ledger events | `gate` per subcheck id |
+| Args | none today (full battery each run); `--check <id>` (run one subcheck) and `--json` are target contract |
+| Ledger events | one run summary with `decisions`/`errors`; per-gate `gate` records are target contract |
 | Exit codes | `0` all subchecks pass; `1` any subcheck fails |
 
-### Doctor subchecks (v0.1.0 battery)
+### Doctor subchecks
 
-| Subcheck id | Verifies |
-|---|---|
-| `proxy.health` | headroom proxy health endpoint responds |
-| `proxy.dashboard` | headroom dashboard returns 200 |
-| `proxy.cache-mode` | `/stats` reports mode=cache |
-| `proxy.owner` | `:8788` is launchd-owned (single-owner rule) |
-| `python.venv` | python3.13 venv present and active for the proxy |
-| `semgrep.smoke` | semgrep runs a smoke ruleset successfully (telemetry off) |
-| `auth.openrouter` | OpenRouter auth file present and parses |
-| `opencode.config-parse` | emitted opencode config parses and loads |
-| `manifest.drift` | managed files match manifest; no unexplained drift |
-| `manifest.completeness` | every invoked external binary appears in `weavelog.json` |
-| `versions.pinned` | manifest versions pinned for all tools |
-| `platform.arm64` | arm64 macOS guard (hard exit `4` otherwise) |
-| `ledger.tail` | ledger exists, is readable, and its tail parses as JSONL |
-| `opencode.adapters` | both managed adapters point to compiled hooks inside the installed package |
+The delivered `weavelog doctor` battery (TASK-29 slice verification):
+`manifest.parse`, `payload.integrity`, `templating.sanity`, `skills.layout`,
+`opencode.adapters`, `proxy.health`, `backlog.binary`, `node.version`,
+`node.path-guard`. The runbook verification-battery decomposition below is
+the target contract for the remaining subchecks; rows marked *target* are
+not yet delivered and belong to the runbook battery (TASK-45
+decomposition).
+
+| Subcheck id | Verifies | Status |
+|---|---|---|
+| `proxy.health` | headroom proxy health endpoint responds | delivered |
+| `opencode.adapters` | both managed adapters point to compiled hooks inside the installed package | delivered |
+| `proxy.dashboard` | headroom dashboard returns 200 | target |
+| `proxy.cache-mode` | `/stats` reports mode=cache | target |
+| `proxy.owner` | `:8788` is launchd-owned (single-owner rule) | target |
+| `python.venv` | python3.13 venv present and active for the proxy | target |
+| `semgrep.smoke` | semgrep runs a smoke ruleset successfully (telemetry off) | target |
+| `auth.openrouter` | OpenRouter auth file present and parses | target |
+| `opencode.config-parse` | emitted opencode config parses and loads | target |
+| `manifest.drift` | managed files match manifest; no unexplained drift | target |
+| `manifest.completeness` | every invoked external binary appears in `weavelog.json` | target |
+| `versions.pinned` | manifest versions pinned for all tools | target |
+| `platform.arm64` | arm64 macOS guard (hard exit `4` otherwise) | target |
+| `ledger.tail` | ledger exists, is readable, and its tail parses as JSONL | target |
 
 Each subcheck prints one line: id, pass/fail, and on failure a single
 copy-paste fix.

@@ -13,18 +13,25 @@
  * Exit codes: 0 = ok/skip, 1 = drift/refusal/conflict, 2 = usage error or
  * missing/unparseable manifest/tracked file.
  */
-import { createHash } from "node:crypto";
 import {
   existsSync,
-  lstatSync,
   mkdirSync,
   readFileSync,
   renameSync,
   writeFileSync,
 } from "node:fs";
 import { homedir } from "node:os";
-import { dirname, isAbsolute, join, relative, resolve } from "node:path";
+import { dirname, isAbsolute, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
+import {
+  excludedBy,
+  expandHome,
+  isSymlink,
+  normalizeRel,
+  readHarnessManifest,
+  sha256File,
+  sha256Of,
+} from "./declared-targets.js";
 import { repoRoot } from "./tool-paths.js";
 
 const HELP = `Usage: bun config-sync.ts [options]
@@ -124,117 +131,6 @@ const KNOWN_FLAGS = new Set([
 ]);
 
 const HOME = homedir();
-
-function expandHome(p: string): string {
-  if (p === "~") return HOME;
-  if (p.startsWith("~/")) return join(HOME, p.slice(2));
-  return p;
-}
-
-/** Normalize a manifest-relative path against a root; returns the clean relative form. */
-export function normalizeRel(root: string, rel: string): string {
-  return relative(root, resolve(root, rel));
-}
-
-/** First exclusion prefix matching the (normalized) rel, or null. */
-export function excludedBy(rel: string, exclusions: string[]): string | null {
-  return exclusions.find((ex) => rel.startsWith(ex)) ?? null;
-}
-
-function isSymlink(p: string): boolean {
-  try {
-    return lstatSync(p).isSymbolicLink();
-  } catch {
-    return false; // missing is not a symlink
-  }
-}
-
-function sha256Of(buf: Buffer): string {
-  return createHash("sha256").update(buf).digest("hex");
-}
-
-function sha256File(p: string): string {
-  return sha256Of(readFileSync(p));
-}
-
-// --- harness manifest ------------------------------------------------------
-
-interface HarnessManifest {
-  version: number;
-  harness: string;
-  liveRoot: string;
-  trackedRoot: string;
-  files: Record<string, string>;
-  exclusions: string[];
-  pluginsDeferral: boolean;
-}
-
-function readHarnessManifest(path: string): HarnessManifest {
-  if (!existsSync(path)) {
-    console.error(`harness manifest missing: ${path} (see --help)`);
-    process.exit(2);
-  }
-  let raw: unknown;
-  try {
-    raw = JSON.parse(readFileSync(path, "utf8"));
-  } catch (err) {
-    console.error(
-      `harness manifest unparseable: ${path}: ${(err as Error).message}`,
-    );
-    process.exit(2);
-  }
-  const errors: string[] = [];
-  const o = raw as Record<string, unknown>;
-  if (o.version !== 1)
-    errors.push(`version must be 1 (got ${JSON.stringify(o.version)})`);
-  if (typeof o.harness !== "string" || !o.harness.trim())
-    errors.push("harness must be a non-empty string");
-  if (typeof o.liveRoot !== "string" || !o.liveRoot.trim())
-    errors.push("liveRoot must be a non-empty string");
-  if (typeof o.trackedRoot !== "string" || !o.trackedRoot.trim())
-    errors.push("trackedRoot must be a non-empty string");
-  if (
-    o.files === null ||
-    typeof o.files !== "object" ||
-    Array.isArray(o.files) ||
-    Object.keys(o.files as Record<string, unknown>).length === 0
-  ) {
-    errors.push(
-      "files must be a non-empty object mapping live-relative -> tracked-relative paths",
-    );
-  } else {
-    for (const [live, tracked] of Object.entries(
-      o.files as Record<string, unknown>,
-    )) {
-      if (typeof tracked !== "string" || !tracked.trim())
-        errors.push(
-          `files.${live} must be a non-empty tracked-relative path string`,
-        );
-    }
-  }
-  if (
-    !Array.isArray(o.exclusions) ||
-    !o.exclusions.every((x) => typeof x === "string")
-  )
-    errors.push("exclusions must be an array of strings");
-  if (typeof o.pluginsDeferral !== "boolean")
-    errors.push("pluginsDeferral must be a boolean");
-  if (errors.length) {
-    console.error(
-      `harness manifest invalid: ${path}\n  ${errors.join("\n  ")}`,
-    );
-    process.exit(2);
-  }
-  return {
-    version: o.version as number,
-    harness: o.harness as string,
-    liveRoot: o.liveRoot as string,
-    trackedRoot: o.trackedRoot as string,
-    files: o.files as Record<string, string>,
-    exclusions: o.exclusions as string[],
-    pluginsDeferral: o.pluginsDeferral as boolean,
-  };
-}
 
 // --- materialize state -----------------------------------------------------
 

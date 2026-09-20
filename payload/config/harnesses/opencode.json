@@ -31,5 +31,27 @@
     "node_modules/"
   ],
   "pluginsDeferral": false,
+  "skills": {
+    "liveRoot": "~/.agents/skills",
+    "trackedRoot": "skills",
+    "dirs": [
+      "as-code-review",
+      "as-content-research-writer",
+      "as-domain-modeling",
+      "as-grilling",
+      "as-prototype",
+      "as-systematic-debugging",
+      "as-tdd",
+      "as-wayfinder",
+      "as-writing-skills",
+      "binary-doc-conversion",
+      "prompt-triage",
+      "remove-ai-slop",
+      "simplify-language",
+      "skill-spec",
+      "tool-selection-rubric",
+      "verify-with-criteria"
+    ]
+  },
   "hashSemantics": "sha256 of the bytes written to live (see config-sync --help)"
 }
