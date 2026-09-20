@@ -6,6 +6,7 @@ type: architecture
 author: conductor
 related_to:
   - ../adr/0008-cli-distribution-contract.md
+  - ../adr/0009-npm-provenance-and-release-gating.md
   - ./README.md
   - ../prd/2026-09-05-v010-draft-brief.md
 sources:
