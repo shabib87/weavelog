@@ -4,6 +4,7 @@ title: Clear public repository and Git history for release
 status: To Do
 assignee: []
 created_date: '2026-09-11 04:29'
+updated_date: '2026-09-20 08:20'
 labels: []
 milestone: m-5
 dependencies:
@@ -32,3 +33,9 @@ Outcome: independently clear the repository and every published Git ref for publ
 - [ ] #3 Branch is rebased on main and green
 - [ ] #4 All acceptance criteria checked with fresh evidence (one at a time, never batched)
 <!-- DOD:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+2026-09-20 scope absorbed from a withdrawn new task (per user: do not create new tasks): this clearance also owns the one-time privacy sweep. TASK-73 externalized the privacy gate so the shipped package carries no personal literal; the repository still holds real-name variants, absolute home paths, and personal email in provenance surfaces. Sweep: scan the working tree with the local needle set plus the generic rules, record offenders with file:line, treat attribution surfaces (LICENSE, NOTICE, ATTRIBUTION.md, README/prd trademark lines, payload/skills author fields) as intentionally allowed, fix or explicitly decide genuine leaks, and narrow/remove the temporary .weavelog-privacy-excludes at the repo root. Input: the 8 shipped payload/skills/*/SKILL.md carry 'author: github:@shabib87' (public brand per TASK-45 [AMEND-R6-6], not PII) — decide strip vs allow when local needles go live.
+<!-- SECTION:NOTES:END -->
