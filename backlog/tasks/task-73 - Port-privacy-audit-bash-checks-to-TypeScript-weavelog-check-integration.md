@@ -1,11 +1,11 @@
 ---
 id: TASK-73
 title: Port privacy-audit bash checks to TypeScript (weavelog check integration)
-status: In Progress
+status: Done
 assignee:
   - '@conductor'
 created_date: '2026-09-07 15:49'
-updated_date: '2026-09-20 08:27'
+updated_date: '2026-09-20 16:37'
 labels:
   - spec-approved
 milestone: m-7
@@ -37,9 +37,9 @@ The privacy/sanitization checks (scan for absolute home-dir paths like /Users/, 
 
 ## Definition of Done
 <!-- DOD:BEGIN -->
-- [ ] #1 Tests and lint pass with fresh output in the worktree
+- [x] #1 Tests and lint pass with fresh output in the worktree
 - [x] #2 Worktree is clean (no uncommitted changes)
-- [ ] #3 Branch is rebased on main and green
+- [x] #3 Branch is rebased on main and green
 - [x] #4 All acceptance criteria checked with fresh evidence (one at a time, never batched)
 <!-- DOD:END -->
 
@@ -97,3 +97,9 @@ Correction: the follow-up sweep task was withdrawn per user instruction (no new 
 
 Final review: L3 diff-reviewer-qwen PASS on fb4941d (externalization: env seam honored, dedicated needle path, empty-file skip, secret-scope-only redaction, canonical-case home-path; no regression). Review tally: L0 glm x2, L3 qwen x6 (final PASS), plan-gate qwen (externalization), plan-gate glm (initial plan). TASK-91 withdrawn/archived; sweep scope recorded on TASK-83.
 <!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Ported the legacy bash privacy checks to a TypeScript privacy subcheck in weavelog check (identity-free generic home-path + secret rules; personal needles from untracked local config), added workspace.test/lint/typecheck and security.audit subchecks, deleted the bash scripts, and updated AGENTS.md + docs/cli.md. Verified with 987 tests (982 pass; 4 pre-existing environmental failures identical to main; 1 skip), clean lint/typecheck, and a passing check --pre-commit. 11 independent review passes (L0 GLM x2, L3 Qwen x7 final PASS, plan-gate GLM + Qwen); all blockers fixed. The remaining in-repo identifiers sweep is recorded on TASK-83.
+<!-- SECTION:FINAL_SUMMARY:END -->
