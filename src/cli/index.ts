@@ -60,7 +60,10 @@ import {
   writeSnapshot,
 } from "../tools/materialize-state.js";
 import { checkDifitPointer, pinHygieneForDir } from "../tools/pin-hygiene.js";
-import { PRIVACY_RULES, privacyAuditForDir } from "../tools/privacy-audit.js";
+import {
+  GENERIC_PRIVACY_RULES,
+  privacyAuditForDir,
+} from "../tools/privacy-audit.js";
 import {
   defaultProfilesDir,
   readProfile,
@@ -1561,7 +1564,7 @@ function redactSecretLines(text: string): string {
   return text
     .split("\n")
     .map((line) =>
-      PRIVACY_RULES.some((rule) => rule.pattern.test(line))
+      GENERIC_PRIVACY_RULES.some((rule) => rule.pattern.test(line))
         ? "[redacted]"
         : line,
     )

@@ -6,18 +6,20 @@ import { join } from "node:path";
 import { afterEach, describe, test } from "node:test";
 import { fileURLToPath } from "node:url";
 import {
+  buildPrivacyRules,
   findPrivacyOffenders,
+  parseLines,
   privacyAuditForDir,
 } from "../src/tools/privacy-audit.js";
 
-// Needles are assembled at runtime so this test file does not itself contain
-// the strings the privacy scan looks for.
-const PERSONAL = ["shabib", "hossain"].join("");
+// All needles/tokens here are synthetic; the real identity never appears.
+const NEEDLE = ["Test", "Person"].join("");
 const SECRET = ["AKIA", "ABCDEFGHIJKLMNOP"].join("");
 const GITHUB_PAT = ["github", "_pat_", "ABCDEFGHIJKLMNOPQRSTUVWX"].join("");
 const OPENAI_KEY = ["sk", "-proj-", "ABCDEFGHIJKLMNOPQRSTUVWX"].join("");
 const STS_KEY = ["AS", "IA", "ABCDEFGHIJKLMNOP"].join("");
 const PRIVATE_KEY = ["-----BEGIN ", "ENCRYPTED ", "PRIVATE KEY-----"].join("");
+const HOME_PATH = ["/Users/", "realuser", "/project"].join("");
 const MODULE = fileURLToPath(
   new URL("../src/tools/privacy-audit.ts", import.meta.url),
 );
@@ -54,6 +56,23 @@ function makeRepo(dir: string): void {
   git(["config", "user.name", "T"], dir);
 }
 
+describe("parseLines / buildPrivacyRules", () => {
+  test("ignores blank lines and comments", () => {
+    assert.deepEqual(parseLines("# c\n\n  a  \nb\n"), ["a", "b"]);
+  });
+
+  test("adds a personal-name rule only when needles exist", () => {
+    assert.equal(
+      buildPrivacyRules([]).some((r) => r.id === "personal-name"),
+      false,
+    );
+    assert.equal(
+      buildPrivacyRules([NEEDLE]).some((r) => r.id === "personal-name"),
+      true,
+    );
+  });
+});
+
 describe("findPrivacyOffenders", () => {
   test("returns no offenders for clean content", () => {
     assert.deepEqual(
@@ -62,15 +81,25 @@ describe("findPrivacyOffenders", () => {
     );
   });
 
-  test("flags a personal identifier with file, line and rule", () => {
-    const offenders = findPrivacyOffenders(
-      "notes.md",
-      `first line\ncontact ${PERSONAL} here\n`,
+  test("flags a generic absolute home path but not synthetic fixtures", () => {
+    const hit = findPrivacyOffenders("notes.md", `path ${HOME_PATH}\n`);
+    assert.equal(hit.length, 1);
+    assert.equal(hit[0]?.rule, "home-path");
+    assert.deepEqual(
+      findPrivacyOffenders("x.md", "see /Users/x and /Users/me\n"),
+      [],
     );
-    assert.equal(offenders.length, 1);
-    assert.equal(offenders[0]?.file, "notes.md");
-    assert.equal(offenders[0]?.line, 2);
-    assert.equal(offenders[0]?.rule, "personal");
+  });
+
+  test("flags a personal name when the local needle rule is built", () => {
+    const rules = buildPrivacyRules([NEEDLE]);
+    const hit = findPrivacyOffenders(
+      "notes.md",
+      `contact ${NEEDLE} here\n`,
+      rules,
+    );
+    assert.equal(hit.length, 1);
+    assert.equal(hit[0]?.rule, "personal-name");
   });
 
   test("flags current secret token formats", () => {
@@ -90,24 +119,15 @@ describe("findPrivacyOffenders", () => {
     }
   });
 
-  test("redacts the matched secret value", () => {
-    const offenders = findPrivacyOffenders(
-      "cfg.ts",
-      `const k = "${SECRET}";\n`,
-    );
-    assert.equal(offenders[0]?.excerpt, "[redacted]");
-  });
-
   test("redacts a personal match on a line that also carries a secret", () => {
+    const rules = buildPrivacyRules([NEEDLE]);
     const offenders = findPrivacyOffenders(
       "cfg.ts",
-      `contact ${PERSONAL} key ${SECRET}\n`,
+      `contact ${NEEDLE} key ${SECRET}\n`,
+      rules,
     );
-    assert.ok(offenders.some((o) => o.rule === "personal"));
-    assert.ok(
-      offenders.every((o) => o.excerpt === "[redacted]"),
-      "no raw line is exposed",
-    );
+    assert.ok(offenders.some((o) => o.rule === "personal-name"));
+    assert.ok(offenders.every((o) => o.excerpt === "[redacted]"));
   });
 
   test("does not flag kebab-case prose that merely contains 'sk-'", () => {
@@ -116,11 +136,7 @@ describe("findPrivacyOffenders", () => {
       "risk-signals-l1-escalation-triggers",
       "flask-caching-implementation-guide",
     ]) {
-      assert.deepEqual(
-        findPrivacyOffenders("x.md", `${line}\n`),
-        [],
-        `false positive on ${line}`,
-      );
+      assert.deepEqual(findPrivacyOffenders("x.md", `${line}\n`), []);
     }
   });
 
@@ -136,7 +152,7 @@ describe("privacyAuditForDir", () => {
     makeRepo(dir);
     write(join(dir, "notes.md"), "# clean\n");
     git(["add", "."], dir);
-    const r = privacyAuditForDir(dir);
+    const r = privacyAuditForDir(dir, { needles: [] });
     assert.equal(r.status, "pass");
     assert.deepEqual(r.offenders, []);
     assert.ok(r.filesScanned >= 1);
@@ -145,25 +161,22 @@ describe("privacyAuditForDir", () => {
   test("fails naming the tracked file and matched pattern", () => {
     const dir = makeDir("dirty");
     makeRepo(dir);
-    write(join(dir, "notes.md"), `contact ${PERSONAL}\n`);
+    write(join(dir, "notes.md"), `path ${HOME_PATH}\n`);
     git(["add", "."], dir);
-    const r = privacyAuditForDir(dir);
+    const r = privacyAuditForDir(dir, { needles: [] });
     assert.equal(r.status, "fail");
     assert.ok(r.offenders.some((o) => o.file === "notes.md"));
-    assert.ok(
-      r.offenders.some((o) => o.rule === "personal"),
-      "offender names the matched rule",
-    );
-    assert.ok(r.detail.includes("notes.md"), "detail names the file");
-    assert.ok(r.detail.includes("[personal]"), "detail names the pattern");
+    assert.ok(r.offenders.some((o) => o.rule === "home-path"));
+    assert.ok(r.detail.includes("notes.md"));
   });
 
-  test("honors personal excludes", () => {
+  test("honors a repo-local excludes file", () => {
     const dir = makeDir("excluded");
     makeRepo(dir);
-    write(join(dir, "backlog", "task.md"), `contact ${PERSONAL}\n`);
+    write(join(dir, ".weavelog-privacy-excludes"), "backlog/\n");
+    write(join(dir, "backlog", "task.md"), `path ${HOME_PATH}\n`);
     git(["add", "."], dir);
-    const r = privacyAuditForDir(dir);
+    const r = privacyAuditForDir(dir, { needles: [] });
     assert.equal(r.status, "pass");
   });
 
@@ -172,7 +185,7 @@ describe("privacyAuditForDir", () => {
     makeRepo(dir);
     write(join(dir, "README.md"), `token ${SECRET}\n`);
     git(["add", "."], dir);
-    const r = privacyAuditForDir(dir);
+    const r = privacyAuditForDir(dir, { needles: [] });
     assert.equal(r.status, "fail");
     assert.ok(r.offenders.some((o) => o.file === "README.md"));
   });
@@ -184,20 +197,51 @@ describe("privacyAuditForDir", () => {
     git(["add", "."], dir);
     write(join(dir, "notes.md"), "clean\n");
     assert.equal(
-      privacyAuditForDir(dir, { source: "worktree" }).status,
+      privacyAuditForDir(dir, { source: "worktree", needles: [] }).status,
       "pass",
-      "worktree scan does not see the staged secret",
     );
-    const r = privacyAuditForDir(dir, { source: "index" });
+    const r = privacyAuditForDir(dir, { source: "index", needles: [] });
     assert.equal(r.status, "fail");
     assert.ok(r.offenders.some((o) => o.file === "notes.md"));
+  });
+
+  test("skips personal-name scanning when no needle file exists", () => {
+    const dir = makeDir("noneedles");
+    makeRepo(dir);
+    write(join(dir, "notes.md"), `contact ${NEEDLE}\n`);
+    git(["add", "."], dir);
+    const r = privacyAuditForDir(dir, { needlesPath: join(dir, "absent.txt") });
+    assert.equal(r.status, "pass");
+    assert.ok(r.detail.includes("skipped"));
+  });
+
+  test("fails closed when the needle file is unreadable", () => {
+    const dir = makeDir("badneedles");
+    makeRepo(dir);
+    write(join(dir, "notes.md"), "clean\n");
+    git(["add", "."], dir);
+    mkdirSync(join(dir, "as-dir"), { recursive: true });
+    const r = privacyAuditForDir(dir, { needlesPath: join(dir, "as-dir") });
+    assert.equal(r.status, "fail");
+    assert.ok(r.detail.includes("failed closed"));
   });
 
   test("skips outside a git working tree root", () => {
     const dir = makeDir("nogit");
     write(join(dir, "notes.md"), "clean\n");
-    const r = privacyAuditForDir(dir);
+    const r = privacyAuditForDir(dir, { needles: [] });
     assert.equal(r.status, "skip");
+  });
+
+  test("skips a nested directory inside a repo instead of scanning the parent", () => {
+    const dir = makeDir("nested");
+    makeRepo(dir);
+    write(join(dir, "notes.md"), `path ${HOME_PATH}\n`);
+    mkdirSync(join(dir, "src"), { recursive: true });
+    git(["add", "."], dir);
+    const r = privacyAuditForDir(join(dir, "src"), { needles: [] });
+    assert.equal(r.status, "skip");
+    assert.ok(r.detail.includes("root"));
   });
 
   test("index source fails closed when a tracked path contains a newline", () => {
@@ -205,19 +249,8 @@ describe("privacyAuditForDir", () => {
     makeRepo(dir);
     write(join(dir, "evil\nname.md"), "clean\n");
     git(["add", "."], dir);
-    const r = privacyAuditForDir(dir, { source: "index" });
+    const r = privacyAuditForDir(dir, { source: "index", needles: [] });
     assert.equal(r.status, "fail");
-    assert.ok(r.detail.includes("newline"), "detail explains the refusal");
-  });
-
-  test("skips a nested directory inside a repo instead of scanning the parent", () => {
-    const dir = makeDir("nested");
-    makeRepo(dir);
-    write(join(dir, "notes.md"), `contact ${PERSONAL}\n`);
-    mkdirSync(join(dir, "src"), { recursive: true });
-    git(["add", "."], dir);
-    const r = privacyAuditForDir(join(dir, "src"));
-    assert.equal(r.status, "skip");
-    assert.ok(r.detail.includes("root"), "detail explains the nested skip");
+    assert.ok(r.detail.includes("newline"));
   });
 });

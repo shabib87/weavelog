@@ -5,7 +5,7 @@ status: In Progress
 assignee:
   - '@conductor'
 created_date: '2026-09-07 15:49'
-updated_date: '2026-09-20 07:11'
+updated_date: '2026-09-20 07:40'
 labels:
   - spec-approved
 milestone: m-7
@@ -30,7 +30,7 @@ The privacy/sanitization checks (scan for absolute home-dir paths like /Users/, 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
 - [x] #1 WHEN the privacy checks are inventoried THEN each legacy check is reimplemented in TypeScript or explicitly dropped with a recorded reason
-- [ ] #2 WHEN weavelog check runs THEN it performs deterministic privacy, workspace test, lint, typecheck, and security verification subchecks
+- [x] #2 WHEN weavelog check runs THEN it performs deterministic privacy, workspace test, lint, typecheck, and security verification subchecks
 - [x] #3 WHEN a scanned file set or workspace verification fails THEN the subcheck fails and names the file, failed command, or matched pattern
 - [x] #4 WHEN the port lands THEN no bash remains as implementation logic and AGENTS.md points at the automated checks
 <!-- AC:END -->
@@ -38,9 +38,9 @@ The privacy/sanitization checks (scan for absolute home-dir paths like /Users/, 
 ## Definition of Done
 <!-- DOD:BEGIN -->
 - [ ] #1 Tests and lint pass with fresh output in the worktree
-- [ ] #2 Worktree is clean (no uncommitted changes)
+- [x] #2 Worktree is clean (no uncommitted changes)
 - [ ] #3 Branch is rebased on main and green
-- [ ] #4 All acceptance criteria checked with fresh evidence (one at a time, never batched)
+- [x] #4 All acceptance criteria checked with fresh evidence (one at a time, never batched)
 <!-- DOD:END -->
 
 ## Implementation Plan

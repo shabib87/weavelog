@@ -1,0 +1,10 @@
+# Repo-local personal-scan excludes (TASK-73).
+#
+# These surfaces legitimately name the author or hold provenance examples.
+# They are NOT shipped (package.json "files" does not include this file).
+# The TASK-83 public-history sweep owns narrowing/removing them.
+backlog/
+docs/research/
+docs/prd/
+README.md
+CHANGELOG.md

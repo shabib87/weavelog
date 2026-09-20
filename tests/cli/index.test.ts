@@ -628,8 +628,7 @@ describe("cli check --pre-commit (pin-hygiene gate)", () => {
 });
 
 describe("cli check privacy (TASK-73)", () => {
-  // Assembled at runtime so this file is not itself a scan offender.
-  const Personal = ["shabib", "hossain"].join("");
+  const HomePath = ["/Users/", "realuser", "/project"].join("");
   const Secret = ["AKIA", "ABCDEFGHIJKLMNOP"].join("");
 
   function git(args: string[], cwd: string): void {
@@ -638,7 +637,7 @@ describe("cli check privacy (TASK-73)", () => {
       throw new Error(`git ${args.join(" ")} failed: ${r.stderr}`);
   }
 
-  test("check --pre-commit fails naming the file and pattern when a tracked file carries a personal identifier", () => {
+  test("check --pre-commit fails naming the file and pattern when a tracked file carries an absolute home path", () => {
     const dir = makeDir("privacy-dirty");
     git(["init", "-b", "main"], dir);
     git(["config", "user.email", "t@t.com"], dir);
@@ -649,7 +648,7 @@ describe("cli check privacy (TASK-73)", () => {
       JSON.stringify({ dependencies: { yaml: "2.9.0" } }),
     );
     write(join(dir, "package-lock.json"), "{}");
-    write(join(dir, "notes.md"), `contact ${Personal}\n`);
+    write(join(dir, "notes.md"), `path ${HomePath}\n`);
     git(["add", "."], dir);
     const r = run(["check", "--pre-commit"], {
       cwd: dir,

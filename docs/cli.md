@@ -225,11 +225,17 @@ versions. Version drift reporting lives in `weavelog versions`.
 | Ledger events | `gate` per gate id with pass/fail; gate receipts reference run id |
 | Exit codes | `0` all gates pass; `1` any gate fails |
 
-The `privacy` subcheck scans the current workspace's tracked files, and staged
-content under `--pre-commit`. The workspace script and audit subchecks run in
-the current workspace and are skipped when it has no `package.json`/lockfile.
-They are guarded against re-entry, so a `check` invoked from inside a workspace
-test run does not recurse.
+The `privacy` subcheck enforces identity-free rules shipped with the package
+(generic absolute home paths and secret patterns) and, when present, the user's
+own identifiers from an untracked local needle file (`WEAVELOG_PRIVACY_NEEDLES`,
+default `~/.config/weavelog/privacy-needles.txt`; absent means the personal-name
+scope is skipped with a visible note, unreadable fails closed). Repo-specific
+personal excludes live in an optional `.weavelog-privacy-excludes` at the
+workspace root and are not shipped. It scans the current workspace's tracked
+files, and staged content under `--pre-commit`. The workspace script and audit
+subchecks run in the current workspace and are skipped when it has no
+`package.json`/lockfile. They are guarded against re-entry, so a `check`
+invoked from inside a workspace test run does not recurse.
 
 Gate receipts: each gate emits a receipt (gate id, run id, timestamp, pass/
 fail, counts) to the ledger; `--json` prints them for programmatic use.

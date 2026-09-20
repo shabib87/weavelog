@@ -137,8 +137,12 @@ node --import tsx --test tests/cli/index.test.ts
 - MUST NOT target platforms other than macOS for v1.
 - MUST NOT commit absolute home-dir paths, personal emails, API keys, or
   machine-specific identifiers. Use `~` for home paths. The `weavelog check`
-  privacy subcheck scans tracked files for personal identifiers and secret
-  patterns; `weavelog check --pre-commit` runs it before every commit.
+  privacy subcheck enforces generic absolute-home-path and secret-pattern rules
+  over tracked files and reads your own identifiers from an untracked local
+  needle file (`WEAVELOG_PRIVACY_NEEDLES`, default
+  `~/.config/weavelog/privacy-needles.txt`); `weavelog check --pre-commit`
+  runs it before every commit. Public CI cannot read local config, so
+  bare-name scanning runs locally; the generic rules always run.
 
 ## Standards
 

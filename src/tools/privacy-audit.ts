@@ -1,14 +1,17 @@
 import { spawnSync } from "node:child_process";
 import { readFileSync, realpathSync, statSync } from "node:fs";
+import { homedir } from "node:os";
 import { join } from "node:path";
 
 /**
  * privacy-audit — deterministic content scan for personal identifiers and
  * secret patterns (TASK-73).
  *
- * Replaces the legacy bash scripts/privacy-audit (git grep over a needle file)
- * with a TypeScript module wired into `weavelog check` and
- * `weavelog check --pre-commit`.
+ * The shipped rules are identity-free: generic absolute home paths and secret
+ * patterns. A user's own identifiers are loaded at runtime from an untracked
+ * local needle file (`WEAVELOG_PRIVACY_NEEDLES`), so no personal literal is
+ * committed or packaged. Repo-specific excludes live in an optional
+ * `.weavelog-privacy-excludes` file at the workspace root (not shipped).
  *
  * Two source modes:
  * - "worktree": scan the working-tree content of tracked files (`check`).
@@ -40,18 +43,14 @@ export interface PrivacyAuditResult {
 
 export type PrivacySource = "worktree" | "index";
 
-/** Personal identifiers that must never appear in a tracked file. */
-const PERSONAL_STRINGS = ["shabib", "hossain"].join("");
-const PERSONAL_HANDLE = ["@weave", "log"].join("");
-
-export const PRIVACY_RULES: PrivacyRule[] = [
+/** Identity-free rules shipped with the package. */
+export const GENERIC_PRIVACY_RULES: PrivacyRule[] = [
   {
-    id: "personal",
+    id: "home-path",
     scope: "personal",
-    pattern: new RegExp(
-      `${PERSONAL_STRINGS}|/Users/${PERSONAL_STRINGS}|${PERSONAL_HANDLE}`,
-      "i",
-    ),
+    // Absolute macOS home paths, excluding obvious synthetic fixture names.
+    pattern:
+      /\/Users\/(?!(?:x|me|test|someone|you|yourname|name)\b)[A-Za-z0-9._-]+/,
   },
   { id: "secret", scope: "secret", pattern: /(AKIA|ASIA)[0-9A-Z]{16}/ },
   { id: "secret", scope: "secret", pattern: /gh[pousr]_[A-Za-z0-9]{36,}/ },
@@ -59,8 +58,6 @@ export const PRIVACY_RULES: PrivacyRule[] = [
   {
     id: "secret",
     scope: "secret",
-    // A bare "sk-" must start a token, not appear inside kebab-case prose
-    // (e.g. "task-validate-..."). Explicit prefixes allow dashes in the body.
     pattern:
       /(?<![A-Za-z0-9])sk-(or-v1-[0-9a-f]{64}|proj-[A-Za-z0-9_-]{24,}|ant-(api|oat)\d+-[A-Za-z0-9_-]{24,}|[A-Za-z0-9]{24,})/,
   },
@@ -76,18 +73,16 @@ export const PRIVACY_RULES: PrivacyRule[] = [
 ];
 
 /**
- * Personal-rule excludes: attribution files legitimately name the author and
- * backlog/frozen docs hold provenance examples. Secret rules ignore these
- * excludes (a pasted token is a leak wherever it lands) except for frozen
- * docs/archive, which carries placeholder key-shaped text.
+ * Shipped excludes. Attribution files legitimately name the author, and frozen
+ * provenance is not shipped. The module excludes itself (it contains the rule
+ * sources). Nothing project-specific ships here — a workspace adds its own
+ * excludes via `.weavelog-privacy-excludes`.
  */
 export const PRIVACY_PERSONAL_EXCLUDES: string[] = [
-  "backlog/",
-  "docs/archive/",
+  "LICENSE",
   "NOTICE",
   "ATTRIBUTION.md",
-  "README.md",
-  "CHANGELOG.md",
+  "docs/archive/",
   "src/tools/privacy-audit.ts",
   "src/tools/privacy-audit.js",
 ];
@@ -98,9 +93,80 @@ export const PRIVACY_SECRET_EXCLUDES: string[] = [
   "src/tools/privacy-audit.js",
 ];
 
+export const REPO_EXCLUDES_FILE = ".weavelog-privacy-excludes";
+
 const MAX_EXCERPT = 120;
 const MAX_FILE_BYTES = 5 * 1024 * 1024;
 const MAX_GIT_BUFFER = 256 * 1024 * 1024;
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/** Parse a needles/excludes file: one entry per line, `#` comments, blanks skipped. */
+export function parseLines(text: string): string[] {
+  return text
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0 && !line.startsWith("#"));
+}
+
+/** Compile a personal-name rule from local needles (empty -> no rule). */
+export function buildPrivacyRules(needles: string[]): PrivacyRule[] {
+  const rules = [...GENERIC_PRIVACY_RULES];
+  if (needles.length > 0) {
+    rules.push({
+      id: "personal-name",
+      scope: "personal",
+      pattern: new RegExp(needles.map(escapeRegExp).join("|"), "i"),
+    });
+  }
+  return rules;
+}
+
+/** Default location of the untracked personal needle file. */
+export function defaultNeedlesPath(): string {
+  const base =
+    process.env.WEAVELOG_CONFIG_HOME ?? join(homedir(), ".config", "weavelog");
+  return join(base, "privacy-needles.txt");
+}
+
+type NeedleLoad =
+  | { ok: true; needles: string[]; detail: string }
+  | { ok: false; detail: string };
+
+function loadNeedles(path: string): NeedleLoad {
+  let text: string;
+  try {
+    text = readFileSync(path, "utf8");
+  } catch (err) {
+    const code = (err as NodeJS.ErrnoException).code;
+    if (code === "ENOENT") {
+      return {
+        ok: true,
+        needles: [],
+        detail: "personal-name scan skipped (no local needle file)",
+      };
+    }
+    return {
+      ok: false,
+      detail: `personal needle file unreadable (${(err as Error).message}); privacy scan failed closed`,
+    };
+  }
+  return {
+    ok: true,
+    needles: parseLines(text),
+    detail: "personal-name scan enabled from local needle file",
+  };
+}
+
+function repoExcludes(root: string): string[] {
+  try {
+    return parseLines(readFileSync(join(root, REPO_EXCLUDES_FILE), "utf8"));
+  } catch {
+    return [];
+  }
+}
 
 function excerptFor(line: string): string {
   const trimmed = line.trim();
@@ -113,7 +179,7 @@ function excerptFor(line: string): string {
 export function findPrivacyOffenders(
   file: string,
   content: string,
-  rules: PrivacyRule[] = PRIVACY_RULES,
+  rules: PrivacyRule[] = GENERIC_PRIVACY_RULES,
 ): PrivacyOffender[] {
   const offenders: PrivacyOffender[] = [];
   const lines = content.split("\n");
@@ -130,7 +196,6 @@ export function findPrivacyOffenders(
           file,
           line: i + 1,
           rule: rule.id,
-          // Never persist a matched secret: keep location, drop the value.
           excerpt:
             rule.scope === "secret" || lineHasSecret
               ? "[redacted]"
@@ -161,7 +226,7 @@ export function scanFile(
     secretExcludes?: string[];
   } = {},
 ): PrivacyOffender[] {
-  const rules = opts.rules ?? PRIVACY_RULES;
+  const rules = opts.rules ?? GENERIC_PRIVACY_RULES;
   const personalExcludes = opts.personalExcludes ?? PRIVACY_PERSONAL_EXCLUDES;
   const secretExcludes = opts.secretExcludes ?? PRIVACY_SECRET_EXCLUDES;
   const scopeById = new Map(rules.map((r) => [r.id, r.scope]));
@@ -354,15 +419,42 @@ export function privacyAuditForDir(
   root: string,
   opts: {
     rules?: PrivacyRule[];
+    needles?: string[];
+    needlesPath?: string;
     personalExcludes?: string[];
     secretExcludes?: string[];
     source?: PrivacySource;
   } = {},
 ): PrivacyAuditResult {
-  const rules = opts.rules ?? PRIVACY_RULES;
-  const personalExcludes = opts.personalExcludes ?? PRIVACY_PERSONAL_EXCLUDES;
-  const secretExcludes = opts.secretExcludes ?? PRIVACY_SECRET_EXCLUDES;
   const source = opts.source ?? "worktree";
+  let needleDetail = "";
+  let rules = opts.rules;
+  if (rules === undefined) {
+    if (opts.needles !== undefined) {
+      rules = buildPrivacyRules(opts.needles);
+      needleDetail =
+        opts.needles.length > 0
+          ? "personal-name scan enabled"
+          : "personal-name scan skipped (no needles)";
+    } else {
+      const loaded = loadNeedles(opts.needlesPath ?? defaultNeedlesPath());
+      if (!loaded.ok) {
+        return {
+          status: "fail",
+          offenders: [],
+          filesScanned: 0,
+          detail: loaded.detail,
+        };
+      }
+      rules = buildPrivacyRules(loaded.needles);
+      needleDetail = loaded.detail;
+    }
+  }
+  const personalExcludes = opts.personalExcludes ?? [
+    ...PRIVACY_PERSONAL_EXCLUDES,
+    ...repoExcludes(root),
+  ];
+  const secretExcludes = opts.secretExcludes ?? PRIVACY_SECRET_EXCLUDES;
   const tracked = trackedFiles(root);
   if (!tracked.ok) {
     return {
@@ -392,12 +484,13 @@ export function privacyAuditForDir(
   }
   const scanned = read.contents.size;
   const skipNote = read.skipped > 0 ? `, ${read.skipped} binary/oversized` : "";
+  const needleNote = needleDetail ? `; ${needleDetail}` : "";
   if (offenders.length === 0) {
     return {
       status: "pass",
       offenders,
       filesScanned: scanned,
-      detail: `clean (${scanned} tracked file${scanned === 1 ? "" : "s"} scanned${skipNote})`,
+      detail: `clean (${scanned} tracked file${scanned === 1 ? "" : "s"} scanned${skipNote}${needleNote})`,
     };
   }
   const summary = offenders
