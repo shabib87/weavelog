@@ -21,7 +21,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { isAbsolute, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
-import { excludedBy, normalizeRel } from "./config-sync.js";
+import { excludedBy, normalizeRel } from "./declared-targets.js";
 import { repoRoot, toolScript } from "./tool-paths.js";
 
 const HELP = `Usage: bun stack-check.ts [options]

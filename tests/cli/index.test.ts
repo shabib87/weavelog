@@ -4,7 +4,6 @@ import {
   chmodSync,
   cpSync,
   existsSync,
-  lstatSync,
   mkdirSync,
   readFileSync,
   rmSync,
@@ -55,6 +54,14 @@ function makeDir(prefix: string): string {
 function write(path: string, content: string): void {
   mkdirSync(join(path, ".."), { recursive: true });
   writeFileSync(path, content);
+}
+
+/** A PATH with nothing on it — hermetic guard env: no second weavelog
+ * install can shadow, and the AC #6 shadow scan has no candidates. */
+function emptyPath(dir: string): string {
+  const p = join(dir, "empty-path");
+  mkdirSync(p, { recursive: true });
+  return p;
 }
 
 function lastLedgerLine(stateDir: string): Record<string, unknown> {
@@ -126,33 +133,72 @@ function fakePlist(path: string, nodePath: string): void {
   );
 }
 
-function initFixture(
-  withDiagramDesign: boolean,
-  extraLiveFiles: Record<string, string> = {},
-): {
+function makeFixtureInstall(dir: string): string {
+  // A present bin makes checkInstallGuard active, so the fixture payload MUST
+  // be a verbatim copy of the repo payload (staleness compares against it).
+  const pkg = join(dir, "pkg");
+  write(
+    join(pkg, "package.json"),
+    JSON.stringify(
+      {
+        name: "weavelog",
+        version: "0.1.0",
+        bin: { weavelog: "./dist/cli/index.js" },
+      },
+      null,
+      2,
+    ),
+  );
+  write(join(pkg, "dist", "cli", "index.js"), "#!/usr/bin/env node\n");
+  cpSync(join(REPO, "payload"), join(pkg, "payload"), { recursive: true });
+  return pkg;
+}
+
+function initFixture(): {
   dir: string;
-  live: string;
+  home: string;
   config: string;
+  skills: string;
   state: string;
+  profiles: string;
+  pkg: string;
+  emptybin: string;
 } {
   const dir = makeDir("init");
-  const live = join(dir, "live");
-  const config = join(dir, "config");
-  const state = join(dir, "state");
-  mkdirSync(live, { recursive: true });
-  for (const [rel, content] of Object.entries(extraLiveFiles)) {
-    write(join(live, rel), content);
-  }
-  write(
-    join(live, ".env"),
-    `WEAVELOG_HOME=${live}\nWEAVELOG_CONFIG_HOME=${config}\n`,
-  );
-  if (withDiagramDesign) {
-    mkdirSync(join(dir, "code", "diagram-design", "skills", "diagram-design"), {
-      recursive: true,
-    });
-  }
-  return { dir, live, config, state };
+  const home = join(dir, "home");
+  const emptybin = join(dir, "emptybin");
+  mkdirSync(home, { recursive: true });
+  mkdirSync(emptybin, { recursive: true });
+  const pkg = makeFixtureInstall(dir);
+  return {
+    dir,
+    home,
+    emptybin,
+    pkg,
+    config: join(home, ".config", "opencode"),
+    skills: join(home, ".agents", "skills"),
+    state: join(dir, "state"),
+    profiles: join(dir, "profiles"),
+  };
+}
+
+function initEnv(f: {
+  home: string;
+  state: string;
+  profiles: string;
+  pkg: string;
+  emptybin: string;
+}): Record<string, string> {
+  return {
+    HOME: f.home,
+    WEAVELOG_STATE_DIR: f.state,
+    WEAVELOG_PROFILES_DIR: f.profiles,
+    // Hermetic AC #6: the resolved installed package is ALWAYS the fixture
+    // pkg and PATH carries no other weavelog bin, so a built worktree dist/
+    // or a host-global install can never flip the staleness/shadow guard on.
+    WEAVELOG_PACKAGE_ROOT: f.pkg,
+    PATH: f.emptybin,
+  };
 }
 
 describe("cli (--help)", () => {
@@ -160,6 +206,7 @@ describe("cli (--help)", () => {
     "init",
     "sync",
     "update",
+    "versions",
     "check",
     "doctor",
     "scaffold",
@@ -181,27 +228,25 @@ describe("cli (--help)", () => {
 
 describe("cli init", () => {
   test("materializes all managed OpenCode adapters from this installed package", () => {
-    const f = initFixture(true);
-    const r = run(["init"], {
-      env: { WEAVELOG_LIVE_ROOT: f.live, WEAVELOG_STATE_DIR: f.state },
-    });
-    assert.equal(r.status, 0);
+    const f = initFixture();
+    const r = run(["init"], { env: initEnv(f) });
+    assert.equal(r.status, 0, r.stderr);
     for (const adapter of ["enforce", "verify-gate", "opencode-tmp"]) {
       const adapterPath = join(f.config, "plugins", `${adapter}.ts`);
       assert.ok(existsSync(adapterPath), `${adapter} adapter materialized`);
       assert.ok(
-        readFileSync(adapterPath, "utf8").includes(join(REPO, "dist", "hooks")),
-        `${adapter} targets this installed package`,
+        readFileSync(adapterPath, "utf8").includes(
+          join(f.pkg, "dist", "hooks"),
+        ),
+        `${adapter} targets the fixture installed package`,
       );
     }
   });
 
-  test("materializes config + skills + AGENTS.md, resolves .env tokens, symlinks diagram-design, writes ledger", () => {
-    const f = initFixture(true);
-    const r = run(["init"], {
-      env: { WEAVELOG_LIVE_ROOT: f.live, WEAVELOG_STATE_DIR: f.state },
-    });
-    assert.equal(r.status, 0);
+  test("materializes config + skills + AGENTS.md, resolves tokens, writes ledger", () => {
+    const f = initFixture();
+    const r = run(["init"], { env: initEnv(f) });
+    assert.equal(r.status, 0, r.stderr);
     assert.ok(
       existsSync(join(f.config, "opencode.jsonc")),
       "opencode.jsonc materialized",
@@ -211,16 +256,16 @@ describe("cli init", () => {
       "live AGENTS.md written",
     );
     assert.ok(
-      existsSync(join(f.live, "skills", "as-tdd", "SKILL.md")),
-      "skills materialized",
+      existsSync(join(f.skills, "as-tdd", "SKILL.md")),
+      "skills materialized to ~/.agents/skills",
     );
     const researcher = readFileSync(
       join(f.config, "agents", "researcher.md"),
       "utf8",
     );
     assert.ok(
-      researcher.includes(f.live),
-      "WEAVELOG_HOME token resolved from .env",
+      researcher.includes(join(f.home, ".agents")),
+      "WEAVELOG_HOME token resolved",
     );
     const implementer = readFileSync(
       join(f.config, "agents", "implementer.md"),
@@ -228,16 +273,11 @@ describe("cli init", () => {
     );
     assert.ok(
       implementer.includes(f.config),
-      "WEAVELOG_CONFIG_HOME token resolved from .env",
+      "WEAVELOG_CONFIG_HOME token resolved",
     );
     assert.ok(
       !researcher.includes("{{"),
       "no unresolved tokens in researcher.md",
-    );
-    assert.equal(
-      lstatSync(join(f.live, "skills", "diagram-design")).isSymbolicLink(),
-      true,
-      "diagram-design symlink created when host target exists",
     );
     const entry = lastLedgerLine(f.state);
     assert.equal(entry.command, "init");
@@ -262,50 +302,44 @@ describe("cli init", () => {
   });
 
   test("re-init on a materialized live root is a no-op exit 0 (managed files unchanged)", () => {
-    const f = initFixture(true);
-    const env = { WEAVELOG_LIVE_ROOT: f.live, WEAVELOG_STATE_DIR: f.state };
+    const f = initFixture();
+    const env = initEnv(f);
     assert.equal(run(["init"], { env }).status, 0);
     const r2 = run(["init"], { env });
     assert.equal(r2.status, 0);
   });
 
-  test("diagram-design symlink skipped with a warning when the host target is absent", () => {
-    const f = initFixture(false);
-    const r = run(["init"], {
-      env: { WEAVELOG_LIVE_ROOT: f.live, WEAVELOG_STATE_DIR: f.state },
-    });
-    assert.equal(r.status, 0);
-    assert.equal(existsSync(join(f.live, "skills", "diagram-design")), false);
-    assert.ok(
-      r.stdout.includes("diagram-design"),
-      "skip condition recorded in output",
-    );
-    const entry = lastLedgerLine(f.state);
-    assert.ok(
-      entry.decisions.some((d: string) => d.includes("diagram-design")),
-      "skip decision recorded in ledger",
-    );
-  });
-
-  test("init refuses on an existing unversioned live file (non-zero + ledger), --force proceeds without deleting it", () => {
-    const f = initFixture(false, { "notes.txt": "personal notes\n" });
-    const env = { WEAVELOG_LIVE_ROOT: f.live, WEAVELOG_STATE_DIR: f.state };
+  test("init refuses on an unowned file at a declared target (nonzero + ledger); --force --yes replaces it with an opaque backup", () => {
+    const f = initFixture();
+    write(join(f.config, "opencode.jsonc"), "personal notes\n");
+    const env = initEnv(f);
     const r = run(["init"], { env });
-    assert.equal(r.status, 3);
+    assert.equal(r.status, 1);
     assert.ok(
-      (r.stdout + r.stderr).includes("notes.txt"),
+      (r.stdout + r.stderr).includes("opencode.jsonc"),
       "refusal names the file",
     );
-    assert.equal(lastLedgerLine(f.state).exitCode, 3);
-    const force = run(["init", "--force"], { env });
-    assert.equal(force.status, 0);
-    assert.equal(
-      readFileSync(join(f.live, "notes.txt"), "utf8"),
-      "personal notes\n",
-    );
+    assert.equal(lastLedgerLine(f.state).exitCode, 1);
+    const force = run(["init", "--force", "--yes"], { env });
+    assert.equal(force.status, 0, force.stderr);
     assert.ok(
       existsSync(join(f.config, "opencode.jsonc")),
       "forced init materialized config",
+    );
+    // the prior personal bytes are preserved as an opaque backup, not deleted
+    const lines = readFileSync(join(f.state, "ledger.jsonl"), "utf8")
+      .trim()
+      .split("\n")
+      .map((l) => JSON.parse(l));
+    const completion = lines.find(
+      (l) => l.phase === "completion" && l.target?.liveRel === "opencode.jsonc",
+    );
+    assert.ok(completion, "replacement completion journaled");
+    const backup = join(f.state, "backups", completion.target.backupRef);
+    assert.equal(
+      readFileSync(backup, "utf8"),
+      "personal notes\n",
+      "prior bytes preserved in the backup",
     );
   });
 });
@@ -315,7 +349,11 @@ describe("cli sync", () => {
     const dir = makeDir("sync");
     const config = join(dir, "config");
     const state = join(dir, "state");
-    const env = { WEAVELOG_CONFIG_HOME: config, WEAVELOG_STATE_DIR: state };
+    const env = {
+      WEAVELOG_CONFIG_HOME: config,
+      WEAVELOG_STATE_DIR: state,
+      PATH: emptyPath(dir),
+    };
     const r = run(["sync"], { env });
     assert.equal(r.status, 0);
     assert.ok(
@@ -347,6 +385,7 @@ describe("cli sync", () => {
         WEAVELOG_LIVE_ROOT: live,
         WEAVELOG_CONFIG_HOME: config,
         WEAVELOG_STATE_DIR: state,
+        PATH: emptyPath(dir),
       },
     });
     assert.equal(r.status, 0);
@@ -389,6 +428,7 @@ describe("cli doctor", () => {
       WEAVELOG_STATE_DIR: join(dir, "state"),
       WEAVELOG_CHECK_PLIST: join(dir, "no-plist.plist"),
       WEAVELOG_SKILLS_DIR: join(dir, "skills"),
+      PATH: emptyPath(dir),
       ...bins,
     };
     const r = run(["doctor"], { env });
@@ -411,6 +451,7 @@ describe("cli doctor", () => {
       WEAVELOG_STATE_DIR: state,
       WEAVELOG_CHECK_PLIST: join(dir, "no-plist.plist"),
       WEAVELOG_SKILLS_DIR: join(dir, "skills"),
+      PATH: emptyPath(dir),
       ...bins,
       // Absent headroom keeps proxy.health on its documented skip path instead
       // of a real localhost:8788 request that depends on the host machine.
@@ -463,6 +504,7 @@ describe("cli doctor", () => {
       WEAVELOG_STATE_DIR: join(dir, "state"),
       WEAVELOG_CHECK_PLIST: join(dir, "Library", "LaunchAgents", CHECK_PLIST),
       WEAVELOG_SKILLS_DIR: join(dir, "skills"),
+      PATH: emptyPath(dir),
       ...bins,
       // Absent headroom keeps proxy.health on its documented skip path instead
       // of a real localhost:8788 request that depends on the host machine.
@@ -488,6 +530,7 @@ describe("cli check", () => {
       WEAVELOG_STATE_DIR: join(dir, "state"),
       WEAVELOG_CHECK_PLIST: join(dir, "no-plist.plist"),
       WEAVELOG_SKILLS_DIR: skills,
+      PATH: emptyPath(dir),
       ...versionEnv(dir),
     };
     const init = run(["init"], { env });
@@ -506,6 +549,7 @@ describe("cli check", () => {
       WEAVELOG_STATE_DIR: join(dir, "state"),
       WEAVELOG_CHECK_PLIST: join(dir, "no-plist.plist"),
       WEAVELOG_SKILLS_DIR: skills,
+      PATH: emptyPath(dir),
       ...versionEnv(dir),
     };
     const bins = join(dir, "bins");
@@ -596,6 +640,7 @@ describe("cli difit.pointer", () => {
       WEAVELOG_STATE_DIR: join(dir, "state"),
       WEAVELOG_CHECK_PLIST: join(dir, "no-plist.plist"),
       WEAVELOG_SKILLS_DIR: skills,
+      PATH: emptyPath(dir),
       WEAVELOG_DIFIT_DOC: badDoc,
       ...versionEnv(dir),
     };
@@ -617,6 +662,7 @@ describe("cli difit.pointer", () => {
       WEAVELOG_STATE_DIR: join(dir, "state"),
       WEAVELOG_CHECK_PLIST: join(dir, "no-plist.plist"),
       WEAVELOG_SKILLS_DIR: skills,
+      PATH: emptyPath(dir),
       WEAVELOG_DIFIT_DOC: doc,
       ...versionEnv(dir),
     };

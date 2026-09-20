@@ -1,10 +1,12 @@
 #!/usr/bin/env node
 
 import { spawnSync } from "node:child_process";
+import { randomUUID } from "node:crypto";
 import type { Stats } from "node:fs";
 import {
   accessSync,
   appendFileSync,
+  chmodSync,
   constants,
   existsSync,
   lstatSync,
@@ -12,19 +14,52 @@ import {
   mkdtempSync,
   readdirSync,
   readFileSync,
-  readlinkSync,
+  renameSync,
   rmSync,
-  symlinkSync,
   writeFileSync,
 } from "node:fs";
 import { homedir, tmpdir } from "node:os";
-import { dirname, join, relative, resolve } from "node:path";
+import { dirname, join, relative, resolve, sep } from "node:path";
+import { createInterface } from "node:readline/promises";
 import { fileURLToPath } from "node:url";
 import {
   emitOpenCodeAdapters,
   inspectOpenCodeAdapters,
 } from "../hooks/opencode-adapters.js";
+import {
+  expandHome,
+  readHarnessManifest,
+  sha256File,
+  sha256Of,
+} from "../tools/declared-targets.js";
+import {
+  type DeclaredTarget,
+  decideTargetAction,
+  declaredTargetsFromFiles,
+  declaredTargetsFromSkills,
+  journalStateFor,
+  type TargetDecision,
+  writeJournal,
+} from "../tools/init-materialize.js";
+import type { InstalledPackage } from "../tools/install-resolver.js";
+import {
+  findPathShadows,
+  hashPayloadFiles,
+  resolveInstalledPackage,
+  stalePayloadFiles,
+} from "../tools/install-resolver.js";
+import {
+  readActiveProfile,
+  writeActiveProfile,
+  writeSnapshot,
+} from "../tools/materialize-state.js";
 import { checkDifitPointer, pinHygieneForDir } from "../tools/pin-hygiene.js";
+import {
+  defaultProfilesDir,
+  readProfile,
+  resolveInputs,
+  tokensFromProfile,
+} from "../tools/profiles.js";
 import {
   detectRiskSignals,
   firstChangedLine,
@@ -36,25 +71,42 @@ import { toolScript } from "../tools/tool-paths.js";
 import type { WeavelogManifest } from "../tools/weavelog-manifest.js";
 
 const USAGE =
-  "Usage: weavelog <command> [options]\n\nCommands:\n  init       Materialize the payload into a live root\n  sync       Repo -> live config materialization (author machine)\n  update     Report tool versions vs weavelog.json plus update and rollback hints\n  check      Verify the machine against weavelog.json (--stack-only: fast subset)\n  doctor     Run the subcheck battery\n  scaffold   Scaffold a backlog-driven project dir\n  stats      Show session usage statistics from .pi/logs/*.stats.json\n\nRun 'weavelog <command> --help' for command help.";
+  "Usage: weavelog <command> [options]\n\nCommands:\n  init       Materialize the payload into a live root\n  sync       Repo -> live config materialization (author machine)\n  update     Refresh materialized global targets from the installed payload\n  versions   Report tool versions vs weavelog.json plus update and rollback hints\n  check      Verify the machine against weavelog.json (--stack-only: fast subset)\n  doctor     Run the subcheck battery\n  scaffold   Scaffold a backlog-driven project dir\n  stats      Show session usage statistics from .pi/logs/*.stats.json\n\nRun 'weavelog <command> --help' for command help.";
 
 const COMMAND_HELP: Record<string, string> = {
-  init: `Usage: weavelog init [--force]
+  init: `Usage: weavelog init [--force] [--yes]
 
-Materialize the payload into a live root. Template files resolve
-{{WEAVELOG_HOME}} and {{WEAVELOG_CONFIG_HOME}} from the .env at the target
-live root (zero secret values in payload templates). Copies payload/config to
-the live config locations and payload/skills to <live-root>/skills (excluding
-personal dirs by policy). Creates the diagram-design host symlink only when
-<skills>/../../code/diagram-design/skills/diagram-design exists, else skips
-with a doctor warning condition. Writes the live AGENTS.md from the payload
-template. Refuses (non-zero exit + ledger line) when the live root exists with
-conflicting unversioned files unless --force.
+Materialize the INSTALLED weavelog package payload into the declared global
+targets per the harness manifest (payload/config/harnesses/opencode.json):
+rendered config (AGENTS.md, opencode.jsonc, agents/, prompts/) to
+~/.config/opencode and copied skills to ~/.agents/skills. Whole-run
+preflight runs before any write: every declared target must be absent
+(create) or proven weavelog-owned AND unchanged (update); any unowned,
+changed, ambiguous, or state-missing target refuses the whole run (exit 1,
+zero writes, per-target reasons). No silent adoption, no baseline capture.
+
+--force may replace only eligible declared leaf files (never skills,
+symlinks, special files, or protected paths) after confirmation:
+interactive TTY prompts for approval; noninteractive requires BOTH --force
+and --yes (--yes alone never permits). Replacements journal intent before
+the change, move the prior file to an opaque 0600 .bak under
+<state>/backups/<run-id>/, install the staged file, and journal completion.
+Backups are preserved and never parsed or logged. On a safe failure the
+original is restored and the rollback recorded; an interrupted run refuses
+automatic recovery and reports the journal and backup paths.
+
+Render tokens: WEAVELOG_HOME and WEAVELOG_CONFIG_HOME defaults plus profile
+choices (precedence: flags > confirmed answers > profile > package-safe
+defaults). No secret values ever enter render tokens, state, journal, or
+backups.
 
 Env seams:
-  WEAVELOG_LIVE_ROOT       live root (default ~/.agents)
-  WEAVELOG_CONFIG_HOME     opencode config dir (default ~/.config/opencode)
-  WEAVELOG_STATE_DIR       ledger dir (default ~/.local/state/weavelog)`,
+  WEAVELOG_PACKAGE_ROOT    installed package root (default: resolved from the running CLI)
+  WEAVELOG_CONFIG_HOME     opencode config root (default: manifest liveRoot)
+  WEAVELOG_LIVE_ROOT       WEAVELOG_HOME token default (default ~/.agents)
+  WEAVELOG_PROFILES_DIR    profiles dir (default ~/.config/weavelog/profiles)
+  WEAVELOG_STATE_DIR       state + ledger dir (default ~/.local/state/weavelog)
+  WEAVELOG_TTY             force interactive TTY behavior for --force confirmation`,
   sync: `Usage: weavelog sync
 
 Repo -> live materialization for the author machine. Runs the config-sync
@@ -64,7 +116,31 @@ already in sync (exit 0).
 Env seams:
   WEAVELOG_CONFIG_HOME     live config root (default ~/.config/opencode)
   WEAVELOG_STATE_DIR       state + ledger dir (default ~/.local/state/weavelog)`,
-  update: `Usage: weavelog update
+  update: `Usage: weavelog update [--force] [--yes]
+
+Refresh materialization from the INSTALLED weavelog package payload into the
+declared global targets (payload/config/harnesses/opencode.json): rendered
+config (AGENTS.md, opencode.jsonc, agents/, prompts/) to ~/.config/opencode
+and copied skills to ~/.agents/skills. Same ownership/preflight/replacement
+contract as 'weavelog init' (docs/trd/cli-vision.md): whole-run preflight
+before any write; every declared target must be absent (created, per the
+ownership table row 'Global target is absent -> Create it') or proven
+weavelog-owned AND unchanged (re-rendered); any unowned, changed, ambiguous,
+or state-missing target refuses the whole run (exit 1, zero writes,
+per-target reasons). Ledger and run journal record command 'update'.
+
+--force may replace only eligible declared leaf files (never skills,
+symlinks, special files, or protected paths) after confirmation:
+interactive TTY prompts for approval; noninteractive requires BOTH --force
+and --yes (--yes alone never permits). Replacements journal intent before
+the change, move the prior file to an opaque 0600 .bak under
+<state>/backups/<run-id>/, install the staged file, and journal completion.
+Backups are preserved and never parsed or logged. On a safe failure the
+original is restored and the rollback recorded; an interrupted run refuses
+automatic recovery and reports the journal and backup paths.
+
+Env seams: same as 'weavelog init'.`,
+  versions: `Usage: weavelog versions
 
 Safe-update flow: checks every weavelog.json tool version against the
 installed tool and reports per-channel update notes (pipx/npm/app/git) plus
@@ -130,7 +206,6 @@ const HERE = fileURLToPath(new URL(".", import.meta.url));
 const REPO_ROOT = resolve(HERE, "..", "..");
 const PAYLOAD_DIR = join(REPO_ROOT, "payload");
 const LEDGER_FILE = "ledger.jsonl";
-const PERSONAL_SKILLS = new Set(["in-my-voice", "diagram-design"]);
 const KNOWN_TOKENS = new Set(["WEAVELOG_HOME", "WEAVELOG_CONFIG_HOME"]);
 
 interface LedgerEntry {
@@ -141,6 +216,10 @@ interface LedgerEntry {
   decisions: string[];
   errors: string[];
   exitCode: number;
+  resolvedPackageRoot?: string | null;
+  resolvedBinPath?: string | null;
+  /** Additive per-target decisions (AC #5): live-relative rel + action. */
+  targets?: { liveRel: string; action: string; reason?: string }[];
 }
 
 interface CheckResult {
@@ -164,9 +243,34 @@ function ledgerPath(): string {
   return join(stateDir(), LEDGER_FILE);
 }
 
+/** Persisted state must not expose raw home paths (cli-vision.md). The
+ * stdout report keeps full paths; the ledger collapses them to ~/. */
+function collapseHomeInEntry(entry: LedgerEntry): LedgerEntry {
+  const escaped = HOME.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const s = (v: string | null | undefined): string | null | undefined =>
+    typeof v === "string" ? v.replace(new RegExp(escaped, "g"), "~") : v;
+  return {
+    ...entry,
+    args: entry.args.map((a) => s(a) ?? a),
+    filesTouched: entry.filesTouched.map((a) => s(a) ?? a),
+    decisions: entry.decisions.map((a) => s(a) ?? a),
+    errors: entry.errors.map((a) => s(a) ?? a),
+    targets: entry.targets?.map((t) => ({
+      ...t,
+      reason: s(t.reason) ?? undefined,
+    })),
+    resolvedPackageRoot: s(entry.resolvedPackageRoot),
+    resolvedBinPath: s(entry.resolvedBinPath),
+  };
+}
+
 function appendLedger(entry: LedgerEntry): void {
-  mkdirSync(dirname(ledgerPath()), { recursive: true });
-  appendFileSync(ledgerPath(), `${JSON.stringify(entry)}\n`);
+  mkdirSync(dirname(ledgerPath()), { recursive: true, mode: 0o700 });
+  appendFileSync(
+    ledgerPath(),
+    `${JSON.stringify(collapseHomeInEntry(entry))}\n`,
+    { mode: 0o600 },
+  );
 }
 
 function finish(entry: Omit<LedgerEntry, "ts">): never {
@@ -606,59 +710,105 @@ function checkBacklogBinary(): CheckResult {
   return { ok: false, detail: `backlog binary missing at ${bin}` };
 }
 
+/** Stage content beside the target (same dir), then rename — rename is
+ * atomic on the same volume and never follows the destination, closing the
+ * preflight-to-write TOCTOU window on a swapped-in symlink leaf. Scoped by
+ * runId so two concurrent runs cannot cross-install each other's bytes. */
+function stagingPathFor(target: DeclaredTarget, runId: string): string {
+  return join(dirname(target.livePath), `.${target.targetId}.${runId}.staging`);
+}
+
 function printCheckLine(marker: string, id: string, detail: string): void {
   console.log(`[${marker}] ${id} — ${detail}`);
 }
 
-// --- init -------------------------------------------------------------------
+// --- install guard (AC #6) -------------------------------------------------
 
-interface PlannedDest {
-  dest: string;
-  content?: Buffer;
-  symlinkTarget?: string;
+function installReportFields(installed: InstalledPackage | null): {
+  resolvedPackageRoot: string | null;
+  resolvedBinPath: string | null;
+} {
+  return {
+    resolvedPackageRoot: installed?.packageRoot ?? null,
+    resolvedBinPath: installed?.binPath ?? null,
+  };
 }
 
-function buildInitPlan(dotenv: Record<string, string>): {
-  configTarget: string;
-  liveTarget: string;
-  planned: PlannedDest[];
+/**
+ * AC #6: refuse before any materialization when the resolved installed
+ * package is stale or shadowed, so a stale or shadowed install never
+ * materializes silently. The refusal applies only when the resolved bin
+ * exists — i.e. the CLI runs from a real build/install. From a bare source
+ * checkout (bin not built) the payload being materialized IS the source, so
+ * nothing stale is silently materialized; the report still records the
+ * resolved package.
+ */
+function checkInstallGuard(installed: InstalledPackage | null): string | null {
+  if (installed === null) return null;
+  if (!existsSync(installed.binPath)) return null;
+  const shadows = findPathShadows(installed.binPath, process.env.PATH ?? "");
+  if (shadows.length > 0) {
+    return `another weavelog install shadows the resolved bin on PATH: ${shadows.join(", ")} — remove the shadowing install or reinstall so the resolved bin (${installed.binPath}) is the one reached on PATH`;
+  }
+  // The installed package IS the materialization source (its own payload):
+  // nothing to compare against.
+  if (resolve(installed.payloadRoot) === resolve(PAYLOAD_DIR)) return null;
+  const stale = stalePayloadFiles(
+    hashPayloadFiles(installed.payloadRoot),
+    hashPayloadFiles(PAYLOAD_DIR),
+  );
+  if (stale.length > 0) {
+    return `installed weavelog payload is older than the repo payload being materialized (${stale.length} stale file(s), e.g. ${stale[0]}) — rebuild and reinstall the package (npm run build && npm install -g .), then re-run`;
+  }
+  return null;
+}
+
+/** Add the resolved install fields to a config-sync JSON report (additive). */
+function augmentSyncReport(
+  stdout: string,
+  installed: InstalledPackage | null,
+): string {
+  if (installed === null) return stdout;
+  let report: unknown;
+  try {
+    report = JSON.parse(stdout);
+  } catch {
+    return stdout; // not a JSON report — pass through untouched
+  }
+  if (report === null || typeof report !== "object" || Array.isArray(report))
+    return stdout;
+  const out = report as Record<string, unknown>;
+  out.resolvedPackageRoot = installed.packageRoot;
+  out.resolvedBinPath = installed.binPath;
+  return `${JSON.stringify(out, null, 2)}\n`;
+}
+
+// --- materialize (init / update) --------------------------------------------
+
+/** Per-target preflight outcome bound to its declared target. */
+interface TargetPlan {
+  target: DeclaredTarget;
+  decision: TargetDecision;
+}
+
+function materializeArgs(force: boolean, yes: boolean): string[] {
+  return [...(force ? ["--force"] : []), ...(yes ? ["--yes"] : [])];
+}
+
+function targetReport(p: TargetPlan): {
+  liveRel: string;
+  action: string;
+  reason?: string;
 } {
-  const configTarget = configHomeValue(dotenv);
-  const liveTarget = liveRootValue(dotenv);
-  const tokens: Record<string, string> = {
-    WEAVELOG_HOME: dotenv.WEAVELOG_HOME ?? liveTarget,
-    WEAVELOG_CONFIG_HOME: dotenv.WEAVELOG_CONFIG_HOME ?? configTarget,
-  };
-  const planned: PlannedDest[] = [];
-  for (const full of walkFiles(join(PAYLOAD_DIR, "config"))) {
-    const rel = relative(join(PAYLOAD_DIR, "config"), full);
-    planned.push({
-      dest: join(configTarget, rel),
-      content: renderToBuffer(full, tokens),
-    });
-  }
-  for (const skill of readdirSync(join(PAYLOAD_DIR, "skills"), {
-    withFileTypes: true,
-  })) {
-    if (!skill.isDirectory() || PERSONAL_SKILLS.has(skill.name)) continue;
-    const skillRoot = join(PAYLOAD_DIR, "skills", skill.name);
-    for (const full of walkFiles(skillRoot)) {
-      const rel = relative(skillRoot, full);
-      planned.push({
-        dest: join(liveTarget, "skills", skill.name, rel),
-        content: renderToBuffer(full, tokens),
-      });
-    }
-  }
-  planned.push({
-    dest: join(configTarget, "AGENTS.md"),
-    content: renderToBuffer(join(PAYLOAD_DIR, "AGENTS.md"), tokens),
-  });
-  planned.push({
-    dest: join(liveTarget, "skills", "diagram-design"),
-    symlinkTarget: "../../code/diagram-design/skills/diagram-design",
-  });
-  return { configTarget, liveTarget, planned };
+  if (p.decision.action === "refuse")
+    return {
+      liveRel: p.target.liveRel,
+      action: "refused",
+      reason: p.decision.reason,
+    };
+  const action =
+    p.decision.action === "replace" ? "replaced" : p.decision.action;
+  return { liveRel: p.target.liveRel, action };
 }
 
 function renderToBuffer(
@@ -671,135 +821,518 @@ function renderToBuffer(
   );
 }
 
-function scanInitConflicts(
-  liveTarget: string,
-  planned: PlannedDest[],
-): string[] {
-  const managedRels = new Set(planned.map((p) => relative(liveTarget, p.dest)));
-  const conflicts: string[] = [];
-  for (const p of planned) {
-    if (!existsSync(p.dest)) continue;
-    let stat: Stats;
-    try {
-      stat = lstatSync(p.dest);
-    } catch {
-      continue;
-    }
-    if (stat.isSymbolicLink()) {
-      if (p.symlinkTarget && readlinkSync(p.dest) === p.symlinkTarget) continue;
-      conflicts.push(
-        `${p.dest} exists as a symlink (use --force to replace it)`,
-      );
-      continue;
-    }
-    if (p.content && Buffer.compare(p.content, readFileSync(p.dest)) === 0)
-      continue;
-    conflicts.push(
-      `${p.dest} exists and differs from the payload (use --force to overwrite)`,
+/**
+ * Interactive --force confirmation: shows every target to be replaced plus
+ * the replacement warning, then requires an explicit y/yes. EOF or a read
+ * error is treated as a decline — never a silent permit.
+ */
+async function confirmReplacement(
+  liveRels: string[],
+  command: string,
+): Promise<boolean> {
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+  try {
+    const answer = await rl.question(
+      `weavelog ${command}: ${liveRels.length} declared target(s) hold unowned or changed content and will be REPLACED after an opaque backup:\n  ${liveRels.join("\n  ")}\nReplace them? [y/N] `,
     );
+    const a = (answer ?? "").trim().toLowerCase();
+    return a === "y" || a === "yes";
+  } catch {
+    return false; // EOF / read error — decline
+  } finally {
+    rl.close();
   }
-  if (!existsSync(liveTarget)) return conflicts;
-  for (const full of walkFiles(liveTarget)) {
-    const rel = relative(liveTarget, full);
-    if (rel === ".env" || rel === ".env.example") continue;
-    if (managedRels.has(rel) || rel.startsWith("skills/")) continue;
-    conflicts.push(
-      `${full} is an unversioned live file (use --force to proceed)`,
-    );
-  }
-  return conflicts;
 }
 
-function runInit(force: boolean): never {
-  const seamLive = process.env.WEAVELOG_LIVE_ROOT ?? join(HOME, ".agents");
-  const dotenv = readDotenv(seamLive);
-  const plan = buildInitPlan(dotenv);
-  const conflicts = scanInitConflicts(plan.liveTarget, plan.planned);
-  const errors: string[] = [];
-  if (conflicts.length > 0 && !force) {
-    errors.push(...conflicts);
-    for (const c of conflicts) console.error(`refusal: ${c}`);
+/**
+ * The shared materialization pipeline for `weavelog init` and `weavelog
+ * update` (TASK-29 slices 5+6; docs/trd/cli-vision.md "Ownership and
+ * replacement"): resolve the installed package + AC #6 guard, read the
+ * harness manifest and profile layer, build every declared target, run the
+ * whole-run preflight state machine (decideTargetAction), refuse all-or-
+ * nothing on any conflict, gate --force replacements (TTY confirm or
+ * --force --yes), then journal intent -> write -> journal completion with
+ * opaque backups and safe-only rollback. The two commands differ only in
+ * the command name recorded in journal/ledger entries and the confirmation
+ * prompt prefix — never in the preflight or replacement rules.
+ */
+async function runMaterialize(
+  command: "init" | "update",
+  force: boolean,
+  yes: boolean,
+  interactive: boolean,
+): Promise<never> {
+  const installed = resolveInstalledPackage(import.meta.url);
+  const guard = checkInstallGuard(installed);
+  if (guard !== null) {
+    console.error(`refusal: ${guard}`);
     finish({
-      command: "init",
-      args: [],
-      errors,
+      command,
+      args: materializeArgs(force, yes),
       filesTouched: [],
       decisions: [],
-      exitCode: 3,
+      errors: [guard],
+      exitCode: 1,
+      ...installReportFields(installed),
     });
   }
-  const filesTouched: string[] = [];
-  const decisions: string[] = [];
-  for (const p of plan.planned) {
-    if (p.symlinkTarget) {
-      const targetAbs = resolve(
-        join(plan.liveTarget, "skills"),
-        p.symlinkTarget,
+  if (installed === null) {
+    const msg =
+      "cannot resolve the installed weavelog package (no package.json payload context) — install weavelog, then re-run";
+    console.error(`refusal: ${msg}`);
+    finish({
+      command,
+      args: materializeArgs(force, yes),
+      filesTouched: [],
+      decisions: [],
+      errors: [msg],
+      exitCode: 1,
+      resolvedPackageRoot: null,
+      resolvedBinPath: null,
+    });
+  }
+  const payloadRoot = installed.payloadRoot;
+  const manifest = readHarnessManifest(
+    join(payloadRoot, "config", "harnesses", "opencode.json"),
+  );
+  const harness = manifest.harness;
+  const configLiveRoot = process.env.WEAVELOG_CONFIG_HOME
+    ? resolve(process.env.WEAVELOG_CONFIG_HOME)
+    : resolve(expandHome(manifest.liveRoot));
+  const trackedRoot = resolve(payloadRoot, manifest.trackedRoot);
+  const state = stateDir();
+
+  // profiles + render tokens (precedence: flags > answers > profile > defaults)
+  const profilesDir = defaultProfilesDir();
+  const profileId = "personal";
+  const profileResult = readProfile(profilesDir, profileId);
+  if (!profileResult.ok) {
+    console.error(
+      `refusal: profile layer unusable: ${profileResult.error.message}`,
+    );
+    finish({
+      command,
+      args: materializeArgs(force, yes),
+      filesTouched: [],
+      decisions: [],
+      errors: [profileResult.error.message],
+      exitCode: 1,
+      ...installReportFields(installed),
+    });
+  }
+  const profile = profileResult.value ?? {
+    id: profileId,
+    choices: {},
+    secretRefs: {},
+  };
+  const weavelogHome = process.env.WEAVELOG_LIVE_ROOT ?? join(HOME, ".agents");
+  const resolved = resolveInputs({
+    flags: {},
+    answers: {},
+    profile,
+    defaults: {
+      WEAVELOG_HOME: weavelogHome,
+      WEAVELOG_CONFIG_HOME: configLiveRoot,
+    },
+  });
+  const tokens: Record<string, string> = { ...tokensFromProfile(profile) };
+  for (const [key, value] of Object.entries(resolved.values)) {
+    tokens[key.toUpperCase().replace(/[^A-Z0-9]+/g, "_")] = value;
+  }
+
+  // declared targets from the INSTALLED payload manifest
+  const fileTargets = declaredTargetsFromFiles({
+    liveRoot: configLiveRoot,
+    trackedRoot,
+    files: manifest.files,
+    exclusions: manifest.exclusions,
+  });
+  const buildRefusals: { liveRel: string; reason: string }[] = [
+    ...fileTargets.refusals,
+  ];
+  let skillTargets: {
+    targets: DeclaredTarget[];
+    refusals: { liveRel: string; reason: string }[];
+  } = { targets: [], refusals: [] };
+  if (manifest.skills) {
+    skillTargets = declaredTargetsFromSkills({
+      liveRoot: resolve(expandHome(manifest.skills.liveRoot)),
+      trackedRoot: resolve(payloadRoot, manifest.skills.trackedRoot),
+      dirs: manifest.skills.dirs,
+    });
+    buildRefusals.push(...skillTargets.refusals);
+  }
+  if (buildRefusals.length > 0) {
+    const errors = buildRefusals.map(
+      (b) => `${b.reason} — target ${b.liveRel}`,
+    );
+    for (const e of errors) console.error(`refusal: ${e}`);
+    finish({
+      command,
+      args: materializeArgs(force, yes),
+      filesTouched: [],
+      decisions: [],
+      errors,
+      exitCode: 1,
+      ...installReportFields(installed),
+    });
+  }
+  const targets = [...fileTargets.targets, ...skillTargets.targets];
+
+  // whole-run preflight: evaluate EVERY declared target before ANY write
+  // A symlinked managed parent (e.g. ~/.config/opencode -> dotfiles/, or a
+  // symlinked ~/.agents/skills) is a refusal for that target: cli-vision.md —
+  // "Symlink, special file, or symlinked managed parent -> Refuse the run /
+  // Never follow or replace". The walk is PER-TARGET (each target carries its
+  // own live root) and INCLUSIVE of the root itself — a symlinked root is the
+  // exact dotfiles scenario the contract calls out.
+  const symlinkedParentOf = (target: DeclaredTarget): string | null => {
+    const stop = resolve(target.liveRoot);
+    let cur = dirname(target.livePath);
+    for (;;) {
+      const inside = cur === stop || cur.startsWith(`${stop}${sep}`);
+      if (!inside) return null;
+      try {
+        if (lstatSync(cur).isSymbolicLink()) return cur;
+      } catch {
+        // missing component is not a symlink — keep walking up; a symlinked
+        // ancestor up to and including the managed root is still a refusal
+        // (fresh machines have missing intermediates below a symlinked root)
+      }
+      if (cur === stop) return null;
+      cur = dirname(cur);
+    }
+  };
+  const runId = randomUUID();
+  const planned: TargetPlan[] = [];
+  for (const target of targets) {
+    let st: Stats | null = null;
+    try {
+      st = lstatSync(target.livePath);
+    } catch {
+      st = null;
+    }
+    const exists = st !== null;
+    const isSymlink = st?.isSymbolicLink() ?? false;
+    const isFile = st?.isFile() ?? false;
+    const hash =
+      exists && isFile && !isSymlink ? sha256File(target.livePath) : null;
+    const ownedResult = readActiveProfile(state, harness, target.targetId);
+    const journal = journalStateFor(state, target.targetId);
+    let decision = decideTargetAction(
+      {
+        exists,
+        isSymlink,
+        isFile,
+        hash,
+        owned: ownedResult.ok && ownedResult.value !== null,
+        ownershipAmbiguous: !ownedResult.ok,
+        recordedHash: journal.recordedHash,
+        interrupted: journal.interrupted,
+        interruptNote: journal.interruptNote,
+      },
+      {
+        force,
+        eligibleForForce: target.eligibleForForce,
+        runId,
+        targetId: target.targetId,
+      },
+    );
+    const badParent =
+      decision.action === "refuse" ? null : symlinkedParentOf(target);
+    if (badParent !== null) {
+      decision = {
+        action: "refuse",
+        reason: `symlinked managed parent directory — never following links (${relative(target.liveRoot, badParent)} under its managed root)`,
+      };
+    }
+    if (decision.action === "replace") {
+      const backupPath = join(state, "backups", decision.backupRef);
+      let backupSt: Stats | null = null;
+      try {
+        backupSt = lstatSync(backupPath);
+      } catch {
+        backupSt = null;
+      }
+      if (backupSt !== null) {
+        decision = {
+          action: "refuse",
+          reason: `backup path already exists (${decision.backupRef}) — a backup is never overwritten`,
+        };
+      }
+    }
+    planned.push({ target, decision });
+  }
+
+  // all-or-nothing: one refusal refuses the whole run, zero writes
+  const refusalReason = (d: TargetDecision): string =>
+    d.action === "refuse" ? d.reason : "";
+  const refusals = planned.filter((p) => p.decision.action === "refuse");
+  if (refusals.length > 0) {
+    const errors = refusals.map(
+      (p) => `${refusalReason(p.decision)} — target ${p.target.liveRel}`,
+    );
+    for (const e of errors) console.error(`refusal: ${e}`);
+    finish({
+      command,
+      args: materializeArgs(force, yes),
+      filesTouched: [],
+      decisions: [],
+      errors,
+      exitCode: 1,
+      targets: refusals.map((p) => ({
+        liveRel: p.target.liveRel,
+        action: "refused",
+        reason: refusalReason(p.decision),
+      })),
+      ...installReportFields(installed),
+    });
+  }
+
+  // --force confirmation gate: TTY prompt, or --force --yes noninteractively
+  const replacing = planned.filter((p) => p.decision.action === "replace");
+  if (replacing.length > 0) {
+    const confirmed = interactive
+      ? await confirmReplacement(
+          replacing.map((p) => p.target.liveRel),
+          command,
+        )
+      : force && yes;
+    if (!confirmed) {
+      const errors = replacing.map(
+        (p) =>
+          `replacement declined for ${p.target.liveRel} — --force requires TTY confirmation, or --force --yes noninteractively`,
       );
-      if (!existsSync(targetAbs)) {
-        const msg = `diagram-design: host target absent at ${targetAbs} — symlink skipped (doctor warning condition)`;
-        decisions.push(msg);
-        console.log(`warning: ${msg}`);
-        continue;
-      }
-      if (existsSync(p.dest)) {
-        try {
-          if (
-            lstatSync(p.dest).isSymbolicLink() &&
-            readlinkSync(p.dest) === p.symlinkTarget
-          ) {
-            continue;
-          }
-        } catch {
-          // fall through to replace
-        }
-        rmSync(p.dest, { recursive: true, force: true });
-      }
-      symlinkSync(p.symlinkTarget, p.dest);
-      filesTouched.push(p.dest);
+      for (const e of errors) console.error(`refusal: ${e}`);
+      finish({
+        command,
+        args: materializeArgs(force, yes),
+        filesTouched: [],
+        decisions: [],
+        errors,
+        exitCode: 1,
+        targets: planned.map((p) =>
+          p.decision.action === "replace"
+            ? {
+                liveRel: p.target.liveRel,
+                action: "refused",
+                reason: "replacement declined",
+              }
+            : targetReport(p),
+        ),
+        ...installReportFields(installed),
+      });
+    }
+  }
+
+  // phase A: ownership records (immutable snapshots + active-profile receipts)
+  // BEFORE any target write — a crash here self-heals on the next run via the
+  // create/update path, never a silent adoption.
+  const stateErrors: string[] = [];
+  for (const p of planned) {
+    const snap = writeSnapshot(
+      state,
+      harness,
+      p.target.targetId,
+      profileId,
+      resolved.values,
+    );
+    if (!snap.ok) {
+      stateErrors.push(`snapshot write failed: ${snap.error.message}`);
       continue;
     }
-    if (existsSync(p.dest)) {
-      let same = false;
-      try {
-        same = Buffer.compare(p.content as Buffer, readFileSync(p.dest)) === 0;
-      } catch {
-        same = false;
-      }
-      if (same) continue;
+    const ap = writeActiveProfile(state, harness, p.target.targetId, {
+      profileId,
+      snapshotSha256: snap.value.snapshotSha256,
+      updatedAt: new Date().toISOString(),
+    });
+    if (!ap.ok)
+      stateErrors.push(`active-profile write failed: ${ap.error.message}`);
+  }
+  if (stateErrors.length > 0) {
+    for (const e of stateErrors) console.error(`refusal: ${e}`);
+    finish({
+      command,
+      args: materializeArgs(force, yes),
+      filesTouched: [],
+      decisions: [],
+      errors: stateErrors,
+      exitCode: 1,
+      targets: planned.map(targetReport),
+      ...installReportFields(installed),
+    });
+  }
+
+  // phase B: mutations — create/update write staged content directly;
+  // replacements follow the journaled backup-then-install sequence.
+  const filesTouched: string[] = [];
+  const errors: string[] = [];
+  for (const p of planned) {
+    const { target, decision } = p;
+    const newContent =
+      target.kind === "render"
+        ? renderToBuffer(target.sourcePath, tokens)
+        : readFileSync(target.sourcePath);
+    const stateHash = sha256Of(newContent);
+    if (decision.action === "create" || decision.action === "update") {
+      // intent WITHOUT stateHash: a crash before the rename leaves no
+      // recorded hash, so the next run honestly refuses (missing state)
+      // instead of comparing against bytes never installed
+      writeJournal(state, {
+        ts: new Date().toISOString(),
+        command,
+        runId,
+        phase: "intent",
+        target: {
+          targetId: target.targetId,
+          liveRel: target.liveRel,
+          action: decision.action,
+        },
+      });
+      mkdirSync(dirname(target.livePath), { recursive: true });
+      writeFileSync(stagingPathFor(target, runId), newContent, { mode: 0o644 });
+      renameSync(stagingPathFor(target, runId), target.livePath);
+      writeJournal(state, {
+        ts: new Date().toISOString(),
+        command,
+        runId,
+        phase: "completion",
+        target: {
+          targetId: target.targetId,
+          liveRel: target.liveRel,
+          action: decision.action,
+          stateHash,
+        },
+      });
+      filesTouched.push(target.liveRel);
+      continue;
     }
-    mkdirSync(dirname(p.dest), { recursive: true });
-    writeFileSync(p.dest, p.content as Buffer);
-    filesTouched.push(p.dest);
+    if (decision.action === "replace") {
+      // replacement step 3: durable journal intent BEFORE changing the target
+      writeJournal(state, {
+        ts: new Date().toISOString(),
+        command,
+        runId,
+        phase: "intent",
+        target: {
+          targetId: target.targetId,
+          liveRel: target.liveRel,
+          action: "replaced",
+          backupRef: decision.backupRef,
+          liveHashBefore: decision.liveHashBefore,
+        },
+      });
+      // step 4: move the prior file to a unique opaque .bak (never overwrite)
+      const backupPath = join(state, "backups", decision.backupRef);
+      mkdirSync(dirname(backupPath), { recursive: true, mode: 0o700 });
+      const backupMode = lstatSync(target.livePath).mode & 0o777;
+      renameSync(target.livePath, backupPath);
+      chmodSync(backupPath, 0o600);
+      // step 5: install the staged file, then journal completion
+      try {
+        mkdirSync(dirname(target.livePath), { recursive: true });
+        writeFileSync(stagingPathFor(target, runId), newContent, {
+          mode: 0o644,
+        });
+        renameSync(stagingPathFor(target, runId), target.livePath);
+      } catch (err) {
+        // safe failure: clean the staged file, restore the original, record
+        try {
+          rmSync(stagingPathFor(target, runId), { force: true });
+        } catch {
+          // staging cleanup is best-effort
+        }
+        let restored = false;
+        try {
+          renameSync(backupPath, target.livePath);
+          chmodSync(target.livePath, backupMode);
+          restored = true;
+        } catch {
+          // restore failed — the backup stays under state/backups and the
+          // dangling intent keeps the target interrupted (no rollback line:
+          // clearing the marker would pretend the original is back)
+        }
+        if (restored) {
+          writeJournal(state, {
+            ts: new Date().toISOString(),
+            command,
+            runId,
+            phase: "rollback",
+            target: {
+              targetId: target.targetId,
+              liveRel: target.liveRel,
+              action: "rollback",
+              backupRef: decision.backupRef,
+              // the restored bytes ARE the pre-replace live bytes — recording
+              // them keeps the ownership receipt consistent with the journal
+              stateHash: decision.liveHashBefore,
+            },
+          });
+          errors.push(
+            `replacement failed for ${target.liveRel}: ${(err as Error).message} — original restored from backup (${decision.backupRef})`,
+          );
+        } else {
+          errors.push(
+            `replacement failed for ${target.liveRel}: ${(err as Error).message} — original NOT restored; it remains at backup ${decision.backupRef} (the next run refuses until resolved)`,
+          );
+        }
+        continue;
+      }
+      writeJournal(state, {
+        ts: new Date().toISOString(),
+        command,
+        runId,
+        phase: "completion",
+        target: {
+          targetId: target.targetId,
+          liveRel: target.liveRel,
+          action: "replaced",
+          backupRef: decision.backupRef,
+          stateHash,
+        },
+      });
+      filesTouched.push(target.liveRel);
+    }
   }
+
+  // OpenCode adapters from the INSTALLED package (fan-out: dist/hooks
+  // referenced from generated loaders).
   for (const adapter of emitOpenCodeAdapters({
-    packageRoot: packageRootValue(),
-    configRoot: plan.configTarget,
-    stateDir: stateDir(),
+    packageRoot: installed.packageRoot,
+    configRoot: configLiveRoot,
+    stateDir: state,
   })) {
-    filesTouched.push(adapter.path);
+    filesTouched.push(relative(configLiveRoot, adapter.path));
   }
-  const symlinkDest = join(plan.liveTarget, "skills", "diagram-design");
-  if (filesTouched.includes(symlinkDest)) {
-    const symlinkTargetAbs = resolve(
-      join(plan.liveTarget, "skills"),
-      "../../code/diagram-design/skills/diagram-design",
-    );
-    decisions.push(
-      `diagram-design: host symlink created -> ${symlinkTargetAbs}`,
-    );
-  }
-  decisions.push(
-    `materialized ${filesTouched.length} file(s) into ${plan.liveTarget} and ${plan.configTarget}`,
-  );
+
   finish({
-    command: "init",
-    args: force ? ["--force"] : [],
+    command,
+    args: materializeArgs(force, yes),
     filesTouched,
-    decisions,
+    decisions: [`materialized ${filesTouched.length} target(s)`],
     errors,
-    exitCode: 0,
+    exitCode: errors.length > 0 ? 1 : 0,
+    targets: planned.map(targetReport),
+    ...installReportFields(installed),
   });
+}
+
+/** `weavelog init`: the shared pipeline under the init identity. */
+function runInit(
+  force: boolean,
+  yes: boolean,
+  interactive: boolean,
+): Promise<never> {
+  return runMaterialize("init", force, yes, interactive);
+}
+
+/** `weavelog update`: the same pipeline under the update identity (slice 6). */
+function runUpdate(
+  force: boolean,
+  yes: boolean,
+  interactive: boolean,
+): Promise<never> {
+  return runMaterialize("update", force, yes, interactive);
 }
 
 // --- sync -------------------------------------------------------------------
@@ -809,6 +1342,20 @@ function resolveConfigSync(): { path: string; tsx: boolean } {
 }
 
 function runSync(): never {
+  const installed = resolveInstalledPackage(import.meta.url);
+  const guard = checkInstallGuard(installed);
+  if (guard !== null) {
+    console.error(`refusal: ${guard}`);
+    finish({
+      command: "sync",
+      args: [],
+      filesTouched: [],
+      decisions: [],
+      errors: [guard],
+      exitCode: 1,
+      ...installReportFields(installed),
+    });
+  }
   const sync = resolveConfigSync();
   const liveRoot = liveRootValue();
   const dotenv = ensureDotenv(liveRoot);
@@ -834,7 +1381,7 @@ function runSync(): never {
     encoding: "utf8",
     timeout: 120_000,
   });
-  if (r.stdout) process.stdout.write(r.stdout);
+  if (r.stdout) process.stdout.write(augmentSyncReport(r.stdout, installed));
   if (r.stderr) process.stderr.write(r.stderr);
   const status = r.status ?? 1;
   if (status !== 0) {
@@ -845,6 +1392,7 @@ function runSync(): never {
       decisions: [],
       errors: [`config-sync exited ${String(r.status)}`],
       exitCode: status,
+      ...installReportFields(installed),
     });
   }
   finish({
@@ -854,10 +1402,12 @@ function runSync(): never {
     decisions: ["config-sync ok (or no-op)"],
     errors: [],
     exitCode: 0,
+    ...installReportFields(installed),
   });
 }
 
-// --- update -----------------------------------------------------------------
+// --- versions (report-only tool-version report; renamed from `update` so the
+// materialization refresh owns the contract `update` name) ------------------
 
 const CHANNEL_NOTES: Record<string, string> = {
   pipx: "pipx install --force <tool>==<pinned>",
@@ -866,16 +1416,16 @@ const CHANNEL_NOTES: Record<string, string> = {
   git: "git -C <skills>/<tool> checkout <pinned>",
 };
 
-function runUpdate(): never {
+function runVersions(): never {
   const manifest = readManifest();
   const results = stackVersionChecks(manifest);
   const failures = results.filter((r) => !r.ok);
   for (const r of results)
     printCheckLine(r.ok ? "pass" : "fail", r.id, r.detail);
   if (failures.length === 0) {
-    console.log("update: all tools at pinned versions — healthy setup");
+    console.log("versions: all tools at pinned versions — healthy setup");
     finish({
-      command: "update",
+      command: "versions",
       args: [],
       filesTouched: [],
       decisions: ["no updates required"],
@@ -894,18 +1444,18 @@ function runUpdate(): never {
       .replaceAll("<tool>", tool)
       .replaceAll("<pinned>", spec.version)
       .replaceAll("<skills>", skillsDir());
-    console.error(`update: ${f.id} — ${f.detail}`);
-    console.error(`update:   apply: ${note}`);
+    console.error(`versions: ${f.id} — ${f.detail}`);
+    console.error(`versions:   apply: ${note}`);
     console.error(
-      `update:   rollback hint: revert ${tool} to the previous pinned version from weavelog.json git history`,
+      `versions:   rollback hint: revert ${tool} to the previous pinned version from weavelog.json git history`,
     );
     errors.push(`${f.id}: ${f.detail}`);
   }
   console.error(
-    "update: refusing — drift found (report-only; nothing was changed)",
+    "versions: refusing — drift found (report-only; nothing was changed)",
   );
   finish({
-    command: "update",
+    command: "versions",
     args: [],
     filesTouched: [],
     decisions: ["drift reported; no updates applied"],
@@ -1464,16 +2014,28 @@ async function main(): Promise<void> {
   }
   switch (cmd) {
     case "init":
-      rejectUnknownFlags(cmd, rest, ["--force"]);
-      runInit(rest.includes("--force"));
+      rejectUnknownFlags(cmd, rest, ["--force", "--yes"]);
+      await runInit(
+        rest.includes("--force"),
+        rest.includes("--yes"),
+        process.env.WEAVELOG_TTY === "1" || process.stdout.isTTY === true,
+      );
       break;
     case "sync":
       rejectUnknownFlags(cmd, rest, []);
       runSync();
       break;
     case "update":
+      rejectUnknownFlags(cmd, rest, ["--force", "--yes"]);
+      await runUpdate(
+        rest.includes("--force"),
+        rest.includes("--yes"),
+        process.env.WEAVELOG_TTY === "1" || process.stdout.isTTY === true,
+      );
+      break;
+    case "versions":
       rejectUnknownFlags(cmd, rest, []);
-      runUpdate();
+      runVersions();
       break;
     case "check":
       rejectUnknownFlags(cmd, rest, ["--stack-only", "--pre-commit"]);
