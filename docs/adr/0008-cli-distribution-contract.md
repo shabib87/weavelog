@@ -6,6 +6,7 @@ type: adr
 author: conductor
 related_to:
   - ./README.md
+  - ./0009-npm-provenance-and-release-gating.md
   - ../prd/2026-09-05-v010-draft-brief.md
   - ../trd/cli-vision.md
   - ../trd/README.md

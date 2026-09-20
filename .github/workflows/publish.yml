@@ -1,0 +1,49 @@
+name: Publish
+
+# Publishes the exact release to npm with OIDC trusted publishing and build
+# provenance. It runs only for a published GitHub Release or a manual dispatch,
+# is gated by the `npm-publish` environment (required human reviewers), and
+# fails closed unless the publish gate passes (closure set Done + the
+# human-controlled WEAVELOG_PUBLISH_APPROVED marker). See ADR-0009.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # OIDC token for npm trusted publishing
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: npm-publish
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+          registry-url: "https://registry.npmjs.org"
+          package-manager-cache: false
+      # Trusted publishing needs npm >= 11.5.1; node 24 may bundle an older
+      # npm, so install the pinned provenance-capable version explicitly.
+      - name: Install provenance-capable npm
+        run: npm install -g npm@12.0.2
+      - name: Reproducible install
+        run: npm ci
+      - name: Publish gate (closure set + human marker)
+        run: node --import tsx src/tools/publish-gate.ts backlog/tasks
+        env:
+          WEAVELOG_PUBLISH_APPROVED: ${{ vars.WEAVELOG_PUBLISH_APPROVED }}
+      - name: Build
+        run: npm run build
+      - name: Tests
+        run: npm test
+      - name: Pack check (fresh build, dist, payload, no backlog)
+        run: |
+          npm pack --dry-run --json > "$RUNNER_TEMP/pack.json"
+          node --import tsx src/tools/pack-check.ts "$RUNNER_TEMP/pack.json"
+      - name: Publish with provenance (OIDC trusted publishing)
+        run: npm publish --provenance --access public
