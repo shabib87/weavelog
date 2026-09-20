@@ -758,6 +758,43 @@ describe("cli check workspace subchecks (TASK-73 AC#2)", () => {
       },
     });
     assert.ok(r.stdout.includes("[fail] workspace.lint"), r.stdout);
+    assert.equal(r.status, 1);
+  });
+
+  test("fails closed when package.json is unparseable", () => {
+    const dir = makeDir("workspace-badjson");
+    makeRepo(dir);
+    write(join(dir, "package.json"), "{ not json");
+    const r = run(["check"], {
+      cwd: dir,
+      env: {
+        WEAVELOG_STATE_DIR: join(dir, "state"),
+        WEAVELOG_CHECK_INNER: "",
+      },
+    });
+    assert.ok(r.stdout.includes("[fail] workspace.test"), r.stdout);
+    assert.ok(r.stdout.includes("unparseable"), r.stdout);
+  });
+
+  test("passes a verbose workspace script without a buffer overflow", () => {
+    const dir = makeDir("workspace-verbose");
+    makeRepo(dir);
+    write(
+      join(dir, "package.json"),
+      JSON.stringify({
+        scripts: {
+          test: "node -e \"process.stdout.write('x'.repeat(2000000))\"",
+        },
+      }),
+    );
+    const r = run(["check"], {
+      cwd: dir,
+      env: {
+        WEAVELOG_STATE_DIR: join(dir, "state"),
+        WEAVELOG_CHECK_INNER: "",
+      },
+    });
+    assert.ok(r.stdout.includes("[pass] workspace.test"), r.stdout);
   });
 
   test("skips workspace subchecks when nested inside another check", () => {

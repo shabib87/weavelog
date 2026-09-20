@@ -60,7 +60,7 @@ import {
   writeSnapshot,
 } from "../tools/materialize-state.js";
 import { checkDifitPointer, pinHygieneForDir } from "../tools/pin-hygiene.js";
-import { privacyAuditForDir } from "../tools/privacy-audit.js";
+import { PRIVACY_RULES, privacyAuditForDir } from "../tools/privacy-audit.js";
 import {
   defaultProfilesDir,
   readProfile,
@@ -1542,21 +1542,34 @@ const WORKSPACE_SCRIPT_CHECKS: { id: string; script: string }[] = [
   { id: "workspace.typecheck", script: "typecheck" },
 ];
 
-function workspaceScripts(cwd: string): Record<string, string> | null {
+function workspaceScripts(
+  cwd: string,
+): { scripts: Record<string, string> } | { error: string } | null {
   const pkg = join(cwd, "package.json");
   if (!existsSync(pkg)) return null;
   try {
     const parsed = JSON.parse(readFileSync(pkg, "utf8")) as {
       scripts?: Record<string, string>;
     };
-    return parsed.scripts ?? {};
-  } catch {
-    return null;
+    return { scripts: parsed.scripts ?? {} };
+  } catch (err) {
+    return { error: `package.json unparseable: ${(err as Error).message}` };
   }
 }
 
+function redactSecretLines(text: string): string {
+  return text
+    .split("\n")
+    .map((line) =>
+      PRIVACY_RULES.some((rule) => rule.pattern.test(line))
+        ? "[redacted]"
+        : line,
+    )
+    .join("\n");
+}
+
 function tailLines(text: string, count = 5): string {
-  return text.trim().split("\n").slice(-count).join(" | ");
+  return redactSecretLines(text).trim().split("\n").slice(-count).join(" | ");
 }
 
 /** Run the workspace's own test/lint/typecheck scripts, guarded against re-entry. */
@@ -1569,10 +1582,17 @@ function runWorkspaceSubchecks(cwd: string): SubCheck[] {
       detail: "nested check; workspace subcheck skipped",
     }));
   }
-  const scripts = workspaceScripts(cwd);
+  const found = workspaceScripts(cwd);
+  if (found !== null && "error" in found) {
+    return WORKSPACE_SCRIPT_CHECKS.map((c) => ({
+      id: c.id,
+      ok: false,
+      detail: found.error,
+    }));
+  }
   const out: SubCheck[] = [];
   for (const check of WORKSPACE_SCRIPT_CHECKS) {
-    if (scripts === null) {
+    if (found === null) {
       out.push({
         id: check.id,
         ok: true,
@@ -1581,7 +1601,7 @@ function runWorkspaceSubchecks(cwd: string): SubCheck[] {
       });
       continue;
     }
-    if (typeof scripts[check.script] !== "string") {
+    if (typeof found.scripts[check.script] !== "string") {
       out.push({
         id: check.id,
         ok: true,
@@ -1594,6 +1614,7 @@ function runWorkspaceSubchecks(cwd: string): SubCheck[] {
       cwd,
       encoding: "utf8",
       timeout: 600_000,
+      maxBuffer: 64 * 1024 * 1024,
       env: { ...process.env, WEAVELOG_CHECK_INNER: "1" },
     });
     if (r.status === 0) {
@@ -1604,11 +1625,10 @@ function runWorkspaceSubchecks(cwd: string): SubCheck[] {
       });
       continue;
     }
-    const detail = r.error
-      ? `npm run ${check.script} failed to start: ${r.error.message}`
-      : `npm run ${check.script} failed (exit ${r.status}): ${tailLines(
-          `${r.stdout ?? ""}${r.stderr ?? ""}`,
-        )}`;
+    const why = r.error ? ` (${r.error.message})` : "";
+    const detail = `npm run ${check.script} failed (exit ${r.status ?? "none"})${why}: ${tailLines(
+      `${r.stdout ?? ""}${r.stderr ?? ""}`,
+    )}`;
     out.push({ id: check.id, ok: false, detail });
   }
   return out;
@@ -1640,15 +1660,17 @@ function runSecurityAudit(cwd: string): SubCheck {
     cwd,
     encoding: "utf8",
     timeout: 120_000,
+    maxBuffer: 64 * 1024 * 1024,
     env: { ...process.env, WEAVELOG_CHECK_INNER: "1" },
   });
   const text = r.stdout ?? "";
   if (!text.trim()) {
+    const why = r.error ? ` (${r.error.message})` : "";
     return {
       id,
       ok: true,
       skip: true,
-      detail: "npm audit produced no report (offline or unavailable)",
+      detail: `npm audit produced no report (offline or unavailable)${why}`,
     };
   }
   let report: NpmAuditReport;

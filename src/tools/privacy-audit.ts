@@ -301,6 +301,13 @@ function readIndexContents(root: string, files: string[]): ReadResult {
     }
     contents.set(rel, content);
   }
+  if (i < files.length) {
+    return {
+      contents,
+      skipped,
+      error: "git cat-file stream ended early; privacy scan failed closed",
+    };
+  }
   return { contents, skipped, error: null };
 }
 
