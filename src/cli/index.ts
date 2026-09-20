@@ -26,6 +26,12 @@ import {
   emitOpenCodeAdapters,
   inspectOpenCodeAdapters,
 } from "../hooks/opencode-adapters.js";
+import type { AuditException, NpmAuditReport } from "../tools/audit-gate.js";
+import {
+  evaluateAuditGate,
+  parseAuditReport,
+  parseExceptions,
+} from "../tools/audit-gate.js";
 import {
   expandHome,
   readHarnessManifest,
@@ -1521,6 +1527,158 @@ function runPreCommit(): never {
   });
 }
 
+// --- workspace verification subchecks (TASK-73 AC#2) ------------------------
+
+interface SubCheck {
+  id: string;
+  ok: boolean;
+  skip?: boolean;
+  detail: string;
+}
+
+const WORKSPACE_SCRIPT_CHECKS: { id: string; script: string }[] = [
+  { id: "workspace.test", script: "test" },
+  { id: "workspace.lint", script: "lint" },
+  { id: "workspace.typecheck", script: "typecheck" },
+];
+
+function workspaceScripts(cwd: string): Record<string, string> | null {
+  const pkg = join(cwd, "package.json");
+  if (!existsSync(pkg)) return null;
+  try {
+    const parsed = JSON.parse(readFileSync(pkg, "utf8")) as {
+      scripts?: Record<string, string>;
+    };
+    return parsed.scripts ?? {};
+  } catch {
+    return null;
+  }
+}
+
+function tailLines(text: string, count = 5): string {
+  return text.trim().split("\n").slice(-count).join(" | ");
+}
+
+/** Run the workspace's own test/lint/typecheck scripts, guarded against re-entry. */
+function runWorkspaceSubchecks(cwd: string): SubCheck[] {
+  if (process.env.WEAVELOG_CHECK_INNER === "1") {
+    return WORKSPACE_SCRIPT_CHECKS.map((c) => ({
+      id: c.id,
+      ok: true,
+      skip: true,
+      detail: "nested check; workspace subcheck skipped",
+    }));
+  }
+  const scripts = workspaceScripts(cwd);
+  const out: SubCheck[] = [];
+  for (const check of WORKSPACE_SCRIPT_CHECKS) {
+    if (scripts === null) {
+      out.push({
+        id: check.id,
+        ok: true,
+        skip: true,
+        detail: "no package.json in workspace",
+      });
+      continue;
+    }
+    if (typeof scripts[check.script] !== "string") {
+      out.push({
+        id: check.id,
+        ok: true,
+        skip: true,
+        detail: `no ${check.script} script`,
+      });
+      continue;
+    }
+    const r = spawnSync("npm", ["run", check.script, "--silent"], {
+      cwd,
+      encoding: "utf8",
+      timeout: 600_000,
+      env: { ...process.env, WEAVELOG_CHECK_INNER: "1" },
+    });
+    if (r.status === 0) {
+      out.push({
+        id: check.id,
+        ok: true,
+        detail: `npm run ${check.script} passed`,
+      });
+      continue;
+    }
+    const detail = r.error
+      ? `npm run ${check.script} failed to start: ${r.error.message}`
+      : `npm run ${check.script} failed (exit ${r.status}): ${tailLines(
+          `${r.stdout ?? ""}${r.stderr ?? ""}`,
+        )}`;
+    out.push({ id: check.id, ok: false, detail });
+  }
+  return out;
+}
+
+/** Production dependency audit via the TASK-63 audit gate. */
+function runSecurityAudit(cwd: string): SubCheck {
+  const id = "security.audit";
+  if (process.env.WEAVELOG_CHECK_INNER === "1") {
+    return {
+      id,
+      ok: true,
+      skip: true,
+      detail: "nested check; audit subcheck skipped",
+    };
+  }
+  if (
+    !existsSync(join(cwd, "package.json")) ||
+    !existsSync(join(cwd, "package-lock.json"))
+  ) {
+    return {
+      id,
+      ok: true,
+      skip: true,
+      detail: "no package-lock.json in workspace",
+    };
+  }
+  const r = spawnSync("npm", ["audit", "--omit=dev", "--json"], {
+    cwd,
+    encoding: "utf8",
+    timeout: 120_000,
+    env: { ...process.env, WEAVELOG_CHECK_INNER: "1" },
+  });
+  const text = r.stdout ?? "";
+  if (!text.trim()) {
+    return {
+      id,
+      ok: true,
+      skip: true,
+      detail: "npm audit produced no report (offline or unavailable)",
+    };
+  }
+  let report: NpmAuditReport;
+  try {
+    report = parseAuditReport(text);
+  } catch (err) {
+    return {
+      id,
+      ok: true,
+      skip: true,
+      detail: `npm audit unavailable: ${(err as Error).message}`,
+    };
+  }
+  const exceptionsPath = join(cwd, ".github", "audit-exceptions.json");
+  let exceptions: AuditException[] = [];
+  try {
+    if (existsSync(exceptionsPath)) {
+      exceptions = parseExceptions(readFileSync(exceptionsPath, "utf8"));
+    }
+  } catch (err) {
+    return {
+      id,
+      ok: false,
+      detail: `audit exceptions unreadable: ${(err as Error).message}`,
+    };
+  }
+  const result = evaluateAuditGate(report, exceptions, new Date());
+  return { id, ok: result.ok, detail: result.detail };
+}
+
 async function runCheck(stackOnly: boolean): Promise<never> {
   const manifest = readManifest();
   const results = stackVersionChecks(manifest);
@@ -1538,6 +1696,8 @@ async function runCheck(stackOnly: boolean): Promise<never> {
       skip: privacy.status === "skip",
       detail: privacy.detail,
     });
+    for (const sub of runWorkspaceSubchecks(process.cwd())) results.push(sub);
+    results.push(runSecurityAudit(process.cwd()));
     const guard = checkNodePathGuard();
     const proxy = await checkProxyHealth();
     const risk = runRiskSignalsCheck();

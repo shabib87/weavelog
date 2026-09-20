@@ -5,7 +5,7 @@ status: In Progress
 assignee:
   - '@conductor'
 created_date: '2026-09-07 15:49'
-updated_date: '2026-09-20 05:56'
+updated_date: '2026-09-20 07:11'
 labels:
   - spec-approved
 milestone: m-7
@@ -74,4 +74,16 @@ Coordination: TASK-63's plan step 8 still runs scripts/privacy-audit as part of 
 Independent diff review (diff-reviewer-glm): PASS WITH ISSUES. Resolved: (2) trackedFiles now passes an explicit maxBuffer and distinguishes rev-parse failure (skip) from git ls-files failure (fail closed with a named reason), so the pre-commit gate cannot silently pass; (3) nested-directory skip now has a distinct message; (5) files > 5 MB are not buffered. Added a nested-in-repo guard test and strengthened the dirty-case assertions. Re-verified: tests/privacy-audit.test.ts 9/9, npm test 802 tests / 4 pre-existing environmental failures (same as main) / 1 skip, lint clean, typecheck clean, check --pre-commit exit 0 with '[pass] privacy — clean (269 tracked files scanned)'.
 
 Open for human decision before merge: (a) AC#2 wording still names workspace test/lint/typecheck + binary semgrep subchecks, which were dropped-with-reason under approved option A; AC#2 remains unchecked pending a scope decision. (b) Review finding: the reimplemented needle set matches only the legacy literal forms, so it does not match the identifier forms actually in the tree ('Shabib Hossain', 'shabib87', 'codewithshabib'); adding those forms needs matching excludes and is a policy call. (c) The plan's generic '/Users/<name>' rule was dropped with reason (AGENTS.md text and frozen fixtures self-trigger).
+
+Review round 2 (L3 diff-reviewer-qwen, security-scoped escalation): FAIL with gate-defeating defects. Fixed: (1) pre-commit now scans the git index (staged content) via one 'git cat-file --batch' call, closing the staged-secret + clean-worktree bypass; (2) token formats widened (github_pat_, sk-proj-, sk-ant-api/oat, ASIA, ENCRYPTED/DSA/PGP keys, Stripe sk_live_), then tightened with a lookbehind so kebab-case prose is not a false positive; (3) excludes are per-scope — personal excludes no longer suppress secret scanning; secret excludes are docs/archive/ + the module; (4) read errors fail closed, binary/oversized counted; (5) GIT_DIR/GIT_WORK_TREE stripped; (6) excerpts redacted whenever a line carries a secret; (7) index parser fails closed on newline paths, malformed headers, and non-Buffer output.
+
+Rebase: main advanced (TASK-63 e170535 + TASK-29 c3363b4 merged). Committed c073429 and rebased cleanly onto ab2f8a0; wiring re-applied into the rewritten src/cli/index.ts (import :57, index mode runPreCommit :1488, worktree mode runCheck :1534). Deleted scripts/privacy-audit has no code/CI references on main (only historical backlog notes).
+
+Review round 3 (L3, rebased): PASS — all prior findings resolved, no new defect; ReDoS probes linear; real formats match, kebab false positives gone. Tally: L0 diff-reviewer-glm (PASS WITH ISSUES, fixed), L3 diff-reviewer-qwen (FAIL -> fixed -> PASS), plan-gate-glm (APPROVE-WITH-FIXES).
+
+Evidence (post-rebase): npm test 974 tests / 969 pass / 4 pre-existing environmental failures (identical set on main) / 1 skip; npm run lint clean (94 files); tsc --noEmit clean; weavelog check --pre-commit exit 0 ('[pass] privacy — clean (440 tracked files scanned)'); full weavelog check privacy pass.
+
+Exclude ledger (plan-gate finding 4): docs/archive/ is excluded from both scopes (frozen provenance, not shipped per package.json files; contains a key-shaped placeholder 'sk-or-YOUR_ZDR_OPENROUTER_KEY'). backlog/ is excluded from the personal rule only; secret scanning still covers it.
+
+TASK-63 coordination: its task notes/plan still cite scripts/privacy-audit as a verify-battery step; the script is deleted here and the equivalent is now 'weavelog check --pre-commit'. No workflow, package.json, or CI reference exists on main. PRD/ROADMAP 'privacy-audit-done' marker wording is a documentation follow-up owned by TASK-63 AC#8.
 <!-- SECTION:NOTES:END -->

@@ -221,13 +221,15 @@ versions. Version drift reporting lives in `weavelog versions`.
 | Aspect | Behavior |
 |---|---|
 | Args | `--gate <id>` (run one gate), `--json` (gate receipts on stdout) |
-| Gates | privacy (tracked-file personal identifiers + secret patterns), manifest completeness, pin hygiene, risk signals, proxy health, config drift, node path guard |
+| Gates | privacy (tracked-file personal identifiers + secret patterns), workspace.test/lint/typecheck (the workspace's own npm scripts), security.audit (npm audit --omit=dev via the audit gate), manifest completeness, pin hygiene, risk signals, proxy health, config drift, node path guard |
 | Ledger events | `gate` per gate id with pass/fail; gate receipts reference run id |
 | Exit codes | `0` all gates pass; `1` any gate fails |
 
-In v0.1.0 the workspace test, lint, typecheck and semgrep gates run in CI
-(TASK-63), not inside `weavelog check`. The `privacy` subcheck scans the
-current workspace's tracked files, and staged content under `--pre-commit`.
+The `privacy` subcheck scans the current workspace's tracked files, and staged
+content under `--pre-commit`. The workspace script and audit subchecks run in
+the current workspace and are skipped when it has no `package.json`/lockfile.
+They are guarded against re-entry, so a `check` invoked from inside a workspace
+test run does not recurse.
 
 Gate receipts: each gate emits a receipt (gate id, run id, timestamp, pass/
 fail, counts) to the ledger; `--json` prints them for programmatic use.

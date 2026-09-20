@@ -708,6 +708,76 @@ describe("cli check privacy (TASK-73)", () => {
   });
 });
 
+describe("cli check workspace subchecks (TASK-73 AC#2)", () => {
+  function git(args: string[], cwd: string): void {
+    const r = spawnSync("git", args, { cwd, encoding: "utf8" });
+    if (r.status !== 0)
+      throw new Error(`git ${args.join(" ")} failed: ${r.stderr}`);
+  }
+
+  function makeRepo(dir: string): void {
+    git(["init", "-b", "main"], dir);
+    git(["config", "user.email", "t@t.com"], dir);
+    git(["config", "user.name", "T"], dir);
+  }
+
+  test("runs the workspace test/lint/typecheck scripts and skips audit without a lockfile", () => {
+    const dir = makeDir("workspace-ok");
+    makeRepo(dir);
+    write(
+      join(dir, "package.json"),
+      JSON.stringify({
+        scripts: { test: "true", lint: "true", typecheck: "true" },
+      }),
+    );
+    const r = run(["check"], {
+      cwd: dir,
+      env: {
+        WEAVELOG_STATE_DIR: join(dir, "state"),
+        WEAVELOG_CHECK_INNER: "",
+      },
+    });
+    assert.ok(r.stdout.includes("[pass] workspace.test"), r.stdout);
+    assert.ok(r.stdout.includes("[pass] workspace.lint"), r.stdout);
+    assert.ok(r.stdout.includes("[pass] workspace.typecheck"), r.stdout);
+    assert.ok(r.stdout.includes("[skip] security.audit"), r.stdout);
+  });
+
+  test("fails naming a workspace script that exits non-zero", () => {
+    const dir = makeDir("workspace-fail");
+    makeRepo(dir);
+    write(
+      join(dir, "package.json"),
+      JSON.stringify({ scripts: { lint: "exit 1" } }),
+    );
+    const r = run(["check"], {
+      cwd: dir,
+      env: {
+        WEAVELOG_STATE_DIR: join(dir, "state"),
+        WEAVELOG_CHECK_INNER: "",
+      },
+    });
+    assert.ok(r.stdout.includes("[fail] workspace.lint"), r.stdout);
+  });
+
+  test("skips workspace subchecks when nested inside another check", () => {
+    const dir = makeDir("workspace-nested");
+    makeRepo(dir);
+    write(
+      join(dir, "package.json"),
+      JSON.stringify({ scripts: { test: "true" } }),
+    );
+    const r = run(["check"], {
+      cwd: dir,
+      env: {
+        WEAVELOG_STATE_DIR: join(dir, "state"),
+        WEAVELOG_CHECK_INNER: "1",
+      },
+    });
+    assert.ok(r.stdout.includes("[skip] workspace.test"), r.stdout);
+  });
+});
+
 describe("cli difit.pointer", () => {
   test("check --stack-only exits 1 naming difit.pointer when the doc loses the pin", () => {
     const dir = makeDir("difit-doc");
