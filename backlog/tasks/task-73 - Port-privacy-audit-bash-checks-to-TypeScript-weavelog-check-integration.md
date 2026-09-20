@@ -5,7 +5,7 @@ status: In Progress
 assignee:
   - '@conductor'
 created_date: '2026-09-07 15:49'
-updated_date: '2026-09-20 08:20'
+updated_date: '2026-09-20 08:27'
 labels:
   - spec-approved
 milestone: m-7
@@ -94,4 +94,6 @@ Taxonomy per prior human ruling TASK-45 [AMEND-R6-6]: shabib87/codewithshabib ar
 Post-externalization evidence: npm test 983 tests / 978 pass / 4 pre-existing environmental failures (same as main) / 1 skip; lint clean; tsc clean; 'weavelog check --pre-commit' pass with '[pass] privacy — clean (441 tracked files scanned; personal-name scan skipped (no local needle file))'; full check runs privacy + workspace.* + security.audit; dist contains no author identity.
 
 Correction: the follow-up sweep task was withdrawn per user instruction (no new tasks). Its scope is now recorded as a note on TASK-83, which already owns working-tree and all-refs clearance.
+
+Final review: L3 diff-reviewer-qwen PASS on fb4941d (externalization: env seam honored, dedicated needle path, empty-file skip, secret-scope-only redaction, canonical-case home-path; no regression). Review tally: L0 glm x2, L3 qwen x6 (final PASS), plan-gate qwen (externalization), plan-gate glm (initial plan). TASK-91 withdrawn/archived; sweep scope recorded on TASK-83.
 <!-- SECTION:NOTES:END -->
