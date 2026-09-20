@@ -5,7 +5,7 @@ status: In Progress
 assignee:
   - '@conductor'
 created_date: '2026-09-07 15:49'
-updated_date: '2026-09-20 07:40'
+updated_date: '2026-09-20 08:20'
 labels:
   - spec-approved
 milestone: m-7
@@ -86,4 +86,12 @@ Evidence (post-rebase): npm test 974 tests / 969 pass / 4 pre-existing environme
 Exclude ledger (plan-gate finding 4): docs/archive/ is excluded from both scopes (frozen provenance, not shipped per package.json files; contains a key-shaped placeholder 'sk-or-YOUR_ZDR_OPENROUTER_KEY'). backlog/ is excluded from the personal rule only; secret scanning still covers it.
 
 TASK-63 coordination: its task notes/plan still cite scripts/privacy-audit as a verify-battery step; the script is deleted here and the equivalent is now 'weavelog check --pre-commit'. No workflow, package.json, or CI reference exists on main. PRD/ROADMAP 'privacy-audit-done' marker wording is a documentation follow-up owned by TASK-63 AC#8.
+
+Externalization (resolves the chicken-and-egg, per plan-gate-qwen APPROVE-WITH-FIXES): shipped rules are identity-free (generic absolute home path + secret patterns); the author's identifiers load at runtime from an untracked needle file (WEAVELOG_PRIVACY_NEEDLES, default <WEAVELOG_CONFIG_HOME|~/.config/weavelog>/privacy-needles.txt); absent = personal-name scope skipped with a visible note, unreadable = fail closed. Shipped excludes are attribution-only (LICENSE, NOTICE, ATTRIBUTION.md, docs/archive/, module); repo-specific personal excludes live in the committed-but-unshipped .weavelog-privacy-excludes. Tests use synthetic needles/paths only; no real identity remains in the module, tests, or dist (verified).
+
+Taxonomy per prior human ruling TASK-45 [AMEND-R6-6]: shabib87/codewithshabib are chosen public brand, not PII; the sweep does not touch them or attribution. Follow-up TASK-91 created for the one-time whole-tree sweep and exclude narrowing, dependent on TASK-83 (public-history clearance) and TASK-73.
+
+Post-externalization evidence: npm test 983 tests / 978 pass / 4 pre-existing environmental failures (same as main) / 1 skip; lint clean; tsc clean; 'weavelog check --pre-commit' pass with '[pass] privacy — clean (441 tracked files scanned; personal-name scan skipped (no local needle file))'; full check runs privacy + workspace.* + security.audit; dist contains no author identity.
+
+Correction: the follow-up sweep task was withdrawn per user instruction (no new tasks). Its scope is now recorded as a note on TASK-83, which already owns working-tree and all-refs clearance.
 <!-- SECTION:NOTES:END -->

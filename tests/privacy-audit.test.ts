@@ -91,6 +91,12 @@ describe("findPrivacyOffenders", () => {
     );
   });
 
+  test("matches home paths case-insensitively", () => {
+    const hit = findPrivacyOffenders("notes.md", "path /users/realuser/x\n");
+    assert.equal(hit.length, 1);
+    assert.equal(hit[0]?.rule, "home-path");
+  });
+
   test("flags a personal name when the local needle rule is built", () => {
     const rules = buildPrivacyRules([NEEDLE]);
     const hit = findPrivacyOffenders(
@@ -213,6 +219,48 @@ describe("privacyAuditForDir", () => {
     const r = privacyAuditForDir(dir, { needlesPath: join(dir, "absent.txt") });
     assert.equal(r.status, "pass");
     assert.ok(r.detail.includes("skipped"));
+  });
+
+  test("reads the needle file from WEAVELOG_PRIVACY_NEEDLES", () => {
+    const dir = makeDir("envneedles");
+    makeRepo(dir);
+    write(join(dir, "notes.md"), `contact ${NEEDLE}\n`);
+    git(["add", "."], dir);
+    const needlesFile = join(dir, "needles.txt");
+    write(needlesFile, `${NEEDLE}\n`);
+    const prev = process.env.WEAVELOG_PRIVACY_NEEDLES;
+    process.env.WEAVELOG_PRIVACY_NEEDLES = needlesFile;
+    try {
+      const r = privacyAuditForDir(dir);
+      assert.equal(r.status, "fail");
+      assert.ok(r.offenders.some((o) => o.rule === "personal-name"));
+    } finally {
+      if (prev === undefined) delete process.env.WEAVELOG_PRIVACY_NEEDLES;
+      else process.env.WEAVELOG_PRIVACY_NEEDLES = prev;
+    }
+  });
+
+  test("reports an empty needle file as skipped, not enabled", () => {
+    const dir = makeDir("emptyneedles");
+    makeRepo(dir);
+    write(join(dir, "notes.md"), "clean\n");
+    git(["add", "."], dir);
+    const needlesFile = join(dir, "needles.txt");
+    write(needlesFile, "# only a comment\n");
+    const r = privacyAuditForDir(dir, { needlesPath: needlesFile });
+    assert.equal(r.status, "pass");
+    assert.ok(r.detail.includes("skipped"), r.detail);
+  });
+
+  test("a repo-local exclude cannot suppress the secret scope", () => {
+    const dir = makeDir("exclude-secret");
+    makeRepo(dir);
+    write(join(dir, ".weavelog-privacy-excludes"), "secret.md\n");
+    write(join(dir, "secret.md"), `token ${SECRET}\n`);
+    git(["add", "."], dir);
+    const r = privacyAuditForDir(dir, { needles: [] });
+    assert.equal(r.status, "fail");
+    assert.ok(r.offenders.some((o) => o.file === "secret.md"));
   });
 
   test("fails closed when the needle file is unreadable", () => {

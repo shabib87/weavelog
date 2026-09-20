@@ -1563,11 +1563,17 @@ function workspaceScripts(
 function redactSecretLines(text: string): string {
   return text
     .split("\n")
-    .map((line) =>
-      GENERIC_PRIVACY_RULES.some((rule) => rule.pattern.test(line))
-        ? "[redacted]"
-        : line,
-    )
+    .map((line) => {
+      if (
+        GENERIC_PRIVACY_RULES.some(
+          (rule) => rule.scope === "secret" && rule.pattern.test(line),
+        )
+      ) {
+        return "[redacted]";
+      }
+      // Mask machine paths inline; keep the rest of the diagnostic line.
+      return line.replace(/\/Users\/[A-Za-z0-9._-]+/g, "/Users/<redacted>");
+    })
     .join("\n");
 }
 

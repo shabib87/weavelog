@@ -50,7 +50,7 @@ export const GENERIC_PRIVACY_RULES: PrivacyRule[] = [
     scope: "personal",
     // Absolute macOS home paths, excluding obvious synthetic fixture names.
     pattern:
-      /\/Users\/(?!(?:x|me|test|someone|you|yourname|name)\b)[A-Za-z0-9._-]+/,
+      /\/Users\/(?!(?:x|me|test|someone|you|yourname|name)\b)[A-Za-z0-9._-]+/i,
   },
   { id: "secret", scope: "secret", pattern: /(AKIA|ASIA)[0-9A-Z]{16}/ },
   { id: "secret", scope: "secret", pattern: /gh[pousr]_[A-Za-z0-9]{36,}/ },
@@ -126,9 +126,7 @@ export function buildPrivacyRules(needles: string[]): PrivacyRule[] {
 
 /** Default location of the untracked personal needle file. */
 export function defaultNeedlesPath(): string {
-  const base =
-    process.env.WEAVELOG_CONFIG_HOME ?? join(homedir(), ".config", "weavelog");
-  return join(base, "privacy-needles.txt");
+  return join(homedir(), ".config", "weavelog", "privacy-needles.txt");
 }
 
 type NeedleLoad =
@@ -153,10 +151,14 @@ function loadNeedles(path: string): NeedleLoad {
       detail: `personal needle file unreadable (${(err as Error).message}); privacy scan failed closed`,
     };
   }
+  const needles = parseLines(text);
   return {
     ok: true,
-    needles: parseLines(text),
-    detail: "personal-name scan enabled from local needle file",
+    needles,
+    detail:
+      needles.length > 0
+        ? "personal-name scan enabled from local needle file"
+        : "personal-name scan skipped (needle file empty)",
   };
 }
 
@@ -437,7 +439,11 @@ export function privacyAuditForDir(
           ? "personal-name scan enabled"
           : "personal-name scan skipped (no needles)";
     } else {
-      const loaded = loadNeedles(opts.needlesPath ?? defaultNeedlesPath());
+      const loaded = loadNeedles(
+        opts.needlesPath ??
+          process.env.WEAVELOG_PRIVACY_NEEDLES ??
+          defaultNeedlesPath(),
+      );
       if (!loaded.ok) {
         return {
           status: "fail",
